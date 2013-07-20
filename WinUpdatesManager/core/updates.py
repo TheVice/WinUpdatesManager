@@ -35,7 +35,7 @@ def getVersion(aPath):
     return version
 
 
-def getType(aPath):
+def getOsType(aPath):
 
     osTypes = ['X86', 'X64', 'IA64', 'ARM']
 
@@ -68,21 +68,21 @@ def getUpdatesInfoFromPackage(aFiles, aStyle=0):
     for update_file in aFiles:
         kb = getKB(update_file)
 
-        if kb == 'UNKNOWN KB':
-            digitStart = 0
+        #if kb == 'UNKNOWN KB':
+            #digitStart = 0
 
-            while (digitStart < len(update_file)
-                   and not update_file[digitStart].isdigit()):
-                digitStart += 1
+            #while (digitStart < len(update_file)
+                   #and not update_file[digitStart].isdigit()):
+                #digitStart += 1
 
-            if digitStart >= len(update_file):
-                continue
+            #if digitStart >= len(update_file):
+                #continue
 
-            newFile = 'KB' + update_file[digitStart:]
-            kb = getKB(newFile)
+            #newFile = 'KB' + update_file[digitStart:]
+            #kb = getKB(newFile)
 
         version = getVersion(update_file)
-        osType = getType(update_file)
+        osType = getOsType(update_file)
         language = getLanguage(update_file)
 
         for ver in version:
@@ -162,3 +162,27 @@ def checkIsThisARM(aVersion, aType):
         return aVersion
 
     return 'WindowsRT'
+
+
+def getUpdatesSerriesSeparate(aUpdates, aSeparator):
+
+    updates = []
+
+    for update in aUpdates:
+        if aSeparator not in update:
+            updates.append(update)
+
+    return updates
+
+
+def getUpdatesFromPackage(aFiles, aDate):
+
+    updates = getUpdatesInfoFromPackage(aFiles)
+
+    upNum = 0
+    while upNum < len(updates):
+        shiftLen = len(updates[upNum]) - 1
+        updates[upNum] = updates[upNum][:shiftLen] + ', ' + str(aDate) + '}'
+        upNum += 1
+
+    return updates

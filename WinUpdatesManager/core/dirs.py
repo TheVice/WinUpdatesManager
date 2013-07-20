@@ -13,7 +13,7 @@ def getSubDirectoryFiles(aPath):
     return files
 
 
-def getSubFolderOnly(aPath, aFullPath=False):
+def getSubDirectoryOnly(aPath, aFullPath=False):
 
     subFolders = []
 

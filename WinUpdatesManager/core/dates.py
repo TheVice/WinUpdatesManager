@@ -25,7 +25,7 @@ def getDatesOfUpdates(aFolders):
     dates = []
 
     for folder in aFolders:
-        if len(folder) > 4 or not folder.isdigit():
+        if len(folder) != 4 or not folder.isdigit():
             continue
 
         year = '20' + folder[2:]

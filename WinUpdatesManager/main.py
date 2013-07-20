@@ -5,45 +5,55 @@ import core.dirs
 import core.updates
 
 
-def getUpdatesFromPackage(aFiles, aDate):
+def getYearUpdates(aPaths, aDates):
 
-    updates = core.updates.getUpdatesInfoFromPackage(aFiles)
-
-    for up in updates:
-        up = up[:len(up) - 1] + ', ' + str(aDate) + '}'
-        print(up)
-
-
-def getFromYearEditionPackage(aPaths, aDates):
+    updates = []
 
     if len(aDates) == 0 or len(aPaths) == 0:
-        return
+        return updates
 
-    i = 0
+    dateNum = 0
     for path in aPaths:
         files = core.dirs.getSubDirectoryFiles(path)
-        getUpdatesFromPackage(files, aDates[min(i, len(aDates) - 1)])
-        i += 1
+
+        fileNum = 0
+        shiftLen = len(path)
+        while fileNum < len(files):
+            files[fileNum] = files[fileNum][shiftLen:]
+            fileNum += 1
+
+        monthUpdates = core.updates.getUpdatesFromPackage(files,
+                                        aDates[min(dateNum, len(aDates) - 1)])
+        updates.append(monthUpdates)
+        dateNum += 1
+
+    return updates
 
 
 if __name__ == '__main__':
 
     argc = len(sys.argv)
-    if argc == 1 or argc > 3:
 
+    updates = []
+
+    if argc == 1 or argc > 3:
         print('Bad using.\n'
               'Correct will be ' + sys.argv[0] +
-              ' <path to directory with updates> <date for non Year edition>')
-    elif argc == 2:
+              ' <path to directory with updates> <date for non year edition>')
 
-        print('One ' + sys.argv[1])
-        #rootFolders = core.dirs.getSubFolderOnly(sys.argv[1])
-        #dates = core.dates.getDatesOfUpdates(rootFolders)
-        #if len(dates) == 0:
-        #    return
-        #rootFolders = core.dirs.getSubFolderOnly(sys.argv[1], True)
-        #getFromYearEditionPackage(rootFolders, dates)
+    elif argc == 2:
+        rootDirectories = core.dirs.getSubDirectoryOnly(sys.argv[1])
+        dates = core.dates.getDatesOfUpdates(rootDirectories)
+
+        if len(dates) != 0:
+            rootDirectories = core.dirs.getSubDirectoryOnly(sys.argv[1], True)
+            updates = getYearUpdates(rootDirectories, dates)
+        else:
+            print('In selected folder ' + sys.argv[1] + ' no date folder')
 
     elif argc == 3:
-        print('Two ' + sys.argv[1] + ' ' + sys.argv[2])
-        #getUpdatesFromPackage(sys.argv[1], sys.argv[2])
+        updates = core.dirs.updates.getUpdatesFromPackage(sys.argv[1],
+            sys.argv[2])
+
+    for update in updates:
+        print(update)
