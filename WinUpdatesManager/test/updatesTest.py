@@ -21,7 +21,8 @@ class TestSequenceFunctions(unittest.TestCase):
 #def getUpdatesInfoFromPackage(aFiles, aStyle=0):
 #def getKBsFromReport(aReport):
 #def updateInfoInJSON(aFileName, aKB, aVersion, aType, aLanguage):
-#def updateInfoInDirStyle(aFileName, aKB, aVersion, aType, aLanguage):
+#def def updateInfoInDirStyle(aPath, aFileName, aKB, aVersion,
+    #aType, aLanguage):
 #def checkIsThisR2(aVersion, aFileName):
 #def checkIsThisARM(aVersion, aType):
 #...

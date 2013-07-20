@@ -52,8 +52,21 @@ if __name__ == '__main__':
             print('In selected folder ' + sys.argv[1] + ' no date folder')
 
     elif argc == 3:
-        updates = core.dirs.updates.getUpdatesFromPackage(sys.argv[1],
+        files = core.dirs.getSubDirectoryFiles(sys.argv[1])
+        updates = core.dirs.updates.getUpdatesFromPackage(files,
             sys.argv[2])
 
     for update in updates:
         print(update)
+
+    #files = core.dirs.getSubDirectoryFiles('E:\\0112\\')
+    #updates = core.updates.getUpdatesInfoFromPackage(files, 1)
+    #updatesUN = core.updates.getUpdatesSerriesSeparate(updates, 'KNOW', True)
+    #updatesKNOW = core.updates.getUpdatesSerriesSeparate(updates, 'KNOW')
+
+    #for update in updatesKNOW:
+        #update = 'E:\\0112\\' + update[3:]
+        #print(update)
+
+    #for update in updatesUN:
+        #print(update)

@@ -68,19 +68,6 @@ def getUpdatesInfoFromPackage(aFiles, aStyle=0):
     for update_file in aFiles:
         kb = getKB(update_file)
 
-        #if kb == 'UNKNOWN KB':
-            #digitStart = 0
-
-            #while (digitStart < len(update_file)
-                   #and not update_file[digitStart].isdigit()):
-                #digitStart += 1
-
-            #if digitStart >= len(update_file):
-                #continue
-
-            #newFile = 'KB' + update_file[digitStart:]
-            #kb = getKB(newFile)
-
         version = getVersion(update_file)
         osType = getOsType(update_file)
         language = getLanguage(update_file)
@@ -88,11 +75,19 @@ def getUpdatesInfoFromPackage(aFiles, aStyle=0):
         for ver in version:
             ver = checkIsThisR2(ver, update_file)
             ver = checkIsThisARM(ver, osType)
+
             if aStyle == 0:
+                if kb != 'UNKNOWN KB':
+                    update_file = update_file[update_file.rfind('\\') + 1:]
                 update = updateInfoInJSON(update_file, kb, ver, osType,
-                    language)
+                        language)
             elif aStyle == 1:
-                update = updateInfoInDirStyle(update_file, kb, ver, osType,
+                if kb != 'UNKNOWN KB':
+                    kb = kb[2:]
+                update = updateInfoInDirStyle(
+                    update_file[0:update_file.find('\\') + 1],
+                    update_file[update_file.rfind('\\') + 1:],
+                    kb, ver, osType,
                     language)
 
             if 0 == updates.count(update):
@@ -122,7 +117,7 @@ def getKBsFromReport(aReport):
 
 def updateInfoInJSON(aFileName, aKB, aVersion, aType, aLanguage):
 
-    return ('{' + 'Name = ' + aFileName[aFileName.rfind('\\') + 1:] + ', '
+    return ('{' + 'Name = ' + aFileName + ', '
                 + 'KB = ' + aKB + ', '
                 + 'Version = ' + aVersion + ', '
                 + 'Type = ' + aType + ', '
@@ -130,14 +125,14 @@ def updateInfoInJSON(aFileName, aKB, aVersion, aType, aLanguage):
                 + '}')
 
 
-def updateInfoInDirStyle(aFileName, aKB, aVersion, aType, aLanguage):
+def updateInfoInDirStyle(aPath, aFileName, aKB, aVersion, aType, aLanguage):
 
-    return (aFileName[0:aFileName.find('\\') + 1]
-            + aKB[2:]
+    return (aPath
+            + aKB
             + '\\' + aVersion
             + '\\' + aType
             + '\\' + aLanguage
-            + '\\' + aFileName[aFileName.rfind('\\') + 1:])
+            + '\\' + aFileName)
 
 
 def checkIsThisR2(aVersion, aFileName):
@@ -164,13 +159,18 @@ def checkIsThisARM(aVersion, aType):
     return 'WindowsRT'
 
 
-def getUpdatesSerriesSeparate(aUpdates, aSeparator):
+def getUpdatesSerriesSeparate(aUpdates, aSeparator, aWithSeparator=False):
 
     updates = []
 
-    for update in aUpdates:
-        if aSeparator not in update:
-            updates.append(update)
+    if aWithSeparator:
+        for update in aUpdates:
+            if aSeparator in update:
+                updates.append(update)
+    else:
+        for update in aUpdates:
+            if aSeparator not in update:
+                updates.append(update)
 
     return updates
 
