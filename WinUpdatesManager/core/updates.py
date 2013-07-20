@@ -1,5 +1,58 @@
 
 
+class Update:
+
+    fullName = ''
+    kb = ''
+    version = ''
+    osType = ''
+    language = ''
+    date = ''
+
+    def __init__(self, aPath, aKB, aVersion, aOsType, aLanguage):
+
+        self.fullName = aPath
+        self.kb = aKB
+        self.version = aVersion
+        self.osType = aOsType
+        self.language = aLanguage
+
+    def setDate(self, aDate):
+        self.date = aDate
+
+    def toJSON(self):
+
+        fileName = self.fullName
+        if self.kb != 'UNKNOWN KB':
+            fileName = fileName[fileName.rfind('\\') + 1:]
+
+        output = ('{' + 'Name = ' + fileName + ', '
+                    + 'KB = ' + self.kb + ', '
+                    + 'Version = ' + self.version + ', '
+                    + 'Type = ' + self.osType + ', '
+                    + 'Language = ' + self.language
+                    + '}')
+
+        if self.date != '':
+            shiftLen = len(output) - 1
+            output = output[:shiftLen] + ', ' + str(self.date) + '}'
+
+        return output
+
+    def toWinDirStyle(self):
+
+        kbNum = self.kb
+        if kbNum != 'UNKNOWN KB':
+            kbNum = kbNum[2:]
+
+        return (self.fullName[0:self.fullName.find('\\') + 1]
+                + kbNum
+                + '\\' + self.version
+                + '\\' + self.osType
+                + '\\' + self.language
+                + '\\' + self.fullName[self.fullName.rfind('\\') + 1:])
+
+
 def getKB(aPath):
 
     length = len(aPath)
@@ -61,7 +114,7 @@ def getLanguage(aPath):
     return 'UNKNOWN LANGUAGE'
 
 
-def getUpdatesInfoFromPackage(aFiles, aStyle=0):
+def getUpdatesInfoFromPackage(aFiles):
 
     updates = []
 
@@ -76,19 +129,7 @@ def getUpdatesInfoFromPackage(aFiles, aStyle=0):
             ver = checkIsThisR2(ver, update_file)
             ver = checkIsThisARM(ver, osType)
 
-            if aStyle == 0:
-                if kb != 'UNKNOWN KB':
-                    update_file = update_file[update_file.rfind('\\') + 1:]
-                update = updateInfoInJSON(update_file, kb, ver, osType,
-                        language)
-            elif aStyle == 1:
-                if kb != 'UNKNOWN KB':
-                    kb = kb[2:]
-                update = updateInfoInDirStyle(
-                    update_file[0:update_file.find('\\') + 1],
-                    update_file[update_file.rfind('\\') + 1:],
-                    kb, ver, osType,
-                    language)
+            update = Update(update_file, kb, ver, osType, language)
 
             if 0 == updates.count(update):
                 updates.append(update)
@@ -113,26 +154,6 @@ def getKBsFromReport(aReport):
         aReport = aReport[pos + len(KB):]
 
     return KBs
-
-
-def updateInfoInJSON(aFileName, aKB, aVersion, aType, aLanguage):
-
-    return ('{' + 'Name = ' + aFileName + ', '
-                + 'KB = ' + aKB + ', '
-                + 'Version = ' + aVersion + ', '
-                + 'Type = ' + aType + ', '
-                + 'Language = ' + aLanguage
-                + '}')
-
-
-def updateInfoInDirStyle(aPath, aFileName, aKB, aVersion, aType, aLanguage):
-
-    return (aPath
-            + aKB
-            + '\\' + aVersion
-            + '\\' + aType
-            + '\\' + aLanguage
-            + '\\' + aFileName)
 
 
 def checkIsThisR2(aVersion, aFileName):
@@ -179,10 +200,7 @@ def getUpdatesFromPackage(aFiles, aDate):
 
     updates = getUpdatesInfoFromPackage(aFiles)
 
-    upNum = 0
-    while upNum < len(updates):
-        shiftLen = len(updates[upNum]) - 1
-        updates[upNum] = updates[upNum][:shiftLen] + ', ' + str(aDate) + '}'
-        upNum += 1
+    for update in updates:
+        update.setDate(aDate)
 
     return updates

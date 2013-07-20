@@ -30,6 +30,12 @@ def getYearUpdates(aPaths, aDates):
     return updates
 
 
+#def some_mock():
+    #import data
+
+    #print(data.one_month())
+    #print(data.one_year())
+
 if __name__ == '__main__':
 
     argc = len(sys.argv)
@@ -51,22 +57,16 @@ if __name__ == '__main__':
         else:
             print('In selected folder ' + sys.argv[1] + ' no date folder')
 
+        for monthUpdates in updates:
+            for update in monthUpdates:
+                print(update.toWinDirStyle())
+
     elif argc == 3:
         files = core.dirs.getSubDirectoryFiles(sys.argv[1])
-        updates = core.dirs.updates.getUpdatesFromPackage(files,
+        updates = core.updates.getUpdatesFromPackage(files,
             sys.argv[2])
+        for update in updates:
+            print(update.toWinDirStyle())
 
-    for update in updates:
-        print(update)
+    #some_mock()
 
-    #files = core.dirs.getSubDirectoryFiles('E:\\0112\\')
-    #updates = core.updates.getUpdatesInfoFromPackage(files, 1)
-    #updatesUN = core.updates.getUpdatesSerriesSeparate(updates, 'KNOW', True)
-    #updatesKNOW = core.updates.getUpdatesSerriesSeparate(updates, 'KNOW')
-
-    #for update in updatesKNOW:
-        #update = 'E:\\0112\\' + update[3:]
-        #print(update)
-
-    #for update in updatesUN:
-        #print(update)

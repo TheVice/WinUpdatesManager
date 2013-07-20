@@ -15,19 +15,6 @@ class TestSequenceFunctions(unittest.TestCase):
             self.assertEqual(correctAnswer[i], core.updates.getKB(update_file))
             i += 1
 
-#def getVersion(aPath):
-#def getType(aPath):
-#def getLanguage(aPath):
-#def getUpdatesInfoFromPackage(aFiles, aStyle=0):
-#def getKBsFromReport(aReport):
-#def updateInfoInJSON(aFileName, aKB, aVersion, aType, aLanguage):
-#def def updateInfoInDirStyle(aPath, aFileName, aKB, aVersion,
-    #aType, aLanguage):
-#def checkIsThisR2(aVersion, aFileName):
-#def checkIsThisARM(aVersion, aType):
-#...
-#def getUpdatesFromPackage
-
     def test_getUpdatesSerriesSeparate(self):
 
         updates = ['someUpdate', 'someUpdate, UNKNOWN LANGUAGE']
