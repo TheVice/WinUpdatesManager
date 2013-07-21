@@ -35,7 +35,7 @@ class Update:
 
         if self.date != '':
             shiftLen = len(output) - 1
-            output = output[:shiftLen] + ', ' + str(self.date) + '}'
+            output = output[:shiftLen] + ', Date = ' + str(self.date) + '}'
 
         return output
 
