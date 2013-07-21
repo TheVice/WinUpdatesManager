@@ -25,7 +25,7 @@ def getFromDB(aDB='win32',
         return items
 
     except:
-        print('Unexpected error:', sys.exc_info())
+        print('Unexpected error:', sys.exc_info()[0])
 
 
 def insertToDB(aDB='win32',
@@ -40,8 +40,9 @@ def insertToDB(aDB='win32',
 
         for item in aItems:
             table.insert(item)
+
     except:
-        print('Unexpected error:', sys.exc_info())
+        print('Unexpected error:', sys.exc_info()[0])
 
 
 def deleteFromDB(aDB='win32',
@@ -56,41 +57,28 @@ def deleteFromDB(aDB='win32',
 
         for item in aItems:
             table.remove(item)
+
     except:
-        print('Unexpected error:', sys.exc_info())
-
-
-def constructQueryFromUpdateInfo(aFileName='',
-                                 aKb='',
-                                 aVersion='',
-                                 aOsType='',
-                                 aLanguage='',
-                                 aDate=''):
-
-    query = {'Name': aFileName,
-             'KB': aKb,
-             'Version': aVersion,
-             'Type': aOsType,
-             'Language': aLanguage,
-             'Date': aDate
-            }
-
-    return query
+        print('Unexpected error:', sys.exc_info()[0])
 
 
 if __name__ == '__main__':
 
-    items = [constructQueryFromUpdateInfo('file')]
+    srcItems = [{'file': 1}]
     print('insert')
-    insertToDB('test', 'items', items)
+    insertToDB('test', 'items', srcItems)
+
     print('get')
-    items2 = getFromDB('test', 'items')
+    items = getFromDB('test', 'items')
+
     print('print what we get')
-    for item in items2:
+    for item in items:
             print(item)
+
     print('delete')
     deleteFromDB('test', 'items', items)
+
     print('print what present')
-    items2 = getFromDB('test', 'items')
-    for item in items2:
+    items = getFromDB('test', 'items')
+    for item in items:
             print(item)

@@ -15,10 +15,9 @@ class TestSequenceFunctions(unittest.TestCase):
         files = ['0112', '0212', '0312', '0412', '0512', '0612', '0']
         correctDays = [10, 14, 13, 10, 8, 12, '']
         dates = core.dates.getDatesOfUpdates(files)
-        i = 0
-        for date in dates:
-            self.assertEqual(correctDays[i], date.day)
-            i += 1
+
+        for correctDay, date in zip(correctDays, dates):
+            self.assertEqual(correctDay, date.day)
 
 
 if __name__ == '__main__':

@@ -2,55 +2,75 @@
 
 class Update:
 
-    fullName = ''
-    kb = ''
-    version = ''
-    osType = ''
-    language = ''
-    date = ''
+    def __init__(self, aPath='', aKB='', aVersion='',
+        aOsType='', aLanguage='', aDate=''):
 
-    def __init__(self, aPath, aKB, aVersion, aOsType, aLanguage):
-
-        self.fullName = aPath
-        self.kb = aKB
-        self.version = aVersion
-        self.osType = aOsType
-        self.language = aLanguage
-
-    def setDate(self, aDate):
-        self.date = aDate
+        self.mFullName = aPath
+        self.mKB = aKB
+        self.mVersion = aVersion
+        self.mOsType = aOsType
+        self.mLanguage = aLanguage
+        self.mDate = aDate
 
     def toJSON(self):
 
-        fileName = self.fullName
-        if self.kb != 'UNKNOWN KB':
-            fileName = fileName[fileName.rfind('\\') + 1:]
+        output = {}
 
-        output = ('{' + 'Name = ' + fileName + ', '
-                    + 'KB = ' + self.kb + ', '
-                    + 'Version = ' + self.version + ', '
-                    + 'Type = ' + self.osType + ', '
-                    + 'Language = ' + self.language
-                    + '}')
-
-        if self.date != '':
-            shiftLen = len(output) - 1
-            output = output[:shiftLen] + ', Date = ' + str(self.date) + '}'
+        if self.mFullName != '':
+            output['Name'] = self.mFullName
+        if self.mKB != '':
+            output['KB'] = self.mKB
+        if self.mVersion != '':
+            output['Version'] = self.mVersion
+        if self.mOsType != '':
+            output['Type'] = self.mOsType
+        if self.mLanguage != '':
+            output['Language'] = self.mLanguage
+        if self.mDate != '':
+            output['Date'] = self.mDate
 
         return output
 
     def toWinDirStyle(self):
 
-        kbNum = self.kb
-        if kbNum != 'UNKNOWN KB':
-            kbNum = kbNum[2:]
+        output = ''
 
-        return (self.fullName[0:self.fullName.find('\\') + 1]
-                + kbNum
-                + '\\' + self.version
-                + '\\' + self.osType
-                + '\\' + self.language
-                + '\\' + self.fullName[self.fullName.rfind('\\') + 1:])
+        if self.mFullName == '':
+            return output
+
+        output = self.getRootOfFullName()
+
+        if self.mDate != '':
+            output += self.mDate + '\\'
+        if self.mKB != '':
+            output += self.mKB + '\\'
+        if self.mVersion != '':
+            output += self.mVersion + '\\'
+        if self.mOsType != '':
+            output += self.mOsType + '\\'
+        if self.mLanguage != '':
+            output += self.mLanguage + '\\'
+
+        output += self.getShortName()
+
+        return output
+
+    def getPathWithOutRoot(self):
+
+        return self.mFullName[self.mFullName.find('\\') + 1:
+               self.mFullName.rfind('\\') + 1]
+
+    def getShortName(self):
+
+        return self.mFullName[self.mFullName.rfind('\\') + 1:]
+
+    def getRootOfFullName(self):
+
+        return self.mFullName[0:self.mFullName.find('\\') + 1]
+
+    def __str__(self):
+
+        return self.toWinDirStyle()
 
 
 def getKB(aPath):
