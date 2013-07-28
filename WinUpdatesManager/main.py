@@ -9,38 +9,25 @@ def getYearUpdates(aPaths, aDates):
 
     updates = []
 
-    if len(aDates) == 0 or len(aPaths) == 0:
-        return updates
+    for path, date in zip(aPaths, aDates):
 
-    dateNum = 0
-    for path in aPaths:
         files = core.dirs.getSubDirectoryFiles(path)
 
-        fileNum = 0
         shiftLen = len(path)
+        fileNum = 0
         while fileNum < len(files):
             files[fileNum] = files[fileNum][shiftLen:]
             fileNum += 1
 
-        monthUpdates = core.updates.getUpdatesFromPackage(files,
-                                        aDates[min(dateNum, len(aDates) - 1)])
+        monthUpdates = core.updates.getUpdatesFromPackage(files, date)
         updates.append(monthUpdates)
-        dateNum += 1
 
     return updates
 
 
-#def some_mock():
-    #import data
-
-    #print(data.one_month())
-    #print(data.one_year())
-
 if __name__ == '__main__':
 
     argc = len(sys.argv)
-
-    updates = []
 
     if argc == 1 or argc > 3:
         print('Bad using.\n'
@@ -51,7 +38,7 @@ if __name__ == '__main__':
         rootDirectories = core.dirs.getSubDirectoryOnly(sys.argv[1])
         dates = core.dates.getDatesOfUpdates(rootDirectories)
 
-        if len(dates) != 0:
+        if len(rootDirectories) != 0 and len(dates) != 0:
             rootDirectories = core.dirs.getSubDirectoryOnly(sys.argv[1], True)
             updates = getYearUpdates(rootDirectories, dates)
         else:
@@ -63,10 +50,7 @@ if __name__ == '__main__':
 
     elif argc == 3:
         files = core.dirs.getSubDirectoryFiles(sys.argv[1])
-        updates = core.updates.getUpdatesFromPackage(files,
-            sys.argv[2])
+        updates = core.updates.getUpdatesFromPackage(files, sys.argv[2])
         for update in updates:
             print(update.toWinDirStyle())
-
-    #some_mock()
 

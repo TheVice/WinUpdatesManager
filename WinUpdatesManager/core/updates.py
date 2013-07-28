@@ -221,6 +221,6 @@ def getUpdatesFromPackage(aFiles, aDate):
     updates = getUpdatesInfoFromPackage(aFiles)
 
     for update in updates:
-        update.setDate(aDate)
+        update.mDate = aDate
 
     return updates
