@@ -1,4 +1,5 @@
 import unittest
+import datetime
 import core
 import core.updates
 
@@ -34,6 +35,10 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEqual('', update.getPathWithOutRoot())
         self.assertEqual('dotNetFx40_Full_x86_x64.exe', update.getShortName())
         self.assertEqual('dotNetFx40_Full_x86_x64.exe', update.toWinDirStyle())
+
+        update = core.updates.Update('ie')
+        update.mDate = datetime.date(2012, 12, 11)
+        print(update.toWinDirStyle())
 
     def test_getKB(self):
 

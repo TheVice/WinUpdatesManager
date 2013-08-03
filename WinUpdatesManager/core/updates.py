@@ -41,7 +41,7 @@ class Update:
         output = self.getRootOfFullName()
 
         if self.mDate != '':
-            output += self.mDate + '\\'
+            output += str(self.mDate) + '\\'
         if self.mKB != '':
             output += self.mKB + '\\'
         if self.mVersion != '':
