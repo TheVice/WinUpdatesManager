@@ -41,7 +41,7 @@ class Update:
         output = self.getRootOfFullName()
 
         if self.mDate != '':
-            output += str(self.mDate) + '\\'
+            output += self.getDate() + '\\'
         if self.mKB != '':
             output += self.mKB + '\\'
         if self.mVersion != '':
@@ -68,6 +68,17 @@ class Update:
 
         return self.mFullName[0:self.mFullName.find('\\') + 1]
 
+    def getDate(self):
+
+        try:
+            month = str(self.mDate.month)
+            if len(month) == 1:
+                month = '0' + month
+            date = month + str(self.mDate.year)[2:4]
+            return date
+        except:
+            return self.mDate
+
     def __str__(self):
 
         return self.toWinDirStyle()
@@ -79,12 +90,13 @@ def getKB(aPath):
     startKB = aPath.find('KB')
 
     if startKB != -1 and startKB + 2 < length:
-        endKB = startKB + 2
+        startKB += 2
+        endKB = startKB
 
         while endKB < length and aPath[endKB].isdigit():
             endKB += 1
 
-        if endKB - startKB > 2:
+        if endKB - startKB > 0:
             return aPath[startKB:endKB]
 
     return 'UNKNOWN KB'

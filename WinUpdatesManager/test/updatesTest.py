@@ -18,8 +18,8 @@ class TestSequenceFunctions(unittest.TestCase):
                          '\\X64\\ENU\\', update.getPathWithOutRoot())
         self.assertEqual('IE7-WINDOWSSERVER2003.' +
                     'WINDOWSXP-KB2761465-X64-ENU.EXE', update.getShortName())
-        self.assertEqual('KB2761465', core.updates.getKB(path))
-        update.mKB = core.updates.getKB(path)[2:]
+        self.assertEqual('2761465', core.updates.getKB(path))
+        update.mKB = core.updates.getKB(path)
         self.assertEqual(['WindowsXP', 'WindowsServer2003'],
                           core.updates.getVersion(path))
         update.mVersion = core.updates.getVersion(path)[1]
@@ -27,7 +27,7 @@ class TestSequenceFunctions(unittest.TestCase):
         update.mOsType = core.updates.getOsType(path)
         self.assertEqual('ENU', core.updates.getLanguage(path))
         update.mLanguage = core.updates.getLanguage(path)
-        update.mDate = '1212'
+        update.mDate = datetime.date(2012, 12, 1)
         self.assertEqual(path, update.toWinDirStyle())
 
         update = core.updates.Update('dotNetFx40_Full_x86_x64.exe')
@@ -36,9 +36,9 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEqual('dotNetFx40_Full_x86_x64.exe', update.getShortName())
         self.assertEqual('dotNetFx40_Full_x86_x64.exe', update.toWinDirStyle())
 
-        update = core.updates.Update('ie')
-        update.mDate = datetime.date(2012, 12, 11)
-        print(update.toWinDirStyle())
+        update = core.updates.Update('update')
+        update.mDate = '1212'
+        self.assertEqual('1212\update', update.toWinDirStyle())
 
     def test_getKB(self):
 
