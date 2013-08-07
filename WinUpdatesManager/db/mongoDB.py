@@ -2,18 +2,23 @@ import sys
 import pymongo
 
 
-def getFromDB(aDB='win32',
+def getFromDB(aHostAndPort='mongodb://localhost:27017',
+              aWriteConcern='majority',
+              aJournal=True,
+              aDB='win32',
               aTable='updates',
               aQuery={'': ''},
-              aProjection={'': ''},
-              aHostAndPort='mongodb://localhost:27017'):
+              aProjection={'': ''}):
 
     try:
-        client = pymongo.MongoClient(host=aHostAndPort, w='majority', j=True)
+        client = pymongo.MongoClient(host=aHostAndPort,
+                                     w=aWriteConcern,
+                                     j=aJournal)
         db = client[aDB]
         table = db[aTable]
 
         items = {}
+
         if aQuery != {'': ''}:
             if aProjection != {'': ''}:
                 items = table.find(aQuery, aProjection)
@@ -28,57 +33,55 @@ def getFromDB(aDB='win32',
         print('Unexpected error:', sys.exc_info()[0])
 
 
-def insertToDB(aDB='win32',
+def insertToDB(aHostAndPort='mongodb://localhost:27017',
+               aWriteConcern=1,
+               aJournal=True,
+               aDB='win32',
                aTable='updates',
                aItems=[],
-               aHostAndPort='mongodb://localhost:27017'):
+               aRawItems=False):
 
     try:
-        client = pymongo.MongoClient(host=aHostAndPort, w=1, j=True)
+        client = pymongo.MongoClient(host=aHostAndPort,
+                                     w=aWriteConcern,
+                                     j=aJournal)
         db = client[aDB]
         table = db[aTable]
 
-        for item in aItems:
-            table.insert(item)
+        if aRawItems:
+            for item in aItems:
+                table.insert(item)
+        else:
+            for item in aItems:
+                table.insert(item.toJSON())
 
     except:
         print('Unexpected error:', sys.exc_info()[0])
 
 
-def deleteFromDB(aDB='win32',
+def deleteFromDB(aHostAndPort='mongodb://localhost:27017',
+                 aWriteConcern=1,
+                 aJournal=True,
+                 aDB='win32',
                  aTable='updates',
                  aItems=[],
-                 aHostAndPort='mongodb://localhost:27017'):
+                 aRawItems=False):
 
     try:
-        client = pymongo.MongoClient(host=aHostAndPort, w=1, j=True)
+        client = pymongo.MongoClient(host=aHostAndPort,
+                                     w=aWriteConcern,
+                                     j=aJournal)
         db = client[aDB]
         table = db[aTable]
 
-        for item in aItems:
-            table.remove(item)
+        if aRawItems:
+            for item in aItems:
+                table.remove(item)
+        else:
+            for item in aItems:
+                table.remove(item.toJSON())
 
     except:
         print('Unexpected error:', sys.exc_info()[0])
 
 
-if __name__ == '__main__':
-
-    srcItems = [{'file': 1}]
-    print('insert')
-    insertToDB('test', 'items', srcItems)
-
-    print('get')
-    items = getFromDB('test', 'items')
-
-    print('print what we get')
-    for item in items:
-            print(item)
-
-    print('delete')
-    deleteFromDB('test', 'items', items)
-
-    print('print what present')
-    items = getFromDB('test', 'items')
-    for item in items:
-            print(item)

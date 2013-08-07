@@ -18,7 +18,7 @@ class TestSequenceFunctions(unittest.TestCase):
                          '\\X64\\ENU\\', update.getPathWithOutRoot())
         self.assertEqual('IE7-WINDOWSSERVER2003.' +
                     'WINDOWSXP-KB2761465-X64-ENU.EXE', update.getShortName())
-        self.assertEqual('2761465', core.updates.getKB(path))
+        self.assertEqual(2761465, core.updates.getKB(path))
         update.mKB = core.updates.getKB(path)
         self.assertEqual(['WindowsXP', 'WindowsServer2003'],
                           core.updates.getVersion(path))
@@ -30,6 +30,8 @@ class TestSequenceFunctions(unittest.TestCase):
         update.mDate = datetime.date(2012, 12, 1)
         self.assertEqual(path, update.toWinDirStyle())
 
+        print(update.toJSON())
+
         update = core.updates.Update('dotNetFx40_Full_x86_x64.exe')
         self.assertEqual('', update.getRootOfFullName())
         self.assertEqual('', update.getPathWithOutRoot())
@@ -38,12 +40,12 @@ class TestSequenceFunctions(unittest.TestCase):
 
         update = core.updates.Update('update')
         update.mDate = '1212'
-        self.assertEqual('1212\update', update.toWinDirStyle())
+        self.assertEqual('1212\\update', update.toWinDirStyle())
 
     def test_getKB(self):
 
         files = ['\\dotNetFW_4.X\\dotNetFx40_Full_x86_x64.exe']
-        correctKBs = ['UNKNOWN KB']
+        correctKBs = [-1]
 
         for KB, update_file in zip(correctKBs, files):
             self.assertEqual(KB, core.updates.getKB(update_file))

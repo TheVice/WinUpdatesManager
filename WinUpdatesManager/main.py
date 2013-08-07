@@ -7,15 +7,14 @@ import core.updates
 if __name__ == '__main__':
 
     argc = len(sys.argv)
+    updates = []
 
     if argc == 1 or argc > 3:
         print('Bad using.\n'
               'Correct will be ' + sys.argv[0] +
               ' <path to directory with updates> <date for non year edition>')
 
-    updates = []
-
-    if argc == 2:
+    elif argc == 2:
         files = core.dirs.getSubDirectoryFiles(sys.argv[1])
         paths = core.dirs.Paths(files)
         dates = core.dates.getDatesOfUpdates(paths.getRootObjects())

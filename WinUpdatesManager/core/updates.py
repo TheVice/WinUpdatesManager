@@ -43,7 +43,7 @@ class Update:
         if self.mDate != '':
             output += self.getDate() + '\\'
         if self.mKB != '':
-            output += self.mKB + '\\'
+            output += str(self.mKB) + '\\'
         if self.mVersion != '':
             output += self.mVersion + '\\'
         if self.mOsType != '':
@@ -97,9 +97,9 @@ def getKB(aPath):
             endKB += 1
 
         if endKB - startKB > 0:
-            return aPath[startKB:endKB]
+            return int(aPath[startKB:endKB])
 
-    return 'UNKNOWN KB'
+    return -1
 
 
 def getVersion(aPath):
@@ -176,7 +176,7 @@ def getKBsFromReport(aReport):
     while 1:
         KB = getKB(aReport)
 
-        if KB != 'UNKNOWN KB' and 0 == KBs.count(KB):
+        if KB != -1 and 0 == KBs.count(KB):
             KBs.append(KB)
 
         pos = aReport.find(KB)
