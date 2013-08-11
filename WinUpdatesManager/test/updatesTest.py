@@ -8,53 +8,39 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def test_UpdateClass(self):
 
-        path = ('E:\\1212\\2761465\\WindowsServer2003' +
-           '\\X64\\ENU\\IE7-WINDOWSSERVER2003.WINDOWSXP-KB2761465-X64-ENU.EXE')
+        paths = ['E:\\1212\\2761465\\WindowsServer2003' +
+           '\\X64\\ENU\\IE7-WINDOWSSERVER2003.WINDOWSXP-KB2761465-X64-ENU.EXE']
+        date = datetime.datetime(2012, 12, 1)
+        updates = core.updates.getUpdatesFromPackage(paths, date)
 
-        update = core.updates.Update(path)
+        self.assertEqual(2, len(updates))
 
-        self.assertEqual('E:\\', update.getRootOfFullName())
-        self.assertEqual('1212\\2761465\\WindowsServer2003' +
-                         '\\X64\\ENU\\', update.getPathWithOutRoot())
-        self.assertEqual('IE7-WINDOWSSERVER2003.' +
-                    'WINDOWSXP-KB2761465-X64-ENU.EXE', update.getShortName())
-        self.assertEqual(2761465, core.updates.getKB(path))
-        update.mKB = core.updates.getKB(path)
-        self.assertEqual(['WindowsXP', 'WindowsServer2003'],
-                          core.updates.getVersion(path))
-        update.mVersion = core.updates.getVersion(path)[1]
-        self.assertEqual('X64', core.updates.getOsType(path))
-        update.mOsType = core.updates.getOsType(path)
-        self.assertEqual('ENU', core.updates.getLanguage(path))
-        update.mLanguage = core.updates.getLanguage(path)
-        update.mDate = datetime.date(2012, 12, 1)
-        self.assertEqual(path, update.toWinDirStyle())
+        versions = ['WindowsXP', 'WindowsServer2003']
+        checkPaths = ['E:\\1212\\2761465\\WindowsXP' +
+           '\\x64\\ENU\\IE7-WINDOWSSERVER2003.WINDOWSXP-KB2761465-X64-ENU.EXE',
+           'E:\\1212\\2761465\\WindowsServer2003' +
+           '\\x64\\ENU\\IE7-WINDOWSSERVER2003.WINDOWSXP-KB2761465-X64-ENU.EXE']
 
-        print(update.toJSON())
-
-        update = core.updates.Update('dotNetFx40_Full_x86_x64.exe')
-        self.assertEqual('', update.getRootOfFullName())
-        self.assertEqual('', update.getPathWithOutRoot())
-        self.assertEqual('dotNetFx40_Full_x86_x64.exe', update.getShortName())
-        self.assertEqual('dotNetFx40_Full_x86_x64.exe', update.toWinDirStyle())
-
-        update = core.updates.Update('update')
-        update.mDate = '1212'
-        self.assertEqual('1212\\update', update.toWinDirStyle())
+        for i in range(0, len(updates)):
+            #self.assertEqual(checkPaths[i], updates[i]['Path'])
+            print(updates[i]['Path'])
+            self.assertEqual(2761465, updates[i]['KB'])
+            self.assertEqual(versions[i], updates[i]['Version'])
+            self.assertEqual('x64', updates[i]['Type'])
+            self.assertEqual('ENU', updates[i]['Language'])
+            self.assertEqual(datetime.datetime(2012, 12, 1),
+                            updates[i]['Date'])
+            self.assertEqual(checkPaths[i],
+                                        core.updates.toWinDirStyle(updates[i]))
 
     def test_getKB(self):
 
         files = ['\\dotNetFW_4.X\\dotNetFx40_Full_x86_x64.exe']
         correctKBs = [-1]
 
-        for KB, update_file in zip(correctKBs, files):
-            self.assertEqual(KB, core.updates.getKB(update_file))
+        for KB, updateFile in zip(correctKBs, files):
+            self.assertEqual(KB, core.updates.getKB(updateFile))
 
-    def test_getUpdatesSerriesSeparate(self):
-
-        updates = ['someUpdate', 'someUpdate, UNKNOWN LANGUAGE']
-        self.assertNotIn('UNKNOWN',
-            core.updates.getUpdatesSerriesSeparate(updates, 'UNKNOWN'))
 
 if __name__ == '__main__':
 

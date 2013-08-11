@@ -8,49 +8,39 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def test_ComplexTest(self):
 
+        db.mongoDB.dropTableInDB()
         items = db.mongoDB.getFromDB()
         self.assertEqual(0, items.count())
-
-        ups = []
 
         paths = ['E:\\1212\\2779030\\Windows8\\x86\\NEU\\' +
         'WINDOWS8-RT-KB2779030-X86.MSU']
+        date = datetime.datetime(2012, 12, 11)
+        updates = core.updates.getUpdatesFromPackage(paths, date)
 
-        for path in paths:
-            update = core.updates.Update()
-            update.mFullName = path
-            update.mKB = core.updates.getKB(path)
-            update.mVersion = core.updates.getVersion(path)[0]
-            update.mOsType = core.updates.getOsType(path)
-            update.mLanguage = core.updates.getLanguage(path)
-            update.mDate = datetime.datetime(2012, 12, 11)
-            ups.append(update)
-
-        db.mongoDB.insertToDB(aItems=ups)
+        db.mongoDB.insertToDB(aItems=updates)
         items = db.mongoDB.getFromDB()
 
-        self.assertEqual(len(ups), items.count())
+        self.assertEqual(len(updates), items.count())
 
-        gettedItems = []
+        #for up, it in zip(updates, items):
+        for i in range(0, max(len(updates), items.count())):
+            self.assertEqual(updates[i]['Path'], items[i]['Path'])
+            self.assertEqual(updates[i]['KB'], items[i]['KB'])
+            self.assertEqual(updates[i]['Version'], items[i]['Version'])
+            self.assertEqual(updates[i]['Type'], items[i]['Type'])
+            self.assertEqual(updates[i]['Language'], items[i]['Language'])
+            self.assertEqual(updates[i]['Date'], items[i]['Date'])
 
-        for up, item in zip(ups, items):
-            self.assertEqual(up.mFullName, item['Name'])
-            self.assertEqual(up.mKB, item['KB'])
-            self.assertEqual(up.mVersion, item['Version'])
-            self.assertEqual(up.mOsType, item['Type'])
-            self.assertEqual(up.mLanguage, item['Language'])
-            self.assertEqual(up.mDate, item['Date'])
-            gettedItems.append(item)
-
-        db.mongoDB.deleteFromDB(aItems=gettedItems, aRawItems=True)
+        db.mongoDB.deleteFromDB(aItems=items)
         items = db.mongoDB.getFromDB()
+
         self.assertEqual(0, items.count())
 
-        db.mongoDB.insertToDB(aItems=ups)
+        db.mongoDB.insertToDB(aItems=updates)
         items = db.mongoDB.getFromDB()
-        self.assertEqual(len(ups), items.count())
+        self.assertEqual(len(updates), items.count())
 
-        db.mongoDB.deleteFromDB(aItems=ups)
+        db.mongoDB.deleteFromDB(aItems=updates)
         items = db.mongoDB.getFromDB()
         self.assertEqual(0, items.count())
 

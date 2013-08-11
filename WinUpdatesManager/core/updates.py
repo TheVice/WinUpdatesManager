@@ -1,87 +1,86 @@
 
 
-class Update:
+class Updates:
 
-    def __init__(self, aPath='', aKB='', aVersion='',
-        aOsType='', aLanguage='', aDate=''):
+    def __init__(self):
 
-        self.mFullName = aPath
-        self.mKB = aKB
-        self.mVersion = aVersion
-        self.mOsType = aOsType
-        self.mLanguage = aLanguage
-        self.mDate = aDate
+        self.mData = []
+        self.mIndex = 0
 
-    def toJSON(self):
+    def addUpdate(self, aPath=None, aKB=None, aOsVersion=None,
+        aOsType=None, aLanguage=None, aDate=None):
 
-        output = {}
+        update = {}
 
-        if self.mFullName != '':
-            output['Name'] = self.mFullName
-        if self.mKB != '':
-            output['KB'] = self.mKB
-        if self.mVersion != '':
-            output['Version'] = self.mVersion
-        if self.mOsType != '':
-            output['Type'] = self.mOsType
-        if self.mLanguage != '':
-            output['Language'] = self.mLanguage
-        if self.mDate != '':
-            output['Date'] = self.mDate
+        update['Path'] = aPath
+        update['KB'] = aKB
+        update['Version'] = aOsVersion
+        update['Type'] = aOsType
+        update['Language'] = aLanguage
+        update['Date'] = aDate
 
-        return output
+        self.addUpdateDict(update)
 
-    def toWinDirStyle(self):
+    def addUpdateDict(self, aUpdate):
 
-        output = ''
+        if 0 == self.mData.count(aUpdate):
+            self.mData.append(aUpdate)
+            self.mIndex += 1
 
-        if self.mFullName == '':
-            return output
+    def __iter__(self):
 
-        output = self.getRootOfFullName()
+        return self
 
-        if self.mDate != '':
-            output += self.getDate() + '\\'
-        if self.mKB != '':
-            output += str(self.mKB) + '\\'
-        if self.mVersion != '':
-            output += self.mVersion + '\\'
-        if self.mOsType != '':
-            output += self.mOsType + '\\'
-        if self.mLanguage != '':
-            output += self.mLanguage + '\\'
+    def __next__(self):
 
-        output += self.getShortName()
+        if self.mIndex == 0:
+            self.mIndex = len(self.mData)
+            raise StopIteration
 
-        return output
+        self.mIndex -= 1
+        return self.mData[self.mIndex]
 
-    def getPathWithOutRoot(self):
+    def __len__(self):
 
-        return self.mFullName[self.mFullName.find('\\') + 1:
-               self.mFullName.rfind('\\') + 1]
+        return len(self.mData)
 
-    def getShortName(self):
+    def __getitem__(self, aKey):
 
-        return self.mFullName[self.mFullName.rfind('\\') + 1:]
+        if aKey < 0 or self.mIndex <= aKey:
+            raise IndexError
 
-    def getRootOfFullName(self):
+        return self.mData[aKey]
 
-        return self.mFullName[0:self.mFullName.find('\\') + 1]
 
-    def getDate(self):
+def toWinDirStyle(aUpdate):
 
-        try:
-            month = str(self.mDate.month)
-            if len(month) == 1:
-                month = '0' + month
-            date = month + str(self.mDate.year)[2:4]
-            return date
-        except:
-            return self.mDate
+    path = aUpdate['Path']
+    date = aUpdate['Date']
+    kb = aUpdate['KB']
+    version = aUpdate['Version']
+    osType = aUpdate['Type']
+    language = aUpdate['Language']
 
-    def __str__(self):
+    output = path[0:path.find('\\')]
 
-        return self.toWinDirStyle()
+    output += '\\' + dateToWinDirStyle(date)
+    output += '\\' + str(kb)
+    output += '\\' + version
+    output += '\\' + osType
+    output += '\\' + language
+
+    output += path[path.rfind('\\'):]
+
+    return output
+
+
+def dateToWinDirStyle(aDate):
+
+    month = str(aDate.month)
+    if len(month) == 1:
+        month = '0' + month
+    date = month + str(aDate.year)[2:4]
+    return date
 
 
 def getKB(aPath):
@@ -122,10 +121,14 @@ def getVersion(aPath):
 
 def getOsType(aPath):
 
-    osTypes = ['X86', 'X64', 'IA64', 'ARM']
+    osTypes = ['x86', 'x64', 'IA64', 'ARM']
 
     for osType in osTypes:
-        if osType in aPath or osType.lower() in aPath:
+        if osType in aPath:
+            return osType
+        elif osType.lower() in aPath:
+            return osType
+        elif osType.upper() in aPath:
             return osType
 
     return 'UNKNOWN TYPE'
@@ -146,25 +149,22 @@ def getLanguage(aPath):
     return 'UNKNOWN LANGUAGE'
 
 
-def getUpdatesInfoFromPackage(aFiles):
+def getUpdatesFromPackage(aFiles, aDate):
 
-    updates = []
+    updates = Updates()
 
-    for update_file in aFiles:
-        kb = getKB(update_file)
+    for updateFile in aFiles:
+        kb = getKB(updateFile)
 
-        version = getVersion(update_file)
-        osType = getOsType(update_file)
-        language = getLanguage(update_file)
+        osVersion = getVersion(updateFile)
+        osType = getOsType(updateFile)
+        language = getLanguage(updateFile)
 
-        for ver in version:
-            ver = checkIsThisR2(ver, update_file)
-            ver = checkIsThisARM(ver, osType)
+        for osVer in osVersion:
+            osVer = checkIsThisR2(osVer, updateFile)
+            osVer = checkIsThisARM(osVer, osType)
 
-            update = Update(update_file, kb, ver, osType, language)
-
-            if 0 == updates.count(update):
-                updates.append(update)
+            updates.addUpdate(updateFile, kb, osVer, osType, language, aDate)
 
     return updates
 
@@ -211,28 +211,3 @@ def checkIsThisARM(aVersion, aType):
 
     return 'WindowsRT'
 
-
-def getUpdatesSerriesSeparate(aUpdates, aSeparator, aWithSeparator=False):
-
-    updates = []
-
-    if aWithSeparator:
-        for update in aUpdates:
-            if aSeparator in update:
-                updates.append(update)
-    else:
-        for update in aUpdates:
-            if aSeparator not in update:
-                updates.append(update)
-
-    return updates
-
-
-def getUpdatesFromPackage(aFiles, aDate):
-
-    updates = getUpdatesInfoFromPackage(aFiles)
-
-    for update in updates:
-        update.mDate = aDate
-
-    return updates

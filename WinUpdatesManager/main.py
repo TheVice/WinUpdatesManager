@@ -26,11 +26,11 @@ if __name__ == '__main__':
 
         for monthUpdates in updates:
             for update in monthUpdates:
-                print(update.toWinDirStyle())
+                print(core.updates.toWinDirStyle(update))
 
     elif argc == 3:
         files = core.dirs.getSubDirectoryFiles(sys.argv[1])
         updates = core.updates.getUpdatesFromPackage(files, sys.argv[2])
 
         for update in updates:
-            print(update.toWinDirStyle())
+            print(core.updates.toWinDirStyle(update))
