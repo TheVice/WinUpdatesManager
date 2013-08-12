@@ -9,27 +9,28 @@ class TestSequenceFunctions(unittest.TestCase):
     def test_UpdateClass(self):
 
         paths = ['E:\\1212\\2761465\\WindowsServer2003' +
+           '\\X64\\ENU\\IE7-WINDOWSSERVER2003.WINDOWSXP-KB2761465-X64-ENU.EXE',
+           'E:\\1212\\2761465\\WindowsServer2003' +
            '\\X64\\ENU\\IE7-WINDOWSSERVER2003.WINDOWSXP-KB2761465-X64-ENU.EXE']
         date = datetime.datetime(2012, 12, 1)
         updates = core.updates.getUpdatesFromPackage(paths, date)
 
-        self.assertEqual(2, len(updates))
+        self.assertEqual(1, len(updates))
 
-        versions = ['WindowsXP', 'WindowsServer2003']
-        checkPaths = ['E:\\1212\\2761465\\WindowsXP' +
-           '\\x64\\ENU\\IE7-WINDOWSSERVER2003.WINDOWSXP-KB2761465-X64-ENU.EXE',
-           'E:\\1212\\2761465\\WindowsServer2003' +
+        kbs = [2761465]
+        versions = ['WindowsServer2003']
+        types = ['x64']
+        languages = ['ENU']
+        checkPaths = ['E:\\1212\\2761465\\WindowsServer2003' +
            '\\x64\\ENU\\IE7-WINDOWSSERVER2003.WINDOWSXP-KB2761465-X64-ENU.EXE']
 
         for i in range(0, len(updates)):
-            #self.assertEqual(checkPaths[i], updates[i]['Path'])
-            print(updates[i]['Path'])
-            self.assertEqual(2761465, updates[i]['KB'])
+            self.assertEqual(paths[i], updates[i]['Path'])
+            self.assertEqual(kbs[i], updates[i]['KB'])
             self.assertEqual(versions[i], updates[i]['Version'])
-            self.assertEqual('x64', updates[i]['Type'])
-            self.assertEqual('ENU', updates[i]['Language'])
-            self.assertEqual(datetime.datetime(2012, 12, 1),
-                            updates[i]['Date'])
+            self.assertEqual(types[i], updates[i]['Type'])
+            self.assertEqual(languages[i], updates[i]['Language'])
+            self.assertEqual(date, updates[i]['Date'])
             self.assertEqual(checkPaths[i],
                                         core.updates.toWinDirStyle(updates[i]))
 
@@ -40,6 +41,643 @@ class TestSequenceFunctions(unittest.TestCase):
 
         for KB, updateFile in zip(correctKBs, files):
             self.assertEqual(KB, core.updates.getKB(updateFile))
+
+    def test_getKBsFromReport(self):
+
+        report = ('Definition Update for Windows Defender - KB2267602' +
+                ' (Definition 1.155.758.0)' +
+                '' +
+                'Download size: 78.7 MB' +
+                '' +
+                'Update type: Important' +
+                '' +
+                'Install this update to revise the definition files that' +
+                ' are used to detect viruses, spyware, and other potentially' +
+                ' unwanted software. Once you have installed this item,' +
+                ' it cannot be removed.' +
+                '' +
+                'More information: ' +
+                'http://www.microsoft.com/athome/security/spyware/software' +
+                '/about/overview.mspx' +
+                '' +
+                'Help and Support: ' +
+                'http://go.microsoft.com/fwlink/?LinkId=52661' +
+                '' +
+                '' +
+                '' +
+                'Microsoft Visual Studio 2010 Service Pack 1' +
+                '' +
+                'Download size: 368.7 MB' +
+                '' +
+                'You may need to restart your computer for this update' +
+                ' to take effect.' +
+                '' +
+                'Update type: Important' +
+                '' +
+                'This download installs Visual Studio 2010 Service Pack 1' +
+                ' (SP1). This service pack release addresses issues that' +
+                ' were found through a combination of customer and partner' +
+                ' feedback, as well as internal testing. These service packs' +
+                ' offer Visual Studio users improvements in responsiveness' +
+                ' and stability, as well as completes some high-impact' +
+                ' scenarios requested by customers.' +
+                '' +
+                'More information: ' +
+                'http://go.microsoft.com/fwlink/?linkid=210715' +
+                '' +
+                'Help and Support: ' +
+                'http://support.microsoft.com' +
+                '' +
+                '' +
+                '' +
+                'Security Update for Internet Explorer Flash Player for' +
+                ' Windows 8.1 Preview for x64-based Systems (KB2857645)' +
+                '' +
+                'Download size: 9.7 MB' +
+                '' +
+                'You may need to restart your computer for this update' +
+                ' to take effect.' +
+                '' +
+                'Update type: Important' +
+                '' +
+                'This update addresses the vulnerability discussed in' +
+                ' Microsoft Security Advisory (KB2857645). Security issues' +
+                ' have been identified that could allow an attacker to' +
+                ' compromise a computer running Internet Explorer Flash' +
+                ' Player for Windows 8.1 Preview and gain control over it.' +
+                ' You can help protect your computer by installing this' +
+                ' update from Microsoft. After you install this item,' +
+                ' you may have to restart your computer.' +
+                '' +
+                'More information: ' +
+                'http://go.microsoft.com/fwlink/?LinkId=264959' +
+                '' +
+                'Help and Support: ' +
+                'http://support.microsoft.com' +
+                '' +
+                '' +
+                '' +
+                'Security Update for Microsoft Visual C++ 2008' +
+                ' Service Pack 1 Redistributable Package (KB2538243)' +
+                '' +
+                'Download size: 4.3 MB' +
+                '' +
+                'You may need to restart your computer for this update' +
+                ' to take effect.' +
+                '' +
+                'Update type: Important' +
+                '' +
+                'A security issue has been identified leading to' +
+                ' MFC application vulnerability in DLL planting due' +
+                ' to MFC not specifying the full path to' +
+                ' system/localization DLLs.' +
+                '  You can protect your computer by installing' +
+                ' this update from Microsoft.  After you install this item,' +
+                ' you may have to restart your computer.' +
+                '' +
+                'More information: ' +
+                'http://go.microsoft.com/fwlink/?LinkId=216803' +
+                '' +
+                'Help and Support: ' +
+                'http://support.microsoft.com' +
+                '' +
+                '' +
+                '' +
+                'Security Update for Microsoft' +
+                ' Visual Studio 2010 (KB2542054)' +
+                '' +
+                'Download size: 264.4 MB' +
+                '' +
+                'You may need to restart your computer for' +
+                ' this update to take effect.' +
+                '' +
+                'Update type: Important' +
+                '' +
+                'A security issue has been identified leading to' +
+                ' MFC application vulnerability in DLL planting due' +
+                ' to MFC not specifying the full path to' +
+                ' system/localization DLLs.  You can protect' +
+                ' your computer by installing this update from Microsoft.' +
+                '  After you install this item, you may have' +
+                ' to restart your computer.' +
+                '' +
+                'More information: ' +
+                'http://go.microsoft.com/fwlink/?LinkId=216926' +
+                '' +
+                'Help and Support: ' +
+                'http://support.microsoft.com' +
+                '' +
+                '' +
+                '' +
+                'Update for Microsoft Visual Studio 2012 (KB2781514)' +
+                '' +
+                'Download size: 1.1 MB' +
+                '' +
+                'You may need to restart your computer for' +
+                ' this update to take effect.' +
+                '' +
+                'Update type: Important' +
+                '' +
+                'Users of Visual Studio may lose the ability' +
+                ' to open or create C++ or JavaScript files' +
+                ' or projects after the .NET Framework 4.5 is updated.' +
+                ' This fix corrects the flaw in Visual Studio.' +
+                '' +
+                'More information: ' +
+                'http://go.microsoft.com/fwlink/?LinkID=272586' +
+                '' +
+                'Help and Support: ' +
+                'http://support.microsoft.com' +
+                '' +
+                '' +
+                '' +
+                'Update for Windows 8.1 Preview for x64-based Systems' +
+                ' (KB2863147)' +
+                '' +
+                'Download size: 247 KB' +
+                '' +
+                'You may need to restart your computer for this update' +
+                ' to take effect.' +
+                '' +
+                'Update type: Recommended' +
+                '' +
+                'Install this update to resolve issues in Windows.' +
+                ' For a complete listing of the issues that are included' +
+                ' in this update, see the associated Microsoft Knowledge' +
+                ' Base article for more information. After you install' +
+                ' this item, you may have to restart your computer.' +
+                '' +
+                'More information: ' +
+                'http://support.microsoft.com/kb/2863147' +
+                '' +
+                'Help and Support: ' +
+                'http://support.microsoft.com' +
+                '' +
+                '' +
+                '' +
+                'Update for Windows 8.1 Preview for x64-based Systems' +
+                ' (KB2863204)' +
+                '' +
+                'Download size: 9.3 MB' +
+                '' +
+                'You may need to restart your computer for this update' +
+                ' to take effect.' +
+                '' +
+                'Update type: Recommended' +
+                '' +
+                'Install this update to resolve issues in Windows.' +
+                ' For a complete listing of the issues that are included' +
+                ' in this update, see the associated Microsoft Knowledge' +
+                ' Base article for more information. After you install this' +
+                ' item, you may have to restart your computer.' +
+                '' +
+                'More information: ' +
+                'http://support.microsoft.com/kb/2863204' +
+                '' +
+                'Help and Support: ' +
+                'http://support.microsoft.com' +
+                '' +
+                '' +
+                '' +
+                'Update for Windows 8.1 Preview for x64-based Systems' +
+                ' (KB2863221)' +
+                '' +
+                'Download size: 917 KB' +
+                '' +
+                'You may need to restart your computer for this update' +
+                ' to take effect.' +
+                '' +
+                'Update type: Important' +
+                '' +
+                'Install this update to resolve issues in Windows.' +
+                ' For a complete listing of the issues that are included' +
+                ' in this update, see the associated Microsoft Knowledge' +
+                ' Base article for more information. After you install' +
+                ' this item, you may have to restart your computer.' +
+                '' +
+                'More information: ' +
+                'http://support.microsoft.com/kb/2863221' +
+                '' +
+                'Help and Support: ' +
+                'http://support.microsoft.com' +
+                '' +
+                '' +
+                '' +
+                'Update for Windows 8.1 Preview for x64-based Systems' +
+                ' (KB2863312)' +
+                '' +
+                'Download size: 2.0 MB' +
+                '' +
+                'You may need to restart your computer for this update' +
+                ' to take effect.' +
+                '' +
+                'Update type: Important' +
+                '' +
+                'Install this update to resolve issues in Windows.' +
+                ' For a complete listing of the issues that are included' +
+                ' in this update, see the associated Microsoft Knowledge' +
+                ' Base article for more information. After you install this' +
+                ' item, you may have to restart your computer.' +
+                '' +
+                'More information: ' +
+                'http://support.microsoft.com/kb/2863312' +
+                '' +
+                'Help and Support: ' +
+                'http://support.microsoft.com' +
+                '' +
+                '' +
+                '' +
+                'Update for Windows 8.1 Preview for x64-based Systems' +
+                ' (KB2863532)' +
+                '' +
+                'Download size: 1.7 MB' +
+                '' +
+                'You may need to restart your computer for this update' +
+                ' to take effect.' +
+                '' +
+                'Update type: Important' +
+                '' +
+                'Install this update to resolve issues in Windows.' +
+                ' For a complete listing of the issues that are included' +
+                ' in this update, see the associated Microsoft Knowledge' +
+                ' Base article for more information. After you install this' +
+                ' item, you may have to restart your computer.' +
+                '' +
+                'More information: ' +
+                'http://support.microsoft.com/kb/2863532' +
+                '' +
+                'Help and Support: ' +
+                'http://support.microsoft.com' +
+                '' +
+                '' +
+                '' +
+                'Update for Windows 8.1 Preview for x64-based Systems' +
+                ' (KB2863721)' +
+                '' +
+                'Download size: 345 KB' +
+                '' +
+                'You may need to restart your computer for this update' +
+                ' to take effect.' +
+                '' +
+                'Update type: Recommended' +
+                '' +
+                'Install this update to resolve issues in Windows.' +
+                ' For a complete listing of the issues that are included' +
+                ' in this update, see the associated Microsoft Knowledge' +
+                ' Base article for more information. After you install this' +
+                ' item, you may have to restart your computer.' +
+                '' +
+                'More information: ' +
+                'http://support.microsoft.com/kb/2863721' +
+                '' +
+                'Help and Support: ' +
+                'http://support.microsoft.com' +
+                '' +
+                '' +
+                '' +
+                'Update for Windows 8.1 Preview for x64-based Systems' +
+                ' (KB2863723)' +
+                '' +
+                'Download size: 2.2 MB' +
+                '' +
+                'You may need to restart your computer for this update' +
+                ' to take effect.' +
+                '' +
+                'Update type: Recommended' +
+                '' +
+                'Install this update to resolve issues in Windows.' +
+                ' For a complete listing of the issues that are included' +
+                ' in this update, see the associated Microsoft Knowledge' +
+                ' Base article for more information. After you install this' +
+                ' item, you may have to restart your computer.' +
+                '' +
+                'More information: ' +
+                'http://support.microsoft.com/kb/2863723' +
+                '' +
+                'Help and Support: ' +
+                'http://support.microsoft.com' +
+                '' +
+                '' +
+                '' +
+                'Update for Windows 8.1 Preview for x64-based Systems' +
+                ' (KB2863846)' +
+                '' +
+                'Download size: 15.6 MB' +
+                '' +
+                'You may need to restart your computer for this update' +
+                ' to take effect.' +
+                '' +
+                'Update type: Recommended' +
+                '' +
+                'Install this update to resolve issues in Windows.' +
+                ' For a complete listing of the issues that are included' +
+                ' in this update, see the associated Microsoft Knowledge' +
+                ' Base article for more information. After you install this' +
+                ' item, you may have to restart your computer.' +
+                '' +
+                'More information: ' +
+                'http://support.microsoft.com/kb/2863846' +
+                '' +
+                'Help and Support: ' +
+                'http://support.microsoft.com' +
+                '' +
+                '' +
+                '' +
+                'Update for Windows 8.1 Preview for x64-based Systems' +
+                ' (KB2864806)' +
+                '' +
+                'Download size: 15.6 MB' +
+                '' +
+                'You may need to restart your computer for this update' +
+                ' to take effect.' +
+                '' +
+                'Update type: Recommended' +
+                '' +
+                'Install this update to resolve issues in Windows.' +
+                ' For a complete listing of the issues that are included' +
+                ' in this update, see the associated Microsoft Knowledge' +
+                ' Base article for more information. After you install this' +
+                ' item, you may have to restart your computer.' +
+                '' +
+                'More information: ' +
+                'http://support.microsoft.com/kb/2864806' +
+                '' +
+                'Help and Support: ' +
+                'http://support.microsoft.com' +
+                '' +
+                '' +
+                '' +
+                'Update for Windows 8.1 Preview for x64-based Systems' +
+                ' (KB2864808)' +
+                '' +
+                'Download size: 6.9 MB' +
+                '' +
+                'You may need to restart your computer for this update' +
+                ' to take effect.' +
+                '' +
+                'Update type: Recommended' +
+                '' +
+                'Install this update to resolve issues in Windows.' +
+                ' For a complete listing of the issues that are included' +
+                ' in this update, see the associated Microsoft Knowledge' +
+                ' Base article for more information. After you install this' +
+                ' item, you may have to restart your computer.' +
+                '' +
+                'More information: ' +
+                'http://support.microsoft.com/kb/2864808' +
+                '' +
+                'Help and Support: ' +
+                'http://support.microsoft.com' +
+                '' +
+                '' +
+                '' +
+                'Update for Windows 8.1 Preview for x64-based Systems' +
+                ' (KB2865946)' +
+                '' +
+                'Download size: 569 KB' +
+                '' +
+                'You may need to restart your computer for this update' +
+                ' to take effect.' +
+                '' +
+                'Update type: Recommended' +
+                '' +
+                'Install this update to resolve issues in Windows.' +
+                ' For a complete listing of the issues that are included' +
+                ' in this update, see the associated Microsoft Knowledge' +
+                ' Base article for more information. After you install this' +
+                ' item, you may have to restart your computer.' +
+                '' +
+                'More information: ' +
+                'http://support.microsoft.com/kb/2865946' +
+                '' +
+                'Help and Support: ' +
+                'http://support.microsoft.com' +
+                '' +
+                '' +
+                '' +
+                'Update for Windows 8.1 Preview for x64-based Systems' +
+                ' (KB2866512)' +
+                '' +
+                'Download size: 3.2 MB' +
+                '' +
+                'You may need to restart your computer for this update' +
+                ' to take effect.' +
+                '' +
+                'Update type: Recommended' +
+                '' +
+                'Install this update to resolve issues in Windows.' +
+                ' For a complete listing of the issues that are included' +
+                ' in this update, see the associated Microsoft Knowledge' +
+                ' Base article for more information. After you install this' +
+                ' item, you may have to restart your computer.' +
+                '' +
+                'More information: ' +
+                'http://support.microsoft.com/kb/2866512' +
+                '' +
+                'Help and Support: ' +
+                'http://support.microsoft.com' +
+                '' +
+                '' +
+                '' +
+                'Update for Windows 8.1 Preview for x64-based Systems' +
+                ' (KB2866518)' +
+                '' +
+                'Download size: 15.7 MB' +
+                '' +
+                'You may need to restart your computer for this update' +
+                ' to take effect.' +
+                '' +
+                'Update type: Recommended' +
+                '' +
+                'Install this update to resolve issues in Windows.' +
+                ' For a complete listing of the issues that are included' +
+                ' in this update, see the associated Microsoft Knowledge' +
+                ' Base article for more information. After you install this' +
+                ' item, you may have to restart your computer.' +
+                '' +
+                'More information: ' +
+                'http://support.microsoft.com/kb/2866518' +
+                '' +
+                'Help and Support: ' +
+                'http://support.microsoft.com' +
+                '' +
+                '' +
+                '' +
+                'Update for Windows 8.1 Preview for x64-based Systems' +
+                ' (KB2866537)' +
+                '' +
+                'Download size: 425 KB' +
+                '' +
+                'You may need to restart your computer for this update' +
+                ' to take effect.' +
+                '' +
+                'Update type: Recommended' +
+                '' +
+                'Install this update to resolve issues in Windows.' +
+                ' For a complete listing of the issues that are included' +
+                ' in this update, see the associated Microsoft Knowledge' +
+                ' Base article for more information. After you install this' +
+                ' item, you may have to restart your computer.' +
+                '' +
+                'More information: ' +
+                'http://support.microsoft.com/kb/2866537' +
+                '' +
+                'Help and Support: ' +
+                'http://support.microsoft.com' +
+                '' +
+                '' +
+                '' +
+                'Update for Windows 8.1 Preview for x64-based Systems' +
+                ' (KB2866763)' +
+                '' +
+                'Download size: 704 KB' +
+                '' +
+                'You may need to restart your computer for this update' +
+                ' to take effect.' +
+                '' +
+                'Update type: Recommended' +
+                '' +
+                'Install this update to resolve issues in Windows.' +
+                ' For a complete listing of the issues that are included' +
+                ' in this update, see the associated Microsoft Knowledge' +
+                ' Base article for more information. After you install this' +
+                ' item, you may have to restart your computer.' +
+                '' +
+                'More information: ' +
+                'http://support.microsoft.com/kb/2866763' +
+                '' +
+                'Help and Support: ' +
+                'http://support.microsoft.com' +
+                '' +
+                '' +
+                '' +
+                'Update for Windows 8.1 Preview for x64-based Systems' +
+                ' (KB2867624)' +
+                '' +
+                'Download size: 268 KB' +
+                '' +
+                'You may need to restart your computer for this update' +
+                ' to take effect.' +
+                '' +
+                'Update type: Recommended' +
+                '' +
+                'Install this update to resolve issues in Windows.' +
+                ' For a complete listing of the issues that are included' +
+                ' in this update, see the associated Microsoft Knowledge' +
+                ' Base article for more information. After you install this' +
+                ' item, you may have to restart your computer.' +
+                '' +
+                'More information: ' +
+                'http://support.microsoft.com/kb/2867624' +
+                '' +
+                'Help and Support: ' +
+                'http://support.microsoft.com' +
+                '' +
+                '' +
+                '' +
+                'Update for Windows 8.1 Preview for x64-based Systems' +
+                ' (KB2868208)' +
+                '' +
+                'Download size: 7.2 MB' +
+                '' +
+                'You may need to restart your computer for this update' +
+                ' to take effect.' +
+                '' +
+                'Update type: Recommended' +
+                '' +
+                'Install this update to resolve issues in Windows.' +
+                ' For a complete listing of the issues that are included' +
+                ' in this update, see the associated Microsoft Knowledge' +
+                ' Base article for more information. After you install this' +
+                ' item, you may have to restart your computer.' +
+                '' +
+                'More information: ' +
+                'http://support.microsoft.com/kb/2868208' +
+                '' +
+                'Help and Support: ' +
+                'http://support.microsoft.com' +
+                '' +
+                '' +
+                '' +
+                'Update for Windows 8.1 Preview for x64-based Systems' +
+                ' (KB2870257)' +
+                '' +
+                'Download size: 85 KB' +
+                '' +
+                'You may need to restart your computer for this update' +
+                ' to take effect.' +
+                '' +
+                'Update type: Recommended' +
+                '' +
+                'Install this update to resolve issues in Windows.' +
+                ' For a complete listing of the issues that are included' +
+                ' in this update, see the associated Microsoft Knowledge' +
+                ' Base article for more information. After you install this' +
+                ' item, you may have to restart your computer.' +
+                '' +
+                'More information: ' +
+                'http://support.microsoft.com/kb/2870257' +
+                '' +
+                'Help and Support: ' +
+                'http://support.microsoft.com' +
+                '' +
+                '' +
+                '' +
+                'Update for Windows 8.1 Preview for x64-based Systems' +
+                ' (KB2871052)' +
+                '' +
+                'Download size: 1.2 MB' +
+                '' +
+                'You may need to restart your computer for this update' +
+                ' to take effect.' +
+                '' +
+                'Update type: Recommended' +
+                '' +
+                'Install this update to resolve issues in Windows.' +
+                ' For a complete listing of the issues that are included' +
+                ' in this update, see the associated Microsoft Knowledge' +
+                ' Base article for more information. After you install this' +
+                ' item, you may have to restart your computer.' +
+                '' +
+                'More information: ' +
+                'http://support.microsoft.com/kb/2871052' +
+                '' +
+                'Help and Support: ' +
+                'http://support.microsoft.com' +
+                '' +
+                '' +
+                '' +
+                'Update for Windows 8.1 Preview for x64-based Systems' +
+                ' (KB2871055)' +
+                '' +
+                'Download size: 15.6 MB' +
+                '' +
+                'You may need to restart your computer for this update' +
+                ' to take effect.' +
+                '' +
+                'Update type: Recommended' +
+                '' +
+                'Install this update to resolve issues in Windows.' +
+                ' For a complete listing of the issues that are included' +
+                ' in this update, see the associated Microsoft Knowledge' +
+                ' Base article for more information. After you install this' +
+                ' item, you may have to restart your computer.' +
+                '' +
+                'More information: ' +
+                'http://support.microsoft.com/kb/2871055' +
+                '' +
+                'Help and Support: ' +
+                'http://support.microsoft.com')
+
+        kbsCorrect = [2267602, 2857645, 2538243, 2542054,
+                      2781514, 2863147, 2863204, 2863221,
+                      2863312, 2863532, 2863721, 2863723,
+                      2863846, 2864806, 2864808, 2865946,
+                      2866512, 2866518, 2866537, 2866763,
+                      2867624, 2868208, 2870257, 2871052,
+                      2871055]
+        kbs = core.updates.getKBsFromReport(report)
+        self.assertEqual(kbsCorrect, kbs)
 
 
 if __name__ == '__main__':

@@ -103,48 +103,42 @@ def getKB(aPath):
 
 def getVersion(aPath):
 
-    versions = ['Windows2000', 'WindowsXP', 'WindowsServer2003',
-                'WindowsVista', 'WindowsServer2008', 'Windows7',
-                'WindowsServer2008R2', 'Windows8', 'WindowsServer2012',
-                'Windows8dot1', 'WindowsServer2012R2', 'WindowsRT']
-    version = []
+    versions = ['\\Windows2000\\', '\\WindowsXP\\', '\\WindowsServer2003\\',
+                '\\WindowsVista\\', '\\WindowsServer2008\\', '\\Windows7\\',
+                '\\WindowsServer2008R2\\', '\\Windows8\\',
+                '\\WindowsServer2012\\', '\\Windows8dot1\\',
+                '\\WindowsServer2012R2\\', '\\WindowsRT\\']
 
-    for ver in versions:
-        if ver in aPath or ver.upper() in aPath:
-            version.append(ver)
+    for version in versions:
+        if version in aPath or version.upper() in aPath:
+            return version[1:len(version) - 1]
 
-    if len(version) == 0:
-        version.append('UNKNOWN VERSION')
-
-    return version
+    return 'UNKNOWN VERSION'
 
 
 def getOsType(aPath):
 
-    osTypes = ['x86', 'x64', 'IA64', 'ARM']
+    osTypes = ['\\x86\\', '\\x64\\', '\\IA64\\', '\\ARM\\']
 
     for osType in osTypes:
-        if osType in aPath:
-            return osType
-        elif osType.lower() in aPath:
-            return osType
-        elif osType.upper() in aPath:
-            return osType
+        if (osType in aPath) or (osType.lower()
+            in aPath) or (osType.upper() in aPath):
+            return osType[1:len(osType) - 1]
 
     return 'UNKNOWN TYPE'
 
 
 def getLanguage(aPath):
 
-    languages = ['NEU', 'ARA', 'CHS', 'CHT', 'CSY', 'DAN',
-                 'DEU', 'ELL', 'ENU', 'ESN', 'FIN', 'FRA',
-                 'HEB', 'HUN', 'ITA', 'JPN', 'KOR', 'NLD',
-                 'NOR', 'PLK', 'PTB', 'PTG', 'RUS', 'SVE',
-                 'TRK']
+    languages = ['\\NEU\\', '\\ARA\\', '\\CHS\\', '\\CHT\\', '\\CSY\\',
+                 '\\DAN\\', '\\DEU\\', '\\ELL\\', '\\ENU\\', '\\ESN\\',
+                 '\\FIN\\', '\\FRA\\', '\\HEB\\', '\\HUN\\', '\\ITA\\',
+                 '\\JPN\\', '\\KOR\\', '\\NLD\\', '\\NOR\\', '\\PLK\\',
+                 '\\PTB\\', '\\PTG\\', '\\RUS\\', '\\SVE\\', '\\TRK\\']
 
     for language in languages:
         if language in aPath:
-            return language
+            return language[1:len(language) - 1]
 
     return 'UNKNOWN LANGUAGE'
 
@@ -155,16 +149,15 @@ def getUpdatesFromPackage(aFiles, aDate):
 
     for updateFile in aFiles:
         kb = getKB(updateFile)
-
         osVersion = getVersion(updateFile)
         osType = getOsType(updateFile)
         language = getLanguage(updateFile)
 
-        for osVer in osVersion:
-            osVer = checkIsThisR2(osVer, updateFile)
-            osVer = checkIsThisARM(osVer, osType)
+        #for osVer in osVersion:
+            #osVer = checkIsThisR2(osVer, updateFile)
+            #osVer = checkIsThisARM(osVer, osType)
 
-            updates.addUpdate(updateFile, kb, osVer, osType, language, aDate)
+        updates.addUpdate(updateFile, kb, osVersion, osType, language, aDate)
 
     return updates
 
@@ -172,18 +165,23 @@ def getUpdatesFromPackage(aFiles, aDate):
 def getKBsFromReport(aReport):
 
     KBs = []
+    i = 0
 
-    while 1:
-        KB = getKB(aReport)
+    while i < len(aReport):
 
+        KB = getKB(aReport[i:])
         if KB != -1 and 0 == KBs.count(KB):
             KBs.append(KB)
 
-        pos = aReport.find(KB)
-        if pos < 1 or pos + len(KB) > len(aReport):
-            return KBs
+        strKB = 'KB'
+        if KB != -1:
+            strKB += str(KB)
 
-        aReport = aReport[pos + len(KB):]
+        pos = aReport[i:].find(strKB)
+        if pos < 1:
+            i = len(aReport)
+        else:
+            i += pos + len(strKB)
 
     return KBs
 
