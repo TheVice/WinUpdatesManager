@@ -72,7 +72,8 @@ def updateInDB(aHostAndPort=None,
         db = client[aDB]
         table = db[aTable]
 
-        table.save(aItems)
+        for item in aItems:
+            table.save(item)
 
     except:
         print('Unexpected error:', sys.exc_info()[0])
