@@ -1,4 +1,5 @@
 import unittest
+import os
 import datetime
 import core.updates
 import db.mongoDB
@@ -12,8 +13,9 @@ class TestSequenceFunctions(unittest.TestCase):
         items = db.mongoDB.getFromDB()
         self.assertEqual(0, items.count())
 
-        paths = ['E:\\1212\\2779030\\Windows8\\x86\\NEU\\' +
-        'WINDOWS8-RT-KB2779030-X86.MSU']
+        paths = ['E:' + os.sep + '1212' + os.sep + '2779030' + os.sep +
+            'Windows8' + os.sep + 'x86' + os.sep + 'NEU' + os.sep +
+            'WINDOWS8-RT-KB2779030-X86.MSU']
         date = datetime.datetime(2012, 12, 11)
         updates = core.updates.getUpdatesFromPackage(paths, date)
 
@@ -46,10 +48,13 @@ class TestSequenceFunctions(unittest.TestCase):
 
         db.mongoDB.dropTableInDB()
 
-        paths = ['E:\\0906\\WINDOWS\\WINDOWS2000\\920685\\' +
-        'X86\\ENGLISH\\WINDOWS2000-KB920685-X86-ENU.EXE',
-        'E:\\0906\\WINDOWS\\WINDOWS2000\\920685\\X86\\' +
-        'RUSSIAN\\WINDOWS2000-KB920685-X86-RUS.EXE']
+        paths = ['E:' + os.sep + '0906' + os.sep + 'WINDOWS' + os.sep +
+                'WINDOWS2000' + os.sep + '920685' + os.sep +
+                'X86' + os.sep + 'ENGLISH' + os.sep +
+                'WINDOWS2000-KB920685-X86-ENU.EXE',
+                'E:' + os.sep + '0906' + os.sep + 'WINDOWS' + os.sep +
+                'WINDOWS2000' + os.sep + '920685' + os.sep + 'X86' + os.sep +
+                'RUSSIAN' + os.sep + 'WINDOWS2000-KB920685-X86-RUS.EXE']
         date = datetime.datetime(2006, 9, 12)
         updates = core.updates.getUpdatesFromPackage(paths, date)
 
@@ -62,7 +67,6 @@ class TestSequenceFunctions(unittest.TestCase):
 
         updates = []
 
-        #for it, language in zip(items, languages):
         for i in range(0, max(items.count(), len(languages))):
             updates.append(items[i])
             updates[i]['Language'] = languages[i]

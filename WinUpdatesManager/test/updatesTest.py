@@ -1,7 +1,7 @@
 import unittest
+import os
 import datetime
 import core.updates
-from core.updates import toWinDirStyle
 
 
 class TestSequenceFunctions(unittest.TestCase):
@@ -16,16 +16,16 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertRaises(IndexError, updates.__getitem__, 1)
 
         for update in updates:
-            self.fail('Actually there are no up in updates!')
+            self.fail('Actually there are no updates!')
 
-        updates.addUpdate('Some\\Path', 123, 'Win32', '80x86', 'English',
-            datetime.datetime(1970, 1, 1))
-        updates.addUpdate('Some\\Path', 123, 'Win32', '80x86', 'English',
-            datetime.datetime(1970, 1, 1))
-        updates.addUpdate('Some\\Path2', 456, 'Win64', 'x86-64', 'Russian',
-            datetime.datetime(2008, 12, 11))
-        updates.addUpdate('Some\\Path2', 456, 'Win64', 'x86-64', 'Russian',
-            datetime.datetime(2008, 12, 11))
+        updates.addUpdate('Some' + os.sep + 'Path', 123,
+                'Win32', '80x86', 'English', datetime.datetime(1970, 1, 1))
+        updates.addUpdate('Some' + os.sep + 'Path', 123,
+                'Win32', '80x86', 'English', datetime.datetime(1970, 1, 1))
+        updates.addUpdate('Some' + os.sep + 'Path2', 456,
+                'Win64', 'x86-64', 'Russian', datetime.datetime(2008, 12, 11))
+        updates.addUpdate('Some' + os.sep + 'Path2', 456,
+                'Win64', 'x86-64', 'Russian', datetime.datetime(2008, 12, 11))
 
         self.assertEqual(2, len(updates))
         self.assertRaises(IndexError, updates.__getitem__, -1)
@@ -46,16 +46,19 @@ class TestSequenceFunctions(unittest.TestCase):
 
         self.assertEqual('Win32', updates[0]['Version'])
         self.assertEqual('Win64', updates[1]['Version'])
-        
-        self.assertEqual('Some\\0170\\123\\Win32\\80x86\\English\\Path',
-                         toWinDirStyle(updates[0]))
+
+        self.assertEqual('Some' + os.sep + '0170' + os.sep + '123' + os.sep +
+                         'Win32' + os.sep + '80x86' + os.sep + 'English' +
+                         os.sep + 'Path', core.updates.toPathStyle(updates[0]))
 
     def test_UpdateComplex(self):
 
-        paths = ['E:\\1212\\2761465\\WindowsServer2003' +
-           '\\X64\\ENU\\IE7-WINDOWSSERVER2003.WINDOWSXP-KB2761465-X64-ENU.EXE',
-           'E:\\1212\\2761465\\WindowsServer2003' +
-           '\\X64\\ENU\\IE7-WINDOWSSERVER2003.WINDOWSXP-KB2761465-X64-ENU.EXE']
+        paths = ['E:' + os.sep + '1212' + os.sep + '2761465' + os.sep +
+            'WindowsServer2003' + os.sep + 'X64' + os.sep + 'ENU' +
+            os.sep + 'IE7-WINDOWSSERVER2003.WINDOWSXP-KB2761465-X64-ENU.EXE',
+           'E:' + os.sep + '1212' + os.sep + '2761465' + os.sep +
+           'WindowsServer2003' + os.sep + 'X64' + os.sep + 'ENU' + os.sep +
+           'IE7-WINDOWSSERVER2003.WINDOWSXP-KB2761465-X64-ENU.EXE']
         date = datetime.datetime(2012, 12, 1)
         updates = core.updates.getUpdatesFromPackage(paths, date)
 
@@ -65,8 +68,9 @@ class TestSequenceFunctions(unittest.TestCase):
         versions = ['WindowsServer2003']
         types = ['x64']
         languages = ['ENU']
-        checkPaths = ['E:\\1212\\2761465\\WindowsServer2003' +
-           '\\x64\\ENU\\IE7-WINDOWSSERVER2003.WINDOWSXP-KB2761465-X64-ENU.EXE']
+        checkPaths = ['E:' + os.sep + '1212' + os.sep + '2761465' + os.sep +
+            'WindowsServer2003' + os.sep + 'x64' + os.sep + 'ENU' + os.sep +
+            'IE7-WINDOWSSERVER2003.WINDOWSXP-KB2761465-X64-ENU.EXE']
 
         for i in range(0, len(updates)):
             self.assertEqual(paths[i], updates[i]['Path'])
@@ -76,11 +80,12 @@ class TestSequenceFunctions(unittest.TestCase):
             self.assertEqual(languages[i], updates[i]['Language'])
             self.assertEqual(date, updates[i]['Date'])
             self.assertEqual(checkPaths[i],
-                                        core.updates.toWinDirStyle(updates[i]))
+                                        core.updates.toPathStyle(updates[i]))
 
     def test_getKB(self):
 
-        files = ['\\dotNetFW_4.X\\dotNetFx40_Full_x86_x64.exe']
+        files = [os.sep + 'dotNetFW_4.X' + os.sep +
+                'dotNetFx40_Full_x86_x64.exe']
         correctKBs = [-1]
 
         for KB, updateFile in zip(correctKBs, files):

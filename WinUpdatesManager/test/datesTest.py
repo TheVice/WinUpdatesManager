@@ -12,7 +12,7 @@ class TestSequenceFunctions(unittest.TestCase):
     def test_getDatesForYearEdition(self):
 
         files = ['0112', '0212', '0312', 'abcd', '0412', 'Addons', '0512',
-                 '12qw','0612', '0', '0211-1', 'af64']
+                 '12qw', '0612', '0', '0211-1', 'af64']
         correctDays = [10, 14, 13, 10, 8, 12, 8]
         dates = core.dates.getDatesOfUpdates(files)
 

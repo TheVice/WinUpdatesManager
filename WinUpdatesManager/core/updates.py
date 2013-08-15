@@ -1,3 +1,4 @@
+import os
 
 
 class Updates:
@@ -56,7 +57,7 @@ class Updates:
         return self.mData[aKey]
 
 
-def toWinDirStyle(aUpdate):
+def toPathStyle(aUpdate):
 
     path = aUpdate['Path']
     date = aUpdate['Date']
@@ -65,20 +66,20 @@ def toWinDirStyle(aUpdate):
     osType = aUpdate['Type']
     language = aUpdate['Language']
 
-    output = path[0:path.find('\\')]
+    output = path[0:path.find(os.sep)]
 
-    output += '\\' + dateToWinDirStyle(date)
-    output += '\\' + str(kb)
-    output += '\\' + version
-    output += '\\' + osType
-    output += '\\' + language
+    output += os.sep + dateToPathStyle(date)
+    output += os.sep + str(kb)
+    output += os.sep + version
+    output += os.sep + osType
+    output += os.sep + language
 
-    output += path[path.rfind('\\'):]
+    output += path[path.rfind(os.sep):]
 
     return output
 
 
-def dateToWinDirStyle(aDate):
+def dateToPathStyle(aDate):
 
     month = str(aDate.month)
     if len(month) == 1:
@@ -157,10 +158,6 @@ def getUpdatesFromPackage(aFiles, aDate):
         osType = getOsType(updateFile)
         language = getLanguage(updateFile)
 
-        #for osVer in osVersion:
-            #osVer = checkIsThisR2(osVer, updateFile)
-            #osVer = checkIsThisARM(osVer, osType)
-
         updates.addUpdate(updateFile, kb, osVersion, osType, language, aDate)
 
     return updates
@@ -188,28 +185,4 @@ def getKBsFromReport(aReport):
             i += pos + len(strKB)
 
     return KBs
-
-
-def checkIsThisR2(aVersion, aFileName):
-
-    if not 'WindowsServer' in aVersion:
-        return aVersion
-
-    if ('Windows6.1' in aFileName
-        or 'WINDOWS6.1' in aFileName) and not 'R2' in aVersion:
-        return aVersion + 'R2'
-
-    if ('Windows6.3' in aFileName
-        or 'WINDOWS6.3' in aFileName) and not 'R2' in aVersion:
-        return aVersion + 'R2'
-
-    return aVersion
-
-
-def checkIsThisARM(aVersion, aType):
-
-    if not 'ARM' in aType:
-        return aVersion
-
-    return 'WindowsRT'
 

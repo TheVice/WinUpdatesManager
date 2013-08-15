@@ -54,10 +54,10 @@ def getRootPaths(aPaths):
         if 0 != files.count(path):
             continue
 
-        firstPosOfSlash = path.find('\\')
+        firstPosOfSlash = path.find(os.sep)
 
         if firstPosOfSlash == 2 and (firstPosOfSlash + 1) < len(path):
-            secondPosIfSlash = path.find('\\', firstPosOfSlash + 1)
+            secondPosIfSlash = path.find(os.sep, firstPosOfSlash + 1)
 
             if secondPosIfSlash < 0:
                 files.append(path)
@@ -83,7 +83,7 @@ def getRootObjects(aPaths, aDataPrepared=False):
         return getRootObjects(files, True)
 
     for path in aPaths:
-        posOfSlash = path.find('\\')
+        posOfSlash = path.find(os.sep)
 
         if posOfSlash == 2:
             files.append(path[posOfSlash + 1:])
