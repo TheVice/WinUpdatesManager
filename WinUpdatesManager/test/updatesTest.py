@@ -1,12 +1,52 @@
 import unittest
 import datetime
-import core
 import core.updates
 
 
 class TestSequenceFunctions(unittest.TestCase):
 
-    def test_UpdateClass(self):
+    def test_UpdateInit(self):
+
+        updates = core.updates.Updates()
+
+        self.assertEqual(0, len(updates))
+        self.assertRaises(IndexError, updates.__getitem__, -1)
+        self.assertRaises(IndexError, updates.__getitem__, 0)
+        self.assertRaises(IndexError, updates.__getitem__, 1)
+
+        for update in updates:
+            self.fail('Actually there are no up in updates!')
+
+        updates.addUpdate('Some\\Path', 123, 'Win32', '80x86', 'English',
+            datetime.datetime(1970, 1, 1))
+        updates.addUpdate('Some\\Path', 123, 'Win32', '80x86', 'English',
+            datetime.datetime(1970, 1, 1))
+        updates.addUpdate('Some\\Path2', 456, 'Win64', 'x86-64', 'Russian',
+            datetime.datetime(2008, 12, 11))
+        updates.addUpdate('Some\\Path2', 456, 'Win64', 'x86-64', 'Russian',
+            datetime.datetime(2008, 12, 11))
+
+        self.assertEqual(2, len(updates))
+        self.assertRaises(IndexError, updates.__getitem__, -1)
+        try:
+            self.assertEqual(updates.__getitem__(0)['Type'], '80x86')
+            self.assertEqual(updates.__getitem__(1)['Language'], 'Russian')
+        except:
+            self.fail('Actually there are present updates!')
+        self.assertRaises(IndexError, updates.__getitem__, 3)
+
+        versions = ['Win64', 'Win32']
+        for update, version in zip(updates, versions):
+            self.assertEqual(update['Version'], version)
+
+        versions = ['Win32', 'Win64']
+        for i in range(0, 2):
+            self.assertEqual(updates[i]['Version'], versions[i])
+
+        self.assertEqual(updates[0]['Version'], 'Win32')
+        self.assertEqual(updates[1]['Version'], 'Win64')
+
+    def test_UpdateComplex(self):
 
         paths = ['E:\\1212\\2761465\\WindowsServer2003' +
            '\\X64\\ENU\\IE7-WINDOWSSERVER2003.WINDOWSXP-KB2761465-X64-ENU.EXE',

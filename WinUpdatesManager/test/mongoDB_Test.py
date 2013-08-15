@@ -19,11 +19,9 @@ class TestSequenceFunctions(unittest.TestCase):
 
         db.mongoDB.insertToDB(aItems=updates)
         items = db.mongoDB.getFromDB()
-
         self.assertEqual(len(updates), items.count())
 
-        #for up, it in zip(updates, items):
-        for i in range(0, max(len(updates), items.count())):
+        for i in range(len(updates)):
             self.assertEqual(updates[i]['Path'], items[i]['Path'])
             self.assertEqual(updates[i]['KB'], items[i]['KB'])
             self.assertEqual(updates[i]['Version'], items[i]['Version'])
