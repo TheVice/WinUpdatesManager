@@ -1,6 +1,7 @@
 import unittest
 import datetime
 import core.updates
+from core.updates import toWinDirStyle
 
 
 class TestSequenceFunctions(unittest.TestCase):
@@ -37,14 +38,17 @@ class TestSequenceFunctions(unittest.TestCase):
 
         versions = ['Win64', 'Win32']
         for update, version in zip(updates, versions):
-            self.assertEqual(update['Version'], version)
+            self.assertEqual(version, update['Version'])
 
         versions = ['Win32', 'Win64']
         for i in range(0, 2):
             self.assertEqual(updates[i]['Version'], versions[i])
 
-        self.assertEqual(updates[0]['Version'], 'Win32')
-        self.assertEqual(updates[1]['Version'], 'Win64')
+        self.assertEqual('Win32', updates[0]['Version'])
+        self.assertEqual('Win64', updates[1]['Version'])
+        
+        self.assertEqual('Some\\0170\\123\\Win32\\80x86\\English\\Path',
+                         toWinDirStyle(updates[0]))
 
     def test_UpdateComplex(self):
 

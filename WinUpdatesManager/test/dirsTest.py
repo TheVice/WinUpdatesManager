@@ -1,5 +1,4 @@
 import unittest
-import core
 import core.dirs
 
 
@@ -162,6 +161,19 @@ class TestSequenceFunctions(unittest.TestCase):
         for path, i in zip(correctRootPaths, range(len(correctRootPaths))):
             self.assertEqual(i + 1, len(paths.getSubObjects(path)))
 
+        subObjects = paths.getSubObjects('E:\\Addons')
+        shift = 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 + 11 + 12
+
+        for i in range(0, len(subObjects)):
+            self.assertEqual(inputPaths[i + shift], subObjects[i])
+
+        subObjects = paths.getSubObjects('E:\\Addons', True)
+        for i in range(0, len(subObjects)):
+            inputPath = inputPaths[i + shift]
+            self.assertEqual(inputPath[len('E:\\Addons'):], subObjects[i])
+
+    #for writing next test MockObject required to use,
+    #but no skill to do it right now
     #def test_getSubDirectoryFiles(self):
 
         #getSubDirectoryFiles()
@@ -170,11 +182,14 @@ class TestSequenceFunctions(unittest.TestCase):
     def test_getRootPaths(self):
 
         paths = ['E:\\0112', 'E:\\0112\\',
-        'E:\\2584146\\Windows7\\x64\\NEU\\WINDOWS6.1-KB2584146-X64.MSU', 'E']
-        correctRootPaths = ['E:\\0112', 'E:\\2584146', 'E']
+        'E:\\2584146\\Windows7\\x64\\NEU\\WINDOWS6.1-KB2584146-X64.MSU',
+        'E', '\\', 'E:\\0112', '\\\\', '\\', '\\\\\\']
+        correctRootPaths = ['E:\\0112', 'E:\\2584146', 'E', '\\', '\\\\', '\\\\\\']
+
         rootPaths = core.dirs.getRootPaths(paths)
 
-        self.assertEqual(correctRootPaths, rootPaths)
+        for correctPath, path in zip(correctRootPaths, rootPaths):
+            self.assertEqual(correctPath, path)
 
     def test_getRootObjects(self):
 
@@ -182,10 +197,11 @@ class TestSequenceFunctions(unittest.TestCase):
         'E:\\2584146\\Windows7\\x64\\NEU\\WINDOWS6.1-KB2584146-X64.MSU',
         'E', 'E:\\Addons']
         correctRootObjects = ['0112', '2584146', 'E', 'Addons']
+
         rootObjects = core.dirs.getRootObjects(paths)
 
-        self.assertEqual(correctRootObjects, rootObjects)
-
+        for correctPath, path in zip(correctRootObjects, rootObjects):
+            self.assertEqual(correctPath, path)
 
 if __name__ == '__main__':
 
