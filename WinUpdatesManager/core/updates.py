@@ -57,12 +57,69 @@ class Updates:
         return self.mData[aKey]
 
 
+class Versions:
+
+    def __init__(self):
+
+        self.Win2k = 'Windows 2000'
+        self.WinXP = 'Windows XP'
+        self.Win2k3 = 'Windows Server 2003'
+        self.Vista = 'Windows Vista'
+        self.Win2k8 = 'Windows Server 2008'
+        self.Seven = 'Windows 7'
+        self.Win2k8R2 = 'Windows Server 2008 R2'
+        self.Eight = 'Windows 8'
+        self.Win2k12 = 'Windows Server 2012'
+
+        self.WinRT = 'Windows RT'
+
+        versions = {}
+
+        versions[os.sep + 'Windows2000' + os.sep] = self.Win2k
+        versions[os.sep + 'WindowsXP' + os.sep] = self.WinXP
+        versions[os.sep + 'WindowsServer2003' + os.sep] = self.Win2k3
+        versions[os.sep + 'WindowsVista' + os.sep] = self.Vista
+        versions[os.sep + 'WindowsServer2008' + os.sep] = self.Win2k8
+        versions[os.sep + 'Windows7' + os.sep] = self.Seven
+        versions[os.sep + 'WindowsServer2008R2' + os.sep] = self.Win2k8R2
+        versions[os.sep + 'Windows8' + os.sep] = self.Eight
+        versions[os.sep + 'WindowsServer2012' + os.sep] = self.Win2k12
+
+        versions[os.sep + 'WindowsRT' + os.sep] = self.WinRT
+
+        self.mVersions = versions
+
+    def getVersion(self, aPath):
+
+        key = None
+
+        for keyVersion in self.mVersions.keys():
+            if keyVersion in aPath:
+                key = keyVersion
+                break
+
+        if key is not None:
+            return self.mVersions.get(key)
+
+        unknown = {}
+        unknown['UNKNOWN VERSION'] = aPath
+        return unknown
+
+    def getPathKey(self, aValue):
+
+        for key, value in self.mVersions.items():
+            if value == aValue:
+                return key
+
+        return os.sep + aValue + os.sep
+
+
 def toPathStyle(aUpdate):
 
     path = aUpdate['Path']
     date = aUpdate['Date']
     kb = aUpdate['KB']
-    version = aUpdate['Version']
+    version = Versions().getPathKey(aUpdate['Version'])
     osType = aUpdate['Type']
     language = aUpdate['Language']
 
@@ -70,8 +127,8 @@ def toPathStyle(aUpdate):
 
     output += os.sep + dateToPathStyle(date)
     output += os.sep + str(kb)
-    output += os.sep + version
-    output += os.sep + osType
+    output += version
+    output += osType
     output += os.sep + language
 
     output += path[path.rfind(os.sep):]
@@ -106,21 +163,6 @@ def getKB(aPath):
     return -1
 
 
-def getVersion(aPath):
-
-    versions = ['\\Windows2000\\', '\\WindowsXP\\', '\\WindowsServer2003\\',
-                '\\WindowsVista\\', '\\WindowsServer2008\\', '\\Windows7\\',
-                '\\WindowsServer2008R2\\', '\\Windows8\\',
-                '\\WindowsServer2012\\', '\\Windows8dot1\\',
-                '\\WindowsServer2012R2\\', '\\WindowsRT\\']
-
-    for version in versions:
-        if version in aPath or version.upper() in aPath:
-            return version[1:len(version) - 1]
-
-    return 'UNKNOWN VERSION'
-
-
 def getOsType(aPath):
 
     osTypes = ['\\x86\\', '\\x64\\', '\\IA64\\', '\\ARM\\']
@@ -151,10 +193,11 @@ def getLanguage(aPath):
 def getUpdatesFromPackage(aFiles, aDate):
 
     updates = Updates()
+    versions = Versions()
 
     for updateFile in aFiles:
         kb = getKB(updateFile)
-        osVersion = getVersion(updateFile)
+        osVersion = versions.getVersion(updateFile)
         osType = getOsType(updateFile)
         language = getLanguage(updateFile)
 

@@ -6,7 +6,7 @@ import core.updates
 
 class TestSequenceFunctions(unittest.TestCase):
 
-    def test_UpdateInit(self):
+    def test_Updates(self):
 
         updates = core.updates.Updates()
 
@@ -51,8 +51,6 @@ class TestSequenceFunctions(unittest.TestCase):
                          'Win32' + os.sep + '80x86' + os.sep + 'English' +
                          os.sep + 'Path', core.updates.toPathStyle(updates[0]))
 
-    def test_UpdateComplex(self):
-
         paths = ['E:' + os.sep + '1212' + os.sep + '2761465' + os.sep +
             'WindowsServer2003' + os.sep + 'X64' + os.sep + 'ENU' +
             os.sep + 'IE7-WINDOWSSERVER2003.WINDOWSXP-KB2761465-X64-ENU.EXE',
@@ -65,7 +63,7 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEqual(1, len(updates))
 
         kbs = [2761465]
-        versions = ['WindowsServer2003']
+        versions = [core.updates.Versions().Win2k3]
         types = ['x64']
         languages = ['ENU']
         checkPaths = ['E:' + os.sep + '1212' + os.sep + '2761465' + os.sep +
@@ -81,6 +79,19 @@ class TestSequenceFunctions(unittest.TestCase):
             self.assertEqual(date, updates[i]['Date'])
             self.assertEqual(checkPaths[i],
                                         core.updates.toPathStyle(updates[i]))
+
+    def test_Versions(self):
+
+        versions = core.updates.Versions()
+
+        path = os.sep + 'midle' + os.sep + 'of' + os.sep + 'nowhere' + os.sep
+        self.assertEqual({'UNKNOWN VERSION': path}, versions.getVersion(path))
+        self.assertEqual(versions.Win2k,
+                        versions.getVersion(os.sep + 'Windows2000' + os.sep))
+
+        self.assertEqual(os.sep + os.sep, versions.getPathKey(''))
+        self.assertEqual(os.sep + 'Windows2000' + os.sep,
+                         versions.getPathKey(versions.Win2k))
 
     def test_getKB(self):
 
