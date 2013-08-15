@@ -114,13 +114,67 @@ class Versions:
         return os.sep + aValue + os.sep
 
 
-def toPathStyle(aUpdate):
+class Types:
+
+    def __init__(self):
+
+        self.x86 = 'x86'
+        self.x64 = 'x64'
+        self.IA64 = 'IA64'
+        self.ARM = 'ARM'
+
+        types = {}
+
+        types[os.sep + 'x86' + os.sep] = self.x86
+        types[os.sep + 'x64' + os.sep] = self.x64
+        types[os.sep + 'IA64' + os.sep] = self.IA64
+        types[os.sep + 'ARM' + os.sep] = self.ARM
+
+        types[os.sep + 'X86' + os.sep] = self.x86
+        types[os.sep + 'X64' + os.sep] = self.x64
+
+        self.mTypes = types
+
+    def getType(self, aPath):
+
+        key = None
+
+        for keyType in self.mTypes.keys():
+            if keyType in aPath:
+                key = keyType
+                break
+
+        if key is not None:
+            return self.mTypes.get(key)
+
+        unknown = {}
+        unknown['UNKNOWN TYPE'] = aPath
+        return unknown
+
+    def getPathKey(self, aValue):
+
+        for key, value in self.mTypes.items():
+            if value == aValue:
+                return key
+
+        return os.sep + aValue + os.sep
+
+
+def toPathStyle(aUpdate, aVersions=None, aTypes=None, aLanguages=None):
+
+    if aVersions is None:
+        aVersions = Versions()
+    if aTypes is None:
+        aTypes = Types()
+    #if aLanguages is None:
+        #aLanguages = Languages()
 
     path = aUpdate['Path']
     date = aUpdate['Date']
     kb = aUpdate['KB']
-    version = Versions().getPathKey(aUpdate['Version'])
-    osType = aUpdate['Type']
+
+    version = aVersions.getPathKey(aUpdate['Version'])
+    osType = aTypes.getPathKey(aUpdate['Type'])
     language = aUpdate['Language']
 
     output = path[0:path.find(os.sep)]
@@ -128,8 +182,8 @@ def toPathStyle(aUpdate):
     output += os.sep + dateToPathStyle(date)
     output += os.sep + str(kb)
     output += version
-    output += osType
-    output += os.sep + language
+    output += osType[1:]
+    output += language
 
     output += path[path.rfind(os.sep):]
 
@@ -163,18 +217,6 @@ def getKB(aPath):
     return -1
 
 
-def getOsType(aPath):
-
-    osTypes = ['\\x86\\', '\\x64\\', '\\IA64\\', '\\ARM\\']
-
-    for osType in osTypes:
-        if (osType in aPath) or (osType.lower()
-            in aPath) or (osType.upper() in aPath):
-            return osType[1:len(osType) - 1]
-
-    return 'UNKNOWN TYPE'
-
-
 def getLanguage(aPath):
 
     languages = ['\\NEU\\', '\\ARA\\', '\\CHS\\', '\\CHT\\', '\\CSY\\',
@@ -194,11 +236,12 @@ def getUpdatesFromPackage(aFiles, aDate):
 
     updates = Updates()
     versions = Versions()
+    types = Types()
 
     for updateFile in aFiles:
         kb = getKB(updateFile)
         osVersion = versions.getVersion(updateFile)
-        osType = getOsType(updateFile)
+        osType = types.getType(updateFile)
         language = getLanguage(updateFile)
 
         updates.addUpdate(updateFile, kb, osVersion, osType, language, aDate)

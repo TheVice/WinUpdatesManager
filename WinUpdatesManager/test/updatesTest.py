@@ -93,6 +93,19 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEqual(os.sep + 'Windows2000' + os.sep,
                          versions.getPathKey(versions.Win2k))
 
+    def test_Types(self):
+
+        types = core.updates.Types()
+
+        path = os.sep + 'midle' + os.sep + 'of' + os.sep + 'nowhere' + os.sep
+        self.assertEqual({'UNKNOWN TYPE': path}, types.getType(path))
+        self.assertEqual(types.x86,
+                        types.getType(os.sep + 'x86' + os.sep))
+
+        self.assertEqual(os.sep + os.sep, types.getPathKey(''))
+        self.assertEqual(os.sep + 'x86' + os.sep,
+                         types.getPathKey(types.x86))
+
     def test_getKB(self):
 
         files = [os.sep + 'dotNetFW_4.X' + os.sep +
