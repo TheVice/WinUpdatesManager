@@ -87,6 +87,32 @@ class Versions:
 
         versions[os.sep + 'WindowsRT' + os.sep] = self.WinRT
 
+        self.mCalligraphicVersions = dict(versions)
+
+        versions[os.sep + 'windows2000' + os.sep] = self.Win2k
+        versions[os.sep + 'windowsxp' + os.sep] = self.WinXP
+        versions[os.sep + 'windowsserver2003' + os.sep] = self.Win2k3
+        versions[os.sep + 'windowsvista' + os.sep] = self.Vista
+        versions[os.sep + 'windowsserver2008' + os.sep] = self.Win2k8
+        versions[os.sep + 'windows7' + os.sep] = self.Seven
+        versions[os.sep + 'windowswerver2008r2' + os.sep] = self.Win2k8R2
+        versions[os.sep + 'windows8' + os.sep] = self.Eight
+        versions[os.sep + 'windowsserver2012' + os.sep] = self.Win2k12
+
+        versions[os.sep + 'windowsrt' + os.sep] = self.WinRT
+
+        versions[os.sep + 'WINDOWS2000' + os.sep] = self.Win2k
+        versions[os.sep + 'WINDOWSXP' + os.sep] = self.WinXP
+        versions[os.sep + 'WINDOWSSERVER2003' + os.sep] = self.Win2k3
+        versions[os.sep + 'WINDOWSVISTA' + os.sep] = self.Vista
+        versions[os.sep + 'WINDOWSSERVER2008' + os.sep] = self.Win2k8
+        versions[os.sep + 'WINDOWS7' + os.sep] = self.Seven
+        versions[os.sep + 'WINDOWSSERVER2008R2' + os.sep] = self.Win2k8R2
+        versions[os.sep + 'WINDOWS8' + os.sep] = self.Eight
+        versions[os.sep + 'WINDOWSSERVER2012' + os.sep] = self.Win2k12
+
+        versions[os.sep + 'WINDOWSRT' + os.sep] = self.WinRT
+
         self.mVersions = versions
 
     def getVersion(self, aPath):
@@ -100,7 +126,7 @@ class Versions:
 
     def getPathKey(self, aValue):
 
-        return getKeyPathByValue(self.mVersions, aValue)
+        return getKeyPathByValue(self.mCalligraphicVersions, aValue)
 
 
 class Types:
@@ -116,11 +142,17 @@ class Types:
 
         types[os.sep + 'x86' + os.sep] = self.x86
         types[os.sep + 'x64' + os.sep] = self.x64
-        types[os.sep + 'IA64' + os.sep] = self.IA64
         types[os.sep + 'ARM' + os.sep] = self.ARM
+        types[os.sep + 'IA64' + os.sep] = self.IA64
+        
+        self.mCalligraphicTypes = dict(types)
 
+        types[os.sep + 'arm' + os.sep] = self.ARM
         types[os.sep + 'X86' + os.sep] = self.x86
         types[os.sep + 'X64' + os.sep] = self.x64
+
+        types['-X86-'] = self.x86
+        types['-X64-'] = self.x64
 
         self.mTypes = types
 
@@ -135,7 +167,7 @@ class Types:
 
     def getPathKey(self, aValue):
 
-        return getKeyPathByValue(self.mTypes, aValue)
+        return getKeyPathByValue(self.mCalligraphicTypes, aValue)
 
 
 class Languages:
@@ -201,6 +233,8 @@ class Languages:
         languages[os.sep + 'Swedish' + os.sep] = self.Swedish
         languages[os.sep + 'Turkish' + os.sep] = self.Turkish
 
+        self.mCalligraphicLanguages = dict(languages)
+
         languages[os.sep + 'NEU' + os.sep] = self.Neutral
         languages[os.sep + 'ARA' + os.sep] = self.Arabic
         languages[os.sep + 'CHS' + os.sep] = self.Chinese_Simplified
@@ -240,7 +274,7 @@ class Languages:
 
     def getPathKey(self, aValue):
 
-        return getKeyPathByValue(self.mLanguages, aValue)
+        return getKeyPathByValue(self.mCalligraphicLanguages, aValue)
 
 
 def getItemByPath(aDict, aKey):
@@ -286,6 +320,8 @@ def toPathStyle(aUpdate, aVersions=None, aTypes=None, aLanguages=None):
 
     version = aVersions.getPathKey(aUpdate['Version'])
     osType = aTypes.getPathKey(aUpdate['Type'])
+    if osType.find(os.sep) != 1:
+        osType = osType[1:]
     language = aLanguages.getPathKey(aUpdate['Language'])
 
     output = path[0:path.find(os.sep)]
@@ -293,7 +329,7 @@ def toPathStyle(aUpdate, aVersions=None, aTypes=None, aLanguages=None):
     output += os.sep + dateToPathStyle(date)
     output += os.sep + str(kb)
     output += version
-    output += osType[1:]
+    output += osType
     output += language[1:]
 
     output += path[path.rfind(os.sep) + 1:]
@@ -321,6 +357,9 @@ def getKB(aPath):
     length = len(aPath)
     startKB = aPath.find('KB')
 
+    if startKB == -1:
+        startKB = aPath.find('kb')
+
     if startKB != -1 and startKB + 2 < length:
         startKB += 2
         endKB = startKB
@@ -331,7 +370,7 @@ def getKB(aPath):
         if endKB - startKB > 0:
             return int(aPath[startKB:endKB])
 
-    return -1
+    return unknownSubstance('UNKNOWN KB', aPath)
 
 
 def getUpdatesFromPackage(aFiles, aDate):
@@ -360,11 +399,11 @@ def getKBsFromReport(aReport):
     while i < len(aReport):
 
         KB = getKB(aReport[i:])
-        if KB != -1 and 0 == KBs.count(KB):
+        if type(KB) is not type({}) and 0 == KBs.count(KB):
             KBs.append(KB)
 
         strKB = 'KB'
-        if KB != -1:
+        if type(KB) is not type({}):
             strKB += str(KB)
 
         pos = aReport[i:].find(strKB)

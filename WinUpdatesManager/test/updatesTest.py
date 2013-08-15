@@ -57,9 +57,7 @@ class TestSequenceFunctions(unittest.TestCase):
                         versions.getVersion(os.sep + 'Windows2000' + os.sep))
 
         self.assertEqual(os.sep + os.sep, versions.getPathKey(''))
-        self.assertTrue(os.sep + 'Windows2000' + os.sep ==
-                         versions.getPathKey(versions.Win2k) or
-                        os.sep + 'WINDOWS2000' + os.sep ==
+        self.assertEqual(os.sep + 'Windows2000' + os.sep,
                          versions.getPathKey(versions.Win2k))
 
     def test_Types(self):
@@ -72,9 +70,7 @@ class TestSequenceFunctions(unittest.TestCase):
                         types.getType(os.sep + 'x86' + os.sep))
 
         self.assertEqual(os.sep + os.sep, types.getPathKey(''))
-        self.assertTrue(os.sep + 'x86' + os.sep ==
-                         types.getPathKey(types.x86) or
-                         os.sep + 'X86' + os.sep ==
+        self.assertEqual(os.sep + 'x86' + os.sep,
                          types.getPathKey(types.x86))
 
     def test_Languages(self):
@@ -88,9 +84,7 @@ class TestSequenceFunctions(unittest.TestCase):
                         languages.getLanguage(os.sep + 'NEU' + os.sep))
 
         self.assertEqual(os.sep + os.sep, languages.getPathKey(''))
-        self.assertTrue(os.sep + 'NEU' + os.sep ==
-                         languages.getPathKey(languages.Neutral) or
-                         os.sep + 'Neutral' + os.sep ==
+        self.assertEqual(os.sep + 'Neutral' + os.sep,
                          languages.getPathKey(languages.Neutral))
 
     #TODO: test_getItemByPath(self):
@@ -102,7 +96,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
         files = [os.sep + 'dotNetFW_4.X' + os.sep +
                 'dotNetFx40_Full_x86_x64.exe']
-        correctKBs = [-1]
+        correctKBs = [{'UNKNOWN KB': files[0]}]
 
         for KB, updateFile in zip(correctKBs, files):
             self.assertEqual(KB, core.updates.getKB(updateFile))
