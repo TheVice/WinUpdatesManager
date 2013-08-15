@@ -40,6 +40,10 @@ class Updates:
         self.mIndex -= 1
         return self.mData[self.mIndex]
 
+    def next(self):
+
+        return self.__next__()
+
     def __len__(self):
 
         return len(self.mData)
