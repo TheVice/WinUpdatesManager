@@ -261,7 +261,7 @@ def getKeyPathByValue(aDict, aValue):
         if value == aValue:
             return key
 
-    return os.sep + aValue + os.sep
+    return os.sep + str(aValue) + os.sep
 
 
 def unknownSubstance(aSubstance, aValue):
@@ -303,10 +303,16 @@ def toPathStyle(aUpdate, aVersions=None, aTypes=None, aLanguages=None):
 
 def dateToPathStyle(aDate):
 
-    month = str(aDate.month)
-    if len(month) == 1:
-        month = '0' + month
-    date = month + str(aDate.year)[2:4]
+    date = ''
+
+    try:
+        month = str(aDate.month)
+        if len(month) == 1:
+            month = '0' + month
+        date = month + str(aDate.year)[2:4]
+    except:
+        date = aDate
+
     return date
 
 

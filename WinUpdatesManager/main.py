@@ -1,5 +1,4 @@
 import sys
-import core
 import core.dates
 import core.dirs
 import core.updates
@@ -26,11 +25,11 @@ if __name__ == '__main__':
 
         for monthUpdates in updates:
             for update in monthUpdates:
-                print(core.updates.toWinDirStyle(update))
+                print(core.updates.toPathStyle(update))
 
     elif argc == 3:
         files = core.dirs.getSubDirectoryFiles(sys.argv[1])
         updates = core.updates.getUpdatesFromPackage(files, sys.argv[2])
 
         for update in updates:
-            print(core.updates.toWinDirStyle(update))
+            print(core.updates.toPathStyle(update))

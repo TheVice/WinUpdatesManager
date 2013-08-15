@@ -5,7 +5,7 @@ import core.dirs
 
 class TestSequenceFunctions(unittest.TestCase):
 
-    def test_PathsClass(self):
+    def test_Paths(self):
 
         inputPaths = ['E:' + os.sep + '0112', 'E:' + os.sep + '0112' + os.sep,
             'E:' + os.sep + '2584146' + os.sep + 'Windows7' + os.sep + 'x64' +
@@ -312,6 +312,22 @@ class TestSequenceFunctions(unittest.TestCase):
             inputPath = inputPaths[i + shift]
             self.assertEqual(inputPath[len('E:' + os.sep + 'Addons'):],
                 subObjects[i])
+            
+        inputPaths = ['E:' + os.sep + '0112' + os.sep + '2584146' + os.sep +
+                'Windows7' + os.sep + 'x64' + os.sep + 'NEU' + os.sep +
+                'WINDOWS6.1-KB2584146-X64.MSU',
+                'DLC_2012' + os.sep + '0112' + os.sep + '2584146' + os.sep +
+                'Windows7' + os.sep + 'x64' + os.sep + 'NEU' + os.sep +
+                'WINDOWS6.1-KB2584146-X64.MSU']
+        paths = core.dirs.Paths(inputPaths)
+
+        print(paths.getFullPaths())
+        print(paths.getRootPaths())
+        print(paths.getRootObjects())
+        print(paths.getSubObjects('DLC_2012'))
+        print(paths.getSubObjects('E:'))
+        print(paths.getSubObjects('DLC_2012', True))
+        print(paths.getSubObjects('E:', True))
 
     #for writing next test MockObject required to use,
     #but no skill to do it right now
