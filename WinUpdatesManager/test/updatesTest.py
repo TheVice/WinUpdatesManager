@@ -47,9 +47,67 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEqual('Win32', updates[0]['Version'])
         self.assertEqual('Win64', updates[1]['Version'])
 
-        self.assertEqual('Some' + os.sep + '0170' + os.sep + '123' + os.sep +
-                         'Win32' + os.sep + '80x86' + os.sep + 'English' +
-                         os.sep + 'Path', core.updates.toPathStyle(updates[0]))
+    def test_Versions(self):
+
+        versions = core.updates.Versions()
+
+        path = os.sep + 'midle' + os.sep + 'of' + os.sep + 'nowhere' + os.sep
+        self.assertEqual({'UNKNOWN VERSION': path}, versions.getVersion(path))
+        self.assertEqual(versions.Win2k,
+                        versions.getVersion(os.sep + 'Windows2000' + os.sep))
+
+        self.assertEqual(os.sep + os.sep, versions.getPathKey(''))
+        self.assertTrue(os.sep + 'Windows2000' + os.sep ==
+                         versions.getPathKey(versions.Win2k) or
+                        os.sep + 'WINDOWS2000' + os.sep ==
+                         versions.getPathKey(versions.Win2k))
+
+    def test_Types(self):
+
+        types = core.updates.Types()
+
+        path = os.sep + 'midle' + os.sep + 'of' + os.sep + 'nowhere' + os.sep
+        self.assertEqual({'UNKNOWN TYPE': path}, types.getType(path))
+        self.assertEqual(types.x86,
+                        types.getType(os.sep + 'x86' + os.sep))
+
+        self.assertEqual(os.sep + os.sep, types.getPathKey(''))
+        self.assertTrue(os.sep + 'x86' + os.sep ==
+                         types.getPathKey(types.x86) or
+                         os.sep + 'X86' + os.sep ==
+                         types.getPathKey(types.x86))
+
+    def test_Languages(self):
+
+        languages = core.updates.Languages()
+
+        path = os.sep + 'midle' + os.sep + 'of' + os.sep + 'nowhere' + os.sep
+        self.assertEqual({'UNKNOWN LANGUAGE': path},
+                            languages.getLanguage(path))
+        self.assertEqual(languages.Neutral,
+                        languages.getLanguage(os.sep + 'NEU' + os.sep))
+
+        self.assertEqual(os.sep + os.sep, languages.getPathKey(''))
+        self.assertTrue(os.sep + 'NEU' + os.sep ==
+                         languages.getPathKey(languages.Neutral) or
+                         os.sep + 'Neutral' + os.sep ==
+                         languages.getPathKey(languages.Neutral))
+
+    #TODO: test_getItemByPath(self):
+    #TODO: test_getKeyPathByValue(self):
+    #TODO: test_unknownSubstance(self):
+    #TODO: test_toPathStyle(self):
+
+    def test_getKB(self):
+
+        files = [os.sep + 'dotNetFW_4.X' + os.sep +
+                'dotNetFx40_Full_x86_x64.exe']
+        correctKBs = [-1]
+
+        for KB, updateFile in zip(correctKBs, files):
+            self.assertEqual(KB, core.updates.getKB(updateFile))
+
+    def test_getUpdatesFromPackage(self):
 
         paths = ['E:' + os.sep + '1212' + os.sep + '2761465' + os.sep +
             'WindowsServer2003' + os.sep + 'X64' + os.sep + 'ENU' +
@@ -65,10 +123,7 @@ class TestSequenceFunctions(unittest.TestCase):
         kbs = [2761465]
         versions = [core.updates.Versions().Win2k3]
         types = ['x64']
-        languages = ['ENU']
-        checkPaths = ['E:' + os.sep + '1212' + os.sep + '2761465' + os.sep +
-            'WindowsServer2003' + os.sep + 'x64' + os.sep + 'ENU' + os.sep +
-            'IE7-WINDOWSSERVER2003.WINDOWSXP-KB2761465-X64-ENU.EXE']
+        languages = ['English']
 
         for i in range(0, len(updates)):
             self.assertEqual(paths[i], updates[i]['Path'])
@@ -77,43 +132,6 @@ class TestSequenceFunctions(unittest.TestCase):
             self.assertEqual(types[i], updates[i]['Type'])
             self.assertEqual(languages[i], updates[i]['Language'])
             self.assertEqual(date, updates[i]['Date'])
-            self.assertEqual(checkPaths[i],
-                                        core.updates.toPathStyle(updates[i]))
-
-    def test_Versions(self):
-
-        versions = core.updates.Versions()
-
-        path = os.sep + 'midle' + os.sep + 'of' + os.sep + 'nowhere' + os.sep
-        self.assertEqual({'UNKNOWN VERSION': path}, versions.getVersion(path))
-        self.assertEqual(versions.Win2k,
-                        versions.getVersion(os.sep + 'Windows2000' + os.sep))
-
-        self.assertEqual(os.sep + os.sep, versions.getPathKey(''))
-        self.assertEqual(os.sep + 'Windows2000' + os.sep,
-                         versions.getPathKey(versions.Win2k))
-
-    def test_Types(self):
-
-        types = core.updates.Types()
-
-        path = os.sep + 'midle' + os.sep + 'of' + os.sep + 'nowhere' + os.sep
-        self.assertEqual({'UNKNOWN TYPE': path}, types.getType(path))
-        self.assertEqual(types.x86,
-                        types.getType(os.sep + 'x86' + os.sep))
-
-        self.assertEqual(os.sep + os.sep, types.getPathKey(''))
-        self.assertEqual(os.sep + 'x86' + os.sep,
-                         types.getPathKey(types.x86))
-
-    def test_getKB(self):
-
-        files = [os.sep + 'dotNetFW_4.X' + os.sep +
-                'dotNetFx40_Full_x86_x64.exe']
-        correctKBs = [-1]
-
-        for KB, updateFile in zip(correctKBs, files):
-            self.assertEqual(KB, core.updates.getKB(updateFile))
 
     def test_getKBsFromReport(self):
 

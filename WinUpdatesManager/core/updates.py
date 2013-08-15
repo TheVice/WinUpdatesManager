@@ -91,27 +91,16 @@ class Versions:
 
     def getVersion(self, aPath):
 
-        key = None
+        version = getItemByPath(self.mVersions, aPath)
 
-        for keyVersion in self.mVersions.keys():
-            if keyVersion in aPath:
-                key = keyVersion
-                break
+        if version is not None:
+            return version
 
-        if key is not None:
-            return self.mVersions.get(key)
-
-        unknown = {}
-        unknown['UNKNOWN VERSION'] = aPath
-        return unknown
+        return unknownSubstance('UNKNOWN VERSION', aPath)
 
     def getPathKey(self, aValue):
 
-        for key, value in self.mVersions.items():
-            if value == aValue:
-                return key
-
-        return os.sep + aValue + os.sep
+        return getKeyPathByValue(self.mVersions, aValue)
 
 
 class Types:
@@ -137,27 +126,149 @@ class Types:
 
     def getType(self, aPath):
 
-        key = None
+        osType = getItemByPath(self.mTypes, aPath)
 
-        for keyType in self.mTypes.keys():
-            if keyType in aPath:
-                key = keyType
-                break
+        if osType is not None:
+            return osType
 
-        if key is not None:
-            return self.mTypes.get(key)
-
-        unknown = {}
-        unknown['UNKNOWN TYPE'] = aPath
-        return unknown
+        return unknownSubstance('UNKNOWN TYPE', aPath)
 
     def getPathKey(self, aValue):
 
-        for key, value in self.mTypes.items():
-            if value == aValue:
-                return key
+        return getKeyPathByValue(self.mTypes, aValue)
 
-        return os.sep + aValue + os.sep
+
+class Languages:
+
+    def __init__(self):
+
+        self.Neutral = 'Neutral'
+        self.Arabic = 'Arabic'
+        self.Chinese_Simplified = 'Chinese (Simplified)'
+        self.Chinese_Traditional = 'Chinese (Traditional)'
+        self.Czech = 'Czech'
+        self.Danish = 'Danish'
+        self.Dutch = 'Dutch'
+        self.English = 'English'
+        self.Finnish = 'Finnish'
+        self.French = 'French'
+        self.German = 'German'
+        self.Greek = 'Greek'
+        self.Hebrew = 'Hebrew'
+        self.Hungarian = 'Hungarian'
+        self.Italian = 'Italian'
+        self.Japanese = 'Japanese'
+        self.Korean = 'Korean'
+        self.Norwegian = 'Norwegian'
+        self.Polish = 'Polish'
+        self.Portuguese_Brazil = 'Portuguese (Brazil)'
+        self.Portuguese_Portugal = 'Portuguese (Portugal)'
+        self.Russian = 'Russian'
+        self.Spanish = 'Spanish'
+        self.Swedish = 'Swedish'
+        self.Turkish = 'Turkish'
+
+        languages = {}
+
+        languages[os.sep + 'Neutral' + os.sep] = self.Neutral
+        languages[os.sep + 'Arabic' + os.sep] = self.Arabic
+        languages[os.sep + 'Chinese (Simplified)' + os.sep] = (
+            self.Chinese_Simplified)
+        languages[os.sep + 'Chinese (Traditional)' + os.sep] = (
+            self.Chinese_Traditional)
+        languages[os.sep + 'Czech' + os.sep] = self.Czech
+        languages[os.sep + 'Danish' + os.sep] = self.Danish
+        languages[os.sep + 'Dutch' + os.sep] = self.Dutch
+        languages[os.sep + 'English' + os.sep] = self.English
+        languages[os.sep + 'Finnish' + os.sep] = self.Finnish
+        languages[os.sep + 'French' + os.sep] = self.French
+        languages[os.sep + 'German' + os.sep] = self.German
+        languages[os.sep + 'Greek' + os.sep] = self.Greek
+        languages[os.sep + 'Hebrew' + os.sep] = self.Hebrew
+        languages[os.sep + 'Hungarian' + os.sep] = self.Hungarian
+        languages[os.sep + 'Italian' + os.sep] = self.Italian
+        languages[os.sep + 'Japanese (Japan)' + os.sep] = self.Japanese
+        languages[os.sep + 'Korean' + os.sep] = self.Korean
+        languages[os.sep + 'Norwegian'] = self.Norwegian    # ()
+        languages[os.sep + 'Polish' + os.sep] = self.Polish
+        languages[os.sep + 'Portuguese (Brazil)' + os.sep] = (
+            self.Portuguese_Brazil)
+        languages[os.sep + 'Portuguese (Portugal)' + os.sep] = (
+            self.Portuguese_Portugal)
+        languages[os.sep + 'Russian' + os.sep] = self.Russian
+        languages[os.sep + 'Spanish (Traditional Sort)' + os.sep] = (
+            self.Spanish)
+        languages[os.sep + 'Swedish' + os.sep] = self.Swedish
+        languages[os.sep + 'Turkish' + os.sep] = self.Turkish
+
+        languages[os.sep + 'NEU' + os.sep] = self.Neutral
+        languages[os.sep + 'ARA' + os.sep] = self.Arabic
+        languages[os.sep + 'CHS' + os.sep] = self.Chinese_Simplified
+        languages[os.sep + 'CHT' + os.sep] = self.Chinese_Traditional
+        languages[os.sep + 'CSY' + os.sep] = self.Czech
+        languages[os.sep + 'DAN' + os.sep] = self.Danish
+        languages[os.sep + 'NLD' + os.sep] = self.Dutch
+        languages[os.sep + 'ENU' + os.sep] = self.English
+        languages[os.sep + 'FIN' + os.sep] = self.Finnish
+        languages[os.sep + 'FRA' + os.sep] = self.French
+        languages[os.sep + 'DEU' + os.sep] = self.German
+        languages[os.sep + 'ELL' + os.sep] = self.Greek
+        languages[os.sep + 'HEB' + os.sep] = self.Hebrew
+        languages[os.sep + 'HUN' + os.sep] = self.Hungarian
+        languages[os.sep + 'ITA' + os.sep] = self.Italian
+        languages[os.sep + 'JPN' + os.sep] = self.Japanese
+        languages[os.sep + 'KOR' + os.sep] = self.Korean
+        languages[os.sep + 'NOR' + os.sep] = self.Norwegian
+        languages[os.sep + 'PLK' + os.sep] = self.Polish
+        languages[os.sep + 'PTB' + os.sep] = self.Portuguese_Brazil
+        languages[os.sep + 'PTG' + os.sep] = self.Portuguese_Portugal
+        languages[os.sep + 'RUS' + os.sep] = self.Russian
+        languages[os.sep + 'ESN' + os.sep] = self.Spanish
+        languages[os.sep + 'SVE' + os.sep] = self.Swedish
+        languages[os.sep + 'TRK' + os.sep] = self.Turkish
+
+        self.mLanguages = languages
+
+    def getLanguage(self, aPath):
+
+        language = getItemByPath(self.mLanguages, aPath)
+
+        if language is not None:
+            return language
+
+        return unknownSubstance('UNKNOWN LANGUAGE', aPath)
+
+    def getPathKey(self, aValue):
+
+        return getKeyPathByValue(self.mLanguages, aValue)
+
+
+def getItemByPath(aDict, aKey):
+
+    key = None
+
+    for keyType in aDict.keys():
+        if keyType in aKey:
+            key = keyType
+            break
+
+    return aDict.get(key)
+
+
+def getKeyPathByValue(aDict, aValue):
+
+    for key, value in aDict.items():
+        if value == aValue:
+            return key
+
+    return os.sep + aValue + os.sep
+
+
+def unknownSubstance(aSubstance, aValue):
+
+    unknown = {}
+    unknown[aSubstance] = aValue
+    return unknown
 
 
 def toPathStyle(aUpdate, aVersions=None, aTypes=None, aLanguages=None):
@@ -166,8 +277,8 @@ def toPathStyle(aUpdate, aVersions=None, aTypes=None, aLanguages=None):
         aVersions = Versions()
     if aTypes is None:
         aTypes = Types()
-    #if aLanguages is None:
-        #aLanguages = Languages()
+    if aLanguages is None:
+        aLanguages = Languages()
 
     path = aUpdate['Path']
     date = aUpdate['Date']
@@ -175,7 +286,7 @@ def toPathStyle(aUpdate, aVersions=None, aTypes=None, aLanguages=None):
 
     version = aVersions.getPathKey(aUpdate['Version'])
     osType = aTypes.getPathKey(aUpdate['Type'])
-    language = aUpdate['Language']
+    language = aLanguages.getPathKey(aUpdate['Language'])
 
     output = path[0:path.find(os.sep)]
 
@@ -183,9 +294,9 @@ def toPathStyle(aUpdate, aVersions=None, aTypes=None, aLanguages=None):
     output += os.sep + str(kb)
     output += version
     output += osType[1:]
-    output += language
+    output += language[1:]
 
-    output += path[path.rfind(os.sep):]
+    output += path[path.rfind(os.sep) + 1:]
 
     return output
 
@@ -217,32 +328,18 @@ def getKB(aPath):
     return -1
 
 
-def getLanguage(aPath):
-
-    languages = ['\\NEU\\', '\\ARA\\', '\\CHS\\', '\\CHT\\', '\\CSY\\',
-                 '\\DAN\\', '\\DEU\\', '\\ELL\\', '\\ENU\\', '\\ESN\\',
-                 '\\FIN\\', '\\FRA\\', '\\HEB\\', '\\HUN\\', '\\ITA\\',
-                 '\\JPN\\', '\\KOR\\', '\\NLD\\', '\\NOR\\', '\\PLK\\',
-                 '\\PTB\\', '\\PTG\\', '\\RUS\\', '\\SVE\\', '\\TRK\\']
-
-    for language in languages:
-        if language in aPath:
-            return language[1:len(language) - 1]
-
-    return 'UNKNOWN LANGUAGE'
-
-
 def getUpdatesFromPackage(aFiles, aDate):
 
     updates = Updates()
     versions = Versions()
     types = Types()
+    languages = Languages()
 
     for updateFile in aFiles:
         kb = getKB(updateFile)
         osVersion = versions.getVersion(updateFile)
         osType = types.getType(updateFile)
-        language = getLanguage(updateFile)
+        language = languages.getLanguage(updateFile)
 
         updates.addUpdate(updateFile, kb, osVersion, osType, language, aDate)
 
