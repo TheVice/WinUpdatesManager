@@ -30,7 +30,7 @@ if __name__ == '__main__':
     elif argc == 3:
         files = core.dirs.getSubDirectoryFiles(sys.argv[1])
         updates = core.updates.getUpdatesFromPackage(files,
-            core.dates.getDatesOfUpdates([sys.argv[2]]))
+            core.dates.getDatesOfUpdates([sys.argv[2]])[0])
 
         for update in updates:
             print(update)  # print(core.updates.toPathStyle(update))
