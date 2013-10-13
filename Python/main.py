@@ -10,7 +10,7 @@ if __name__ == '__main__':
 
     if argc == 1 or argc > 3:
         print('Bad using.\n'
-              'Correct will be ' + sys.argv[0] +
+              'Correct will be ' + sys.argv[0] + 
               ' <path to directory with updates> <date for non year edition>')
 
     elif argc == 2:
@@ -25,11 +25,12 @@ if __name__ == '__main__':
 
         for monthUpdates in updates:
             for update in monthUpdates:
-                print(core.updates.toPathStyle(update))
+                print(update)  # print(core.updates.toPathStyle(update))
 
     elif argc == 3:
         files = core.dirs.getSubDirectoryFiles(sys.argv[1])
-        updates = core.updates.getUpdatesFromPackage(files, sys.argv[2])
+        updates = core.updates.getUpdatesFromPackage(files,
+            core.dates.getDatesOfUpdates([sys.argv[2]]))
 
         for update in updates:
-            print(core.updates.toPathStyle(update))
+            print(update)  # print(core.updates.toPathStyle(update))

@@ -474,6 +474,9 @@ def getUpdatesFromPackage(aFiles, aDate):
     languages = Languages()
 
     for updateFile in aFiles:
+
+        updateFile = updateFile[updateFile.find(os.sep):]
+
         kb = getKB(updateFile)
         osVersion = versions.getVersion(updateFile)
         osType = types.getType(updateFile)

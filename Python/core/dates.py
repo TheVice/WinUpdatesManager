@@ -32,7 +32,7 @@ def getDatesOfUpdates(aFolders):
         year = '20' + folder[2:4]
         month = folder[0:2]
 
-        if not year.isdigit() or not month.isdigit():
+        if not year.isdigit() or not month.isdigit() or int(month) > 12:
             continue
 
         day = getDayFromYearMonthAndWeek(int(year), int(month), 2, 2)

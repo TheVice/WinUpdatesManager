@@ -120,7 +120,7 @@ class TestSequenceFunctions(unittest.TestCase):
         languages = ['English']
 
         for i in range(0, len(updates)):
-            self.assertEqual(paths[i], updates[i]['Path'])
+            self.assertEqual(paths[i][2:], updates[i]['Path'])
             self.assertEqual(kbs[i], updates[i]['KB'])
             self.assertEqual(versions[i], updates[i]['Version'])
             self.assertEqual(types[i], updates[i]['Type'])

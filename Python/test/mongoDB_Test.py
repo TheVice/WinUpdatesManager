@@ -9,18 +9,14 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def test_complex(self):
 
-        db.mongoDB.dropTableInDB()
-        items = db.mongoDB.getFromDB()
-        self.assertEqual(0, items.count())
-
         paths = ['E:' + os.sep + '1212' + os.sep + '2779030' + os.sep +
             'Windows8' + os.sep + 'x86' + os.sep + 'NEU' + os.sep +
             'WINDOWS8-RT-KB2779030-X86.MSU']
         date = datetime.datetime(2012, 12, 11)
         updates = core.updates.getUpdatesFromPackage(paths, date)
 
-        db.mongoDB.insertToDB(aItems=updates)
-        items = db.mongoDB.getFromDB()
+        db.mongoDB.insertToDB(aDB='win32', aTable='updates', aItems=updates)
+        items = db.mongoDB.getItemsFromDB(aDB='win32', aTable='updates')
         self.assertEqual(len(updates), items.count())
 
         for i in range(len(updates)):
@@ -31,22 +27,18 @@ class TestSequenceFunctions(unittest.TestCase):
             self.assertEqual(updates[i]['Language'], items[i]['Language'])
             self.assertEqual(updates[i]['Date'], items[i]['Date'])
 
-        db.mongoDB.deleteFromDB(aItems=items)
-        items = db.mongoDB.getFromDB()
+        db.mongoDB.deleteFromDB(aDB='win32', aTable='updates', aItems=items)
+        items = db.mongoDB.getItemsFromDB(aDB='win32', aTable='updates')
 
         self.assertEqual(0, items.count())
 
-        db.mongoDB.insertToDB(aItems=updates)
-        items = db.mongoDB.getFromDB()
+        db.mongoDB.insertToDB(aDB='win32', aTable='updates', aItems=updates)
+        items = db.mongoDB.getItemsFromDB(aDB='win32', aTable='updates')
         self.assertEqual(len(updates), items.count())
 
-        db.mongoDB.deleteFromDB(aItems=updates)
-        items = db.mongoDB.getFromDB()
+        db.mongoDB.deleteFromDB(aDB='win32', aTable='updates', aItems=updates)
+        items = db.mongoDB.getItemsFromDB(aDB='win32', aTable='updates')
         self.assertEqual(0, items.count())
-
-    def test_updateInDB(self):
-
-        db.mongoDB.dropTableInDB()
 
         paths = ['E:' + os.sep + '0906' + os.sep + 'WINDOWS' + os.sep +
                 'WINDOWS2000' + os.sep + '920685' + os.sep +
@@ -58,8 +50,8 @@ class TestSequenceFunctions(unittest.TestCase):
         date = datetime.datetime(2006, 9, 12)
         updates = core.updates.getUpdatesFromPackage(paths, date)
 
-        db.mongoDB.insertToDB(aItems=updates)
-        items = db.mongoDB.getFromDB()
+        db.mongoDB.insertToDB(aDB='win32', aTable='updates', aItems=updates)
+        items = db.mongoDB.getItemsFromDB(aDB='win32', aTable='updates')
         self.assertEqual(len(updates), items.count())
 
         languages = ['Enu', 'Rus']
@@ -72,13 +64,56 @@ class TestSequenceFunctions(unittest.TestCase):
             updates[i]['Language'] = languages[i]
             ids.append({'_id': updates[i]['_id']})
 
-        db.mongoDB.updateInDB(aItems=updates)
-        items = db.mongoDB.getFromDB()
+        db.mongoDB.updateInDB(aDB='win32', aTable='updates', aItems=updates)
+        items = db.mongoDB.getItemsFromDB(aDB='win32', aTable='updates')
         self.assertEqual(len(updates), items.count())
 
         for i in range(0, len(updates)):
             self.assertEqual(ids[i]['_id'], items[i]['_id'])
             self.assertEqual(languages[i], items[i]['Language'])
+
+        db.mongoDB.dropTableInDB(aDB='win32', aTable='updates')
+        items = db.mongoDB.getItemsFromDB(aDB='win32', aTable='updates')
+        self.assertEqual(0, items.count())
+
+    def test_getDBsAndCollections(self):
+
+        db.mongoDB.insertToDB(aDB='win16',
+                              aTable='updates1',
+                              aItems=[{'item1': 1}, {'item2': 2}])
+        db.mongoDB.insertToDB(aDB='win16',
+                              aTable='updates2',
+                              aItems=[{'item3': 3}, {'item4': 4}])
+        db.mongoDB.insertToDB(aDB='win64',
+                              aTable='updates3',
+                              aItems=[{'item5': 5}, {'item6': 6}])
+
+        dbs = db.mongoDB.getDBs()
+
+        db1 = False
+        db2 = False
+        for dataBase in dbs:
+            if(dataBase == 'win32'):
+                db1 = True
+            elif(dataBase == 'win64'):
+                db2 = True
+
+        self.assertTrue(db1)
+        self.assertEqual(db1, db2)
+
+        collections = db.mongoDB.getCollections('win16')
+        self.assertEqual(3, len(collections))
+        self.assertEqual(['system.indexes', 'updates1', 'updates2'],
+            collections)
+
+        collections = db.mongoDB.getCollections('win64')
+        self.assertEqual(2, len(collections))
+        self.assertEqual(['system.indexes', 'updates3'], collections)
+
+        db.mongoDB.dropTableInDB(aDB='win16', aTable='updates1')
+        db.mongoDB.dropTableInDB(aDB='win16', aTable='updates2')
+        db.mongoDB.dropTableInDB(aDB='win64', aTable='updates3')
+
 
 if __name__ == '__main__':
 
