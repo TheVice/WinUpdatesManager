@@ -10,7 +10,7 @@ if __name__ == '__main__':
 
     if argc == 1 or argc > 3:
         print('Bad using.\n'
-              'Correct will be ' + sys.argv[0] + 
+              'Correct will be ' + sys.argv[0] +
               ' <path to directory with updates> <date for non year edition>')
 
     elif argc == 2:

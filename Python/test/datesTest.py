@@ -1,4 +1,5 @@
 import unittest
+import datetime
 import core.dates
 
 
@@ -18,6 +19,11 @@ class TestSequenceFunctions(unittest.TestCase):
 
         for correctDay, date in zip(correctDays, dates):
             self.assertEqual(correctDay, date.day)
+
+    def test_getDatesFromJSON_Recode(self):
+
+        self.assertEqual(datetime.date(2013, 2, 12),
+            core.dates.getDatesFromJSON_Recode('datetime.date(2013, 2, 12)'))
 
 
 if __name__ == '__main__':

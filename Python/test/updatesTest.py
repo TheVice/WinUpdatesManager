@@ -764,6 +764,47 @@ class TestSequenceFunctions(unittest.TestCase):
         kbs = core.updates.getKBsFromReport(report)
         self.assertEqual(kbsCorrect, kbs)
 
+    def test_prepareLineToParse(self):
+
+        line = ('{\'Type\': \'x86\', \'Date\': datetime.date(2013, 2, 12),' +
+            ' \'KB\': 2802968, \'Language\': \'Turkish\', \'Path\':' +
+            ' \'\\2802968\\WindowsXP\\x86\\TRK\\' +
+            'WINDOWSXP-KB2802968-X86-TRK.EXE\', \'Version\': \'Windows XP\'}')
+
+        line = core.updates.prepareLineToParse(line)
+        newLine = ('{\'Type\': \'x86\',' +
+            '\t\'Date\': \'datetime.date(2013, 2, 12),' +
+            '\t\'KB\': \'2802968,\t\'Language\': \'Turkish\',\t\'Path\':' +
+            ' \'\\2802968\\WindowsXP\\x86\\TRK\\' +
+            'WINDOWSXP-KB2802968-X86-TRK.EXE\',' +
+            '\t\'Version\': \'Windows XP\'\t}')
+        self.assertEqual(newLine, line)
+
+    def test_getJSONvalue(self):
+
+        line = ('{\'Type\': \'x86\', \'Date\': datetime.date(2013, 2, 12),' +
+            ' \'KB\': 2802968, \'Language\': \'Turkish\', \'Path\':' +
+            ' \'\\2802968\\WindowsXP\\x86\\TRK\\' +
+            'WINDOWSXP-KB2802968-X86-TRK.EXE\', \'Version\': \'Windows XP\'}')
+
+        line = core.updates.prepareLineToParse(line)
+
+        #kb = re.search('(?<=KB\': )(\d+)', line).group(0)
+        #osType = re.search('(?<=Type\': \')(\w+)', line).group(0)
+        #osLanguage = re.search('(?<=Language\': \')(\w+)', line).group(0)
+        #(?<=Version': )('.+', ')
+
+        self.assertEqual('\\2802968\\WindowsXP\\x86\\TRK\\' +
+            'WINDOWSXP-KB2802968-X86-TRK.EXE',
+            core.updates.getJSONvalue(line, 'Path'))
+        self.assertEqual(2802968, int(core.updates.getJSONvalue(line, 'KB')))
+        self.assertEqual('Windows XP',
+            core.updates.getJSONvalue(line, 'Version'))
+        self.assertEqual('x86', core.updates.getJSONvalue(line, 'Type'))
+        self.assertEqual('Turkish',
+            core.updates.getJSONvalue(line, 'Language'))
+        self.assertEqual('datetime.date(2013, 2, 12)',
+            core.updates.getJSONvalue(line, 'Date'))
 
 if __name__ == '__main__':
 

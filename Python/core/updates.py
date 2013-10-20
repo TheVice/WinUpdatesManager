@@ -1,5 +1,5 @@
 import os
-
+import re
 
 class Updates:
 
@@ -510,3 +510,23 @@ def getKBsFromReport(aReport):
 
     return KBs
 
+
+def prepareLineToParse(aLine):
+    aLine = aLine.replace(', \'', ',\t\'')
+    aLine = aLine.replace('\'}', '\'\t}')
+    aLine = aLine.replace('\'KB\': ', '\'KB\': \'')
+    aLine = aLine.replace('\'Date\': ', '\'Date\': \'')
+    return aLine
+
+
+def getJSONvalue(aText, aJSON_Parameter):
+    parameter = '(?<=' + aJSON_Parameter + '\': \')(.+\t)'
+    value = re.search(parameter, aText).group(0)
+
+    value = value[:value.find('\'')]
+
+    pos = value.rfind(',')
+    if(pos != -1):
+        value = value[:pos]
+
+    return value
