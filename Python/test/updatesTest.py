@@ -51,7 +51,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
         versions = core.updates.Versions()
 
-        path = os.sep + 'midle' + os.sep + 'of' + os.sep + 'nowhere' + os.sep
+        path = os.sep + 'middle' + os.sep + 'of' + os.sep + 'nowhere' + os.sep
         self.assertEqual({'UNKNOWN VERSION': path}, versions.getVersion(path))
         self.assertEqual(versions.Win2k,
                         versions.getVersion(os.sep + 'Windows2000' + os.sep))
@@ -64,7 +64,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
         types = core.updates.Types()
 
-        path = os.sep + 'midle' + os.sep + 'of' + os.sep + 'nowhere' + os.sep
+        path = os.sep + 'middle' + os.sep + 'of' + os.sep + 'nowhere' + os.sep
         self.assertEqual({'UNKNOWN TYPE': path}, types.getType(path))
         self.assertEqual(types.x86,
                         types.getType(os.sep + 'x86' + os.sep))
@@ -77,7 +77,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
         languages = core.updates.Languages()
 
-        path = os.sep + 'midle' + os.sep + 'of' + os.sep + 'nowhere' + os.sep
+        path = os.sep + 'middle' + os.sep + 'of' + os.sep + 'nowhere' + os.sep
         self.assertEqual({'UNKNOWN LANGUAGE': path},
                             languages.getLanguage(path))
         self.assertEqual(languages.Neutral,

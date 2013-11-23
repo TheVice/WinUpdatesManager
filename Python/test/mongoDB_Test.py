@@ -15,6 +15,7 @@ class TestSequenceFunctions(unittest.TestCase):
         date = datetime.datetime(2012, 12, 11)
         updates = core.updates.getUpdatesFromPackage(paths, date)
 
+        db.mongoDB.dropTableInDB(aDB='win32', aTable='updates')
         db.mongoDB.insertToDB(aDB='win32', aTable='updates', aItems=updates)
         items = db.mongoDB.getItemsFromDB(aDB='win32', aTable='updates')
         self.assertEqual(len(updates), items.count())
@@ -114,6 +115,20 @@ class TestSequenceFunctions(unittest.TestCase):
         db.mongoDB.dropTableInDB(aDB='win16', aTable='updates2')
         db.mongoDB.dropTableInDB(aDB='win64', aTable='updates3')
 
+    def test_pymongoDate2DateTime(self):
+        updates = []
+
+        for i in range(1, 31):
+            data = {}
+            data['date'] = datetime.date(2013, 12, i)
+            updates.append(data)
+
+        updates = db.mongoDB.pymongoDate2DateTime(updates, 'date')
+
+        i = 1
+        for update in updates:
+            self.assertEqual(datetime.datetime(2013, 12, i), update['date'])
+            i += 1
 
 if __name__ == '__main__':
 

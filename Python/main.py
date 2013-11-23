@@ -2,16 +2,21 @@ import sys
 import core.dates
 import core.dirs
 import core.updates
+import db.mongoDB
 
 if __name__ == '__main__':
 
     argc = len(sys.argv)
     updates = []
 
-    if argc == 1 or argc > 3:
-        print('Bad using.\n'
-              'Correct will be ' + sys.argv[0] +
-              ' <path to directory with updates> <date for non year edition>')
+    if argc == 1:
+        print('Bad using.')
+        print('Sample using ' + sys.argv[0] +
+              ' <path to directory with updates>' +
+              ' <date for non year edition>')
+        print('Sample using ' + sys.argv[0] +
+              ' <path to JSON data file, from that insert to MongoDB info>' +
+              ' <data base name> <table name>')
 
     elif argc == 2:
         files = core.dirs.getSubDirectoryFiles(sys.argv[1])
@@ -25,7 +30,7 @@ if __name__ == '__main__':
 
         for monthUpdates in updates:
             for update in monthUpdates:
-                print(update)  # print(core.updates.toPathStyle(update))
+                print(update)
 
     elif argc == 3:
         files = core.dirs.getSubDirectoryFiles(sys.argv[1])
@@ -33,4 +38,10 @@ if __name__ == '__main__':
             core.dates.getDatesOfUpdates([sys.argv[2]])[0])
 
         for update in updates:
-            print(update)  # print(core.updates.toPathStyle(update))
+            print(update)
+
+    elif argc == 4:
+        updates = core.updates.getUpdatesFromJSONfile(sys.argv[1])
+        updates = db.mongoDB.pymongoDate2DateTime(updates, 'Date')
+        db.mongoDB.insertToDB(aDB=sys.argv[2], aTable=sys.argv[3],
+                              aItems=updates)

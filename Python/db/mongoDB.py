@@ -1,4 +1,5 @@
 import sys
+import datetime
 import pymongo
 
 
@@ -149,3 +150,12 @@ def getCollections(aDB, aHostAndPort=None,
     except:
         raise Exception('Unexpected error:', sys.exc_info()[0])
 
+
+def pymongoDate2DateTime(aCollection=[], aFieldName=None):
+
+    for i in range(0, len(aCollection)):
+        date = aCollection[i][aFieldName]
+        aCollection[i][aFieldName] = datetime.datetime(date.year, date.month,
+                                                        date.day)
+
+    return aCollection

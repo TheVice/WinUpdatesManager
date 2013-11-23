@@ -1,5 +1,7 @@
 import os
 import re
+import core.dates
+
 
 class Updates:
 
@@ -70,6 +72,8 @@ class Versions:
         self.Win2k8R2 = 'Windows Server 2008 R2'
         self.Eight = 'Windows 8'
         self.Win2k12 = 'Windows Server 2012'
+        self.EightDotOne = 'Windows 8.1'
+        self.Win2k12R2 = 'Windows Server 2012 R2'
 
         self.WinRT = 'Windows RT'
 
@@ -84,6 +88,8 @@ class Versions:
         versions[os.sep + 'WindowsServer2008R2' + os.sep] = self.Win2k8R2
         versions[os.sep + 'Windows8' + os.sep] = self.Eight
         versions[os.sep + 'WindowsServer2012' + os.sep] = self.Win2k12
+        versions[os.sep + 'Windows8.1' + os.sep] = self.EightDotOne
+        versions[os.sep + 'WindowsServer2012R2' + os.sep] = self.Win2k12R2
 
         versions[os.sep + 'WindowsRT' + os.sep] = self.WinRT
 
@@ -98,6 +104,8 @@ class Versions:
         versions[os.sep + 'windowsserver2008r2' + os.sep] = self.Win2k8R2
         versions[os.sep + 'windows8' + os.sep] = self.Eight
         versions[os.sep + 'windowsserver2012' + os.sep] = self.Win2k12
+        versions[os.sep + 'windows8.1' + os.sep] = self.EightDotOne
+        versions[os.sep + 'windowswerver2012r2' + os.sep] = self.Win2k12R2
 
         versions[os.sep + 'windowsrt' + os.sep] = self.WinRT
 
@@ -110,6 +118,8 @@ class Versions:
         versions[os.sep + 'WINDOWSSERVER2008R2' + os.sep] = self.Win2k8R2
         versions[os.sep + 'WINDOWS8' + os.sep] = self.Eight
         versions[os.sep + 'WINDOWSSERVER2012' + os.sep] = self.Win2k12
+        versions[os.sep + 'WINDOWS8.1' + os.sep] = self.EightDotOne
+        versions[os.sep + 'WINDOWSSERVER2012R2' + os.sep] = self.Win2k12R2
 
         versions[os.sep + 'WINDOWSRT' + os.sep] = self.WinRT
 
@@ -514,6 +524,7 @@ def getKBsFromReport(aReport):
 def prepareLineToParse(aLine):
     aLine = aLine.replace(', \'', ',\t\'')
     aLine = aLine.replace('\'}', '\'\t}')
+    aLine = aLine.replace(')}', '),\t}')
     aLine = aLine.replace('\'KB\': ', '\'KB\': \'')
     aLine = aLine.replace('\'Date\': ', '\'Date\': \'')
     return aLine
@@ -530,3 +541,40 @@ def getJSONvalue(aText, aJSON_Parameter):
         value = value[:pos]
 
     return value
+
+
+def getUpdatesFromJSONfile(aFile):
+    updates = Updates()
+    try:
+        inputFile = open(aFile, 'r')
+        versions = Versions()
+
+        for line in inputFile:
+            line = prepareLineToParse(line)
+
+            path = getJSONvalue(line, 'Path')
+            path = path.replace(os.sep + os.sep, os.sep)
+
+            kb = None
+            try:
+                kb = int(getJSONvalue(line, 'KB'))
+            except:
+                kb = getKB(path)
+
+            osVersion = None
+            try:
+                osVersion = getJSONvalue(line, 'Version')
+            except:
+                osVersion = versions.getVersion(line)
+
+            osType = getJSONvalue(line, 'Type')
+            language = getJSONvalue(line, 'Language')
+            date = getJSONvalue(line, 'Date')
+            updates.addUpdate(path, kb, osVersion, osType, language,
+                              core.dates.getDatesFromJSON_Recode(date))
+
+        inputFile.close()
+    except:
+        raise Exception('Unexpected error while work with file:' + aFile)
+
+    return updates

@@ -3,15 +3,14 @@ WinUpdatesManager
 
 Series of scripts to manage of MS DLC from KB913086 and others.
 
-Using
+Sample using
 =================
-1)Mount ISO-9660 DVD5 image with security updates. 
-2)Execute 'python main.py E:\ 1013'
-Where E:\ mount point (e.g. for Windows case) and 1013 date in MMYY format.
+1)Mount ISO-9660 DVD5 image with security updates.
+2)Execute python main.py <path> <MMYY>
 3)List of update description in JSON format you can save to file,
 just add to command '> file.json'.
-4)After this you can import to data base that support JSON.
-For e.g. on MongoDB this do like this 'mongoimport updates.JSON -d win32 -c updates'
+4)After this you can import stored info into MongoDB by typing
+python main.py <file.json> <database> <collection>
 
 =============
 
