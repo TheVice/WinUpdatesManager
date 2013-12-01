@@ -10,6 +10,12 @@ class Updates:
         self.mData = []
         self.mIndex = 0
 
+    def addUpdates(self, aUpdates):
+
+        for up in aUpdates:
+            self.addUpdate(up['Path'], up['KB'], up['Version'],
+                           up['Type'], up['Language'], up['Date'])
+
     def addUpdate(self, aPath=None, aKB=None, aOsVersion=None,
         aOsType=None, aLanguage=None, aDate=None):
 
@@ -237,7 +243,7 @@ class Languages:
         languages[os.sep + 'Italian' + os.sep] = self.Italian
         languages[os.sep + 'Japanese (Japan)' + os.sep] = self.Japanese
         languages[os.sep + 'Korean' + os.sep] = self.Korean
-        languages[os.sep + 'Norwegian'] = self.Norwegian    # ()
+        languages[os.sep + 'Norwegian'] = self.Norwegian
         languages[os.sep + 'Polish' + os.sep] = self.Polish
         languages[os.sep + 'Portuguese (Brazil)' + os.sep] = (
             self.Portuguese_Brazil)
@@ -522,6 +528,7 @@ def getKBsFromReport(aReport):
 
 
 def prepareLineToParse(aLine):
+
     aLine = aLine.replace(', \'', ',\t\'')
     aLine = aLine.replace('\'}', '\'\t}')
     aLine = aLine.replace(')}', '),\t}')
@@ -531,6 +538,7 @@ def prepareLineToParse(aLine):
 
 
 def getJSONvalue(aText, aJSON_Parameter):
+
     parameter = '(?<=' + aJSON_Parameter + '\': \')(.+\t)'
     value = re.search(parameter, aText).group(0)
 
@@ -544,10 +552,12 @@ def getJSONvalue(aText, aJSON_Parameter):
 
 
 def getUpdatesFromJSONfile(aFile):
+
     updates = Updates()
     try:
         inputFile = open(aFile, 'r')
         versions = Versions()
+        types = Types()
 
         for line in inputFile:
             line = prepareLineToParse(line)
@@ -567,7 +577,12 @@ def getUpdatesFromJSONfile(aFile):
             except:
                 osVersion = versions.getVersion(line)
 
-            osType = getJSONvalue(line, 'Type')
+            osType = None
+            try:
+                osType = getJSONvalue(line, 'Type')
+            except:
+                osType = types.getType(line)
+
             language = getJSONvalue(line, 'Language')
             date = getJSONvalue(line, 'Date')
             updates.addUpdate(path, kb, osVersion, osType, language,

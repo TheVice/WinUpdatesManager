@@ -4,6 +4,8 @@ import core.dirs
 import core.updates
 import db.mongoDB
 
+dbClient = db.mongoDB.MongoDBClient()
+
 if __name__ == '__main__':
 
     argc = len(sys.argv)
@@ -43,5 +45,5 @@ if __name__ == '__main__':
     elif argc == 4:
         updates = core.updates.getUpdatesFromJSONfile(sys.argv[1])
         updates = db.mongoDB.pymongoDate2DateTime(updates, 'Date')
-        db.mongoDB.insertToDB(aDB=sys.argv[2], aTable=sys.argv[3],
+        dbClient.insertToDB(aDB=sys.argv[2], aTable=sys.argv[3],
                               aItems=updates)

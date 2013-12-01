@@ -16,7 +16,7 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertRaises(IndexError, updates.__getitem__, 1)
 
         for update in updates:
-            self.fail('Actually there are no updates!')
+            self.fail('Actually there are no updates! ', update)
 
         updates.addUpdate('Some' + os.sep + 'Path', 123,
                 'Win32', '80x86', 'English', datetime.datetime(1970, 1, 1))
@@ -26,6 +26,22 @@ class TestSequenceFunctions(unittest.TestCase):
                 'Win64', 'x86-64', 'Russian', datetime.datetime(2008, 12, 11))
         updates.addUpdate('Some' + os.sep + 'Path2', 456,
                 'Win64', 'x86-64', 'Russian', datetime.datetime(2008, 12, 11))
+
+        items = []
+        items.append({'Path': 'Some' + os.sep + 'Path', 'KB': 123,
+                      'Version': 'Win32', 'Type': '80x86',
+                      'Language': 'English',
+                      'Date': datetime.datetime(1970, 1, 1)})
+        items.append({'Path': 'Some' + os.sep + 'Path', 'KB': 123,
+                      'Version': 'Win32', 'Type': '80x86',
+                      'Language': 'English',
+                      'Date': datetime.datetime(1970, 1, 1)})
+        items.append({'Path': 'Some' + os.sep + 'Path2', 'KB': 456,
+                      'Version': 'Win64', 'Type': 'x86-64',
+                      'Language': 'Russian',
+                      'Date': datetime.datetime(2008, 12, 11)})
+
+        updates.addUpdates(items)
 
         self.assertEqual(2, len(updates))
         self.assertRaises(IndexError, updates.__getitem__, -1)
@@ -89,8 +105,34 @@ class TestSequenceFunctions(unittest.TestCase):
 
     #TODO: test_getItemByPath(self):
     #TODO: test_getKeyPathByValue(self):
-    #TODO: test_unknownSubstance(self):
-    #TODO: test_toPathStyle(self):
+    def test_unknownSubstance(self):
+
+        kb = 123
+        lang = 'NEU'
+        osType = 'x86'
+
+        substance = core.updates.unknownSubstance('KB', kb)
+        self.assertEqual({'KB': 123}, substance)
+        substance = core.updates.unknownSubstance('Lang', lang)
+        self.assertEqual({'Lang': 'NEU'}, substance)
+        substance = core.updates.unknownSubstance('Type', osType)
+        self.assertEqual({'Type': 'x86'}, substance)
+
+    def test_toPathStyle(self):
+
+        path = os.sep + os.path.join('0212', str(123), 'Windows',
+            'x86', 'Neutral', '123.MSU')
+        update = {'Path': path, 'Date': datetime.date(2012, 2, 1), 'KB': 123,
+                  'Version': 'Windows', 'Type': 'x86', 'Language': 'Neutral'}
+        newPath = core.updates.toPathStyle(update)
+        self.assertEqual(path, newPath)
+
+        path = os.sep + os.path.join('MMYY', str(123), 'Windows',
+            'x86', 'Neutral', '123.MSU')
+        update = {'Path': path, 'Date': 'MMYY', 'KB': 123,
+                  'Version': 'Windows', 'Type': 'x86', 'Language': 'Neutral'}
+        newPath = core.updates.toPathStyle(update)
+        self.assertEqual(path, newPath)
 
     def test_getKB(self):
 
@@ -788,11 +830,6 @@ class TestSequenceFunctions(unittest.TestCase):
             'WINDOWSXP-KB2802968-X86-TRK.EXE\', \'Version\': \'Windows XP\'}')
 
         line = core.updates.prepareLineToParse(line)
-
-        #kb = re.search('(?<=KB\': )(\d+)', line).group(0)
-        #osType = re.search('(?<=Type\': \')(\w+)', line).group(0)
-        #osLanguage = re.search('(?<=Language\': \')(\w+)', line).group(0)
-        #(?<=Version': )('.+', ')
 
         self.assertEqual('\\2802968\\WindowsXP\\x86\\TRK\\' +
             'WINDOWSXP-KB2802968-X86-TRK.EXE',

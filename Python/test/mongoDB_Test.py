@@ -4,6 +4,8 @@ import datetime
 import core.updates
 import db.mongoDB
 
+dbClient = db.mongoDB.MongoDBClient()
+
 
 class TestSequenceFunctions(unittest.TestCase):
 
@@ -15,9 +17,9 @@ class TestSequenceFunctions(unittest.TestCase):
         date = datetime.datetime(2012, 12, 11)
         updates = core.updates.getUpdatesFromPackage(paths, date)
 
-        db.mongoDB.dropTableInDB(aDB='win32', aTable='updates')
-        db.mongoDB.insertToDB(aDB='win32', aTable='updates', aItems=updates)
-        items = db.mongoDB.getItemsFromDB(aDB='win32', aTable='updates')
+        dbClient.dropTableInDB(aDB='win32', aTable='updates')
+        dbClient.insertToDB(aDB='win32', aTable='updates', aItems=updates)
+        items = dbClient.getItemsFromDB(aDB='win32', aTable='updates')
         self.assertEqual(len(updates), items.count())
 
         for i in range(len(updates)):
@@ -28,17 +30,18 @@ class TestSequenceFunctions(unittest.TestCase):
             self.assertEqual(updates[i]['Language'], items[i]['Language'])
             self.assertEqual(updates[i]['Date'], items[i]['Date'])
 
-        db.mongoDB.deleteFromDB(aDB='win32', aTable='updates', aItems=items)
-        items = db.mongoDB.getItemsFromDB(aDB='win32', aTable='updates')
+        dbClient.deleteFromDB(aDB='win32', aTable='updates', aItems=items)
+        items = dbClient.getItemsFromDB(aDB='win32', aTable='updates')
 
         self.assertEqual(0, items.count())
 
-        db.mongoDB.insertToDB(aDB='win32', aTable='updates', aItems=updates)
-        items = db.mongoDB.getItemsFromDB(aDB='win32', aTable='updates')
+        dbClient.insertToDB(aDB='win32', aTable='updates', aItems=updates)
+        items = dbClient.getItemsFromDB(aDB='win32', aTable='updates')
         self.assertEqual(len(updates), items.count())
 
-        db.mongoDB.deleteFromDB(aDB='win32', aTable='updates', aItems=updates)
-        items = db.mongoDB.getItemsFromDB(aDB='win32', aTable='updates')
+        dbClient.deleteFromDB(aDB='win32', aTable='updates',
+                                   aItems=updates)
+        items = dbClient.getItemsFromDB(aDB='win32', aTable='updates')
         self.assertEqual(0, items.count())
 
         paths = ['E:' + os.sep + '0906' + os.sep + 'WINDOWS' + os.sep +
@@ -51,8 +54,8 @@ class TestSequenceFunctions(unittest.TestCase):
         date = datetime.datetime(2006, 9, 12)
         updates = core.updates.getUpdatesFromPackage(paths, date)
 
-        db.mongoDB.insertToDB(aDB='win32', aTable='updates', aItems=updates)
-        items = db.mongoDB.getItemsFromDB(aDB='win32', aTable='updates')
+        dbClient.insertToDB(aDB='win32', aTable='updates', aItems=updates)
+        items = dbClient.getItemsFromDB(aDB='win32', aTable='updates')
         self.assertEqual(len(updates), items.count())
 
         languages = ['Enu', 'Rus']
@@ -65,31 +68,31 @@ class TestSequenceFunctions(unittest.TestCase):
             updates[i]['Language'] = languages[i]
             ids.append({'_id': updates[i]['_id']})
 
-        db.mongoDB.updateInDB(aDB='win32', aTable='updates', aItems=updates)
-        items = db.mongoDB.getItemsFromDB(aDB='win32', aTable='updates')
+        dbClient.updateInDB(aDB='win32', aTable='updates', aItems=updates)
+        items = dbClient.getItemsFromDB(aDB='win32', aTable='updates')
         self.assertEqual(len(updates), items.count())
 
         for i in range(0, len(updates)):
             self.assertEqual(ids[i]['_id'], items[i]['_id'])
             self.assertEqual(languages[i], items[i]['Language'])
 
-        db.mongoDB.dropTableInDB(aDB='win32', aTable='updates')
-        items = db.mongoDB.getItemsFromDB(aDB='win32', aTable='updates')
+        dbClient.dropTableInDB(aDB='win32', aTable='updates')
+        items = dbClient.getItemsFromDB(aDB='win32', aTable='updates')
         self.assertEqual(0, items.count())
 
     def test_getDBsAndCollections(self):
 
-        db.mongoDB.insertToDB(aDB='win16',
-                              aTable='updates1',
-                              aItems=[{'item1': 1}, {'item2': 2}])
-        db.mongoDB.insertToDB(aDB='win16',
-                              aTable='updates2',
-                              aItems=[{'item3': 3}, {'item4': 4}])
-        db.mongoDB.insertToDB(aDB='win64',
-                              aTable='updates3',
-                              aItems=[{'item5': 5}, {'item6': 6}])
+        dbClient.insertToDB(aDB='win16',
+                                 aTable='updates1',
+                                 aItems=[{'item1': 1}, {'item2': 2}])
+        dbClient.insertToDB(aDB='win16',
+                                 aTable='updates2',
+                                 aItems=[{'item3': 3}, {'item4': 4}])
+        dbClient.insertToDB(aDB='win64',
+                                 aTable='updates3',
+                                 aItems=[{'item5': 5}, {'item6': 6}])
 
-        dbs = db.mongoDB.getDBs()
+        dbs = dbClient.getDBs()
 
         db1 = False
         db2 = False
@@ -102,29 +105,28 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertTrue(db1)
         self.assertEqual(db1, db2)
 
-        collections = db.mongoDB.getCollections('win16')
+        collections = dbClient.getCollections('win16')
         self.assertEqual(3, len(collections))
         self.assertEqual(['system.indexes', 'updates1', 'updates2'],
             collections)
 
-        collections = db.mongoDB.getCollections('win64')
+        collections = dbClient.getCollections('win64')
         self.assertEqual(2, len(collections))
         self.assertEqual(['system.indexes', 'updates3'], collections)
 
-        db.mongoDB.dropTableInDB(aDB='win16', aTable='updates1')
-        db.mongoDB.dropTableInDB(aDB='win16', aTable='updates2')
-        db.mongoDB.dropTableInDB(aDB='win64', aTable='updates3')
+        dbClient.dropTableInDB(aDB='win16', aTable='updates1')
+        dbClient.dropTableInDB(aDB='win16', aTable='updates2')
+        dbClient.dropTableInDB(aDB='win64', aTable='updates3')
 
     def test_pymongoDate2DateTime(self):
-        updates = []
 
+        updates = []
         for i in range(1, 31):
             data = {}
             data['date'] = datetime.date(2013, 12, i)
             updates.append(data)
 
         updates = db.mongoDB.pymongoDate2DateTime(updates, 'date')
-
         i = 1
         for update in updates:
             self.assertEqual(datetime.datetime(2013, 12, i), update['date'])

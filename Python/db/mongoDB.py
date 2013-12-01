@@ -3,152 +3,156 @@ import datetime
 import pymongo
 
 
-def getItemsFromDB(aDB,
+class MongoDBClient:
+
+    def getItemsFromDB(self,
+                       aDB,
+                       aTable,
+                       aHostAndPort=None,
+                       aWriteConcern='majority',
+                       aJournal=True,
+                       aQuery={},
+                       aProjection={},
+                       aSkip=None,
+                       aLimit=None):
+
+        try:
+            client = pymongo.MongoClient(host=aHostAndPort,
+                                         w=aWriteConcern,
+                                         j=aJournal)
+            db = client[aDB]
+            table = db[aTable]
+
+            items = {}
+
+            if aProjection != {}:
+                items = table.find(aQuery, aProjection)
+            else:
+                items = table.find(aQuery)
+
+            if aSkip is not None:
+                items = items.skip(aSkip)
+
+            if aLimit is not None:
+                items = items.limit(aLimit)
+
+            return items
+
+        except:
+            raise Exception('Unexpected error:', sys.exc_info()[0])
+
+    def insertToDB(self,
+                   aDB,
                    aTable,
                    aHostAndPort=None,
-                   aWriteConcern='majority',
+                   aWriteConcern=1,
                    aJournal=True,
-                   aQuery={},
-                   aProjection={},
-                   aSkip=None,
-                   aLimit=None):
+                   aItems=[]):
 
-    try:
-        client = pymongo.MongoClient(host=aHostAndPort,
-                                     w=aWriteConcern,
-                                     j=aJournal)
-        db = client[aDB]
-        table = db[aTable]
+        try:
+            client = pymongo.MongoClient(host=aHostAndPort,
+                                         w=aWriteConcern,
+                                         j=aJournal)
+            db = client[aDB]
+            table = db[aTable]
 
-        items = {}
+            table.insert(aItems)
 
-        if aProjection != {}:
-            items = table.find(aQuery, aProjection)
-        else:
-            items = table.find(aQuery)
+        except:
+            raise Exception('Unexpected error:', sys.exc_info()[0])
 
-        if aSkip is not None:
-            items = items.skip(aSkip)
+    def updateInDB(self,
+                   aDB,
+                   aTable,
+                   aHostAndPort=None,
+                   aWriteConcern=1,
+                   aJournal=True,
+                   aItems=[]):
 
-        if aLimit is not None:
-            items = items.limit(aLimit)
+        try:
+            client = pymongo.MongoClient(host=aHostAndPort,
+                                         w=aWriteConcern,
+                                         j=aJournal)
+            db = client[aDB]
+            table = db[aTable]
 
-        return items
+            for item in aItems:
+                table.save(item)
 
-    except:
-        raise Exception('Unexpected error:', sys.exc_info()[0])
+        except:
+            raise('Unexpected error:', sys.exc_info()[0])
 
+    def deleteFromDB(self,
+                     aDB,
+                     aTable,
+                     aHostAndPort=None,
+                     aWriteConcern=1,
+                     aJournal=True,
+                     aItems=[]):
 
-def insertToDB(aDB,
-               aTable,
+        try:
+            client = pymongo.MongoClient(host=aHostAndPort,
+                                         w=aWriteConcern,
+                                         j=aJournal)
+            db = client[aDB]
+            table = db[aTable]
+
+            for item in aItems:
+                table.remove(item)
+
+        except:
+            raise Exception('Unexpected error:', sys.exc_info()[0])
+
+    def dropTableInDB(self,
+                      aDB,
+                      aTable,
+                      aHostAndPort=None,
+                      aWriteConcern=1,
+                      aJournal=True):
+
+        try:
+            client = pymongo.MongoClient(host=aHostAndPort,
+                                         w=aWriteConcern,
+                                         j=aJournal)
+            db = client[aDB]
+            table = db[aTable]
+
+            table.drop()
+
+        except:
+            raise Exception('Unexpected error:', sys.exc_info()[0])
+
+    def getDBs(self,
                aHostAndPort=None,
-               aWriteConcern=1,
-               aJournal=True,
-               aItems=[]):
+               aWriteConcern='majority',
+               aJournal=True):
 
-    try:
-        client = pymongo.MongoClient(host=aHostAndPort,
-                                     w=aWriteConcern,
-                                     j=aJournal)
-        db = client[aDB]
-        table = db[aTable]
+        try:
+            client = pymongo.MongoClient(host=aHostAndPort,
+                                         w=aWriteConcern,
+                                         j=aJournal)
 
-        table.insert(aItems)
+            return client.database_names()
 
-    except:
-        raise Exception('Unexpected error:', sys.exc_info()[0])
+        except:
+            raise Exception('Unexpected error:', sys.exc_info()[0])
 
+    def getCollections(self,
+                       aDB,
+                       aHostAndPort=None,
+                       aWriteConcern='majority',
+                       aJournal=True):
 
-def updateInDB(aDB,
-               aTable,
-               aHostAndPort=None,
-               aWriteConcern=1,
-               aJournal=True,
-               aItems=[]):
+        try:
+            client = pymongo.MongoClient(host=aHostAndPort,
+                                         w=aWriteConcern,
+                                         j=aJournal)
 
-    try:
-        client = pymongo.MongoClient(host=aHostAndPort,
-                                     w=aWriteConcern,
-                                     j=aJournal)
-        db = client[aDB]
-        table = db[aTable]
+            db = client[aDB]
+            return db.collection_names()
 
-        for item in aItems:
-            table.save(item)
-
-    except:
-        raise('Unexpected error:', sys.exc_info()[0])
-
-
-def deleteFromDB(aDB,
-                 aTable,
-                 aHostAndPort=None,
-                 aWriteConcern=1,
-                 aJournal=True,
-                 aItems=[]):
-
-    try:
-        client = pymongo.MongoClient(host=aHostAndPort,
-                                     w=aWriteConcern,
-                                     j=aJournal)
-        db = client[aDB]
-        table = db[aTable]
-
-        for item in aItems:
-            table.remove(item)
-
-    except:
-        raise Exception('Unexpected error:', sys.exc_info()[0])
-
-
-def dropTableInDB(aDB,
-                  aTable,
-                  aHostAndPort=None,
-                  aWriteConcern=1,
-                  aJournal=True):
-
-    try:
-        client = pymongo.MongoClient(host=aHostAndPort,
-                                     w=aWriteConcern,
-                                     j=aJournal)
-        db = client[aDB]
-        table = db[aTable]
-
-        table.drop()
-
-    except:
-        raise Exception('Unexpected error:', sys.exc_info()[0])
-
-
-def getDBs(aHostAndPort=None,
-           aWriteConcern='majority',
-           aJournal=True):
-
-    try:
-        client = pymongo.MongoClient(host=aHostAndPort,
-                                     w=aWriteConcern,
-                                     j=aJournal)
-
-        return client.database_names()
-
-    except:
-        raise Exception('Unexpected error:', sys.exc_info()[0])
-
-
-def getCollections(aDB, aHostAndPort=None,
-                   aWriteConcern='majority',
-                   aJournal=True):
-
-    try:
-        client = pymongo.MongoClient(host=aHostAndPort,
-                                     w=aWriteConcern,
-                                     j=aJournal)
-
-        db = client[aDB]
-        return db.collection_names()
-
-    except:
-        raise Exception('Unexpected error:', sys.exc_info()[0])
+        except:
+            raise Exception('Unexpected error:', sys.exc_info()[0])
 
 
 def pymongoDate2DateTime(aCollection=[], aFieldName=None):
