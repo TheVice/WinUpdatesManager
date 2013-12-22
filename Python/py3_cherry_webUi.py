@@ -1,6 +1,7 @@
 import sys
 import cherrypy
 import core.updates
+import inspectReport
 import db.mongoDB
 
 
@@ -83,82 +84,84 @@ class Main(Page):
 
             return (
             self.header() +
-            '<H1>Nothing to show. KBs\' list is empty.</H2>' +
+            '<H1>Nothing to show. KBs\' list is empty.</H1>' +
             self.footer())
 
+        str_list = []
+
+        str_list.append('At the input report located')
+        for kb in KBs:
+            str_list.append('<br><I>')
+            str_list.append(str(kb))
+            str_list.append('</I>')
+
+        str_list.append('<br><H1>Count - ')
+        str_list.append(str(len(KBs)))
+        str_list.append('</H1>')
+
         query = {}
-        query['$or'] = self.kbsToQueryList(KBs)
+        query['$or'] = inspectReport.kbsToQueryPathList(KBs)
+        # inspectReport.kbsToQueryList(KBs)
         query['Version'] = aVersion
         query['Type'] = aPlatform
         query['Language'] = aLanguage
 
-        items = self.db.getItemsFromDB('win32', 'updates', aQuery=query)
-        if items.count() == 0:
+        sort = [('Date', 1), ('KB', 1)]
 
-            return (
-            self.header() +
-            '<H1>Not founded updates</H1>' + self.kbsToTable(KBs) +
-            self.footer())
+        data = inspectReport.getData(KBs, query, sort)
 
-        updates = core.updates.Updates()
-        updates.addUpdates(items)
+        updates = data.get('Updates')
 
-        updatesList = ('<H1>Update List</H1><p><ul>' +
-                       self.itemsData2TableRow(updates) +
-                       '</ul><p><H1>End List</H1>')
+        if updates is not None:
+            str_list.append('<br>Count of updates queried from db - ')
+            str_list.append(str(len(updates)))
 
-        KBs = self.notFoundedKbList(KBs, updates)
-        if len(KBs) == 0:
+            for up in updates:
+                str_list.append('<br><I>')
+                str_list.append(up['Path'])
+                str_list.append('</I>')
+        else:
+            str_list.append('<br>Unable to find any updates')
 
-            return (
-            self.header() +
-            updatesList +
-            self.footer())
+        KBs = data.get('KBs')
 
-        query = {}
-        query['$or'] = self.kbsToQueryList(KBs)
+        if 0 != len(KBs):
+            str_list.append('<br>Not founded by strict query')
 
-        items = self.db.getItemsFromDB('win32', 'updates', aQuery=query)
-        if items.count() == 0:
+            for kb in KBs:
+                str_list.append('<br><I>')
+                str_list.append(str(kb))
+                str_list.append('</I>')
 
-            return (
-            self.header() +
-            updatesList +
-            '<H1>Not founded updates</H1>' + self.kbsToTable(KBs) +
-            self.footer())
+            query = {}
+            query['$or'] = inspectReport.kbsToQueryList(KBs)
 
-        updates = core.updates.Updates()
-        updates.addUpdates(items)
+            data = inspectReport.getData(KBs, query)
 
-        kbsNumberList = ('<br><br>' +
-                         '<H1>Values only by number</H1><p><ul>' +
-                         self.itemsData2TableRow(updates) +
-                         '</ul><p><H1>End List</H1>')
+            updates = data.get('Updates')
 
-        KBs = self.notFoundedKbList(KBs, updates)
-        if len(KBs) == 0:
+            if updates is not None:
+                str_list.append('<br>Founded by number only')
 
-            return (
-            self.header() +
-            updatesList +
-            kbsNumberList +
-            self.footer())
+                for up in updates:
+                    str_list.append('<br><I>')
+                    str_list.append(up['Path'])
+                    str_list.append('</I>')
+
+            KBs = data.get('KBs')
+
+            if 0 != len(KBs):
+                str_list.append('<br>Not founded')
+
+                KBs = self.kbsToTable(KBs)
+
+                for kb in KBs:
+                    str_list.append(str(kb))
 
         return (
-        self.header() +
-        updatesList +
-        kbsNumberList +
-        '<H1>Not founded updates</H1>' + self.kbsToTable(KBs) +
-        self.footer())
-
-    def kbsToQueryList(self, aKBs):
-
-        kbList = []
-        for kb in aKBs:
-
-            kbList.append({'KB': kb})
-
-        return kbList
+                self.header() +
+                ''.join(str_list) +
+                self.footer())
 
     def kbsToTable(self, aKBs):
 
@@ -169,34 +172,6 @@ class Main(Page):
             (kb, kb))
         kbItems = kbItems + '</ul><p>'
         return kbItems
-
-    def itemsData2TableRow(self, aItems):
-
-        row = ''
-        for item in aItems:
-            row = (row +
-            '<li>KB: %s Type: %s Date: %s Version: %s Language: %s Path: %s' %
-            (item['KB'], item['Type'], item['Date'].date(), item['Version'],
-            item['Language'], item['Path']))
-        return row
-
-    def notFoundedKbList(self, aKBs, aItems):
-
-        kbList = []
-        for kb in aKBs:
-
-            founded = False
-            for it in aItems:
-
-                if kb == it['KB']:
-
-                    founded = True
-                    break
-
-            if not founded:
-                kbList.append(kb)
-
-        return kbList
 
 conf = {'/global': {'server.socket_host': '127.0.0.1',
                     'server.socket_port': 8080,

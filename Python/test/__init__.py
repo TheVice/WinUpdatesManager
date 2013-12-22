@@ -1,1 +1,1 @@
-__all__ = ['datesTest', 'dirsTest', 'mongoDB_Test', 'updatesTest']
+__all__ = ['datesTest', 'dirsTest', 'inspectReportTest', 'mongoDB_Test', 'updatesTest', 'updateToPackageTest']

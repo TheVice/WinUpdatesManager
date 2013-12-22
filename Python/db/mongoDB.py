@@ -12,9 +12,10 @@ class MongoDBClient:
                        aWriteConcern='majority',
                        aJournal=True,
                        aQuery={},
-                       aProjection={},
+                       aProjection=None,
                        aSkip=None,
-                       aLimit=None):
+                       aLimit=None,
+                       aSort=None):
 
         try:
             client = pymongo.MongoClient(host=aHostAndPort,
@@ -25,7 +26,7 @@ class MongoDBClient:
 
             items = {}
 
-            if aProjection != {}:
+            if aProjection is not None:
                 items = table.find(aQuery, aProjection)
             else:
                 items = table.find(aQuery)
@@ -35,6 +36,9 @@ class MongoDBClient:
 
             if aLimit is not None:
                 items = items.limit(aLimit)
+
+            if aSort is not None:
+                items = items.sort(aSort)
 
             return items
 
@@ -159,7 +163,8 @@ def pymongoDate2DateTime(aCollection=[], aFieldName=None):
 
     for i in range(0, len(aCollection)):
         date = aCollection[i][aFieldName]
-        aCollection[i][aFieldName] = datetime.datetime(date.year, date.month,
-                                                        date.day)
+        aCollection[i][aFieldName] = datetime.datetime(date.year,
+                                                       date.month,
+                                                       date.day)
 
     return aCollection

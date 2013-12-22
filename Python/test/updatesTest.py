@@ -6,6 +6,37 @@ import core.updates
 
 class TestSequenceFunctions(unittest.TestCase):
 
+    def test_AddUpdates(self):
+
+        items = []
+        items.append({'_id': 'ObjectId(\'52a8e53ef1b5a171803d4163\')',
+                      'Language': 'Neutral',
+                      'Type': 'x64',
+                      'KB': 2795944,
+                      'Date': 'ISODate(\'2013-02-12T00:00:00Z\')',
+                      'Version': 'Windows 8',
+                      'Path': '\\2795944\\Windows8\\NEU\\x64' +
+                      '\\Windows8-RT-KB2795944-x64.msu'})
+        items.append({'_id': 'ObjectId(\'52ac66c0f1b5a1372437be3c\')',
+                      'Language': 'Neutral',
+                      'Type': 'x64',
+                      'KB': 2795944,
+                      'Date': 'ISODate(\'2013-02-12T00:00:00Z\')',
+                      'Version': 'Windows 8',
+                      'Path': '\\2795944\\Windows8\\NEU\\x64' +
+                      '\\Windows8-RT-KB2795944-x64.msu'})
+        items.append({'_id': 'ObjectId(\'52ac6deff1b5a1b01096772d\')',
+                      'Language': 'Neutral',
+                      'Type': 'x64',
+                      'KB': 2795944,
+                      'Date': 'ISODate(\'2013-02-12T00:00:00Z\')',
+                      'Version': 'Windows 8',
+                      'Path': '\\2795944\\Windows8\\NEU\\x64' +
+                      '\\Windows8-RT-KB2795944-x64.msu'})
+        updates = core.updates.Updates()
+        updates.addUpdates(items)
+        self.assertEqual(1, len(updates))
+
     def test_Updates(self):
 
         updates = core.updates.Updates()
@@ -842,6 +873,41 @@ class TestSequenceFunctions(unittest.TestCase):
             core.updates.getJSONvalue(line, 'Language'))
         self.assertEqual('datetime.date(2013, 2, 12)',
             core.updates.getJSONvalue(line, 'Date'))
+
+    def test_separateToKnownAndUnknown(self):
+
+        updates = [{'KB': {}, 'Version': {}, 'Type': {}, 'Language': {}}]
+        data = core.updates.separateToKnownAndUnknown(updates)
+
+        self.assertEqual(1, len(data.get('unKnown')))
+        self.assertEqual(0, len(data.get('known')))
+
+        updates = [{'KB': 123, 'Version': {}, 'Type': {}, 'Language': {}}]
+        data = core.updates.separateToKnownAndUnknown(updates)
+
+        self.assertEqual(1, len(data.get('unKnown')))
+        self.assertEqual(0, len(data.get('known')))
+
+        updates = [{'KB': 123, 'Version': 'Windows',
+                    'Type': {}, 'Language': {}}]
+        data = core.updates.separateToKnownAndUnknown(updates)
+
+        self.assertEqual(1, len(data.get('unKnown')))
+        self.assertEqual(0, len(data.get('known')))
+
+        updates = [{'KB': 123, 'Version': 'Windows',
+                    'Type': 'x86', 'Language': {}}]
+        data = core.updates.separateToKnownAndUnknown(updates)
+
+        self.assertEqual(1, len(data.get('unKnown')))
+        self.assertEqual(0, len(data.get('known')))
+
+        updates = [{'KB': 123, 'Version': 'Windows',
+                    'Type': 'x86', 'Language': 'Neutral'}]
+        data = core.updates.separateToKnownAndUnknown(updates)
+
+        self.assertEqual(0, len(data.get('unKnown')))
+        self.assertEqual(1, len(data.get('known')))
 
 if __name__ == '__main__':
 

@@ -17,7 +17,7 @@ class Updates:
                            up['Type'], up['Language'], up['Date'])
 
     def addUpdate(self, aPath=None, aKB=None, aOsVersion=None,
-        aOsType=None, aLanguage=None, aDate=None):
+                  aOsType=None, aLanguage=None, aDate=None):
 
         update = {}
 
@@ -527,6 +527,19 @@ def getKBsFromReport(aReport):
     return KBs
 
 
+def getKBsFromReportFile(aFileName):
+
+    report = None
+    try:
+        inputFile = open(aFileName, 'r')
+        report = inputFile.read()
+        inputFile.close()
+    except:
+        raise('Unable to read from file', aFileName)
+
+    return getKBsFromReport(report)
+
+
 def prepareLineToParse(aLine):
 
     aLine = aLine.replace(', \'', ',\t\'')
@@ -556,8 +569,10 @@ def getUpdatesFromJSONfile(aFile):
     updates = Updates()
     try:
         inputFile = open(aFile, 'r')
+
         versions = Versions()
         types = Types()
+        languages = Languages()
 
         for line in inputFile:
             line = prepareLineToParse(line)
@@ -583,13 +598,34 @@ def getUpdatesFromJSONfile(aFile):
             except:
                 osType = types.getType(line)
 
-            language = getJSONvalue(line, 'Language')
+            language = None
+            try:
+                language = getJSONvalue(line, 'Language')
+            except:
+                language = languages.getLanguage(line)
+
             date = getJSONvalue(line, 'Date')
+
             updates.addUpdate(path, kb, osVersion, osType, language,
                               core.dates.getDatesFromJSON_Recode(date))
 
         inputFile.close()
     except:
         raise Exception('Unexpected error while work with file:' + aFile)
+
+    return updates
+
+
+def separateToKnownAndUnknown(aUpdates):
+
+    updates = {'known': [], 'unKnown': []}
+
+    for up in aUpdates:
+        if (isinstance(up['KB'], dict) or isinstance(up['Version'], dict) or
+            isinstance(up['Type'], dict) or isinstance(up['Language'], dict)):
+
+            updates['unKnown'].append(up)
+        else:
+            updates['known'].append(up)
 
     return updates

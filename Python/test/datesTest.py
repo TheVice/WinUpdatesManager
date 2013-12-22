@@ -8,7 +8,7 @@ class TestSequenceFunctions(unittest.TestCase):
     def test_getDayFromYearMonthAndWeek(self):
 
         self.assertEqual(9,
-            core.dates.getDayFromYearMonthAndWeek(2013, 7, 2, 2))
+                         core.dates.getDayFromYearMonthAndWeek(2013, 7, 2, 2))
 
     def test_getDatesForYearEdition(self):
 
@@ -24,7 +24,8 @@ class TestSequenceFunctions(unittest.TestCase):
     def test_getDatesFromJSON_Recode(self):
 
         self.assertEqual(datetime.date(2013, 2, 12),
-            core.dates.getDatesFromJSON_Recode('datetime.date(2013, 2, 12)'))
+                         core.dates.getDatesFromJSON_Recode('datetime.date' +
+                                                            '(2013, 2, 12)'))
 
 
 if __name__ == '__main__':
