@@ -55,7 +55,7 @@ def getData(aKBs, aQueryReq, aSortReq=None):
         ret['Updates'] = updates
         ret['KBs'] = KBs
     else:
-        ret['KBs'] = KBs
+        ret['KBs'] = aKBs
 
     return ret
 
