@@ -158,6 +158,26 @@ class MongoDBClient:
         except:
             raise Exception('Unexpected error:', sys.exc_info()[0])
 
+    def aggregate(self,
+                  aDB,
+                  aTable,
+                  aHostAndPort=None,
+                  aWriteConcern='majority',
+                  aJournal=True,
+                  aAggregateExpression=[]):
+
+        try:
+            client = pymongo.MongoClient(host=aHostAndPort,
+                                         w=aWriteConcern,
+                                         j=aJournal)
+            db = client[aDB]
+            table = db[aTable]
+
+            return table.aggregate(aAggregateExpression)
+
+        except:
+            raise Exception('Unexpected error:', sys.exc_info()[0])
+
 
 def pymongoDate2DateTime(aCollection=[], aFieldName=None):
 

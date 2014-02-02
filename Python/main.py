@@ -10,17 +10,9 @@ if __name__ == '__main__':
 
     argc = len(sys.argv)
 
-    if argc == 1:
-        print('Bad using.')
-        print('Sample using ' + sys.argv[0] +
-              ' <path to directory with updates>' +
-              ' <date for non year edition>')
-        print('Sample using ' + sys.argv[0] +
-              ' <path to JSON data file, from that insert to MongoDB info>' +
-              ' <data base name> <table name>')
-
-    elif argc == 2:
+    if argc == 2:
         files = core.dirs.getSubDirectoryFiles(sys.argv[1])
+        #TODO: check return
         paths = core.dirs.Paths(files)
         dates = core.dates.getDatesOfUpdates(paths.getRootObjects())
         updates = {'known': [], 'unKnown': []}
@@ -42,6 +34,7 @@ if __name__ == '__main__':
 
     elif argc == 3:
         files = core.dirs.getSubDirectoryFiles(sys.argv[1])
+        #TODO: check return
         updates = core.updates.getUpdatesFromPackage(files,
                   core.dates.getDatesOfUpdates([sys.argv[2]])[0])
         updates = core.updates.separateToKnownAndUnknown(updates)
@@ -57,3 +50,11 @@ if __name__ == '__main__':
         updates = db.mongoDB.pymongoDate2DateTime(updates, 'Date')
         dbClient.insertToDB(aDB=sys.argv[2], aTable=sys.argv[3],
                             aItems=updates)
+
+    else:
+        print('Using:')
+        print(sys.argv[0] + ' <path to directory with updates>' +
+                            ' <date for non year edition>')
+        print(sys.argv[0] +
+              ' <path to JSON data file, from that insert to MongoDB info>' +
+              ' <data base name> <table name>')

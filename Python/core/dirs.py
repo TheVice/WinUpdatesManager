@@ -46,6 +46,20 @@ def getSubDirectoryFiles(aPath):
     return files
 
 
+def getFilesInDirectory(aPath, aExtention=None):
+
+    for root, dirs, files in os.walk(aPath):
+        retFiles = []
+        if aExtention is None:
+            for _file in files:
+                retFiles.append(os.path.join(root, _file))
+        else:
+            for _file in files:
+                if -1 != _file.rfind(aExtention):
+                    retFiles.append(os.path.join(root, _file))
+        return retFiles
+
+
 def getRootPaths(aPaths):
 
     files = []
