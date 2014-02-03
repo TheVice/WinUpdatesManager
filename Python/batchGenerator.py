@@ -2,84 +2,94 @@ import sys
 import os
 
 
-def batchTemplate(aPath, aStrNumber, aSwitch=' /quiet /norestart'):
+def batchTemplate(aPath, aStrNumber, aSwitch):
 
-# for notes see http://www.skymind.com/~ocrow/python_string/
+    strList = []
+    strList.append(':')
+    strList.append('UP')
+    strList.append(aStrNumber)
 
-# Template like this
-#
-# :UP
-# IF NOT EXIST updateToPackage.cm GOTO N
-# echo "Installing..."
-# :...
-# GOTO Y
-# :N
-# echo "File not present.
-# echo Please change media and press any key..."
-# PAUSE > nul:
-# GOTO UP
-# :Y
+    strList.append(os.linesep)
+    strList.append('IF NOT EXIST \"')
+    strList.append(aPath)
+    strList.append('\" GOTO ')
+    strList.append('N')
+    strList.append(aStrNumber)
 
-    str_list = []
-    str_list.append(':')
-    str_list.append('UP')
-    str_list.append(aStrNumber)
+    strList.append(os.linesep)
+    strList.append(os.linesep)
+    strList.append('echo Installing ')
+    strList.append(aPath)
+    strList.append(' UP')
+    strList.append(aStrNumber)
 
-    str_list.append(os.linesep)
-    str_list.append('IF NOT EXIST \"')
-    str_list.append(aPath)
-    str_list.append('\" GOTO ')
-    str_list.append('N')
-    str_list.append(aStrNumber)
+    strList.append(os.linesep)
+    strList.append('\"')
+    strList.append(aPath)
+    strList.append('\"')
+    strList.append(aSwitch)
+    strList.append(os.linesep)
 
-    str_list.append(os.linesep)
-    str_list.append(os.linesep)
-    str_list.append('echo Installing ')
-    str_list.append(aPath)
-    str_list.append(' UP')
-    str_list.append(aStrNumber)
+    strList.append('GOTO ')
+    strList.append('Y')
+    strList.append(aStrNumber)
+    strList.append(os.linesep)
 
-    str_list.append(os.linesep)
-    str_list.append('\"')
-    str_list.append(aPath)
-    str_list.append('\"')
-    str_list.append(aSwitch)
-    str_list.append(os.linesep)
+    strList.append(os.linesep)
+    strList.append(':')
+    strList.append('N')
+    strList.append(aStrNumber)
 
-    str_list.append('GOTO ')
-    str_list.append('Y')
-    str_list.append(aStrNumber)
-    str_list.append(os.linesep)
+    strList.append(os.linesep)
+    strList.append('echo File ')
+    strList.append(aPath)
+    strList.append(' not present.')
 
-    str_list.append(os.linesep)
-    str_list.append(':')
-    str_list.append('N')
-    str_list.append(aStrNumber)
+    strList.append(os.linesep)
+    strList.append('echo Please change media and press any key...')
 
-    str_list.append(os.linesep)
-    str_list.append('echo File ')
-    str_list.append(aPath)
-    str_list.append(' not present.')
+    strList.append(os.linesep)
+    strList.append('PAUSE > nul:')
+    strList.append(os.linesep)
 
-    str_list.append(os.linesep)
-    str_list.append('echo Please change media and press any key...')
+    strList.append('GOTO ')
+    strList.append('UP')
+    strList.append(aStrNumber)
 
-    str_list.append(os.linesep)
-    str_list.append('PAUSE > nul:')
-    str_list.append(os.linesep)
+    strList.append(os.linesep)
+    strList.append(':')
+    strList.append('Y')
+    strList.append(aStrNumber)
 
-    str_list.append('GOTO ')
-    str_list.append('UP')
-    str_list.append(aStrNumber)
+    strList.append(os.linesep)
 
-    str_list.append(os.linesep)
-    str_list.append(':')
-    str_list.append('Y')
-    str_list.append(aStrNumber)
+    return ''.join(strList)
 
-    str_list.append(os.linesep)
 
-    return ''.join(str_list)
+def generate(aLines, aRoot=None, aSwitch=' /quiet /norestart'):
+
+    strList = []
+    strList.append('@echo off')
+    strList.append(os.linesep)
+    strList.append('GOTO %1')
+    strList.append(os.linesep)
+
+    i = 1
+    if aRoot is not None:
+        for kbPath in aLines:
+            kbPath = kbPath.replace('\n', '')
+            kbPath = kbPath.replace('\r', '')
+            kbPath = os.path.join(aRoot, kbPath)
+            strList.append(batchTemplate(kbPath, str(i), aSwitch))
+            i += 1
+    else:
+        for kbPath in aLines:
+            kbPath = kbPath.replace('\n', '')
+            kbPath = kbPath.replace('\r', '')
+            strList.append(batchTemplate(kbPath, str(i), aSwitch))
+            i += 1
+
+    return ''.join(strList)
 
 if __name__ == '__main__':
 
@@ -88,22 +98,14 @@ if __name__ == '__main__':
 
         try:
             inputFile = open(sys.argv[1], 'r')
-
-            print('@echo off')
-            print('GOTO %1')
-
-            i = 1
-            if 2 < argc:
-                for kbPath in inputFile:
-                    kbPath = os.path.join(sys.argv[2], kbPath)
-                    print(batchTemplate(kbPath[:len(kbPath) - 1], str(i)))
-                    i += 1
-            else:
-                for kbPath in inputFile:
-                    print(batchTemplate(kbPath[:len(kbPath) - 1], str(i)))
-                    i += 1
-
+            lines = inputFile.read()
             inputFile.close()
+
+            #see note on os.linesep in help
+            if 2 < argc:
+                print(generate(lines.split('\n'), sys.argv[2]))
+            else:
+                print(generate(lines.split('\n')))
         except:
             print('Error while read file', sys.argv[1])
 

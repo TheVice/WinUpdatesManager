@@ -2,6 +2,7 @@ import sys
 import cherrypy
 import core.updates
 import inspectReport
+import batchGenerator
 import db.mongoDB
 
 
@@ -42,6 +43,8 @@ class Main(Page):
         return (
         self.header() +
         '<a href=\'/update_viewer\'>Go to update viewer</a>' +
+        '<br>' +
+        '<a href=\'/batch_generator\'>Go to batch generator</a>' +
         self.footer())
 
     @cherrypy.expose
@@ -71,7 +74,7 @@ class Main(Page):
         '<p><label>Windows Update Report<br><br>'
         '<textarea name=aReport cols=100 rows=25 required></textarea>'
         '</label></p>'
-        '<p><input type=submit value=\'Make request.\'></p>'
+        '<p><input type=submit value=\'Make request\'></p>'
         '</form>' +
         self.footer())
 
@@ -172,6 +175,46 @@ class Main(Page):
             (kb, kb))
         kbItems = kbItems + '</ul><p>'
         return kbItems
+
+    @cherrypy.expose
+    def batch_generator(self):
+
+        return (
+        self.header() +
+        '<form action=\'process_generation\' method=\'post\'>'
+        '<p><label>Root path (if req): <input list=\'Roots\''
+        ' name=aRoot type=\'text\'></label>'
+        '<datalist id=\'Roots\'>'
+        '<option value=\'Z:\\\'></option>'
+        '</datalist>'
+        '</p>'
+        '<p><label>Switch: <input list=\'Switchs\''
+        ' name=aSwitch type=\'text\'></label>'
+        '<datalist id=\'Switchs\'>'
+        '<option value=\' /quiet /norestart\'></option>'
+        '<option value=\' -u -q -norestart\'></option>'
+        '</datalist>'
+        '</p>'
+        '<p><label><u>List of paths</u><br><br>'
+        '<textarea name=aReport cols=100 rows=25 required></textarea>'
+        '</label></p>'
+        '<p><input type=submit value=\'Generate\'></p>'
+        '</form>' +
+        self.footer())
+
+    @cherrypy.expose
+    def process_generation(self, aReport, aSwitch, aRoot=None):
+
+        return (
+        self.header() +
+        '<textarea cols=100 rows=25>' +
+        batchGenerator.generate(aReport.split('\n'), aRoot, aSwitch) +
+        '</textarea>' +
+        '<br>' +
+        '<a href=\'/update_viewer\'>Go to update viewer</a>' +
+        '<br>' +
+        '<a href=\'/batch_generator\'>Go to batch generator</a>' +
+        self.footer())
 
 conf = {'/global': {'server.socket_host': '127.0.0.1',
                     'server.socket_port': 8080,

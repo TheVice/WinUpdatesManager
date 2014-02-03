@@ -14,3 +14,6 @@ class TestSequenceFunctions(unittest.TestCase):
         upFile = updateToPackage.UpFile('Windows8.1-KB2904266-x86.msu')
         path = upFile.getPath()
         self.assertEqual(os.path.join('Windows8.1', 'x86', 'NEU'), path)
+
+if __name__ == '__main__':
+    unittest.main()
