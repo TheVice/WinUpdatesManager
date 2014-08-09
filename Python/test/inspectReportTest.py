@@ -4,26 +4,6 @@ import inspectReport
 
 class TestSequenceFunctions(unittest.TestCase):
 
-    def test_kbsToQueryPathList(self):
-        kbList = [1, 2, 3, 4, 5, 6]
-        refQueryPathList = [{'Path': {'$regex': '1'}},
-                            {'Path': {'$regex': '2'}},
-                            {'Path': {'$regex': '3'}},
-                            {'Path': {'$regex': '4'}},
-                            {'Path': {'$regex': '5'}},
-                            {'Path': {'$regex': '6'}}]
-        queryPathList = inspectReport.kbsToQueryPathList(kbList)
-
-        self.assertEqual(refQueryPathList, queryPathList)
-
-    def test_kbsToQueryList(self):
-        kbList = [1, 2, 3, 4, 5, 6]
-        refQueryList = [{'KB': 1}, {'KB': 2}, {'KB': 3}, {'KB': 4}, {'KB': 5},
-                        {'KB': 6}]
-        queryList = inspectReport.kbsToQueryList(kbList)
-
-        self.assertEqual(refQueryList, queryList)
-
     def test_items2KBs(self):
         items = [{'KB': 1}, {'KB': 2}, {'KB': 3},
                  {'KB': 4}, {'KB': 5}, {'KB': 6}]

@@ -94,6 +94,66 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEqual('Win32', updates[0]['Version'])
         self.assertEqual('Win64', updates[1]['Version'])
 
+    def test_QueryUpdates(self):
+
+        items = []
+        items.append({'_id': 'ObjectId(\'52a8e53ef1b5a171803d4163\')',
+                      'Language': 'Neutral',
+                      'Type': 'x64',
+                      'KB': 2795944,
+                      'Date': 'ISODate(\'2013-02-12T00:00:00Z\')',
+                      'Version': 'Windows 8',
+                      'Path': '\\2795944\\Windows8\\NEU\\x64' +
+                      '\\Windows8-RT-KB2795944-x64.msu'})
+        items.append({'_id': 'ObjectId(\'52ac66c0f1b5a1372437be3c\')',
+                      'Language': 'Neutral',
+                      'Type': 'x64',
+                      'KB': 2795945,
+                      'Date': 'ISODate(\'2013-02-12T00:00:00Z\')',
+                      'Version': 'Windows 8',
+                      'Path': '\\2795945\\Windows8\\NEU\\x64' +
+                      '\\Windows8-RT-KB2795944-x64.msu'})
+        items.append({'_id': 'ObjectId(\'52ac6deff1b5a1b01096772d\')',
+                      'Language': 'Neutral',
+                      'Type': 'x64',
+                      'KB': 2795946,
+                      'Date': 'ISODate(\'2013-02-12T00:00:00Z\')',
+                      'Version': 'Windows 8',
+                      'Path': '\\2795946\\Windows8\\NEU\\x64' +
+                      '\\Windows8-RT-KB2795944-x64.msu'})
+
+        updates = core.updates.Updates()
+        updates.addUpdates(items)
+        query = {}
+        query['Path'] = ('\\2795944\\Windows8\\NEU\\' +
+                         'x64\\Windows8-RT-KB2795944-x64.msu')
+        query['KB'] = 2795944
+        query['Version'] = 'Windows 8'
+        query['Type'] = 'x64'
+        query['Language'] = 'Neutral'
+        query['Date'] = 'ISODate(\'2013-02-12T00:00:00Z\')'
+        up2 = updates.getUpdates(dict(query))
+        self.assertEqual(1, len(up2))
+
+        query = {}
+        query['Type'] = 'x64'
+        up2 = updates.getUpdates(dict(query))
+        self.assertEqual(3, len(up2))
+
+        query = {}
+        query['Language'] = 'Neutral'
+        up2 = updates.getUpdates(dict(query))
+        self.assertEqual(3, len(up2))
+
+        query = {}
+        query['Language'] = ''
+        up2 = updates.getUpdates(dict(query))
+        self.assertEqual(0, len(up2))
+
+        query = {}
+        up2 = updates.getUpdates(dict(query))
+        self.assertEqual(3, len(up2))
+
     def test_Versions(self):
 
         versions = core.updates.Versions()
@@ -853,7 +913,7 @@ class TestSequenceFunctions(unittest.TestCase):
             '\t\'Version\': \'Windows XP\'\t}')
         self.assertEqual(newLine, line)
 
-    def test_getJSONvalue(self):
+    def test_getUIFvalue(self):
 
         line = ('{\'Type\': \'x86\', \'Date\': datetime.date(2013, 2, 12),' +
             ' \'KB\': 2802968, \'Language\': \'Turkish\', \'Path\':' +
@@ -864,15 +924,15 @@ class TestSequenceFunctions(unittest.TestCase):
 
         self.assertEqual('\\2802968\\WindowsXP\\x86\\TRK\\' +
             'WINDOWSXP-KB2802968-X86-TRK.EXE',
-            core.updates.getJSONvalue(line, 'Path'))
-        self.assertEqual(2802968, int(core.updates.getJSONvalue(line, 'KB')))
+            core.updates.getUIFvalue(line, 'Path'))
+        self.assertEqual(2802968, int(core.updates.getUIFvalue(line, 'KB')))
         self.assertEqual('Windows XP',
-            core.updates.getJSONvalue(line, 'Version'))
-        self.assertEqual('x86', core.updates.getJSONvalue(line, 'Type'))
+            core.updates.getUIFvalue(line, 'Version'))
+        self.assertEqual('x86', core.updates.getUIFvalue(line, 'Type'))
         self.assertEqual('Turkish',
-            core.updates.getJSONvalue(line, 'Language'))
+            core.updates.getUIFvalue(line, 'Language'))
         self.assertEqual('datetime.date(2013, 2, 12)',
-            core.updates.getJSONvalue(line, 'Date'))
+            core.updates.getUIFvalue(line, 'Date'))
 
     def test_separateToKnownAndUnknown(self):
 

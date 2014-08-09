@@ -41,7 +41,7 @@ def getDatesOfUpdates(aFolders):
     return dates
 
 
-def getDatesFromJSON_Recode(aRecord):
+def getDatesFromUIF_Recode(aRecord):
 
     d = datetime.datetime.strptime(aRecord, 'datetime.date(%Y, %m, %d)')
     return d.date()

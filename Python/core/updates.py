@@ -1,6 +1,7 @@
 import os
 import re
 import core.dates
+import core.dirs
 
 
 class Updates:
@@ -35,6 +36,21 @@ class Updates:
         if 0 == self.mData.count(aUpdate):
             self.mData.append(aUpdate)
             self.mIndex += 1
+
+    def getUpdates(self, aQuery):
+
+        updates = []
+
+        for update in self:
+            match = True
+            for key in aQuery.keys():
+                if (update[key] != aQuery.get(key)):
+                    match = False
+                    break
+            if match:
+                updates.append(update)
+
+        return updates
 
     def __iter__(self):
 
@@ -550,9 +566,9 @@ def prepareLineToParse(aLine):
     return aLine
 
 
-def getJSONvalue(aText, aJSON_Parameter):
+def getUIFvalue(aText, aParameter):
 
-    parameter = '(?<=' + aJSON_Parameter + '\': \')(.+\t)'
+    parameter = '(?<=' + aParameter + '\': \')(.+\t)'
     value = re.search(parameter, aText).group(0)
 
     value = value[:value.find('\'')]
@@ -564,7 +580,7 @@ def getJSONvalue(aText, aJSON_Parameter):
     return value
 
 
-def getUpdatesFromJSONfile(aFile):
+def getUpdatesFromUIF(aFile):
 
     updates = Updates()
     try:
@@ -577,41 +593,55 @@ def getUpdatesFromJSONfile(aFile):
         for line in inputFile:
             line = prepareLineToParse(line)
 
-            path = getJSONvalue(line, 'Path')
+            path = getUIFvalue(line, 'Path')
             path = path.replace(os.sep + os.sep, os.sep)
 
             kb = None
             try:
-                kb = int(getJSONvalue(line, 'KB'))
+                kb = int(getUIFvalue(line, 'KB'))
             except:
                 kb = getKB(path)
 
             osVersion = None
             try:
-                osVersion = getJSONvalue(line, 'Version')
+                osVersion = getUIFvalue(line, 'Version')
             except:
                 osVersion = versions.getVersion(line)
 
             osType = None
             try:
-                osType = getJSONvalue(line, 'Type')
+                osType = getUIFvalue(line, 'Type')
             except:
                 osType = types.getType(line)
 
             language = None
             try:
-                language = getJSONvalue(line, 'Language')
+                language = getUIFvalue(line, 'Language')
             except:
                 language = languages.getLanguage(line)
 
-            date = getJSONvalue(line, 'Date')
+            date = getUIFvalue(line, 'Date')
 
             updates.addUpdate(path, kb, osVersion, osType, language,
-                              core.dates.getDatesFromJSON_Recode(date))
+                              core.dates.getDatesFromUIF_Recode(date))
 
         inputFile.close()
     except:
         raise Exception('Unexpected error while work with file:' + aFile)
+
+    return updates
+
+
+def getUpdatesFromUIF_Storage(aPath):
+
+    updates = Updates()
+
+    if os.path.isfile(aPath):
+        updates = getUpdatesFromUIF(aPath)
+    elif os.path.isdir(aPath):
+        files = core.dirs.getFilesInDirectory(aPath, '.uif')
+        for _file in files:
+            updates.addUpdates(getUpdatesFromUIF(_file))
 
     return updates
 

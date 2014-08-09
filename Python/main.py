@@ -2,9 +2,7 @@ import sys
 import core.dates
 import core.dirs
 import core.updates
-import db.mongoDB
 
-dbClient = db.mongoDB.MongoDBClient()
 
 if __name__ == '__main__':
 
@@ -45,16 +43,7 @@ if __name__ == '__main__':
         for update in updates['unKnown']:
             print(update)
 
-    elif argc == 4:
-        updates = core.updates.getUpdatesFromJSONfile(sys.argv[1])
-        updates = db.mongoDB.pymongoDate2DateTime(updates, 'Date')
-        dbClient.insertToDB(aDB=sys.argv[2], aTable=sys.argv[3],
-                            aItems=updates)
-
     else:
         print('Using:')
         print(sys.argv[0] + ' <path to directory with updates>' +
                             ' <date for non year edition>')
-        print(sys.argv[0] +
-              ' <path to JSON data file, from that insert to MongoDB info>' +
-              ' <data base name> <table name>')

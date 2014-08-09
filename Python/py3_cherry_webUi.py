@@ -3,7 +3,6 @@ import cherrypy
 import core.updates
 import inspectReport
 import batchGenerator
-import db.mongoDB
 
 
 class Page:
@@ -33,9 +32,9 @@ class Main(Page):
 
     mTitle = 'Windows Updates Getter'
 
-    def __init__(self, aDB):
+    def __init__(self, aUifData):
 
-        self.db = aDB
+        self.uifData = aUifData
 
     @cherrypy.expose
     def index(self):
@@ -103,15 +102,11 @@ class Main(Page):
         str_list.append('</H1>')
 
         query = {}
-        query['$or'] = inspectReport.kbsToQueryPathList(KBs)
-        # inspectReport.kbsToQueryList(KBs)
         query['Version'] = aVersion
         query['Type'] = aPlatform
         query['Language'] = aLanguage
 
-        sort = [('Date', 1), ('KB', 1)]
-
-        data = inspectReport.getData(KBs, query, sort)
+        data = inspectReport.getData(self.uifData, KBs, query)
 
         updates = data.get('Updates')
 
@@ -137,9 +132,7 @@ class Main(Page):
                 str_list.append('</I>')
 
             query = {}
-            query['$or'] = inspectReport.kbsToQueryList(KBs)
-
-            data = inspectReport.getData(KBs, query)
+            data = inspectReport.getData(self.uifData, KBs, query)
 
             updates = data.get('Updates')
 
@@ -221,13 +214,18 @@ conf = {'/global': {'server.socket_host': '127.0.0.1',
                     'server.thread_pool': 10}}
 
 if __name__ == '__main__':
+
     argc = len(sys.argv)
-    if argc == 1:
+    if argc == 2:
+        cherrypy.quickstart(
+            Main(core.updates.getUpdatesFromUIF_Storage(sys.argv[1])),
+            config=conf)
 
-        cherrypy.quickstart(Main(db.mongoDB.MongoDBClient()), config=conf)
+    elif argc == 3:
+        cherrypy.quickstart(
+            Main(core.updates.getUpdatesFromUIF_Storage(sys.argv[1])),
+                 config=sys.argv[2])
 
-    elif argc == 2:
-        cherrypy.quickstart(Main(db.mongoDB.MongoDBClient()),
-                            config=sys.argv[1])
-#else:
-#    cherrypy.tree.mount(Main(), config=conf)
+    else:
+        print('Using', sys.argv[0],
+          '<Folder or file with update info (*.uif)>')

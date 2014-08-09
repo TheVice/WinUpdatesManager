@@ -1,28 +1,5 @@
 import sys
 import core.updates
-import db.mongoDB
-
-dbClient = db.mongoDB.MongoDBClient()
-
-
-def kbsToQueryPathList(aKBs):
-
-    kbList = []
-    for kb in aKBs:
-
-        kbList.append({'Path': {'$regex': str(kb)}})
-
-    return kbList
-
-
-def kbsToQueryList(aKBs):
-
-    kbList = []
-    for kb in aKBs:
-
-        kbList.append({'KB': kb})
-
-    return kbList
 
 
 def items2KBs(aItems):
@@ -40,16 +17,16 @@ def getListDiff(aParentList, aChildList):
     return list(set(aParentList) - set(aChildList))
 
 
-def getData(aKBs, aQueryReq, aSortReq=None):
+def getData(aUpdates, aKBs, aQuery):
 
     ret = {}
-    items = dbClient.getItemsFromDB('win32', 'updates', aQuery=aQueryReq,
-                                    aSort=aSortReq)
+    updates = core.updates.Updates()
 
-    if 0 != items.count():
-        updates = core.updates.Updates()
-        updates.addUpdates(items)
+    for kb in aKBs:
+        aQuery['KB'] = kb
+        updates.addUpdates(aUpdates.getUpdates(aQuery))
 
+    if 0 != len(updates):
         KBs = getListDiff(aKBs, items2KBs(updates))
 
         ret['Updates'] = updates
@@ -63,24 +40,23 @@ if __name__ == '__main__':
 
     argc = len(sys.argv)
     if 4 < argc:
-        KBs = core.updates.getKBsFromReportFile(sys.argv[1])
+        uifData = core.updates.getUpdatesFromUIF_Storage(sys.argv[1])
+        reportFile = sys.argv[2]
+        version = sys.argv[3]
+        platform = sys.argv[4]
+        language = sys.argv[5]
 
-        print('At the input report', sys.argv[1], 'located', KBs)
+        KBs = core.updates.getKBsFromReportFile(reportFile)
+
+        print('At the input report', reportFile, 'located', KBs)
         print('Count', len(KBs))
 
-        version = sys.argv[2]
-        platform = sys.argv[3]
-        language = sys.argv[4]
-
         query = {}
-        query['$or'] = kbsToQueryPathList(KBs)  # kbsToQueryList(KBs)
         query['Version'] = version
         query['Type'] = platform
         query['Language'] = language
 
-        sort = [('Date', 1), ('KB', 1)]
-
-        data = getData(KBs, query, sort)
+        data = getData(uifData, KBs, query)
 
         updates = data.get('Updates')
 
@@ -101,9 +77,7 @@ if __name__ == '__main__':
                 print(kb)
 
             query = {}
-            query['$or'] = kbsToQueryList(KBs)
-
-            data = getData(KBs, query)
+            data = getData(uifData, KBs, query)
 
             updates = data.get('Updates')
 
@@ -123,4 +97,5 @@ if __name__ == '__main__':
 
     else:
         print('Using', sys.argv[0],
+              '<Folder or file with update info (*.uif)> ' +
               '<Report file> <Version> <Type> <Language>')
