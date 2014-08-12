@@ -46,4 +46,4 @@ if __name__ == '__main__':
     else:
         print('Using:')
         print(sys.argv[0] + ' <path to directory with updates>' +
-                            ' <date for non year edition>')
+                            ' <date (MMYY), only for non year edition>')

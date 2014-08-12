@@ -22,9 +22,16 @@ def getData(aUpdates, aKBs, aQuery):
     ret = {}
     updates = core.updates.Updates()
 
-    for kb in aKBs:
-        aQuery['KB'] = kb
-        updates.addUpdates(aUpdates.getUpdates(aQuery))
+    if aQuery == {}:
+        condition = lambda a, b: ((a in b) or (b in a))
+        for kb in aKBs:
+            aQuery['Path'] = str(kb)
+            updates.addUpdates(
+                aUpdates.getUpdatesByCondition(condition, aQuery))
+    else:
+        for kb in aKBs:
+            aQuery['KB'] = kb
+            updates.addUpdates(aUpdates.getUpdates(aQuery))
 
     if 0 != len(updates):
         KBs = getListDiff(aKBs, items2KBs(updates))

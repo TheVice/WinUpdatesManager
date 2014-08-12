@@ -37,20 +37,25 @@ class Updates:
             self.mData.append(aUpdate)
             self.mIndex += 1
 
-    def getUpdates(self, aQuery):
+    def getUpdatesByCondition(self, aCondition, aQuery):
 
         updates = []
 
         for update in self:
             match = True
             for key in aQuery.keys():
-                if (update[key] != aQuery.get(key)):
+                if (False == aCondition(update[key], aQuery.get(key))):
                     match = False
                     break
             if match:
                 updates.append(update)
 
         return updates
+
+    def getUpdates(self, aQuery):
+
+        condition = lambda a, b: (a == b)
+        return self.getUpdatesByCondition(condition, aQuery)
 
     def __iter__(self):
 
@@ -640,8 +645,12 @@ def getUpdatesFromUIF_Storage(aPath):
         updates = getUpdatesFromUIF(aPath)
     elif os.path.isdir(aPath):
         files = core.dirs.getFilesInDirectory(aPath, '.uif')
+        count = len(files)
+        i = 1
         for _file in files:
             updates.addUpdates(getUpdatesFromUIF(_file))
+            print(str(i) + ' / ' + str(count) + ' ' + str(_file))
+            i += 1
 
     return updates
 
