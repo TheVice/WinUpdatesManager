@@ -154,6 +154,34 @@ class TestSequenceFunctions(unittest.TestCase):
         up2 = updates.getUpdates(dict(query))
         self.assertEqual(3, len(up2))
 
+
+    def test_QueryUpdates2(self):
+
+        lines = []
+        lines.append('{\'Date\': datetime.date(2014, 5, 13), \'Path\': \'\\2920189\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB2920189-x64.msu\', \'Type\': \'x64\', \'Version\': \'Windows Server 2012 R2\', \'KB\': 2920189, \'Language\': \'Neutral\'}')
+        lines.append('{\'Date\': datetime.date(2014, 5, 13), \'Path\': \'\\2920189\\WindowsServer2012\\X64\\NEU\\Windows8-RT-KB2920189-x64.msu\', \'Type\': \'x64\', \'Version\': \'Windows Server 2012\', \'KB\': 2920189, \'Language\': \'Neutral\'}')
+        lines.append('{\'Date\': datetime.date(2014, 5, 13), \'Path\': \'\\2920189\\Windows8.1\\X86\\NEU\\Windows8.1-KB2920189-x86.msu\', \'Type\': \'x86\', \'Version\': \'Windows 8.1\', \'KB\': 2920189, \'Language\': \'Neutral\'}')
+        lines.append('{\'Date\': datetime.date(2014, 5, 13), \'Path\': \'\\2920189\\Windows8.1\\X64\\NEU\\Windows8.1-KB2920189-x64.msu\', \'Type\': \'x64\', \'Version\': \'Windows 8.1\', \'KB\': 2920189, \'Language\': \'Neutral\'}')
+        lines.append('{\'Date\': datetime.date(2014, 5, 13), \'Path\': \'\\2920189\\Windows8\\X86\\NEU\\Windows8-RT-KB2920189-x86.msu\', \'Type\': \'x86\', \'Version\': \'Windows 8\', \'KB\': 2920189, \'Language\': \'Neutral\'}')
+        lines.append('{\'Date\': datetime.date(2014, 5, 13), \'Path\': \'\\2920189\\Windows8\\X64\\NEU\\Windows8-RT-KB2920189-x64.msu\', \'Type\': \'x64\', \'Version\': \'Windows 8\', \'KB\': 2920189, \'Language\': \'Neutral\'}')
+
+        updates = core.updates.Updates()
+        versions = core.updates.Versions()
+        types = core.updates.Types()
+        languages = core.updates.Languages()
+
+        for line in lines:
+            core.updates.getUpdatesFromUIF_Line(line, versions, types, languages, updates)
+
+        self.assertEqual(len(lines), len(updates))
+        query = {}
+        query['Version'] = 'Windows 8'
+        query['Type'] = 'x64'
+        query['Language'] = 'Neutral'
+        up = updates.getUpdates(dict(query))
+        self.assertEqual(1, len(up))
+
+
     def test_Versions(self):
 
         versions = core.updates.Versions()

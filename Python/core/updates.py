@@ -585,6 +585,43 @@ def getUIFvalue(aText, aParameter):
     return value
 
 
+def getUpdatesFromUIF_Line(aLine, aVersions, aTypes, aLanguages, aUpdates):
+
+    aLine = prepareLineToParse(aLine)
+
+    path = getUIFvalue(aLine, 'Path')
+    path = path.replace(os.sep + os.sep, os.sep)
+
+    kb = None
+    try:
+        kb = int(getUIFvalue(aLine, 'KB'))
+    except:
+        kb = getKB(path)
+
+    osVersion = None
+    try:
+        osVersion = getUIFvalue(aLine, 'Version')
+    except:
+        osVersion = aVersions.getVersion(aLine)
+
+    osType = None
+    try:
+        osType = getUIFvalue(aLine, 'Type')
+    except:
+        osType = aTypes.getType(aLine)
+
+    language = None
+    try:
+        language = getUIFvalue(aLine, 'Language')
+    except:
+        language = aLanguages.getLanguage(aLine)
+
+    date = getUIFvalue(aLine, 'Date')
+
+    aUpdates.addUpdate(path, kb, osVersion, osType, language,
+                      core.dates.getDatesFromUIF_Recode(date))
+
+
 def getUpdatesFromUIF(aFile):
 
     updates = Updates()
@@ -596,39 +633,7 @@ def getUpdatesFromUIF(aFile):
         languages = Languages()
 
         for line in inputFile:
-            line = prepareLineToParse(line)
-
-            path = getUIFvalue(line, 'Path')
-            path = path.replace(os.sep + os.sep, os.sep)
-
-            kb = None
-            try:
-                kb = int(getUIFvalue(line, 'KB'))
-            except:
-                kb = getKB(path)
-
-            osVersion = None
-            try:
-                osVersion = getUIFvalue(line, 'Version')
-            except:
-                osVersion = versions.getVersion(line)
-
-            osType = None
-            try:
-                osType = getUIFvalue(line, 'Type')
-            except:
-                osType = types.getType(line)
-
-            language = None
-            try:
-                language = getUIFvalue(line, 'Language')
-            except:
-                language = languages.getLanguage(line)
-
-            date = getUIFvalue(line, 'Date')
-
-            updates.addUpdate(path, kb, osVersion, osType, language,
-                              core.dates.getDatesFromUIF_Recode(date))
+            getUpdatesFromUIF_Line(line, versions, types, languages, updates)
 
         inputFile.close()
     except:
