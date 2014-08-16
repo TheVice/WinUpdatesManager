@@ -73,12 +73,19 @@ Function GetFolderNameForImage($aImagePath)
 	{
 		$folderName = $aImagePath.Substring($beginIndex, $len)
 	}
-	Else #Windows-KB913086-201102-1.iso
+	ElseIf ($len -eq 1) #Windows-KB913086-201102-1.iso
 	{
 		$baseName = $aImagePath.Substring(0, $beginIndex - 1)
 		$baseName += "."
 		$baseName = GetFolderNameForImage($baseName)
 		$additionName = $aImagePath.Substring($beginIndex - 1, $len + 1)
+		$folderName = $baseName + $additionName
+	}
+	ElseIf ($len -eq 2) #Windows-KB913086-2013-01.iso
+	{
+		$baseName = $aImagePath.Substring(0, $beginIndex - 1)
+		$baseName = $baseName.Substring($baseName.LastIndexOf("-") + 1)
+		$additionName = $aImagePath.Substring($beginIndex - 1, 3)
 		$folderName = $baseName + $additionName
 	}
 	$folderName
@@ -192,17 +199,19 @@ If (($args -ne $null) -and ($args[1] -ne "clean"))
 	$folderForLinking = prepareLinkFolder($rootPath)
 
 	[string[]]$isos = GetIsoFiles
-	#[string[]]$volumes += MountImages2($isos)
-	#[string[]]$mountedPoints = MountVolumeOfImage($rootPath, $isos, $volumes)
+	[string[]]$volumes += MountImages2($isos)
+	[string[]]$mountedPoints = MountVolumeOfImage($rootPath, $isos, $volumes)
 	#linkingSubFolders($folderForLinking, $mountedPoints)
+
+	#unLinkingSubFolders($linkObjects)
+	UnMountVolumeOfImage($mountedPoints)
+	UnMountImages($isos)
 
 	#[string[]]$addons = GetAddonFolders
 	#linkingSubFolders($folderForLinking, $addons)
-	UnMountImages($isos)
+
+	#unLinkingSubFolders($linkObjects)
 }
 #Else
 #{
-#	unLinkingSubFolders($linkObjects)
-#	UnMountVolumeOfImage($mountedPoints)
-#	
 #}
