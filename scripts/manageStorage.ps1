@@ -201,17 +201,20 @@ If (($args -ne $null) -and ($args[1] -ne "clean"))
 	[string[]]$isos = GetIsoFiles
 	[string[]]$volumes += MountImages2($isos)
 	[string[]]$mountedPoints = MountVolumeOfImage($rootPath, $isos, $volumes)
-	#linkingSubFolders($folderForLinking, $mountedPoints)
-
+	[string[]]$linkObjects = linkingSubFolders($folderForLinking, $mountedPoints)
 	#unLinkingSubFolders($linkObjects)
-	UnMountVolumeOfImage($mountedPoints)
+	#UnMountVolumeOfImage($mountedPoints)
+	#UnMountImages($isos)
+
+	#[string[]]$addons = GetAddonFolders
+	#[string[]]$linkObjects = linkingSubFolders($folderForLinking, $addons)
+	#unLinkingSubFolders($linkObjects)
+}
+Else
+{
+	[string[]]$isos = GetIsoFiles
 	UnMountImages($isos)
 
 	#[string[]]$addons = GetAddonFolders
-	#linkingSubFolders($folderForLinking, $addons)
-
 	#unLinkingSubFolders($linkObjects)
 }
-#Else
-#{
-#}
