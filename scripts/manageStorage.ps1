@@ -147,6 +147,35 @@ Function rmlink($aPath)
 	}
 }
 
+Function linkingSubFolders()
+{
+	[string[]]$linkedObjects = @()
+	$rootPath = $args[0][0]
+	$paths = $args[0][1]
+
+	For ($i = 0; $i -lt $paths.Count; $i++)
+	{
+		$subFolders = (Get-ChildItem -Path $paths[$i] -Directory)
+		For ($j = 0; $j -lt $subFolders.Count; $j++)
+		{
+			$link = $rootPath + "\" + $subFolders[$j].Name
+			$target = $paths[$i] + "\" + $subFolders[$j].Name
+			Write-Output("link - " + $link + " target - " + $target)
+			mklink /J $link $target
+			$linkedObjects += $link
+		}
+	}
+	$linkedObjects
+}
+
+Function unLinkingSubFolders($aLinkPaths)
+{
+	For ($i = 0; $i -lt $aLinkPaths.Count; $i++)
+	{
+		rmlink $aLinkPaths[$i]
+	}
+}
+
 #$isos = GetIsoFiles
 #Write-Output($isos)
 
@@ -178,3 +207,11 @@ Function rmlink($aPath)
 
 #UnMountVolumeOfImage($mountedPoints)
 #UnMountImages($isos)
+
+#$rootPath = "C:\Public"
+#[string[]]$paths = @()
+#$paths += "C:\Addons\0107"
+#$paths += "C:\Addons\0108"
+
+#$linkObjects = linkingSubFolders($rootPath, $paths)
+#unLinkingSubFolders($linkObjects)
