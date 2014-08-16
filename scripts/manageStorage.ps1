@@ -151,15 +151,15 @@ Function linkingSubFolders()
 {
 	[string[]]$linkedObjects = @()
 	$rootPath = $args[0][0]
-	$paths = $args[0][1]
+	[string[]]$paths = $args[0][1]
 
 	For ($i = 0; $i -lt $paths.Count; $i++)
 	{
-		$subFolders = (Get-ChildItem -Path $paths[$i] -Directory)
+		[string[]]$subFolders = (Get-ChildItem $paths[$i] -Name -Directory)
 		For ($j = 0; $j -lt $subFolders.Count; $j++)
 		{
-			$link = $rootPath + "\" + $subFolders[$j].Name
-			$target = $paths[$i] + "\" + $subFolders[$j].Name
+			$link = $rootPath + "\" + $subFolders[$j]
+			$target = $paths[$i] + "\" + $subFolders[$j]
 			Write-Output("link - " + $link + " target - " + $target)
 			mklink /J $link $target
 			$linkedObjects += $link
@@ -176,42 +176,33 @@ Function unLinkingSubFolders($aLinkPaths)
 	}
 }
 
-#$isos = GetIsoFiles
-#Write-Output($isos)
+Function prepareLinkFolder($aRootPath)
+{
+	$folderPath = $aRootPath + "\0"
+	If ((Test-Path $folderPath) -eq $false)
+	{
+		Write-Output("Create folder - " + (New-Item -Path $folderPath -ItemType Directory).FullName)
+	}
+	$folderPath
+}
 
-#$addons = GetAddonFolders
-#Write-Output($addons)
+If (($args -ne $null) -and ($args[1] -ne "clean"))
+{
+	$rootPath = $args[0]
+	$folderForLinking = prepareLinkFolder($rootPath)
 
-#Write-Output(MountImages($isos))
-#UnMountImages($isos)
+	[string[]]$isos = GetIsoFiles
+	#[string[]]$volumes += MountImages2($isos)
+	#[string[]]$mountedPoints = MountVolumeOfImage($rootPath, $isos, $volumes)
+	#linkingSubFolders($folderForLinking, $mountedPoints)
 
-#mklink /J C:\FileLink.txt C:\FileName.txt
-#mklink C:\FolderLink C:\Folder
-
-#rmlink C:\FolderLink
-#rmlink C:\FileLink.txt
-
-#Write-Output(MountImages2($isos))
-#UnMountImages($isos)
-
-#$rootPath = "C:\Public"
-#[string[]]$isos = @()
-#[string[]]$volumes = @()
-#$isos += "C:\Windows-KB913086-201101.iso"
-#$isos += "C:\Windows-KB913086-201102-1.iso"
-
-#$volumes += MountImages2($isos)
-#$mountedPoints = MountVolumeOfImage($rootPath, $isos, $volumes)
-
-#Write-Output("Mounted points - " + $mountedPoints)
-
-#UnMountVolumeOfImage($mountedPoints)
-#UnMountImages($isos)
-
-#$rootPath = "C:\Public"
-#[string[]]$paths = @()
-#$paths += "C:\Addons\0107"
-#$paths += "C:\Addons\0108"
-
-#$linkObjects = linkingSubFolders($rootPath, $paths)
-#unLinkingSubFolders($linkObjects)
+	#[string[]]$addons = GetAddonFolders
+	#linkingSubFolders($folderForLinking, $addons)
+	UnMountImages($isos)
+}
+#Else
+#{
+#	unLinkingSubFolders($linkObjects)
+#	UnMountVolumeOfImage($mountedPoints)
+#	
+#}
