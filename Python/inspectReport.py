@@ -43,6 +43,22 @@ def getData(aUpdates, aKBs, aQuery):
 
     return ret
 
+
+def getDataByVersionTypeLanguage(aUpdates, aKBs,
+                                 aVersion, aPlatform, aLanguage):
+
+    query = {}
+    query['Version'] = aVersion
+    query['Type'] = aPlatform
+    query['Language'] = aLanguage
+    return getData(aUpdates, aKBs, query)
+
+
+def getDataByKbPath(aUpdates, aKBs):
+
+    query = {}
+    return getData(aUpdates, aKBs, query)
+
 if __name__ == '__main__':
 
     argc = len(sys.argv)
@@ -58,13 +74,8 @@ if __name__ == '__main__':
         print('At the input report', reportFile, 'located', KBs)
         print('Count', len(KBs))
 
-        query = {}
-        query['Version'] = version
-        query['Type'] = platform
-        query['Language'] = language
-
-        data = getData(uifData, KBs, query)
-
+        data = getDataByVersionTypeLanguage(uifData, KBs, version, platform,
+                                            language)
         updates = data.get('Updates')
 
         if updates is not None:
@@ -83,9 +94,7 @@ if __name__ == '__main__':
             for kb in KBs:
                 print(kb)
 
-            query = {}
-            data = getData(uifData, KBs, query)
-
+            data = getDataByKbPath(uifData, KBs)
             updates = data.get('Updates')
 
             if updates is not None:

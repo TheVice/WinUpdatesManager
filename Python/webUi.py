@@ -101,13 +101,8 @@ class Main(Page):
         str_list.append(str(len(KBs)))
         str_list.append('</H1>')
 
-        query = {}
-        query['Version'] = aVersion
-        query['Type'] = aPlatform
-        query['Language'] = aLanguage
-
-        data = inspectReport.getData(self.uifData, KBs, query)
-
+        data = inspectReport.getDataByVersionTypeLanguage(self.uifData,
+                                    KBs, aVersion, aPlatform, aLanguage)
         updates = data.get('Updates')
 
         if updates is not None:
@@ -131,9 +126,7 @@ class Main(Page):
                 str_list.append(str(kb))
                 str_list.append('</I>')
 
-            query = {}
-            data = inspectReport.getData(self.uifData, KBs, query)
-
+            data = inspectReport.getDataByKbPath(self.uifData, KBs)
             updates = data.get('Updates')
 
             if updates is not None:
@@ -178,6 +171,7 @@ class Main(Page):
         '<p><label>Root path (if req): <input list=\'Roots\''
         ' name=aRoot type=\'text\'></label>'
         '<datalist id=\'Roots\'>'
+        '<option value=\'\\\\192.168.56.1\\0\'></option>'
         '<option value=\'Z:\\\'></option>'
         '</datalist>'
         '</p>'
