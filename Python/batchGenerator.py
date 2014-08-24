@@ -24,8 +24,22 @@ def batchTemplate(aPath, aStrNumber, aSwitch):
     strList.append(aStrNumber)
 
     strList.append(os.linesep)
+    fileName = aPath[aPath.rfind(os.sep):]
+    strList.append('copy ')
     strList.append('\"')
     strList.append(aPath)
+    strList.append('\"')
+
+    strList.append(' ')
+    strList.append('\"')
+    strList.append("%TEMP%")
+    strList.append(fileName)
+    strList.append('\"')
+    strList.append(' /Y')
+    strList.append(os.linesep)
+    strList.append('\"')
+    strList.append("%TEMP%")
+    strList.append(fileName)
     strList.append('\"')
     strList.append(aSwitch)
     strList.append(os.linesep)
@@ -62,6 +76,22 @@ def batchTemplate(aPath, aStrNumber, aSwitch):
     strList.append(aStrNumber)
 
     strList.append(os.linesep)
+    strList.append(os.linesep)
+
+    return ''.join(strList)
+
+
+def batch4Temp(aPath, aSwitch):
+
+    strList = []
+    fileName = aPath[aPath.rfind(os.sep):]
+
+    strList.append('\"')
+    strList.append("%TEMP%")
+    strList.append(fileName)
+    strList.append('\"')
+    strList.append(aSwitch)
+    strList.append(os.linesep)
 
     return ''.join(strList)
 
@@ -71,7 +101,10 @@ def generate(aLines, aRoot=None, aSwitch=' /quiet /norestart'):
     strList = []
     strList.append('@echo off')
     strList.append(os.linesep)
+    strList.append('if [%1] == [] GOTO UP1')
+    strList.append(os.linesep)
     strList.append('GOTO %1')
+    strList.append(os.linesep)
     strList.append(os.linesep)
 
     i = 1
@@ -90,6 +123,18 @@ def generate(aLines, aRoot=None, aSwitch=' /quiet /norestart'):
             i += 1
 
     return ''.join(strList)
+
+
+def generateTemp(aLines, aSwitch=' /quiet /norestart'):
+
+    strList = []
+    for kbPath in aLines:
+        kbPath = kbPath.replace('\n', '')
+        kbPath = kbPath.replace('\r', '')
+        strList.append(batch4Temp(kbPath, aSwitch))
+
+    return ''.join(strList)
+
 
 if __name__ == '__main__':
 

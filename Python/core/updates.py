@@ -85,6 +85,15 @@ class Updates:
 
         return self.mData[aKey]
 
+    def __str__(self):
+
+        updates = []
+        for up in self:
+            updates.append(str(up))
+            updates.append(os.linesep)
+
+        return ''.join(updates)
+
 
 class Versions:
 
@@ -658,6 +667,43 @@ def getUpdatesFromUIF_Storage(aPath):
             i += 1
 
     return updates
+
+
+def assignmentUp2Up(aUp1, aUp2):
+
+    if len(aUp1.keys()) == len(aUp2.keys()):
+        for key in aUp1.keys():
+            aUp1[key] = aUp2[key]
+
+
+def exchangeUps(aUp1, aUp2):
+
+    if len(aUp1.keys()) == len(aUp2.keys()):
+        tmp = {}
+        for key in aUp1.keys():
+            tmp[key] = aUp1[key]
+        assignmentUp2Up(aUp1, aUp2)
+        assignmentUp2Up(aUp2, tmp)
+
+
+def sortByCondition(aCondition, aUpdates):
+
+    for a in range(0, len(aUpdates)):
+        for b in range(0, len(aUpdates)):
+            if aCondition(aUpdates[a]['Date'], aUpdates[b]['Date']):
+                exchangeUps(aUpdates[b], aUpdates[a])
+
+
+def sortByDateUpToDown(aUpdates):
+
+    condition = lambda a, b: (a < b)
+    return sortByCondition(condition, aUpdates)
+
+
+def sortByDateDownToUp(aUpdates):
+
+    condition = lambda a, b: (a > b)
+    return sortByCondition(condition, aUpdates)
 
 
 def separateToKnownAndUnknown(aUpdates):

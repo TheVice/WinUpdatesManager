@@ -154,7 +154,6 @@ class TestSequenceFunctions(unittest.TestCase):
         up2 = updates.getUpdates(dict(query))
         self.assertEqual(3, len(up2))
 
-
     def test_QueryUpdates2(self):
 
         lines = []
@@ -171,7 +170,8 @@ class TestSequenceFunctions(unittest.TestCase):
         languages = core.updates.Languages()
 
         for line in lines:
-            core.updates.getUpdatesFromUIF_Line(line, versions, types, languages, updates)
+            core.updates.getUpdatesFromUIF_Line(line, versions,
+                types, languages, updates)
 
         self.assertEqual(len(lines), len(updates))
         query = {}
@@ -180,7 +180,6 @@ class TestSequenceFunctions(unittest.TestCase):
         query['Language'] = 'Neutral'
         up = updates.getUpdates(dict(query))
         self.assertEqual(1, len(up))
-
 
     def test_Versions(self):
 
@@ -996,6 +995,122 @@ class TestSequenceFunctions(unittest.TestCase):
 
         self.assertEqual(0, len(data.get('unKnown')))
         self.assertEqual(1, len(data.get('known')))
+
+    def test_assignmentUp2Up(self):
+
+        ups = core.updates.Updates()
+        ups.addUpdateDict({'Date': datetime.date(2014, 7, 11), 'KB': 324189})
+        ups.addUpdateDict({'Date': datetime.date(2014, 5, 13), 'KB': 292189})
+
+        core.updates.assignmentUp2Up(ups[0], ups[1])
+
+        self.assertEqual(ups[0], ups[1])
+
+    def test_exchangeUps(self):
+
+        ups = core.updates.Updates()
+        ups.addUpdateDict({'Date': datetime.date(2014, 7, 11), 'KB': 324189})
+        ups.addUpdateDict({'Date': datetime.date(2014, 5, 13), 'KB': 292189})
+
+        core.updates.exchangeUps(ups[0], ups[1])
+
+        self.assertNotEqual(ups[0], ups[1])
+
+    def test_sort(self):
+
+        upIn = core.updates.Updates()
+        upIn.addUpdateDict({'Date': datetime.date(2014, 1, 25), 'KB': 35764})
+        upIn.addUpdateDict({'Date': datetime.date(2014, 1, 25), 'KB': 52515})
+        upIn.addUpdateDict({'Date': datetime.date(2014, 1, 25), 'KB': 69413})
+        upIn.addUpdateDict({'Date': datetime.date(2014, 3, 28), 'KB': 43915})
+        upIn.addUpdateDict({'Date': datetime.date(2014, 6, 20), 'KB': 63237})
+        upIn.addUpdateDict({'Date': datetime.date(2014, 1, 1), 'KB': 29068})
+        upIn.addUpdateDict({'Date': datetime.date(2014, 1, 19), 'KB': 56402})
+        upIn.addUpdateDict({'Date': datetime.date(2014, 1, 19), 'KB': 53064})
+        upIn.addUpdateDict({'Date': datetime.date(2014, 1, 19), 'KB': 42119})
+        upIn.addUpdateDict({'KB': 72550, 'Date': datetime.date(2014, 6, 25)})
+        upIn.addUpdateDict({'KB': 65153, 'Date': datetime.date(2014, 3, 3)})
+        upIn.addUpdateDict({'KB': 64589, 'Date': datetime.date(2014, 3, 3)})
+        upIn.addUpdateDict({'KB': 32858, 'Date': datetime.date(2014, 3, 3)})
+        upIn.addUpdateDict({'KB': 75060, 'Date': datetime.date(2014, 5, 5)})
+        upIn.addUpdateDict({'KB': 52820, 'Date': datetime.date(2014, 3, 18)})
+        upIn.addUpdateDict({'KB': 52570, 'Date': datetime.date(2014, 3, 18)})
+        upIn.addUpdateDict({'KB': 61927, 'Date': datetime.date(2014, 3, 18)})
+        upIn.addUpdateDict({'KB': 26868, 'Date': datetime.date(2014, 3, 18)})
+        upIn.addUpdateDict({'KB': 83810, 'Date': datetime.date(2014, 3, 18)})
+        upIn.addUpdateDict({'KB': 31790, 'Date': datetime.date(2014, 2, 27)})
+        upIn.addUpdateDict({'KB': 84359, 'Date': datetime.date(2014, 2, 27)})
+        upIn.addUpdateDict({'KB': 19907, 'Date': datetime.date(2014, 2, 27)})
+        upIn.addUpdateDict({'KB': 61161, 'Date': datetime.date(2014, 2, 27)})
+        upIn.addUpdateDict({'Date': datetime.date(2014, 7, 11), 'KB': 324189})
+        upIn.addUpdateDict({'Date': datetime.date(2014, 5, 13), 'KB': 292189})
+
+        upRef = core.updates.Updates()
+        upRef.addUpdateDict({'Date': datetime.date(2014, 1, 1), 'KB': 29068})
+        upRef.addUpdateDict({'Date': datetime.date(2014, 1, 19), 'KB': 42119})
+        upRef.addUpdateDict({'Date': datetime.date(2014, 1, 19), 'KB': 53064})
+        upRef.addUpdateDict({'Date': datetime.date(2014, 1, 19), 'KB': 56402})
+        upRef.addUpdateDict({'Date': datetime.date(2014, 1, 25), 'KB': 35764})
+        upRef.addUpdateDict({'Date': datetime.date(2014, 1, 25), 'KB': 52515})
+        upRef.addUpdateDict({'Date': datetime.date(2014, 1, 25), 'KB': 69413})
+        upRef.addUpdateDict({'KB': 19907, 'Date': datetime.date(2014, 2, 27)})
+        upRef.addUpdateDict({'KB': 31790, 'Date': datetime.date(2014, 2, 27)})
+        upRef.addUpdateDict({'KB': 61161, 'Date': datetime.date(2014, 2, 27)})
+        upRef.addUpdateDict({'KB': 84359, 'Date': datetime.date(2014, 2, 27)})
+        upRef.addUpdateDict({'KB': 32858, 'Date': datetime.date(2014, 3, 3)})
+        upRef.addUpdateDict({'KB': 64589, 'Date': datetime.date(2014, 3, 3)})
+        upRef.addUpdateDict({'KB': 65153, 'Date': datetime.date(2014, 3, 3)})
+        upRef.addUpdateDict({'KB': 26868, 'Date': datetime.date(2014, 3, 18)})
+        upRef.addUpdateDict({'KB': 52570, 'Date': datetime.date(2014, 3, 18)})
+        upRef.addUpdateDict({'KB': 52820, 'Date': datetime.date(2014, 3, 18)})
+        upRef.addUpdateDict({'KB': 61927, 'Date': datetime.date(2014, 3, 18)})
+        upRef.addUpdateDict({'KB': 83810, 'Date': datetime.date(2014, 3, 18)})
+        upRef.addUpdateDict({'Date': datetime.date(2014, 3, 28), 'KB': 43915})
+        upRef.addUpdateDict({'KB': 75060, 'Date': datetime.date(2014, 5, 5)})
+        upRef.addUpdateDict({'Date': datetime.date(2014, 5, 13), 'KB': 292189})
+        upRef.addUpdateDict({'Date': datetime.date(2014, 6, 20), 'KB': 63237})
+        upRef.addUpdateDict({'KB': 72550, 'Date': datetime.date(2014, 6, 25)})
+        upRef.addUpdateDict({'Date': datetime.date(2014, 7, 11), 'KB': 324189})
+
+        core.updates.sortByDateUpToDown(upIn)
+
+        self.assertEqual(len(upIn), len(upRef))
+        for up, rf in zip(upIn, upRef):
+            self.assertEqual(up['Date'], rf['Date'])
+
+        upRef = core.updates.Updates()
+        upRef.addUpdateDict({'Date': datetime.date(2014, 7, 11), 'KB': 324189})
+        upRef.addUpdateDict({'KB': 72550, 'Date': datetime.date(2014, 6, 25)})
+        upRef.addUpdateDict({'Date': datetime.date(2014, 6, 20), 'KB': 63237})
+        upRef.addUpdateDict({'Date': datetime.date(2014, 5, 13), 'KB': 292189})
+        upRef.addUpdateDict({'KB': 75060, 'Date': datetime.date(2014, 5, 5)})
+        upRef.addUpdateDict({'Date': datetime.date(2014, 3, 28), 'KB': 43915})
+        upRef.addUpdateDict({'KB': 83810, 'Date': datetime.date(2014, 3, 18)})
+        upRef.addUpdateDict({'KB': 61927, 'Date': datetime.date(2014, 3, 18)})
+        upRef.addUpdateDict({'KB': 52820, 'Date': datetime.date(2014, 3, 18)})
+        upRef.addUpdateDict({'KB': 52570, 'Date': datetime.date(2014, 3, 18)})
+        upRef.addUpdateDict({'KB': 26868, 'Date': datetime.date(2014, 3, 18)})
+        upRef.addUpdateDict({'KB': 65153, 'Date': datetime.date(2014, 3, 3)})
+        upRef.addUpdateDict({'KB': 64589, 'Date': datetime.date(2014, 3, 3)})
+        upRef.addUpdateDict({'KB': 32858, 'Date': datetime.date(2014, 3, 3)})
+        upRef.addUpdateDict({'KB': 84359, 'Date': datetime.date(2014, 2, 27)})
+        upRef.addUpdateDict({'KB': 61161, 'Date': datetime.date(2014, 2, 27)})
+        upRef.addUpdateDict({'KB': 31790, 'Date': datetime.date(2014, 2, 27)})
+        upRef.addUpdateDict({'KB': 19907, 'Date': datetime.date(2014, 2, 27)})
+        upRef.addUpdateDict({'Date': datetime.date(2014, 1, 25), 'KB': 69413})
+        upRef.addUpdateDict({'Date': datetime.date(2014, 1, 25), 'KB': 52515})
+        upRef.addUpdateDict({'Date': datetime.date(2014, 1, 25), 'KB': 35764})
+        upRef.addUpdateDict({'Date': datetime.date(2014, 1, 19), 'KB': 56402})
+        upRef.addUpdateDict({'Date': datetime.date(2014, 1, 19), 'KB': 53064})
+        upRef.addUpdateDict({'Date': datetime.date(2014, 1, 19), 'KB': 42119})
+        upRef.addUpdateDict({'Date': datetime.date(2014, 1, 1), 'KB': 29068})
+
+        core.updates.sortByDateDownToUp(upIn)
+
+        self.assertEqual(len(upIn), len(upRef))
+        for up, rf in zip(upIn, upRef):
+            self.assertEqual(up['Date'], rf['Date'])
+
 
 if __name__ == '__main__':
 
