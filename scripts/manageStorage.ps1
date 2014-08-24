@@ -12,7 +12,7 @@ Function GetIsoFiles()
 			$items = (Get-ChildItem $subDirectories[$i] -Name -File -Include *.iso)
 			For ($j = 0; $j -lt $items.Count; $j++)
 			{
-				$fileList += (Get-Item $($subDirectories[$i] + "\" + $items[$j])).FullName
+				$fileList += (Get-Item $(Join-Path -Path $subDirectories[$i] -ChildPath $items[$j])).FullName
 			}
 		}
 	}
@@ -22,15 +22,22 @@ Function GetIsoFiles()
 Function GetAddonFolders()
 {
 	[string[]]$folderList = @()
-	$addonsPath = (Get-Item "Addons").FullName
-	$subDirectories = (Get-ChildItem $addonsPath -Name -Directory)
-	For ($i = 0; $i -lt $subDirectories.Count; $i++)
-	{
-		If ($subDirectories[$i].Length -eq 4)
-		{
-			$folderList += (Get-Item $($addonsPath + "\" + $subDirectories[$i])).FullName
-		}
-	}
+    If (Test-Path "Addons" -PathType Container)
+    {
+	    $addonsPath = (Get-Item "Addons").FullName
+	    $subDirectories = (Get-ChildItem $addonsPath -Name -Directory)
+	    For ($i = 0; $i -lt $subDirectories.Count; $i++)
+	    {
+		    If ($subDirectories[$i].Length -eq 4)
+		    {
+			    $folderList += (Get-Item $(Join-Path -Path $addonsPath -ChildPath $subDirectories[$i])).FullName
+		    }
+	    }
+    }
+    Else
+    {
+        Write-Output("Unable to fine Addons folder")
+    }
 	$folderList
 }
 
@@ -193,28 +200,21 @@ Function prepareLinkFolder($aRootPath)
 	$folderPath
 }
 
-If (($args -ne $null) -and ($args[1] -ne "clean"))
-{
-	$rootPath = $args[0]
-	$folderForLinking = prepareLinkFolder($rootPath)
+#$rootPath = $args[0]
+#$folderForLinking = prepareLinkFolder($rootPath)
 
-	[string[]]$isos = GetIsoFiles
-	[string[]]$volumes += MountImages2($isos)
-	[string[]]$mountedPoints = MountVolumeOfImage($rootPath, $isos, $volumes)
-	[string[]]$linkObjects = linkingSubFolders($folderForLinking, $mountedPoints)
-	#unLinkingSubFolders($linkObjects)
-	#UnMountVolumeOfImage($mountedPoints)
-	#UnMountImages($isos)
+#[string[]]$isos = GetIsoFiles
+#[string[]]$addons = GetAddonFolders
+#[string[]]$volumes += MountImages2($isos)
+#[string[]]$mountedPoints = MountVolumeOfImage($rootPath, $isos, $volumes)
+#[string[]]$linkObjects = linkingSubFolders($folderForLinking, $mountedPoints)
 
-	#[string[]]$addons = GetAddonFolders
-	#[string[]]$linkObjects = linkingSubFolders($folderForLinking, $addons)
-	#unLinkingSubFolders($linkObjects)
-}
-Else
-{
-	[string[]]$isos = GetIsoFiles
-	UnMountImages($isos)
+#Write-Output("Press Enter to unlink and unmount the update storage and exit from script")
+#Read-Host
 
-	#[string[]]$addons = GetAddonFolders
-	#unLinkingSubFolders($linkObjects)
-}
+#unLinkingSubFolders($linkObjects)
+#UnMountVolumeOfImage($mountedPoints)
+#UnMountImages($isos)
+
+#[string[]]$linkObjects = linkingSubFolders($folderForLinking, $addons)
+#unLinkingSubFolders($linkObjects)

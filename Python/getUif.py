@@ -10,38 +10,43 @@ if __name__ == '__main__':
 
     if argc == 2:
         files = core.dirs.getSubDirectoryFiles(sys.argv[1])
-        #TODO: check return
-        paths = core.dirs.Paths(files)
-        dates = core.dates.getDatesOfUpdates(paths.getRootObjects())
-        updates = {'known': [], 'unKnown': []}
+        if 0 < len(files):
+            paths = core.dirs.Paths(files)
+            dates = core.dates.getDatesOfUpdates(paths.getRootObjects())
+            updates = {'known': [], 'unKnown': []}
 
-        for path, date in zip(paths.getRootPaths(), dates):
-            files = paths.getSubObjects(path, True)
-            monthUpdates = core.updates.getUpdatesFromPackage(files, date)
-            monthUpdates = core.updates.separateToKnownAndUnknown(monthUpdates)
-            updates['known'].append(monthUpdates['known'])
-            updates['unKnown'].append(monthUpdates['unKnown'])
+            for path, date in zip(paths.getRootPaths(), dates):
+                files = paths.getSubObjects(path, True)
+                monthUpdates = core.updates.getUpdatesFromPackage(files, date)
+                monthUpdates = core.updates.separateToKnownAndUnknown(
+                    monthUpdates)
+                updates['known'].append(monthUpdates['known'])
+                updates['unKnown'].append(monthUpdates['unKnown'])
 
-        for monthUpdates in updates['known']:
-            for update in monthUpdates:
-                print(update)
+            for monthUpdates in updates['known']:
+                for update in monthUpdates:
+                    print(update)
 
-        for monthUpdates in updates['unKnown']:
-            for update in monthUpdates:
-                print(update)
+            for monthUpdates in updates['unKnown']:
+                for update in monthUpdates:
+                    print(update)
+        else:
+            print('There is no files at ' + str(sys.argv[1]))
 
     elif argc == 3:
         files = core.dirs.getSubDirectoryFiles(sys.argv[1])
-        #TODO: check return
-        updates = core.updates.getUpdatesFromPackage(files,
-                  core.dates.getDatesOfUpdates([sys.argv[2]])[0])
-        updates = core.updates.separateToKnownAndUnknown(updates)
+        if 0 < len(files):
+            updates = core.updates.getUpdatesFromPackage(files,
+                      core.dates.getDatesOfUpdates([sys.argv[2]])[0])
+            updates = core.updates.separateToKnownAndUnknown(updates)
 
-        for update in updates['known']:
-            print(update)
+            for update in updates['known']:
+                print(update)
 
-        for update in updates['unKnown']:
-            print(update)
+            for update in updates['unKnown']:
+                print(update)
+        else:
+            print('There is no files at ' + str(sys.argv[1]))
 
     else:
         print('Using:')
