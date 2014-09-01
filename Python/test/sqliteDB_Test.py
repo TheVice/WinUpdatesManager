@@ -2,12 +2,16 @@ import unittest
 import datetime
 import db.sqliteDB
 
+
 class TestSequenceFunctions(unittest.TestCase):
 
     def test_complex(self):
 
         dataBase = db.sqliteDB.connect(':memory:')
         self.assertNotEqual(None, dataBase)
+
+        self.assertEqual([],
+                         db.sqliteDB.listTables(dataBase))
 
         self.assertEqual(None, db.sqliteDB.findTable(dataBase, 'KBs'))
         db.sqliteDB.createTableKBs(dataBase)
@@ -39,14 +43,20 @@ class TestSequenceFunctions(unittest.TestCase):
 
         self.assertEqual(None, db.sqliteDB.getIDFrom(dataBase, 'KBs', 'id', 1))
         db.sqliteDB.insertInto(dataBase, 'KBs', 'id', 1)
-        self.assertNotEqual(None, db.sqliteDB.getIDFrom(dataBase, 'KBs', 'id', 1))
+        self.assertNotEqual(None, db.sqliteDB.getIDFrom(dataBase, 'KBs',
+                                                        'id', 1))
+
+        self.assertEqual(['Dates', 'KBs', 'Languages', 'Paths', 'Types',
+                          'Updates', 'Versions', 'sqlite_sequence'],
+                         db.sqliteDB.listTables(dataBase))
 
         update = {'Date': datetime.date(2011, 5, 10),
                  'Language': 'German',
                  'Type': 'IA64',
                  'KB': 2524426,
                  'Version': 'Windows Server 2003',
-                 'Path': '\\2524426\\WindowsServer2003\\ia64\\DEU\\WINDOWSSERVER2003-KB2524426-IA64-DEU.EXE'}
+                 'Path': '\\2524426\\WindowsServer2003\\ia64\\DEU\\' +
+                         'WINDOWSSERVER2003-KB2524426-IA64-DEU.EXE'}
 
         self.assertEqual(None, db.sqliteDB.findUpdate(dataBase, update))
         db.sqliteDB.addUpdate(dataBase, update)
@@ -54,8 +64,10 @@ class TestSequenceFunctions(unittest.TestCase):
         update['Path'] = '?'
         self.assertEqual(None, db.sqliteDB.findUpdate(dataBase, update))
 
-        self.assertNotEqual(None, db.sqliteDB.getIDFrom(dataBase, 'KBs', 'id', update['KB']))
-        self.assertEqual(None, db.sqliteDB.getIDFrom(dataBase, 'KBs', 'id', update['KB'] + 1))
+        self.assertNotEqual(None, db.sqliteDB.getIDFrom(dataBase, 'KBs', 'id',
+                                                        update['KB']))
+        self.assertEqual(None, db.sqliteDB.getIDFrom(dataBase, 'KBs', 'id',
+                                                     update['KB'] + 1))
 
         self.assertNotEqual(None, db.sqliteDB.getDateByID(dataBase, 1))
         self.assertEqual(None, db.sqliteDB.getDateByID(dataBase, 2))
@@ -71,6 +83,11 @@ class TestSequenceFunctions(unittest.TestCase):
 
         self.assertNotEqual(None, db.sqliteDB.getLanguageByID(dataBase, 1))
         self.assertEqual(None, db.sqliteDB.getLanguageByID(dataBase, 2))
+
+        self.assertNotEqual(None, db.sqliteDB.getUpdatesByKB(dataBase,
+                                                             update['KB']))
+        self.assertEqual(None, db.sqliteDB.getUpdatesByKB(dataBase,
+                                                          update['KB'] + 1))
 
         dataBase.close()
 

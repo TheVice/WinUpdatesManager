@@ -1,5 +1,6 @@
 import sqlite3
 
+
 def connect(dbName):
     db = sqlite3.connect(dbName)
     return db
@@ -14,7 +15,7 @@ def writeToDataBase(db, statement):
 def readFromDataBase(db, statement):
     cursor = db.cursor()
     cursor.execute(statement)
-    return cursor.fetchone()
+    return cursor
 
 
 def insertInto(db, table, rowName, item):
@@ -24,14 +25,14 @@ def insertInto(db, table, rowName, item):
 
 def getIDFrom(db, table, rowName, item):
     fields = readFromDataBase(db, '''SELECT id FROM %s WHERE %s=%s'''
-        % (table, rowName, item))
+        % (table, rowName, item)).fetchone()
     return fields[0] if fields is not None else None
 
 
 def getSomethingByIDFrom(aDb, aTable, aRowName, aId):
 
     fields = readFromDataBase(aDb, '''SELECT %s FROM %s
-        WHERE id LIKE %s''' % (aRowName, aTable, aId))
+        WHERE id LIKE %s''' % (aRowName, aTable, aId)).fetchone()
     return fields[0] if fields is not None else None
 
 
@@ -41,15 +42,20 @@ def findTable(db, table):
          SELECT * FROM sqlite_temp_master)
          WHERE type='table' AND name='%s'
          ORDER BY name
-         ''' % table)
+         ''' % table).fetchone()
 
 
 def listTables(db):
-    return readFromDataBase(db, '''SELECT name FROM
+    rawTables = readFromDataBase(db, '''SELECT name FROM
        (SELECT * FROM sqlite_master UNION ALL
         SELECT * FROM sqlite_temp_master)
         WHERE type='table'
         ORDER BY name''')
+
+    tables = []
+    for table in rawTables:
+        tables.append(table[0])
+    return tables
 
 
 def createTableKBs(db):
@@ -176,13 +182,13 @@ def findUpdate(db, update):
     if language_id is None:
         return None
 
-    if None is readFromDataBase(db, '''SELECT kb_id, date_id, path_id, version_id,
-                            type_id, language_id
+    if None is readFromDataBase(db, '''SELECT kb_id, date_id, path_id,
+                            version_id, type_id, language_id
                             FROM Updates
                             WHERE kb_id=%s AND date_id=%s AND path_id=%s AND
                             version_id=%s AND type_id=%s AND language_id=%s
                             ''' % (kb_id, date_id, path_id, version_id,
-                                type_id, language_id)):
+                                type_id, language_id)).fetchone():
         return None
 
     update = {}
@@ -194,3 +200,30 @@ def findUpdate(db, update):
     update['Language'] = getLanguageByID(db, language_id)
 
     return update
+
+
+def getUpdatesByKB(aDb, aKB):
+
+    kb_id = getIDFrom(aDb, 'KBs', 'id', aKB)
+    if kb_id is None:
+        return None
+
+    rawUpdates = readFromDataBase(aDb, '''SELECT kb_id, date_id, path_id,
+                                  version_id, type_id, language_id
+                                  FROM Updates
+                                  WHERE kb_id=%s''' % kb_id)
+
+    updates = []
+    for rawUpdate in rawUpdates:
+
+        update = {}
+        update['KB'] = rawUpdate[0]
+        update['Date'] = getDateByID(aDb, rawUpdate[1])
+        update['Path'] = getPathByID(aDb, rawUpdate[2])
+        update['Version'] = getVersionByID(aDb, rawUpdate[3])
+        update['Type'] = getTypeByID(aDb, rawUpdate[4])
+        update['Language'] = getLanguageByID(aDb, rawUpdate[5])
+
+        updates.append(update)
+
+    return updates
