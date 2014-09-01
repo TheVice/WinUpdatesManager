@@ -1,6 +1,4 @@
 import sqlite3
-import datetime
-
 
 def connect(dbName):
     db = sqlite3.connect(dbName)
@@ -27,6 +25,13 @@ def insertInto(db, table, rowName, item):
 def getIDFrom(db, table, rowName, item):
     fields = readFromDataBase(db, '''SELECT id FROM %s WHERE %s=%s'''
         % (table, rowName, item))
+    return fields[0] if fields is not None else None
+
+
+def getSomethingByIDFrom(aDb, aTable, aRowName, aId):
+
+    fields = readFromDataBase(aDb, '''SELECT %s FROM %s
+        WHERE id LIKE %s''' % (aRowName, aTable, aId))
     return fields[0] if fields is not None else None
 
 
@@ -99,6 +104,31 @@ def createTableUpdates(db):
         FOREIGN KEY(language_id) REFERENCES Languages(id))''')
 
 
+def getDateByID(aDb, aId):
+
+    return getSomethingByIDFrom(aDb, 'Dates', 'Date', aId)
+
+
+def getPathByID(aDb, aId):
+
+    return getSomethingByIDFrom(aDb, 'Paths', 'Path', aId)
+
+
+def getVersionByID(aDb, aId):
+
+    return getSomethingByIDFrom(aDb, 'Versions', 'Version', aId)
+
+
+def getTypeByID(aDb, aId):
+
+    return getSomethingByIDFrom(aDb, 'Types', 'Type', aId)
+
+
+def getLanguageByID(aDb, aId):
+
+    return getSomethingByIDFrom(aDb, 'Languages', 'Language', aId)
+
+
 def getSetSubstanceID(db, table, rowName, item):
     substanceID = getIDFrom(db, table, rowName, item)
     if substanceID is not None:
@@ -109,7 +139,7 @@ def getSetSubstanceID(db, table, rowName, item):
 
 def addUpdate(db, update):
     kb_id = getSetSubstanceID(db, 'KBs', 'id', update['KB'])
-    date_id = getSetSubstanceID(db, 'Dates', 'Date', update['Date'])
+    date_id = getSetSubstanceID(db, 'Dates', 'Date', '\'%s\'' % update['Date'])
     path_id = getSetSubstanceID(db, 'Paths', 'Path', '\'%s\'' % update['Path'])
     version_id = getSetSubstanceID(db, 'Versions', 'Version',
                                    '\'%s\'' % update['Version'])
@@ -128,7 +158,7 @@ def findUpdate(db, update):
     kb_id = getIDFrom(db, 'KBs', 'id', update['KB'])
     if kb_id is None:
         return None
-    date_id = getIDFrom(db, 'Dates', 'Date', update['Date'])
+    date_id = getIDFrom(db, 'Dates', 'Date', '\'%s\'' % update['Date'])
     if date_id is None:
         return None
     path_id = getIDFrom(db, 'Paths', 'Path', '\'%s\'' % update['Path'])
@@ -145,47 +175,22 @@ def findUpdate(db, update):
                                     '\'%s\'' % update['Language'])
     if language_id is None:
         return None
-    return readFromDataBase(db, '''SELECT kb_id, date_id, path_id, version_id,
+
+    if None is readFromDataBase(db, '''SELECT kb_id, date_id, path_id, version_id,
                             type_id, language_id
                             FROM Updates
                             WHERE kb_id=%s AND date_id=%s AND path_id=%s AND
                             version_id=%s AND type_id=%s AND language_id=%s
                             ''' % (kb_id, date_id, path_id, version_id,
-                                type_id, language_id))
+                                type_id, language_id)):
+        return None
 
+    update = {}
+    update['KB'] = kb_id
+    update['Date'] = getDateByID(db, date_id)
+    update['Path'] = getPathByID(db, path_id)
+    update['Version'] = getVersionByID(db, version_id)
+    update['Type'] = getTypeByID(db, type_id)
+    update['Language'] = getLanguageByID(db, language_id)
 
-if __name__ == '__main__':
-    db = connect(':memory:')
-
-    if findTable(db, 'KBs') is None:
-        createTableKBs(db)
-    if findTable(db, 'Dates') is None:
-        createTableDates(db)
-    if findTable(db, 'Paths') is None:
-        createTablePaths(db)
-    if findTable(db, 'Versions') is None:
-        createTableVersions(db)
-    if findTable(db, 'Types') is None:
-        createTableTypes(db)
-    if findTable(db, 'Languages') is None:
-        createTableLanguages(db)
-    if findTable(db, 'Updates') is None:
-        createTableUpdates(db)
-    if getIDFrom(db, 'KBs', 'id', 1) is None:
-        insertInto(db, 'KBs', 'id', 1)
-
-    update = {'KB': 1,
-              'Date': datetime.date(2013, 2, 1),
-              'Path': 'D:\\SQLite\\sqlite3.exe',
-              'Version': 'SQLite',
-              'Type': 'x86',
-              'Language': 'Neutral'}
-
-    if findUpdate(db, update) is None:
-        addUpdate(db, update)
-
-    update['Path'] = '?'
-
-    print(findUpdate(db, update))
-
-    db.close()
+    return update
