@@ -24,7 +24,7 @@ def insertInto(db, table, rowName, item):
 
 
 def getIDFrom(db, table, rowName, item):
-    fields = readFromDataBase(db, '''SELECT id FROM %s WHERE %s=%s'''
+    fields = readFromDataBase(db, '''SELECT id FROM %s WHERE %s LIKE %s'''
         % (table, rowName, item)).fetchone()
     return fields[0] if fields is not None else None
 
@@ -40,7 +40,7 @@ def findTable(db, table):
     return readFromDataBase(db, '''SELECT name FROM
         (SELECT * FROM sqlite_master UNION ALL
          SELECT * FROM sqlite_temp_master)
-         WHERE type='table' AND name='%s'
+         WHERE type LIKE 'table' AND name LIKE '%s'
          ORDER BY name
          ''' % table).fetchone()
 
@@ -49,7 +49,7 @@ def listTables(db):
     rawTables = readFromDataBase(db, '''SELECT name FROM
        (SELECT * FROM sqlite_master UNION ALL
         SELECT * FROM sqlite_temp_master)
-        WHERE type='table'
+        WHERE type LIKE 'table'
         ORDER BY name''')
 
     tables = []
@@ -185,8 +185,9 @@ def findUpdate(db, update):
     if None is readFromDataBase(db, '''SELECT kb_id, date_id, path_id,
                             version_id, type_id, language_id
                             FROM Updates
-                            WHERE kb_id=%s AND date_id=%s AND path_id=%s AND
-                            version_id=%s AND type_id=%s AND language_id=%s
+                            WHERE kb_id LIKE %s AND date_id LIKE %s AND
+                            path_id LIKE %s AND version_id LIKE %s AND
+                            type_id LIKE %s AND language_id LIKE %s
                             ''' % (kb_id, date_id, path_id, version_id,
                                 type_id, language_id)).fetchone():
         return None
@@ -211,7 +212,7 @@ def getUpdatesByKB(aDb, aKB):
     rawUpdates = readFromDataBase(aDb, '''SELECT kb_id, date_id, path_id,
                                   version_id, type_id, language_id
                                   FROM Updates
-                                  WHERE kb_id=%s''' % kb_id)
+                                  WHERE kb_id LIKE %s''' % kb_id)
 
     updates = []
     for rawUpdate in rawUpdates:
