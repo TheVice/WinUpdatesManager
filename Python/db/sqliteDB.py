@@ -31,8 +31,8 @@ def getIDFrom(db, table, rowName, item):
 
 def getSomethingByIDFrom(aDb, aTable, aRowName, aId):
 
-    fields = readFromDataBase(aDb, '''SELECT %s FROM %s
-        WHERE id LIKE %s''' % (aRowName, aTable, aId)).fetchone()
+    fields = readFromDataBase(aDb, '''SELECT %s FROM %s WHERE id LIKE %s'''
+        % (aRowName, aTable, aId)).fetchone()
     return fields[0] if fields is not None else None
 
 
@@ -143,16 +143,33 @@ def getSetSubstanceID(db, table, rowName, item):
     return getIDFrom(db, table, rowName, item)
 
 
-def addUpdate(db, update):
-    kb_id = getSetSubstanceID(db, 'KBs', 'id', update['KB'])
-    date_id = getSetSubstanceID(db, 'Dates', 'Date', '\'%s\'' % update['Date'])
-    path_id = getSetSubstanceID(db, 'Paths', 'Path', '\'%s\'' % update['Path'])
-    version_id = getSetSubstanceID(db, 'Versions', 'Version',
-                                   '\'%s\'' % update['Version'])
-    type_id = getSetSubstanceID(db, 'Types', 'Type', '\'%s\'' % update['Type'])
-    language_id = getSetSubstanceID(db, 'Languages', 'Language',
-                                    '\'%s\'' % update['Language'])
-    writeToDataBase(db, '''INSERT INTO Updates
+def addUpdate(aDb, aUpdate):
+
+    kb = aUpdate['KB'] if not isinstance(aUpdate['KB'], dict) else -1
+    kb_id = getSetSubstanceID(aDb, 'KBs', 'id', kb)
+
+    osVersion = (aUpdate['Version']
+            if not isinstance(aUpdate['Version'], dict) else 'UNKNOWN VERSION')
+    version_id = getSetSubstanceID(aDb, 'Versions', 'Version',
+                                   '\'%s\'' % osVersion)
+
+    osType = (
+        aUpdate['Type'] if not isinstance(aUpdate['Type'], dict) else
+            'UNKNOWN TYPE')
+    type_id = getSetSubstanceID(aDb, 'Types', 'Type', '\'%s\'' % osType)
+
+    language = (
+        aUpdate['Language'] if not isinstance(aUpdate['Language'], dict) else
+            'UNKNOWN LANGUAGE')
+    language_id = getSetSubstanceID(aDb, 'Languages', 'Language',
+                                    '\'%s\'' % language)
+
+    date_id = getSetSubstanceID(aDb, 'Dates', 'Date',
+                                '\'%s\'' % aUpdate['Date'])
+    path_id = getSetSubstanceID(aDb, 'Paths', 'Path',
+                                '\'%s\'' % aUpdate['Path'])
+
+    writeToDataBase(aDb, '''INSERT INTO Updates
                            (kb_id, date_id, path_id, version_id,
                             type_id, language_id)
                            VALUES (%s, %s, %s, %s, %s, %s)'''
@@ -174,7 +191,7 @@ def getUpdates(aDb, aQuery):
         if('KB' == key):
             kb_id = getIDFrom(aDb, 'KBs', 'id', aQuery[key])
             if kb_id is None:
-                return None
+                return []
 
             query += ''' kb_id LIKE %s''' % kb_id
             andNead = True
@@ -182,7 +199,7 @@ def getUpdates(aDb, aQuery):
         elif('Date' == key):
             date_id = getIDFrom(aDb, 'Dates', 'Date', '\'%s\'' % aQuery[key])
             if date_id is None:
-                return None
+                return []
 
             query += ''' date_id LIKE %s''' % date_id
             andNead = True
@@ -191,7 +208,7 @@ def getUpdates(aDb, aQuery):
             version_id = getIDFrom(aDb, 'Versions', 'Version',
                                    '\'%s\'' % aQuery[key])
             if version_id is None:
-                return None
+                return []
 
             query += ''' version_id LIKE %s''' % version_id
             andNead = True
@@ -199,7 +216,7 @@ def getUpdates(aDb, aQuery):
         elif('Type' == key):
             type_id = getIDFrom(aDb, 'Types', 'Type', '\'%s\'' % aQuery[key])
             if type_id is None:
-                return None
+                return []
 
             query += ''' type_id LIKE %s''' % type_id
             andNead = True
@@ -208,7 +225,7 @@ def getUpdates(aDb, aQuery):
             language_id = getIDFrom(aDb, 'Languages', 'Language',
                                     '\'%s\'' % aQuery[key])
             if language_id is None:
-                return None
+                return []
 
             query += ''' language_id LIKE %s''' % language_id
             andNead = True
@@ -216,7 +233,7 @@ def getUpdates(aDb, aQuery):
         elif('Path' == key):
             path_id = getIDFrom(aDb, 'Paths', 'Path', '\'%s\'' % aQuery[key])
             if path_id is None:
-                return None
+                return []
 
             query += ''' path_id LIKE %s''' % path_id
             andNead = True
