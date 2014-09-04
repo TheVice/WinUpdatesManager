@@ -160,59 +160,68 @@ def addUpdate(db, update):
                        language_id))
 
 
-def findUpdate(db, update):
-    kb_id = getIDFrom(db, 'KBs', 'id', update['KB'])
-    if kb_id is None:
-        return None
-    date_id = getIDFrom(db, 'Dates', 'Date', '\'%s\'' % update['Date'])
-    if date_id is None:
-        return None
-    path_id = getIDFrom(db, 'Paths', 'Path', '\'%s\'' % update['Path'])
-    if path_id is None:
-        return None
-    version_id = getIDFrom(db, 'Versions', 'Version',
-                                   '\'%s\'' % update['Version'])
-    if version_id is None:
-        return None
-    type_id = getIDFrom(db, 'Types', 'Type', '\'%s\'' % update['Type'])
-    if type_id is None:
-        return None
-    language_id = getIDFrom(db, 'Languages', 'Language',
-                                    '\'%s\'' % update['Language'])
-    if language_id is None:
-        return None
+def getUpdates(aDb, aQuery):
 
-    if None is readFromDataBase(db, '''SELECT kb_id, date_id, path_id,
-                            version_id, type_id, language_id
-                            FROM Updates
-                            WHERE kb_id LIKE %s AND date_id LIKE %s AND
-                            path_id LIKE %s AND version_id LIKE %s AND
-                            type_id LIKE %s AND language_id LIKE %s
-                            ''' % (kb_id, date_id, path_id, version_id,
-                                type_id, language_id)).fetchone():
-        return None
+    query = '''SELECT kb_id, date_id, path_id, version_id, type_id, language_id
+               FROM Updates WHERE'''
 
-    update = {}
-    update['KB'] = kb_id
-    update['Date'] = getDateByID(db, date_id)
-    update['Path'] = getPathByID(db, path_id)
-    update['Version'] = getVersionByID(db, version_id)
-    update['Type'] = getTypeByID(db, type_id)
-    update['Language'] = getLanguageByID(db, language_id)
+    andNead = False
+    for key in aQuery.keys():
 
-    return update
+        if(andNead):
+            query += ''' AND'''
 
+        if('KB' == key):
+            kb_id = getIDFrom(aDb, 'KBs', 'id', aQuery[key])
+            if kb_id is None:
+                return None
 
-def getUpdatesByKB(aDb, aKB):
+            query += ''' kb_id LIKE %s''' % kb_id
+            andNead = True
 
-    kb_id = getIDFrom(aDb, 'KBs', 'id', aKB)
-    if kb_id is None:
-        return None
+        elif('Date' == key):
+            date_id = getIDFrom(aDb, 'Dates', 'Date', '\'%s\'' % aQuery[key])
+            if date_id is None:
+                return None
 
-    rawUpdates = readFromDataBase(aDb, '''SELECT kb_id, date_id, path_id,
-                                  version_id, type_id, language_id
-                                  FROM Updates
-                                  WHERE kb_id LIKE %s''' % kb_id)
+            query += ''' date_id LIKE %s''' % date_id
+            andNead = True
+
+        elif('Version' == key):
+            version_id = getIDFrom(aDb, 'Versions', 'Version',
+                                   '\'%s\'' % aQuery[key])
+            if version_id is None:
+                return None
+
+            query += ''' version_id LIKE %s''' % version_id
+            andNead = True
+
+        elif('Type' == key):
+            type_id = getIDFrom(aDb, 'Types', 'Type', '\'%s\'' % aQuery[key])
+            if type_id is None:
+                return None
+
+            query += ''' type_id LIKE %s''' % type_id
+            andNead = True
+
+        elif('Language' == key):
+            language_id = getIDFrom(aDb, 'Languages', 'Language',
+                                    '\'%s\'' % aQuery[key])
+            if language_id is None:
+                return None
+
+            query += ''' language_id LIKE %s''' % language_id
+            andNead = True
+
+        elif('Path' == key):
+            path_id = getIDFrom(aDb, 'Paths', 'Path', '\'%s\'' % aQuery[key])
+            if path_id is None:
+                return None
+
+            query += ''' path_id LIKE %s''' % path_id
+            andNead = True
+
+    rawUpdates = readFromDataBase(aDb, query)
 
     updates = []
     for rawUpdate in rawUpdates:

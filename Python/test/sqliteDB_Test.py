@@ -58,11 +58,11 @@ class TestSequenceFunctions(unittest.TestCase):
                  'Path': '\\2524426\\WindowsServer2003\\ia64\\DEU\\' +
                          'WINDOWSSERVER2003-KB2524426-IA64-DEU.EXE'}
 
-        self.assertEqual(None, db.sqliteDB.findUpdate(dataBase, update))
+        self.assertEqual(None, db.sqliteDB.getUpdates(dataBase, update))
         db.sqliteDB.addUpdate(dataBase, update)
-        self.assertNotEqual(None, db.sqliteDB.findUpdate(dataBase, update))
+        self.assertNotEqual(None, db.sqliteDB.getUpdates(dataBase, update))
         update['Path'] = '?'
-        self.assertEqual(None, db.sqliteDB.findUpdate(dataBase, update))
+        self.assertEqual(None, db.sqliteDB.getUpdates(dataBase, update))
 
         self.assertNotEqual(None, db.sqliteDB.getIDFrom(dataBase, 'KBs', 'id',
                                                         update['KB']))
@@ -84,10 +84,12 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertNotEqual(None, db.sqliteDB.getLanguageByID(dataBase, 1))
         self.assertEqual(None, db.sqliteDB.getLanguageByID(dataBase, 2))
 
-        self.assertNotEqual(None, db.sqliteDB.getUpdatesByKB(dataBase,
-                                                             update['KB']))
-        self.assertEqual(None, db.sqliteDB.getUpdatesByKB(dataBase,
-                                                          update['KB'] + 1))
+        update['Path'] = ('\\2524426\\WindowsServer2003\\ia64\\DEU\\' +
+                         'WINDOWSSERVER2003-KB2524426-IA64-DEU.EXE')
+
+        self.assertNotEqual(None, db.sqliteDB.getUpdates(dataBase, update))
+        update['KB'] += 1
+        self.assertEqual(None, db.sqliteDB.getUpdates(dataBase, update))
 
         dataBase.close()
 
