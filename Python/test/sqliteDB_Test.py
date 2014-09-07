@@ -164,6 +164,10 @@ class TestSequenceFunctions(unittest.TestCase):
         updates = db.sqliteDB.getUpdates(self.dataBase, query)
         self.assertEqual(0, len(updates))
 
+        query = {}
+        updates = db.sqliteDB.getUpdates(self.dataBase, query)
+        self.assertEqual(6, len(updates))
+
     def tearDown(self):
 
         self.dataBase.close()

@@ -179,64 +179,72 @@ def addUpdate(aDb, aUpdate):
 
 def getUpdates(aDb, aQuery):
 
-    query = '''SELECT kb_id, date_id, path_id, version_id, type_id, language_id
-               FROM Updates WHERE'''
+    query = None
+    if(aQuery == {}):
+        query = '''SELECT kb_id, date_id, path_id, version_id,
+                   type_id, language_id FROM Updates'''
+    else:
+        query = '''SELECT kb_id, date_id, path_id, version_id,
+                   type_id, language_id FROM Updates WHERE'''
 
-    andNead = False
-    for key in aQuery.keys():
+        andNead = False
+        for key in aQuery.keys():
 
-        if(andNead):
-            query += ''' AND'''
+            if(andNead):
+                query += ''' AND'''
 
-        if('KB' == key):
-            kb_id = getIDFrom(aDb, 'KBs', 'id', aQuery[key])
-            if kb_id is None:
-                return []
+            if('KB' == key):
+                kb_id = getIDFrom(aDb, 'KBs', 'id', aQuery[key])
+                if kb_id is None:
+                    return []
 
-            query += ''' kb_id LIKE %s''' % kb_id
-            andNead = True
+                query += ''' kb_id LIKE %s''' % kb_id
+                andNead = True
 
-        elif('Date' == key):
-            date_id = getIDFrom(aDb, 'Dates', 'Date', '\'%s\'' % aQuery[key])
-            if date_id is None:
-                return []
+            elif('Date' == key):
+                date_id = getIDFrom(aDb, 'Dates',
+                                    'Date', '\'%s\'' % aQuery[key])
+                if date_id is None:
+                    return []
 
-            query += ''' date_id LIKE %s''' % date_id
-            andNead = True
+                query += ''' date_id LIKE %s''' % date_id
+                andNead = True
 
-        elif('Version' == key):
-            version_id = getIDFrom(aDb, 'Versions', 'Version',
-                                   '\'%s\'' % aQuery[key])
-            if version_id is None:
-                return []
+            elif('Version' == key):
+                version_id = getIDFrom(aDb, 'Versions', 'Version',
+                                       '\'%s\'' % aQuery[key])
+                if version_id is None:
+                    return []
 
-            query += ''' version_id LIKE %s''' % version_id
-            andNead = True
+                query += ''' version_id LIKE %s''' % version_id
+                andNead = True
 
-        elif('Type' == key):
-            type_id = getIDFrom(aDb, 'Types', 'Type', '\'%s\'' % aQuery[key])
-            if type_id is None:
-                return []
+            elif('Type' == key):
+                type_id = getIDFrom(aDb, 'Types',
+                                    'Type', '\'%s\'' % aQuery[key])
+                if type_id is None:
+                    return []
 
-            query += ''' type_id LIKE %s''' % type_id
-            andNead = True
+                query += ''' type_id LIKE %s''' % type_id
+                andNead = True
 
-        elif('Language' == key):
-            language_id = getIDFrom(aDb, 'Languages', 'Language',
-                                    '\'%s\'' % aQuery[key])
-            if language_id is None:
-                return []
+            elif('Language' == key):
+                language_id = getIDFrom(aDb, 'Languages', 'Language',
+                                        '\'%s\'' % aQuery[key])
+                if language_id is None:
+                    return []
 
-            query += ''' language_id LIKE %s''' % language_id
-            andNead = True
+                query += ''' language_id LIKE %s''' % language_id
+                andNead = True
 
-        elif('Path' == key):
-            path_id = getIDFrom(aDb, 'Paths', 'Path', '\'%s\'' % aQuery[key])
-            if path_id is None:
-                return []
+            elif('Path' == key):
+                path_id = getIDFrom(aDb, 'Paths',
+                                    'Path', '\'%s\'' % aQuery[key])
+                if path_id is None:
+                    return []
 
-            query += ''' path_id LIKE %s''' % path_id
-            andNead = True
+                query += ''' path_id LIKE %s''' % path_id
+                andNead = True
 
     rawUpdates = readFromDataBase(aDb, query)
 
