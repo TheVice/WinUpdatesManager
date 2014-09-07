@@ -177,6 +177,24 @@ def addUpdate(aDb, aUpdate):
                        language_id))
 
 
+def rawUpdatesToUpdates(aDb, aRawUpdates):
+
+    updates = []
+    for rawUpdate in aRawUpdates:
+
+        update = {}
+        update['KB'] = rawUpdate[0]
+        update['Date'] = getDateByID(aDb, rawUpdate[1])
+        update['Path'] = getPathByID(aDb, rawUpdate[2])
+        update['Version'] = getVersionByID(aDb, rawUpdate[3])
+        update['Type'] = getTypeByID(aDb, rawUpdate[4])
+        update['Language'] = getLanguageByID(aDb, rawUpdate[5])
+
+        updates.append(update)
+
+    return updates
+
+
 def getUpdates(aDb, aQuery):
 
     query = None
@@ -247,18 +265,4 @@ def getUpdates(aDb, aQuery):
                 andNead = True
 
     rawUpdates = readFromDataBase(aDb, query)
-
-    updates = []
-    for rawUpdate in rawUpdates:
-
-        update = {}
-        update['KB'] = rawUpdate[0]
-        update['Date'] = getDateByID(aDb, rawUpdate[1])
-        update['Path'] = getPathByID(aDb, rawUpdate[2])
-        update['Version'] = getVersionByID(aDb, rawUpdate[3])
-        update['Type'] = getTypeByID(aDb, rawUpdate[4])
-        update['Language'] = getLanguageByID(aDb, rawUpdate[5])
-
-        updates.append(update)
-
-    return updates
+    return rawUpdatesToUpdates(aDb, rawUpdates)
