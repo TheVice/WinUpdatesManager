@@ -266,3 +266,27 @@ def getUpdates(aDb, aQuery):
 
     rawUpdates = readFromDataBase(aDb, query)
     return rawUpdatesToUpdates(aDb, rawUpdates)
+
+
+def regexp(aKb, aPath):
+
+    return aKb in aPath
+
+
+def getUpdatesByKBInPath(aDb, aKb):
+
+    aDb.create_function('REGEXP', 2, regexp)
+    path_ids = readFromDataBase(aDb, '''SELECT id FROM Paths
+                                        WHERE Path REGEXP '%s' ''' % aKb)
+
+    updates = []
+    for path_id in path_ids:
+
+        path = getPathByID(aDb, path_id[0])
+        query = {'Path': path}
+        ups = getUpdates(aDb, query)
+
+        for up in ups:
+            updates.append(up)
+
+    return updates
