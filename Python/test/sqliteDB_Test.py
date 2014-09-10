@@ -168,9 +168,172 @@ class TestSequenceFunctions(unittest.TestCase):
         updates = db.sqliteDB.getUpdates(self.dataBase, query)
         self.assertEqual(6, len(updates))
 
+    def test_getUpdatesByKBInPath(self):
+
+        updates = [
+        {'Date': datetime.date(2011, 5, 10), 'Language': 'Neutral',
+            'Type': 'x64', 'KB': 2524426, 'Version': 'Windows Server 2008 R2',
+            'Path': '\\2524426\\WindowsServer2008R2\\x64' +
+            '\\NEU\\WINDOWS6.1-KB2524426-X64.MSU'},
+        {'Date': datetime.date(2011, 5, 10), 'Language': 'Neutral',
+            'Type': 'x86', 'KB': 2524426, 'Version': 'Windows Server 2008',
+            'Path': '\\2524426\\WindowsServer2008\\x86' +
+            '\\NEU\\WINDOWS6.0-KB2524426-X86.MSU'},
+        {'Date': datetime.date(2011, 5, 10), 'Language': 'Neutral',
+            'Type': 'x64', 'KB': 2524426, 'Version': 'Windows Server 2008',
+            'Path': '\\2524426\\WindowsServer2008\\x64' +
+            '\\NEU\\WINDOWS6.0-KB2524426-X64.MSU'},
+        {'Date': datetime.date(2011, 5, 10), 'Language': 'Turkish',
+            'Type': 'x86', 'KB': 2524426, 'Version': 'Windows Server 2003',
+            'Path': '\\2524426\\WindowsServer2003\\x86' +
+            '\\TRK\\WINDOWSSERVER2003-KB2524426-X86-TRK.EXE'},
+        {'Date': datetime.date(2011, 5, 10), 'Language': 'Swedish',
+            'Type': 'x86', 'KB': 2524426, 'Version': 'Windows Server 2003',
+            'Path': '\\2524426\\WindowsServer2003\\x86' +
+            '\\SVE\\WINDOWSSERVER2003-KB2524426-X86-SVE.EXE'},
+        {'Date': datetime.date(2011, 5, 10), 'Language': 'Russian',
+            'Type': 'x86', 'KB': 2524426, 'Version': 'Windows Server 2003',
+            'Path': '\\2524426\\WindowsServer2003\\x86' +
+            '\\RUS\\WINDOWSSERVER2003-KB2524426-X86-RUS.EXE'},
+        {'Date': datetime.date(2011, 5, 10),
+            'Language': 'Portuguese (Portugal)',
+            'Type': 'x86', 'KB': 2524426, 'Version': 'Windows Server 2003',
+            'Path': '\\2524426\\WindowsServer2003\\x86' +
+            '\\PTG\\WINDOWSSERVER2003-KB2524426-X86-PTG.EXE'},
+        {'Date': datetime.date(2011, 5, 10), 'Language': 'Portuguese (Brazil)',
+            'Type': 'x86', 'KB': 2524426, 'Version': 'Windows Server 2003',
+            'Path': '\\2524426\\WindowsServer2003\\x86' +
+            '\\PTB\\WINDOWSSERVER2003-KB2524426-X86-PTB.EXE'},
+        {'Date': datetime.date(2011, 5, 10), 'Language': 'Polish',
+            'Type': 'x86', 'KB': 2524426, 'Version': 'Windows Server 2003',
+            'Path': '\\2524426\\WindowsServer2003\\x86' +
+            '\\PLK\\WINDOWSSERVER2003-KB2524426-X86-PLK.EXE'},
+        {'Date': datetime.date(2011, 5, 10), 'Language': 'Dutch',
+            'Type': 'x86', 'KB': 2524426, 'Version': 'Windows Server 2003',
+            'Path': '\\2524426\\WindowsServer2003\\x86' +
+            '\\NLD\\WINDOWSSERVER2003-KB2524426-X86-NLD.EXE'},
+        {'Date': datetime.date(2011, 5, 10), 'Language': 'Korean',
+            'Type': 'x86', 'KB': 2524426, 'Version': 'Windows Server 2003',
+            'Path': '\\2524426\\WindowsServer2003\\x86' +
+            '\\KOR\\WINDOWSSERVER2003-KB2524426-X86-KOR.EXE'},
+        {'Date': datetime.date(2011, 5, 10), 'Language': 'Japanese',
+            'Type': 'x86', 'KB': 2524426, 'Version': 'Windows Server 2003',
+            'Path': '\\2524426\\WindowsServer2003\\x86' +
+            '\\JPN\\WINDOWSSERVER2003-KB2524426-X86-JPN.EXE'},
+        {'Date': datetime.date(2011, 5, 10), 'Language': 'Italian',
+            'Type': 'x86', 'KB': 2524426, 'Version': 'Windows Server 2003',
+            'Path': '\\2524426\\WindowsServer2003\\x86' +
+            '\\ITA\\WINDOWSSERVER2003-KB2524426-X86-ITA.EXE'},
+        {'Date': datetime.date(2011, 5, 10), 'Language': 'Hungarian',
+            'Type': 'x86', 'KB': 2524426, 'Version': 'Windows Server 2003',
+            'Path': '\\2524426\\WindowsServer2003\\x86' +
+            '\\HUN\\WINDOWSSERVER2003-KB2524426-X86-HUN.EXE'},
+        {'Date': datetime.date(2011, 5, 10), 'Language': 'French',
+            'Type': 'x86', 'KB': 2524426, 'Version': 'Windows Server 2003',
+            'Path': '\\2524426\\WindowsServer2003\\x86' +
+            '\\FRA\\WINDOWSSERVER2003-KB2524426-X86-FRA.EXE'},
+        {'Date': datetime.date(2011, 5, 10), 'Language': 'Spanish',
+            'Type': 'x86', 'KB': 2524426, 'Version': 'Windows Server 2003',
+            'Path': '\\2524426\\WindowsServer2003\\x86' +
+            '\\ESN\\WINDOWSSERVER2003-KB2524426-X86-ESN.EXE'},
+        {'Date': datetime.date(2011, 5, 10), 'Language': 'English',
+            'Type': 'x86', 'KB': 2524426, 'Version': 'Windows Server 2003',
+            'Path': '\\2524426\\WindowsServer2003\\x86' +
+            '\\ENU\\WINDOWSSERVER2003-KB2524426-X86-ENU.EXE'},
+        {'Date': datetime.date(2011, 5, 10), 'Language': 'German',
+            'Type': 'x86', 'KB': 2524426, 'Version': 'Windows Server 2003',
+            'Path': '\\2524426\\WindowsServer2003\\x86' +
+            '\\DEU\\WINDOWSSERVER2003-KB2524426-X86-DEU.EXE'},
+        {'Date': datetime.date(2011, 5, 10), 'Language': 'Czech',
+            'Type': 'x86', 'KB': 2524426, 'Version': 'Windows Server 2003',
+            'Path': '\\2524426\\WindowsServer2003\\x86' +
+            '\\CSY\\WINDOWSSERVER2003-KB2524426-X86-CSY.EXE'},
+        {'Date': datetime.date(2011, 5, 10),
+            'Language': 'Chinese (Traditional)',
+            'Type': 'x86', 'KB': 2524426, 'Version': 'Windows Server 2003',
+            'Path': '\\2524426\\WindowsServer2003\\x86' +
+            '\\CHT\\WINDOWSSERVER2003-KB2524426-X86-CHT.EXE'},
+        {'Date': datetime.date(2011, 5, 10),
+            'Language': 'Chinese (Simplified)',
+            'Type': 'x86', 'KB': 2524426, 'Version': 'Windows Server 2003',
+            'Path': '\\2524426\\WindowsServer2003\\x86' +
+            '\\CHS\\WINDOWSSERVER2003-KB2524426-X86-CHS.EXE'},
+        {'Date': datetime.date(2011, 5, 10), 'Language': 'Russian',
+            'Type': 'x64', 'KB': 2524426, 'Version': 'Windows Server 2003',
+            'Path': '\\2524426\\WindowsServer2003\\x64' +
+            '\\RUS\\WINDOWSSERVER2003.WINDOWSXP-KB2524426-X64-RUS.EXE'},
+        {'Date': datetime.date(2011, 5, 10), 'Language': 'Portuguese (Brazil)',
+            'Type': 'x64', 'KB': 2524426, 'Version': 'Windows Server 2003',
+            'Path': '\\2524426\\WindowsServer2003\\x64' +
+            '\\PTB\\WINDOWSSERVER2003.WINDOWSXP-KB2524426-X64-PTB.EXE'},
+        {'Date': datetime.date(2011, 5, 10), 'Language': 'Korean',
+            'Type': 'x64', 'KB': 2524426, 'Version': 'Windows Server 2003',
+            'Path': '\\2524426\\WindowsServer2003\\x64' +
+            '\\KOR\\WINDOWSSERVER2003.WINDOWSXP-KB2524426-X64-KOR.EXE'},
+        {'Date': datetime.date(2011, 5, 10), 'Language': 'Japanese',
+            'Type': 'x64', 'KB': 2524426, 'Version': 'Windows Server 2003',
+            'Path': '\\2524426\\WindowsServer2003\\x64' +
+            '\\JPN\\WINDOWSSERVER2003.WINDOWSXP-KB2524426-X64-JPN.EXE'},
+        {'Date': datetime.date(2011, 5, 10), 'Language': 'Italian',
+            'Type': 'x64', 'KB': 2524426, 'Version': 'Windows Server 2003',
+            'Path': '\\2524426\\WindowsServer2003\\x64' +
+            '\\ITA\\WINDOWSSERVER2003.WINDOWSXP-KB2524426-X64-ITA.EXE'},
+        {'Date': datetime.date(2011, 5, 10), 'Language': 'French',
+            'Type': 'x64', 'KB': 2524426, 'Version': 'Windows Server 2003',
+            'Path': '\\2524426\\WindowsServer2003\\x64' +
+            '\\FRA\\WINDOWSSERVER2003.WINDOWSXP-KB2524426-X64-FRA.EXE'},
+        {'Date': datetime.date(2011, 5, 10), 'Language': 'Spanish',
+            'Type': 'x64', 'KB': 2524426, 'Version': 'Windows Server 2003',
+            'Path': '\\2524426\\WindowsServer2003\\x64' +
+            '\\ESN\\WINDOWSSERVER2003.WINDOWSXP-KB2524426-X64-ESN.EXE'},
+        {'Date': datetime.date(2011, 5, 10), 'Language': 'English',
+            'Type': 'x64', 'KB': 2524426, 'Version': 'Windows Server 2003',
+            'Path': '\\2524426\\WindowsServer2003\\x64' +
+            '\\ENU\\WINDOWSSERVER2003.WINDOWSXP-KB2524426-X64-ENU.EXE'},
+        {'Date': datetime.date(2011, 5, 10), 'Language': 'German',
+            'Type': 'x64', 'KB': 2524426, 'Version': 'Windows Server 2003',
+            'Path': '\\2524426\\WindowsServer2003\\x64' +
+            '\\DEU\\WINDOWSSERVER2003.WINDOWSXP-KB2524426-X64-DEU.EXE'},
+        {'Date': datetime.date(2011, 5, 10),
+            'Language': 'Chinese (Traditional)',
+            'Type': 'x64', 'KB': 2524426, 'Version': 'Windows Server 2003',
+            'Path': '\\2524426\\WindowsServer2003\\x64' +
+            '\\CHT\\WINDOWSSERVER2003.WINDOWSXP-KB2524426-X64-CHT.EXE'},
+        {'Date': datetime.date(2011, 5, 10),
+            'Language': 'Chinese (Simplified)',
+            'Type': 'x64', 'KB': 2524426, 'Version': 'Windows Server 2003',
+            'Path': '\\2524426\\WindowsServer2003\\x64' +
+            '\\CHS\\WINDOWSSERVER2003.WINDOWSXP-KB2524426-X64-CHS.EXE'},
+        {'Date': datetime.date(2011, 5, 10), 'Language': 'Japanese',
+            'Type': 'IA64', 'KB': 2524426, 'Version': 'Windows Server 2003',
+            'Path': '\\2524426\\WindowsServer2003\\ia64' +
+            '\\JPN\\WINDOWSSERVER2003-KB2524426-IA64-JPN.EXE'},
+        {'Date': datetime.date(2011, 5, 10), 'Language': 'French',
+            'Type': 'IA64', 'KB': 2524426, 'Version': 'Windows Server 2003',
+            'Path': '\\2524426\\WindowsServer2003\\ia64' +
+            '\\FRA\\WINDOWSSERVER2003-KB2524426-IA64-FRA.EXE'},
+        {'Date': datetime.date(2011, 5, 10), 'Language': 'English',
+            'Type': 'IA64', 'KB': 2524426, 'Version': 'Windows Server 2003',
+            'Path': '\\2524426\\WindowsServer2003\\ia64' +
+            '\\ENU\\WINDOWSSERVER2003-KB2524426-IA64-ENU.EXE'},
+        {'Date': datetime.date(2011, 5, 10), 'Language': 'German',
+            'Type': 'IA64', 'KB': 2524426, 'Version': 'Windows Server 2003',
+            'Path': '\\2524426\\WindowsServer2003\\ia64' +
+            '\\DEU\\WINDOWSSERVER2003-KB2524426-IA64-DEU.EXE'}
+        ]
+
+        for update in updates:
+            db.sqliteDB.addUpdate(self.dataBase, update)
+
+        updates = db.sqliteDB.getUpdatesByKBInPath(self.dataBase, 'JPN')
+        self.assertEqual(3, len(updates))
+
+        updates = db.sqliteDB.getUpdatesByKBInPath(self.dataBase, 'ia64')
+        self.assertEqual(4, len(updates))
+
     def tearDown(self):
 
-        self.dataBase.close()
+        db.sqliteDB.disconnect(self.dataBase)
 
 if __name__ == '__main__':
 

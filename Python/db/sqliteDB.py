@@ -1,9 +1,15 @@
 import sqlite3
 
 
-def connect(dbName):
-    db = sqlite3.connect(dbName)
+def connect(aDbName):
+
+    db = sqlite3.connect(aDbName)
     return db
+
+
+def disconnect(aDb):
+
+    aDb.close()
 
 
 def writeToDataBase(db, statement):
@@ -145,8 +151,7 @@ def getSetSubstanceID(db, table, rowName, item):
 
 def addUpdate(aDb, aUpdate):
 
-    kb = aUpdate['KB'] if not isinstance(aUpdate['KB'], dict) else -1
-    kb_id = getSetSubstanceID(aDb, 'KBs', 'id', kb)
+    kb_id = getSetSubstanceID(aDb, 'KBs', 'id', aUpdate['KB'])
 
     osVersion = (aUpdate['Version']
             if not isinstance(aUpdate['Version'], dict) else 'UNKNOWN VERSION')
@@ -268,16 +273,18 @@ def getUpdates(aDb, aQuery):
     return rawUpdatesToUpdates(aDb, rawUpdates)
 
 
-def regexp(aKb, aPath):
-
-    return aKb in aPath
-
-
 def getUpdatesByKBInPath(aDb, aKb):
 
-    aDb.create_function('REGEXP', 2, regexp)
-    path_ids = readFromDataBase(aDb, '''SELECT id FROM Paths
-                                        WHERE Path REGEXP '%s' ''' % aKb)
+    path_ids = None
+    try:
+
+        path_ids = readFromDataBase(aDb, '''SELECT id FROM Paths
+                                            WHERE Path REGEXP '%s' ''' % aKb)
+    except:
+
+        aDb.create_function('REGEXP', 2, lambda kb, path: kb in path)
+        path_ids = readFromDataBase(aDb, '''SELECT id FROM Paths
+                                            WHERE Path REGEXP '%s' ''' % aKb)
 
     updates = []
     for path_id in path_ids:
