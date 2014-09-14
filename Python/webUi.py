@@ -15,10 +15,10 @@ class Page:
         '<!DOCTYPE html>'
         '<html>'
         '<head>'
-        '<meta charset=\'utf-8\'><title>%s</title>'
+        '<meta charset=\'utf-8\'><title>{}</title>'
         '</head>'
         '<body>'
-        ) % self.mTitle
+        ).format(self.mTitle)
 
     def footer(self):
 
@@ -157,8 +157,8 @@ class Main(Page):
         kbItems = '<p><ul>'
         for kb in aKBs:
             kbItems = (kbItems +
-            '<li><a href=\'http://support.microsoft.com/KB/%s\'>%s</a></li>' %
-            (kb, kb))
+            '<li><a href=\'http://support.microsoft.com/KB/{0}\'>{0}</a></li>'.
+            format(kb, kb))
         kbItems = kbItems + '</ul><p>'
         return kbItems
 

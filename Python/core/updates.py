@@ -101,6 +101,7 @@ class Versions:
 
         self.Win2k = 'Windows 2000'
         self.WinXP = 'Windows XP'
+        self.WinXPEmbedded = 'Windows XP Embedded'
         self.Win2k3 = 'Windows Server 2003'
         self.Vista = 'Windows Vista'
         self.Win2k8 = 'Windows Server 2008'
@@ -117,6 +118,7 @@ class Versions:
 
         versions[os.sep + 'Windows2000' + os.sep] = self.Win2k
         versions[os.sep + 'WindowsXP' + os.sep] = self.WinXP
+        versions[os.sep + 'WindowsXPEmbedded' + os.sep] = self.WinXPEmbedded
         versions[os.sep + 'WindowsServer2003' + os.sep] = self.Win2k3
         versions[os.sep + 'WindowsVista' + os.sep] = self.Vista
         versions[os.sep + 'WindowsServer2008' + os.sep] = self.Win2k8

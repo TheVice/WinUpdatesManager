@@ -12,47 +12,56 @@ def disconnect(aDb):
     aDb.close()
 
 
-def writeToDataBase(db, statement):
-    cursor = db.cursor()
-    cursor.execute(statement)
-    db.commit()
+def writeToDataBase(aDb, aStatement):
+
+    cursor = aDb.cursor()
+    cursor.execute(aStatement)
+    aDb.commit()
 
 
-def readFromDataBase(db, statement):
-    cursor = db.cursor()
-    cursor.execute(statement)
+def readFromDataBase(aDb, aStatement):
+
+    cursor = aDb.cursor()
+    cursor.execute(aStatement)
     return cursor
 
 
-def insertInto(db, table, rowName, item):
-    writeToDataBase(db, '''INSERT INTO %s (%s) VALUES(%s)'''
-        % (table, rowName, item))
+def insertInto(aDb, aTable, aRowName, aItem):
+
+    writeToDataBase(aDb,
+        '''INSERT INTO {} ({}) VALUES({})'''.format
+        (aTable, aRowName, aItem))
 
 
-def getIDFrom(db, table, rowName, item):
-    fields = readFromDataBase(db, '''SELECT id FROM %s WHERE %s LIKE %s'''
-        % (table, rowName, item)).fetchone()
+def getIDFrom(aDb, aTable, aRowName, aItem):
+
+    fields = readFromDataBase(aDb,
+        '''SELECT id FROM {} WHERE {} LIKE {}'''.format
+        (aTable, aRowName, aItem)).fetchone()
     return fields[0] if fields is not None else None
 
 
 def getSomethingByIDFrom(aDb, aTable, aRowName, aId):
 
-    fields = readFromDataBase(aDb, '''SELECT %s FROM %s WHERE id LIKE %s'''
-        % (aRowName, aTable, aId)).fetchone()
+    fields = readFromDataBase(aDb,
+        '''SELECT {} FROM {} WHERE id LIKE {}'''.format
+        (aRowName, aTable, aId)).fetchone()
     return fields[0] if fields is not None else None
 
 
-def findTable(db, table):
-    return readFromDataBase(db, '''SELECT name FROM
+def findTable(aDb, aTable):
+
+    return readFromDataBase(aDb, '''SELECT name FROM
         (SELECT * FROM sqlite_master UNION ALL
          SELECT * FROM sqlite_temp_master)
-         WHERE type LIKE 'table' AND name LIKE '%s'
+         WHERE type LIKE 'table' AND name LIKE '{}'
          ORDER BY name
-         ''' % table).fetchone()
+         '''.format(aTable)).fetchone()
 
 
-def listTables(db):
-    rawTables = readFromDataBase(db, '''SELECT name FROM
+def listTables(aDb):
+
+    rawTables = readFromDataBase(aDb, '''SELECT name FROM
        (SELECT * FROM sqlite_master UNION ALL
         SELECT * FROM sqlite_temp_master)
         WHERE type LIKE 'table'
@@ -64,43 +73,50 @@ def listTables(db):
     return tables
 
 
-def createTableKBs(db):
-    writeToDataBase(db, '''CREATE TABLE KBs (
+def createTableKBs(aDb):
+
+    writeToDataBase(aDb, '''CREATE TABLE KBs (
         id INTEGER PRIMARY KEY NOT NULL)''')
 
 
-def createTableDates(db):
-    writeToDataBase(db, '''CREATE TABLE Dates (
+def createTableDates(aDb):
+
+    writeToDataBase(aDb, '''CREATE TABLE Dates (
         id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
         Date TEXT UNIQUE NOT NULL)''')
 
 
-def createTablePaths(db):
-    writeToDataBase(db, '''CREATE TABLE Paths (
+def createTablePaths(aDb):
+
+    writeToDataBase(aDb, '''CREATE TABLE Paths (
         id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
         Path TEXT UNIQUE NOT NULL)''')
 
 
-def createTableVersions(db):
-    writeToDataBase(db, '''CREATE TABLE Versions (
+def createTableVersions(aDb):
+
+    writeToDataBase(aDb, '''CREATE TABLE Versions (
         id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
         Version TEXT UNIQUE NOT NULL)''')
 
 
-def createTableTypes(db):
-    writeToDataBase(db, '''CREATE TABLE Types (
+def createTableTypes(aDb):
+
+    writeToDataBase(aDb, '''CREATE TABLE Types (
         id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
         Type TEXT UNIQUE NOT NULL)''')
 
 
-def createTableLanguages(db):
-    writeToDataBase(db, '''CREATE TABLE Languages (
+def createTableLanguages(aDb):
+
+    writeToDataBase(aDb, '''CREATE TABLE Languages (
         id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
         Language TEXT UNIQUE NOT NULL)''')
 
 
-def createTableUpdates(db):
-    writeToDataBase(db, '''CREATE TABLE Updates (
+def createTableUpdates(aDb):
+
+    writeToDataBase(aDb, '''CREATE TABLE Updates (
         id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
         kb_id INTEGER NOT NULL,
         date_id INTEGER NOT NULL,
@@ -141,12 +157,15 @@ def getLanguageByID(aDb, aId):
     return getSomethingByIDFrom(aDb, 'Languages', 'Language', aId)
 
 
-def getSetSubstanceID(db, table, rowName, item):
-    substanceID = getIDFrom(db, table, rowName, item)
+def getSetSubstanceID(aDb, aTable, aRowName, aItem):
+
+    substanceID = getIDFrom(aDb, aTable, aRowName, aItem)
+
     if substanceID is not None:
         return substanceID
-    insertInto(db, table, rowName, item)
-    return getIDFrom(db, table, rowName, item)
+
+    insertInto(aDb, aTable, aRowName, aItem)
+    return getIDFrom(aDb, aTable, aRowName, aItem)
 
 
 def addUpdate(aDb, aUpdate):
@@ -156,30 +175,29 @@ def addUpdate(aDb, aUpdate):
     osVersion = (aUpdate['Version']
             if not isinstance(aUpdate['Version'], dict) else 'UNKNOWN VERSION')
     version_id = getSetSubstanceID(aDb, 'Versions', 'Version',
-                                   '\'%s\'' % osVersion)
+                                   '\'{}\''.format(osVersion))
 
     osType = (
         aUpdate['Type'] if not isinstance(aUpdate['Type'], dict) else
             'UNKNOWN TYPE')
-    type_id = getSetSubstanceID(aDb, 'Types', 'Type', '\'%s\'' % osType)
+    type_id = getSetSubstanceID(aDb, 'Types', 'Type', '\'{}\''.format(osType))
 
     language = (
         aUpdate['Language'] if not isinstance(aUpdate['Language'], dict) else
             'UNKNOWN LANGUAGE')
     language_id = getSetSubstanceID(aDb, 'Languages', 'Language',
-                                    '\'%s\'' % language)
+                                    '\'{}\''.format(language))
 
     date_id = getSetSubstanceID(aDb, 'Dates', 'Date',
-                                '\'%s\'' % aUpdate['Date'])
+                                '\'{}\''.format(aUpdate['Date']))
     path_id = getSetSubstanceID(aDb, 'Paths', 'Path',
-                                '\'%s\'' % aUpdate['Path'])
+                                '\'{}\''.format(aUpdate['Path']))
 
     writeToDataBase(aDb, '''INSERT INTO Updates
                            (kb_id, date_id, path_id, version_id,
                             type_id, language_id)
-                           VALUES (%s, %s, %s, %s, %s, %s)'''
-                    % (kb_id, date_id, path_id, version_id, type_id,
-                       language_id))
+                           VALUES ({}, {}, {}, {}, {}, {})'''.format
+                (kb_id, date_id, path_id, version_id, type_id, language_id))
 
 
 def rawUpdatesToUpdates(aDb, aRawUpdates):
@@ -221,52 +239,52 @@ def getUpdates(aDb, aQuery):
                 if kb_id is None:
                     return []
 
-                query += ''' kb_id LIKE %s''' % kb_id
+                query += ''' kb_id LIKE {}'''.format(kb_id)
                 andNead = True
 
             elif('Date' == key):
                 date_id = getIDFrom(aDb, 'Dates',
-                                    'Date', '\'%s\'' % aQuery[key])
+                                    'Date', '\'{}\''.format(aQuery[key]))
                 if date_id is None:
                     return []
 
-                query += ''' date_id LIKE %s''' % date_id
+                query += ''' date_id LIKE {}'''.format(date_id)
                 andNead = True
 
             elif('Version' == key):
                 version_id = getIDFrom(aDb, 'Versions', 'Version',
-                                       '\'%s\'' % aQuery[key])
+                                       '\'{}\''.format(aQuery[key]))
                 if version_id is None:
                     return []
 
-                query += ''' version_id LIKE %s''' % version_id
+                query += ''' version_id LIKE {}'''.format(version_id)
                 andNead = True
 
             elif('Type' == key):
                 type_id = getIDFrom(aDb, 'Types',
-                                    'Type', '\'%s\'' % aQuery[key])
+                                    'Type', '\'{}\''.format(aQuery[key]))
                 if type_id is None:
                     return []
 
-                query += ''' type_id LIKE %s''' % type_id
+                query += ''' type_id LIKE {}'''.format(type_id)
                 andNead = True
 
             elif('Language' == key):
                 language_id = getIDFrom(aDb, 'Languages', 'Language',
-                                        '\'%s\'' % aQuery[key])
+                                        '\'{}\''.format(aQuery[key]))
                 if language_id is None:
                     return []
 
-                query += ''' language_id LIKE %s''' % language_id
+                query += ''' language_id LIKE {}'''.format(language_id)
                 andNead = True
 
             elif('Path' == key):
                 path_id = getIDFrom(aDb, 'Paths',
-                                    'Path', '\'%s\'' % aQuery[key])
+                                    'Path', '\'{}\''.format(aQuery[key]))
                 if path_id is None:
                     return []
 
-                query += ''' path_id LIKE %s''' % path_id
+                query += ''' path_id LIKE {}'''.format(path_id)
                 andNead = True
 
     rawUpdates = readFromDataBase(aDb, query)
@@ -279,12 +297,14 @@ def getUpdatesByKBInPath(aDb, aKb):
     try:
 
         path_ids = readFromDataBase(aDb, '''SELECT id FROM Paths
-                                            WHERE Path REGEXP '%s' ''' % aKb)
+                                            WHERE Path REGEXP '{}' '''.format
+                                            (aKb))
     except:
 
         aDb.create_function('REGEXP', 2, lambda kb, path: kb in path)
         path_ids = readFromDataBase(aDb, '''SELECT id FROM Paths
-                                            WHERE Path REGEXP '%s' ''' % aKb)
+                                            WHERE Path REGEXP '{}' '''.format
+                                            (aKb))
 
     updates = []
     for path_id in path_ids:

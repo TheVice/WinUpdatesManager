@@ -164,6 +164,22 @@ class TestSequenceFunctions(unittest.TestCase):
         updates = db.sqliteDB.getUpdates(self.dataBase, query)
         self.assertEqual(0, len(updates))
 
+        query = {'Date': datetime.date(2014, 8, 12)}
+        updates = db.sqliteDB.getUpdates(self.dataBase, query)
+        self.assertEqual(0, len(updates))
+
+        query = {'Version': 'Windows XP Embedded'}
+        updates = db.sqliteDB.getUpdates(self.dataBase, query)
+        self.assertEqual(0, len(updates))
+
+        query = {'Type': 'IA64'}
+        updates = db.sqliteDB.getUpdates(self.dataBase, query)
+        self.assertEqual(0, len(updates))
+
+        query = {'Language': 'NEU'}
+        updates = db.sqliteDB.getUpdates(self.dataBase, query)
+        self.assertEqual(0, len(updates))
+
         query = {}
         updates = db.sqliteDB.getUpdates(self.dataBase, query)
         self.assertEqual(6, len(updates))
