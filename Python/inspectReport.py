@@ -17,28 +17,41 @@ def getListDiff(aParentList, aChildList):
     return list(set(aParentList) - set(aChildList))
 
 
+def makeDefineUnknownUpdates(aKBs):
+
+    for i in range(0, len(aKBs)):
+        if isinstance(aKBs[i], dict):
+            aKBs[i] = -1
+
+
 def getData(aUpdates, aKBs, aQuery):
 
     ret = {}
     updates = core.updates.Updates()
 
     if aQuery == {}:
+
         condition = lambda a, b: ((a in b) or (b in a))
         for kb in aKBs:
             aQuery['Path'] = str(kb)
             updates.addUpdates(
                 aUpdates.getUpdatesByCondition(condition, aQuery))
     else:
+
         for kb in aKBs:
             aQuery['KB'] = kb
             updates.addUpdates(aUpdates.getUpdates(aQuery))
 
     if 0 != len(updates):
-        KBs = getListDiff(aKBs, items2KBs(updates))
+
+        items = items2KBs(updates)
+        makeDefineUnknownUpdates(items)
+        KBs = getListDiff(aKBs, items)
 
         ret['Updates'] = updates
         ret['KBs'] = KBs
     else:
+
         ret['KBs'] = aKBs
 
     return ret

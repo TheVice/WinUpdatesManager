@@ -347,6 +347,72 @@ class TestSequenceFunctions(unittest.TestCase):
         updates = db.sqliteDB.getUpdatesByKBInPath(self.dataBase, 'ia64')
         self.assertEqual(4, len(updates))
 
+    def test_getUpdates_UnknownUpdates(self):
+
+        updates = [
+        {'Date': datetime.date(2014, 7, 8),
+         'KB': {'UNKNOWN KB': '\\2977218\\Windows\\x86' +
+             '\\NEU\\Silverlight_Developer.exe'},
+         'Type': 'x86', 'Language': 'Neutral',
+         'Path': '\\2977218\\Windows\\x86' +
+             '\\NEU\\Silverlight_Developer.exe',
+         'Version': {'UNKNOWN VERSION': '\\2977218\\Windows\\x86' +
+             '\\NEU\\Silverlight_Developer.exe'}},
+        {'Date': datetime.date(2014, 7, 8),
+         'KB': {'UNKNOWN KB': '\\2977218\\Windows\\x86' +
+             '\\NEU\\Silverlight_Developer.dmg'},
+         'Type': 'x86', 'Language': 'Neutral',
+         'Path': '\\2977218\\Windows\\x86\\NEU\\Silverlight_Developer.dmg',
+         'Version': {'UNKNOWN VERSION': '\\2977218\\Windows\\x86' +
+             '\\NEU\\Silverlight_Developer.dmg'}},
+        {'Date': datetime.date(2014, 7, 8),
+         'KB': {'UNKNOWN KB': '\\2977218\\Windows\\x86' +
+             '\\NEU\\Silverlight.exe'},
+         'Type': 'x86', 'Language': 'Neutral',
+         'Path': '\\2977218\\Windows\\x86' +
+         '\\NEU\\Silverlight.exe',
+         'Version': {'UNKNOWN VERSION': '\\2977218\\Windows\\x86' +
+             '\\NEU\\Silverlight.exe'}},
+        {'Date': datetime.date(2014, 7, 8),
+         'KB': {'UNKNOWN KB': '\\2977218\\Windows\\x86' +
+             '\\NEU\\Silverlight.dmg'}, 'Type': 'x86', 'Language': 'Neutral',
+         'Path': '\\2977218\\Windows\\x86\\NEU\\Silverlight.dmg',
+         'Version': {'UNKNOWN VERSION': '\\2977218\\Windows\\x86' +
+             '\\NEU\\Silverlight.dmg'}},
+        {'Date': datetime.date(2014, 7, 8),
+         'KB': {'UNKNOWN KB': '\\2977218\\Windows\\x64' +
+             '\\NEU\\Silverlight_x64.exe'}, 'Type': 'x64',
+         'Language': 'Neutral',
+         'Path': '\\2977218\\Windows\\x64\\NEU\\Silverlight_x64.exe',
+         'Version': {'UNKNOWN VERSION': '\\2977218\\Windows\\x64' +
+             '\\NEU\\Silverlight_x64.exe'}},
+        {'Date': datetime.date(2014, 7, 8),
+         'KB': {'UNKNOWN KB': '\\2977218\\Windows\\x64' +
+             '\\NEU\\Silverlight_Developer_x64.exe'},
+         'Type': 'x64', 'Language': 'Neutral',
+         'Path': '\\2977218\\Windows\\x64' +
+             '\\NEU\\Silverlight_Developer_x64.exe',
+         'Version': {'UNKNOWN VERSION': '\\2977218\\Windows\\x64' +
+             '\\NEU\\Silverlight_Developer_x64.exe'}}
+        ]
+
+        for update in updates:
+            db.sqliteDB.addUpdate(self.dataBase, update)
+
+        query = {'KB': 2977218}
+        updates = db.sqliteDB.getUpdates(self.dataBase, query)
+        self.assertEqual(0, len(updates))
+
+        query = {'KB': -1}
+        updates = db.sqliteDB.getUpdates(self.dataBase, query)
+        self.assertEqual(6, len(updates))
+        for up in updates:
+            self.assertTrue(isinstance(up['KB'], dict))
+
+        query = {}
+        updates = db.sqliteDB.getUpdates(self.dataBase, query)
+        self.assertEqual(6, len(updates))
+
     def tearDown(self):
 
         db.sqliteDB.disconnect(self.dataBase)

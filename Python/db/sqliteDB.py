@@ -1,4 +1,5 @@
 import sqlite3
+import core.updates
 
 
 def connect(aDbName):
@@ -170,7 +171,8 @@ def getSetSubstanceID(aDb, aTable, aRowName, aItem):
 
 def addUpdate(aDb, aUpdate):
 
-    kb_id = getSetSubstanceID(aDb, 'KBs', 'id', aUpdate['KB'])
+    kb = aUpdate['KB'] if not isinstance(aUpdate['KB'], dict) else -1
+    kb_id = getSetSubstanceID(aDb, 'KBs', 'id', kb)
 
     osVersion = (aUpdate['Version']
             if not isinstance(aUpdate['Version'], dict) else 'UNKNOWN VERSION')
@@ -206,7 +208,10 @@ def rawUpdatesToUpdates(aDb, aRawUpdates):
     for rawUpdate in aRawUpdates:
 
         update = {}
-        update['KB'] = rawUpdate[0]
+        update['KB'] = (
+            rawUpdate[0] if -1 != rawUpdate[0] else
+            core.updates.unknownSubstance('UNKNOWN KB',
+                getPathByID(aDb, rawUpdate[2])))
         update['Date'] = getDateByID(aDb, rawUpdate[1])
         update['Path'] = getPathByID(aDb, rawUpdate[2])
         update['Version'] = getVersionByID(aDb, rawUpdate[3])
