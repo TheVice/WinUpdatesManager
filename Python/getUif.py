@@ -1,3 +1,4 @@
+import os
 import sys
 import core.dates
 import core.dirs
@@ -9,7 +10,7 @@ if __name__ == '__main__':
     argc = len(sys.argv)
 
     if argc == 2:
-        files = core.dirs.getSubDirectoryFiles(sys.argv[1])
+        files = core.dirs.getSubDirectoryFiles(os.path.abspath(sys.argv[1]))
         if 0 < len(files):
             paths = core.dirs.Paths(files)
             dates = core.dates.getDatesOfUpdates(paths.getRootObjects())
@@ -34,7 +35,7 @@ if __name__ == '__main__':
             print('There is no files at ' + str(sys.argv[1]))
 
     elif argc == 3:
-        files = core.dirs.getSubDirectoryFiles(sys.argv[1])
+        files = core.dirs.getSubDirectoryFiles(os.path.abspath(sys.argv[1]))
         if 0 < len(files):
             updates = core.updates.getUpdatesFromPackage(files,
                       core.dates.getDatesOfUpdates([sys.argv[2]])[0])
