@@ -24,7 +24,11 @@ def batchTemplate(aPath, aStrNumber, aSwitch):
     strList.append(aStrNumber)
 
     strList.append(os.linesep)
-    fileName = aPath[aPath.rfind(os.sep):]
+    fileName = None
+    if aPath.rfind(os.sep) != -1:
+        fileName = aPath[aPath.rfind(os.sep):]
+    else:
+        fileName = '{}{}'.format(os.sep, aPath)
     strList.append('copy ')
     strList.append('\"')
     strList.append(aPath)
@@ -32,13 +36,13 @@ def batchTemplate(aPath, aStrNumber, aSwitch):
 
     strList.append(' ')
     strList.append('\"')
-    strList.append("%TEMP%")
+    strList.append('%TEMP%')
     strList.append(fileName)
     strList.append('\"')
     strList.append(' /Y')
     strList.append(os.linesep)
     strList.append('\"')
-    strList.append("%TEMP%")
+    strList.append('%TEMP%')
     strList.append(fileName)
     strList.append('\"')
     strList.append(aSwitch)
@@ -76,7 +80,6 @@ def batchTemplate(aPath, aStrNumber, aSwitch):
     strList.append(aStrNumber)
 
     strList.append(os.linesep)
-    strList.append(os.linesep)
 
     return ''.join(strList)
 
@@ -87,7 +90,7 @@ def batch4Temp(aPath, aSwitch):
     fileName = aPath[aPath.rfind(os.sep):]
 
     strList.append('\"')
-    strList.append("%TEMP%")
+    strList.append('%TEMP%')
     strList.append(fileName)
     strList.append('\"')
     strList.append(aSwitch)

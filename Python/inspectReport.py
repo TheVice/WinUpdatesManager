@@ -38,9 +38,16 @@ def getData(aUpdates, aKBs, aQuery):
                 aUpdates.getUpdatesByCondition(condition, aQuery))
     else:
 
-        for kb in aKBs:
-            aQuery['KB'] = kb
+        if (aKBs is None):
             updates.addUpdates(aUpdates.getUpdates(aQuery))
+        else:
+            for kb in aKBs:
+                aQuery['KB'] = kb
+                updates.addUpdates(aUpdates.getUpdates(aQuery))
+
+    if (aKBs is None):
+        ret['Updates'] = updates
+        return ret
 
     if 0 != len(updates):
 

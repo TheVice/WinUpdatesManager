@@ -688,24 +688,24 @@ def exchangeUps(aUp1, aUp2):
         assignmentUp2Up(aUp2, tmp)
 
 
-def sortByCondition(aCondition, aUpdates):
+def sortByCondition(aCondition, aUpdates, aField):
 
     for a in range(0, len(aUpdates)):
         for b in range(0, len(aUpdates)):
-            if aCondition(aUpdates[a]['Date'], aUpdates[b]['Date']):
+            if aCondition(aUpdates[a][aField], aUpdates[b][aField]):
                 exchangeUps(aUpdates[b], aUpdates[a])
 
 
-def sortByDateUpToDown(aUpdates):
+def sortByFieldUpToDown(aUpdates, aField):
 
     condition = lambda a, b: (a < b)
-    return sortByCondition(condition, aUpdates)
+    return sortByCondition(condition, aUpdates, aField)
 
 
-def sortByDateDownToUp(aUpdates):
+def sortByFieldDownToUp(aUpdates, aField):
 
     condition = lambda a, b: (a > b)
-    return sortByCondition(condition, aUpdates)
+    return sortByCondition(condition, aUpdates, aField)
 
 
 def separateToKnownAndUnknown(aUpdates):

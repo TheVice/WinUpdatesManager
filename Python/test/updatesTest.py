@@ -1016,7 +1016,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
         self.assertNotEqual(ups[0], ups[1])
 
-    def test_sort(self):
+    def test_sort_by_date(self):
 
         upIn = core.updates.Updates()
         upIn.addUpdateDict({'Date': datetime.date(2014, 1, 25), 'KB': 35764})
@@ -1072,7 +1072,7 @@ class TestSequenceFunctions(unittest.TestCase):
         upRef.addUpdateDict({'KB': 72550, 'Date': datetime.date(2014, 6, 25)})
         upRef.addUpdateDict({'Date': datetime.date(2014, 7, 11), 'KB': 324189})
 
-        core.updates.sortByDateUpToDown(upIn)
+        core.updates.sortByFieldUpToDown(upIn, 'Date')
 
         self.assertEqual(len(upIn), len(upRef))
         for up, rf in zip(upIn, upRef):
@@ -1105,11 +1105,29 @@ class TestSequenceFunctions(unittest.TestCase):
         upRef.addUpdateDict({'Date': datetime.date(2014, 1, 19), 'KB': 42119})
         upRef.addUpdateDict({'Date': datetime.date(2014, 1, 1), 'KB': 29068})
 
-        core.updates.sortByDateDownToUp(upIn)
+        core.updates.sortByFieldDownToUp(upIn, 'Date')
 
         self.assertEqual(len(upIn), len(upRef))
         for up, rf in zip(upIn, upRef):
             self.assertEqual(up['Date'], rf['Date'])
+
+    def test_sort_by_path(self):
+
+        upIn = core.updates.Updates()
+        upIn.addUpdateDict({'Path': 'B'})
+        upIn.addUpdateDict({'Path': 'C'})
+        upIn.addUpdateDict({'Path': 'A'})
+
+        upRef = core.updates.Updates()
+        upRef.addUpdateDict({'Path': 'A'})
+        upRef.addUpdateDict({'Path': 'B'})
+        upRef.addUpdateDict({'Path': 'C'})
+
+        core.updates.sortByFieldUpToDown(upIn, 'Path')
+
+        self.assertEqual(len(upIn), len(upRef))
+        for up, rf in zip(upIn, upRef):
+            self.assertEqual(up['Path'], rf['Path'])
 
 
 if __name__ == '__main__':

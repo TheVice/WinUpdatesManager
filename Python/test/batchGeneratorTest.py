@@ -13,7 +13,9 @@ class TestSequenceFunctions(unittest.TestCase):
               os.linesep +
               'echo Installing 1.txt UP2' +
               os.linesep +
-              '"1.txt" /quit' +
+              'copy "1.txt" "%TEMP%\\1.txt" /Y' +
+              os.linesep +
+              '"%TEMP%\\1.txt" /quit' +
               os.linesep +
               'GOTO Y2' +
               os.linesep +
@@ -31,12 +33,15 @@ class TestSequenceFunctions(unittest.TestCase):
               ':Y2' +
               os.linesep)
         self.assertEqual(ref,
-                   batchGenerator.batchTemplate('1.txt', str(2), ' /quit'))
+            batchGenerator.batchTemplate('1.txt', str(2), ' /quit'))
 
     def test_generate(self):
         ref = ('@echo off' +
               os.linesep +
+              'if [%1] == [] GOTO UP1' +
+              os.linesep +
               'GOTO %1' +
+              os.linesep +
               os.linesep +
               ':UP1' +
               os.linesep +
@@ -45,7 +50,9 @@ class TestSequenceFunctions(unittest.TestCase):
               os.linesep +
               'echo Installing update.exe UP1' +
               os.linesep +
-              '"update.exe" /quit /nobackup' +
+              'copy "update.exe" "%TEMP%\\update.exe" /Y' +
+              os.linesep +
+              '"%TEMP%\\update.exe" /quit /nobackup' +
               os.linesep +
               'GOTO Y1' +
               os.linesep +
@@ -63,11 +70,14 @@ class TestSequenceFunctions(unittest.TestCase):
               ':Y1' +
               os.linesep)
         self.assertEqual(ref,
-             batchGenerator.generate(['update.exe'], None, ' /quit /nobackup'))
-
+            batchGenerator.generate(['update.exe'], None, ' /quit /nobackup'))
+ 
         ref = ('@echo off' +
               os.linesep +
+              'if [%1] == [] GOTO UP1' +
+              os.linesep +
               'GOTO %1' +
+              os.linesep +
               os.linesep +
               ':UP1' +
               os.linesep +
@@ -76,7 +86,9 @@ class TestSequenceFunctions(unittest.TestCase):
               os.linesep +
               'echo Installing Z:' + os.sep + 'update.exe UP1' +
               os.linesep +
-              '"Z:' + os.sep + 'update.exe" /quit /nobackup' +
+              'copy "Z:\\update.exe" "%TEMP%\\update.exe" /Y' +
+              os.linesep +
+              '"%TEMP%\\update.exe" /quit /nobackup' +
               os.linesep +
               'GOTO Y1' +
               os.linesep +
@@ -94,8 +106,8 @@ class TestSequenceFunctions(unittest.TestCase):
               ':Y1' +
               os.linesep)
         self.assertEqual(ref,
-             batchGenerator.generate(['update.exe'], 'Z:' + os.sep,
-                                     ' /quit /nobackup'))
+            batchGenerator.generate(['update.exe'], 'Z:' + os.sep,
+                                    ' /quit /nobackup'))
 
 if __name__ == '__main__':
     unittest.main()
