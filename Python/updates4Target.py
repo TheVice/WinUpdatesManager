@@ -1,24 +1,34 @@
 import os
 import sys
 import inspectReport
-import core.updates
+import db.uif
+import core.kb
+from core.versions import Versions
+from core.types import Types
+from core.languages import Languages
 
 if __name__ == '__main__':
 
     argc = len(sys.argv)
     if 4 < argc:
-        updates = core.updates.getUpdatesFromUIF_Storage(sys.argv[1])
+        updates = db.uif.getUpdatesFromStorage(sys.argv[1])
 
         KBs = None
         if 5 < argc:
-            KBs = core.updates.getKBsFromReportFile(sys.argv[5])
+            KBs = core.kb.getKBsFromReportFile(sys.argv[5])
 
-        version = core.updates.Versions().getVersion(
+        version = Versions().getVersion(
                     '{0}{1}{0}'.format(os.sep, sys.argv[2].replace(' ', '')))
-        platform = core.updates.Types().getType(
+        platform = Types().getType(
                                     '{0}{1}{0}'.format(os.sep, sys.argv[3]))
-        language = core.updates.Languages().getLanguage(
+        language = Languages().getLanguage(
                                     '{0}{1}{0}'.format(os.sep, sys.argv[4]))
+
+        print('Target:\n'
+              '\tVersion - {}\n'
+              '\tPlatform - {}\n'
+              '\tLanguage - {}\n'
+              '\tKBs - {}\n'.format(version, platform, language, KBs))
 
         updates = inspectReport.getDataByVersionTypeLanguage(updates,
                                                              KBs,

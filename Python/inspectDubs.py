@@ -1,7 +1,7 @@
 import os
 import sys
 import core.dirs
-import core.updates
+import db.uif
 import db.mongoDB
 
 dbClient = db.mongoDB.MongoDBClient()
@@ -79,7 +79,9 @@ def showUpdateDubsFromJsonFiles(aFiles):
 
     for jFile in aFiles:
         fileName = jFile[jFile.rfind(os.sep) + 1:]
-        updates[fileName] = core.updates.getUpdatesFromUIF(jFile)
+        ups = []
+        db.uif.getUpdatesFromFile(jFile, ups)
+        updates[fileName] = ups
 
     for key, value in updates.items():
         for key1, value1 in updates.items():

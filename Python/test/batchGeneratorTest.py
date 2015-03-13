@@ -71,7 +71,7 @@ class TestSequenceFunctions(unittest.TestCase):
               os.linesep)
         self.assertEqual(ref,
             batchGenerator.generate(['update.exe'], None, ' /quit /nobackup'))
- 
+
         ref = ('@echo off' +
               os.linesep +
               'if [%1] == [] GOTO UP1' +
@@ -110,4 +110,5 @@ class TestSequenceFunctions(unittest.TestCase):
                                     ' /quit /nobackup'))
 
 if __name__ == '__main__':
+
     unittest.main()

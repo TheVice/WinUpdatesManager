@@ -1,6 +1,7 @@
 import sys
 import cherrypy
-import core.updates
+import core.kb
+import db.uif
 import inspectReport
 import batchGenerator
 
@@ -81,7 +82,7 @@ class Main(Page):
     def process_report(self, aVersion=None, aPlatform=None, aLanguage=None,
                        aReport=None):
 
-        KBs = core.updates.getKBsFromReport(aReport)
+        KBs = core.kb.getKBsFromReport(aReport)
         if len(KBs) == 0:
 
             return (
@@ -212,12 +213,14 @@ if __name__ == '__main__':
     argc = len(sys.argv)
     if argc == 2:
         cherrypy.quickstart(
-            Main(core.updates.getUpdatesFromUIF_Storage(sys.argv[1])),
+            Main(inspectReport.convertUifListIntoUpdates(
+                db.uif.getUpdatesFromStorage(sys.argv[1]))),
             config=conf)
 
     elif argc == 3:
         cherrypy.quickstart(
-            Main(core.updates.getUpdatesFromUIF_Storage(sys.argv[1])),
+            Main(inspectReport.convertUifListIntoUpdates(
+                db.uif.getUpdatesFromStorage(sys.argv[1]))),
                  config=sys.argv[2])
 
     else:

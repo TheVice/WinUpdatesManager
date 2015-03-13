@@ -16,4 +16,5 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEqual(os.path.join('Windows8.1', 'x86', 'NEU'), path)
 
 if __name__ == '__main__':
+
     unittest.main()

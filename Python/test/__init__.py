@@ -1,2 +1,4 @@
 __all__ = ['batchGeneratorTest', 'datesTest', 'dirsTest', 'inspectReportTest',
-           'mongoDB_Test', 'sqliteDB_Test', 'updatesTest', 'updateToPackageTest']
+           'kbTest', 'languagesTest', 'mongoDB_Test', 'sqliteDB_Test',
+           'typesTest', 'uifTest', 'unknownSubstanceTest', 'updatesTest',
+           'updateToPackageTest', 'versionsTest', ]

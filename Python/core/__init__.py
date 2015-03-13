@@ -1,1 +1,2 @@
-__all__ = ['dates', 'dirs', 'updates']
+__all__ = ['dates', 'dirs', 'kb', 'languages', 'types', 'unknownSubstance',
+           'updates', 'versions']

@@ -1,5 +1,15 @@
 import sys
+import core.kb
 import core.updates
+import db.uif
+import inspectReport
+
+
+def convertUifListIntoUpdates(aList):
+
+    updates = core.updates.Updates()
+    updates.addUpdates(aList)
+    return updates
 
 
 def items2KBs(aItems):
@@ -25,6 +35,9 @@ def makeDefineUnknownUpdates(aKBs):
 
 
 def getData(aUpdates, aKBs, aQuery):
+
+    if (isinstance(aUpdates, list)):
+        aUpdates = inspectReport.convertUifListIntoUpdates(aUpdates)
 
     ret = {}
     updates = core.updates.Updates()
@@ -83,13 +96,19 @@ if __name__ == '__main__':
 
     argc = len(sys.argv)
     if 4 < argc:
-        uifData = core.updates.getUpdatesFromUIF_Storage(sys.argv[1])
+        uifData = db.uif.getUpdatesFromStorage(sys.argv[1])
         reportFile = sys.argv[2]
         version = sys.argv[3]
         platform = sys.argv[4]
         language = sys.argv[5]
 
-        KBs = core.updates.getKBsFromReportFile(reportFile)
+        print('Converting from uif list into updates.\n'
+              'Please standing by...')
+        if (isinstance(uifData, list)):
+            uifData = convertUifListIntoUpdates(uifData)
+        print('Uif converted')
+
+        KBs = core.kb.getKBsFromReportFile(reportFile)
 
         print('At the input report', reportFile, 'located', KBs)
         print('Count', len(KBs))

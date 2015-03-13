@@ -1,5 +1,5 @@
 import sqlite3
-import core.updates
+from core.unknownSubstance import UnknownSubstance
 
 
 def connect(aDbName):
@@ -210,7 +210,7 @@ def rawUpdatesToUpdates(aDb, aRawUpdates):
         update = {}
         update['KB'] = (
             rawUpdate[0] if -1 != rawUpdate[0] else
-            core.updates.unknownSubstance('UNKNOWN KB',
+            UnknownSubstance().unknown('UNKNOWN KB',
                 getPathByID(aDb, rawUpdate[2])))
         update['Date'] = getDateByID(aDb, rawUpdate[1])
         update['Path'] = getPathByID(aDb, rawUpdate[2])
