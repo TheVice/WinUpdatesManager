@@ -1,5 +1,6 @@
 import sys
 import cherrypy
+import core.updates
 import core.kb
 import db.uif
 import inspectReport
@@ -213,13 +214,13 @@ if __name__ == '__main__':
     argc = len(sys.argv)
     if argc == 2:
         cherrypy.quickstart(
-            Main(inspectReport.convertUifListIntoUpdates(
+            Main(core.updates.Updates.convertUifListIntoUpdates(
                 db.uif.getUpdatesFromStorage(sys.argv[1]))),
             config=conf)
 
     elif argc == 3:
         cherrypy.quickstart(
-            Main(inspectReport.convertUifListIntoUpdates(
+            Main(core.updates.Updates.convertUifListIntoUpdates(
                 db.uif.getUpdatesFromStorage(sys.argv[1]))),
                  config=sys.argv[2])
 

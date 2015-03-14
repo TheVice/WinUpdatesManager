@@ -17,3 +17,7 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEqual(os.sep + os.sep, versions.getPathKey(''))
         self.assertEqual(os.sep + 'Windows2000' + os.sep,
                          versions.getPathKey(versions.Win2k))
+
+if __name__ == '__main__':
+
+    unittest.main()

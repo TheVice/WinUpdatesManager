@@ -50,6 +50,9 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertRaises(IndexError, updates.__getitem__, 0)
         self.assertRaises(IndexError, updates.__getitem__, 1)
 
+        s = '{0}'.format(updates)
+        self.assertEqual('', s)
+
         for update in updates:
             self.fail('Actually there are no updates! ', update)
 
@@ -97,6 +100,9 @@ class TestSequenceFunctions(unittest.TestCase):
 
         self.assertEqual('Win32', updates[0]['Version'])
         self.assertEqual('Win64', updates[1]['Version'])
+
+        s = '{0}'.format(updates)
+        self.assertNotEqual('', s)
 
     def test_QueryUpdates(self):
 
@@ -199,6 +205,7 @@ class TestSequenceFunctions(unittest.TestCase):
         date = datetime.datetime(2012, 12, 1)
         updates = core.updates.getUpdatesFromPackage(paths, date)
 
+        updates = core.updates.Updates.convertUifListIntoUpdates(updates)
         self.assertEqual(1, len(updates))
 
         kbs = [2761465]
@@ -217,34 +224,34 @@ class TestSequenceFunctions(unittest.TestCase):
     def test_separateToKnownAndUnknown(self):
 
         updates = [{'KB': {}, 'Version': {}, 'Type': {}, 'Language': {}}]
-        data = core.updates.separateToKnownAndUnknown(updates)
+        data = core.updates.Updates.separateToKnownAndUnknown(updates)
 
         self.assertEqual(1, len(data.get('unKnown')))
         self.assertEqual(0, len(data.get('known')))
 
         updates = [{'KB': 123, 'Version': {}, 'Type': {}, 'Language': {}}]
-        data = core.updates.separateToKnownAndUnknown(updates)
+        data = core.updates.Updates.separateToKnownAndUnknown(updates)
 
         self.assertEqual(1, len(data.get('unKnown')))
         self.assertEqual(0, len(data.get('known')))
 
         updates = [{'KB': 123, 'Version': 'Windows',
                     'Type': {}, 'Language': {}}]
-        data = core.updates.separateToKnownAndUnknown(updates)
+        data = core.updates.Updates.separateToKnownAndUnknown(updates)
 
         self.assertEqual(1, len(data.get('unKnown')))
         self.assertEqual(0, len(data.get('known')))
 
         updates = [{'KB': 123, 'Version': 'Windows',
                     'Type': 'x86', 'Language': {}}]
-        data = core.updates.separateToKnownAndUnknown(updates)
+        data = core.updates.Updates.separateToKnownAndUnknown(updates)
 
         self.assertEqual(1, len(data.get('unKnown')))
         self.assertEqual(0, len(data.get('known')))
 
         updates = [{'KB': 123, 'Version': 'Windows',
                     'Type': 'x86', 'Language': 'Neutral'}]
-        data = core.updates.separateToKnownAndUnknown(updates)
+        data = core.updates.Updates.separateToKnownAndUnknown(updates)
 
         self.assertEqual(0, len(data.get('unKnown')))
         self.assertEqual(1, len(data.get('known')))
@@ -255,7 +262,7 @@ class TestSequenceFunctions(unittest.TestCase):
         ups.addUpdateDict({'Date': datetime.date(2014, 7, 11), 'KB': 324189})
         ups.addUpdateDict({'Date': datetime.date(2014, 5, 13), 'KB': 292189})
 
-        core.updates.assignmentUp2Up(ups[0], ups[1])
+        core.updates.Updates.assignmentUp2Up(ups[0], ups[1])
 
         self.assertEqual(ups[0], ups[1])
 
@@ -265,7 +272,7 @@ class TestSequenceFunctions(unittest.TestCase):
         ups.addUpdateDict({'Date': datetime.date(2014, 7, 11), 'KB': 324189})
         ups.addUpdateDict({'Date': datetime.date(2014, 5, 13), 'KB': 292189})
 
-        core.updates.exchangeUps(ups[0], ups[1])
+        core.updates.Updates.exchangeUps(ups[0], ups[1])
 
         self.assertNotEqual(ups[0], ups[1])
 
@@ -325,7 +332,7 @@ class TestSequenceFunctions(unittest.TestCase):
         upRef.addUpdateDict({'KB': 72550, 'Date': datetime.date(2014, 6, 25)})
         upRef.addUpdateDict({'Date': datetime.date(2014, 7, 11), 'KB': 324189})
 
-        core.updates.sortByFieldUpToDown(upIn, 'Date')
+        core.updates.Updates.sortByFieldUpToDown(upIn, 'Date')
 
         self.assertEqual(len(upIn), len(upRef))
         for up, rf in zip(upIn, upRef):
@@ -358,7 +365,7 @@ class TestSequenceFunctions(unittest.TestCase):
         upRef.addUpdateDict({'Date': datetime.date(2014, 1, 19), 'KB': 42119})
         upRef.addUpdateDict({'Date': datetime.date(2014, 1, 1), 'KB': 29068})
 
-        core.updates.sortByFieldDownToUp(upIn, 'Date')
+        core.updates.Updates.sortByFieldDownToUp(upIn, 'Date')
 
         self.assertEqual(len(upIn), len(upRef))
         for up, rf in zip(upIn, upRef):
@@ -376,11 +383,23 @@ class TestSequenceFunctions(unittest.TestCase):
         upRef.addUpdateDict({'Path': 'B'})
         upRef.addUpdateDict({'Path': 'C'})
 
-        core.updates.sortByFieldUpToDown(upIn, 'Path')
+        core.updates.Updates.sortByFieldUpToDown(upIn, 'Path')
 
         self.assertEqual(len(upIn), len(upRef))
         for up, rf in zip(upIn, upRef):
             self.assertEqual(up['Path'], rf['Path'])
+
+    def test_convertUifListIntoUpdates(self):
+
+        items = []
+        items.append({'Language': 'Neutral',
+                      'Type': 'x64',
+                      'KB': 2795944,
+                      'Date': 'ISODate(\'2013-02-12T00:00:00Z\')',
+                      'Version': 'Windows 8',
+                      'Path': '\\2795944\\Windows8\\NEU\\x64' +
+                      '\\Windows8-RT-KB2795944-x64.msu'})
+        self.assertEqual(1, len(core.updates.Updates.convertUifListIntoUpdates(items)))
 
 
 if __name__ == '__main__':

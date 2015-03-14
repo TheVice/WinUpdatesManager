@@ -149,7 +149,7 @@ if __name__ == '__main__':
             lines = inputFile.read()
             inputFile.close()
 
-            #see note on os.linesep in help
+            # see note on os.linesep in help
             if 2 < argc:
                 print(generate(lines.split('\n'), sys.argv[2]))
             else:

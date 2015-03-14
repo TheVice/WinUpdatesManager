@@ -5,7 +5,6 @@ from core.unknownSubstance import UnknownSubstance
 class Languages(UnknownSubstance):
 
     def __init__(self):
-        super(Languages, self).__init__()
 
         self.Neutral = 'Neutral'
         self.Arabic = 'Arabic'
@@ -187,13 +186,14 @@ class Languages(UnknownSubstance):
 
     def getLanguage(self, aPath):
 
-        language = self.getItemByPath(self.mLanguages, aPath)
+        language = UnknownSubstance.getItemByPath(self.mLanguages, aPath)
 
         if language is not None:
             return language
 
-        return self.unknown('UNKNOWN LANGUAGE', aPath)
+        return UnknownSubstance.unknown('UNKNOWN LANGUAGE', aPath)
 
     def getPathKey(self, aValue):
 
-        return self.getKeyPathByValue(self.mCalligraphicLanguages, aValue)
+        return UnknownSubstance.getKeyPathByValue(
+            self.mCalligraphicLanguages, aValue)

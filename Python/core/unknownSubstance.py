@@ -3,13 +3,15 @@ import os
 
 class UnknownSubstance:
 
-    def unknown(self, aSubstance, aValue):
+    @staticmethod
+    def unknown(aSubstance, aValue):
 
         unknown = {}
         unknown[aSubstance] = aValue
         return unknown
 
-    def getItemByPath(self, aDict, aKey):
+    @staticmethod
+    def getItemByPath(aDict, aKey):
 
         key = None
 
@@ -20,7 +22,8 @@ class UnknownSubstance:
 
         return aDict.get(key)
 
-    def getKeyPathByValue(self, aDict, aValue):
+    @staticmethod
+    def getKeyPathByValue(aDict, aValue):
 
         for key, value in aDict.items():
             if value == aValue:

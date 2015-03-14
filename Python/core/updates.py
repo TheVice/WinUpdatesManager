@@ -95,10 +95,71 @@ class Updates:
 
         return ''.join(updates)
 
+    @staticmethod
+    def assignmentUp2Up(aUp1, aUp2):
+
+        if len(aUp1.keys()) == len(aUp2.keys()):
+            for key in aUp1.keys():
+                aUp1[key] = aUp2[key]
+
+    @staticmethod
+    def exchangeUps(aUp1, aUp2):
+
+        if len(aUp1.keys()) == len(aUp2.keys()):
+            tmp = {}
+            for key in aUp1.keys():
+                tmp[key] = aUp1[key]
+            Updates.assignmentUp2Up(aUp1, aUp2)
+            Updates.assignmentUp2Up(aUp2, tmp)
+
+    @staticmethod
+    def sortByCondition(aCondition, aUpdates, aField):
+
+        for a in range(0, len(aUpdates)):
+            for b in range(0, len(aUpdates)):
+                if aCondition(aUpdates[a][aField], aUpdates[b][aField]):
+                    Updates.exchangeUps(aUpdates[b], aUpdates[a])
+
+    @staticmethod
+    def sortByFieldUpToDown(aUpdates, aField):
+
+        condition = lambda a, b: (a < b)
+        return Updates.sortByCondition(condition, aUpdates, aField)
+
+    @staticmethod
+    def sortByFieldDownToUp(aUpdates, aField):
+
+        condition = lambda a, b: (a > b)
+        return Updates.sortByCondition(condition, aUpdates, aField)
+
+    @staticmethod
+    def separateToKnownAndUnknown(aUpdates):
+
+        updates = {'known': [], 'unKnown': []}
+
+        for up in aUpdates:
+            if (isinstance(up['KB'], dict) or
+                isinstance(up['Version'], dict) or
+                isinstance(up['Type'], dict) or
+                isinstance(up['Language'], dict)):
+
+                updates['unKnown'].append(up)
+            else:
+                updates['known'].append(up)
+
+        return updates
+
+    @staticmethod
+    def convertUifListIntoUpdates(aList):
+
+        updates = core.updates.Updates()
+        updates.addUpdates(aList)
+        return updates
+
 
 def getUpdatesFromPackage(aFiles, aDate):
 
-    updates = Updates()
+    updates = []
     versions = Versions()
     types = Types()
     languages = Languages()
@@ -112,58 +173,11 @@ def getUpdatesFromPackage(aFiles, aDate):
         osType = types.getType(updateFile)
         language = languages.getLanguage(updateFile)
 
-        updates.addUpdate(updateFile, kb, osVersion, osType, language, aDate)
-
-    return updates
-
-
-def assignmentUp2Up(aUp1, aUp2):
-
-    if len(aUp1.keys()) == len(aUp2.keys()):
-        for key in aUp1.keys():
-            aUp1[key] = aUp2[key]
-
-
-def exchangeUps(aUp1, aUp2):
-
-    if len(aUp1.keys()) == len(aUp2.keys()):
-        tmp = {}
-        for key in aUp1.keys():
-            tmp[key] = aUp1[key]
-        assignmentUp2Up(aUp1, aUp2)
-        assignmentUp2Up(aUp2, tmp)
-
-
-def sortByCondition(aCondition, aUpdates, aField):
-
-    for a in range(0, len(aUpdates)):
-        for b in range(0, len(aUpdates)):
-            if aCondition(aUpdates[a][aField], aUpdates[b][aField]):
-                exchangeUps(aUpdates[b], aUpdates[a])
-
-
-def sortByFieldUpToDown(aUpdates, aField):
-
-    condition = lambda a, b: (a < b)
-    return sortByCondition(condition, aUpdates, aField)
-
-
-def sortByFieldDownToUp(aUpdates, aField):
-
-    condition = lambda a, b: (a > b)
-    return sortByCondition(condition, aUpdates, aField)
-
-
-def separateToKnownAndUnknown(aUpdates):
-
-    updates = {'known': [], 'unKnown': []}
-
-    for up in aUpdates:
-        if (isinstance(up['KB'], dict) or isinstance(up['Version'], dict) or
-            isinstance(up['Type'], dict) or isinstance(up['Language'], dict)):
-
-            updates['unKnown'].append(up)
-        else:
-            updates['known'].append(up)
+        updates.append({'Path': updateFile,
+                        'KB': kb,
+                        'Version': osVersion,
+                        'Type': osType,
+                        'Language': language,
+                        'Date': aDate})
 
     return updates

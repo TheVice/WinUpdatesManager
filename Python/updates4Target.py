@@ -37,7 +37,7 @@ if __name__ == '__main__':
                                                              language)
 
         updates = updates['Updates']
-        core.updates.sortByFieldUpToDown(updates, 'Path')
+        core.updates.Updates.sortByFieldUpToDown(updates, 'Path')
 
         for up in updates:
             print(up['Path'])

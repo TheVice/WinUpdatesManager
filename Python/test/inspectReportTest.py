@@ -6,18 +6,6 @@ import core.updates
 
 class TestSequenceFunctions(unittest.TestCase):
 
-    def test_convertUifListIntoUpdates(self):
-
-        items = []
-        items.append({'Language': 'Neutral',
-                      'Type': 'x64',
-                      'KB': 2795944,
-                      'Date': 'ISODate(\'2013-02-12T00:00:00Z\')',
-                      'Version': 'Windows 8',
-                      'Path': '\\2795944\\Windows8\\NEU\\x64' +
-                      '\\Windows8-RT-KB2795944-x64.msu'})
-        self.assertEqual(1, len(inspectReport.convertUifListIntoUpdates(items)))
-
     def test_items2KBs(self):
 
         items = [{'KB': 1}, {'KB': 2}, {'KB': 3},

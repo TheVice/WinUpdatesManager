@@ -19,7 +19,7 @@ if __name__ == '__main__':
             for path, date in zip(paths.getRootPaths(), dates):
                 files = paths.getSubObjects(path, True)
                 monthUpdates = core.updates.getUpdatesFromPackage(files, date)
-                monthUpdates = core.updates.separateToKnownAndUnknown(
+                monthUpdates = core.updates.Updates.separateToKnownAndUnknown(
                     monthUpdates)
                 updates['known'].append(monthUpdates['known'])
                 updates['unKnown'].append(monthUpdates['unKnown'])
@@ -39,7 +39,7 @@ if __name__ == '__main__':
         if 0 < len(files):
             updates = core.updates.getUpdatesFromPackage(files,
                       core.dates.getDatesOfUpdates([sys.argv[2]])[0])
-            updates = core.updates.separateToKnownAndUnknown(updates)
+            updates = core.updates.Updates.separateToKnownAndUnknown(updates)
 
             for update in updates['known']:
                 print(update)

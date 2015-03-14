@@ -5,7 +5,6 @@ from core.unknownSubstance import UnknownSubstance
 class Versions(UnknownSubstance):
 
     def __init__(self):
-        super(Versions, self).__init__()
 
         self.Win2k = 'Windows 2000'
         self.WinXP = 'Windows XP'
@@ -73,13 +72,14 @@ class Versions(UnknownSubstance):
 
     def getVersion(self, aPath):
 
-        version = self.getItemByPath(self.mVersions, aPath)
+        version = UnknownSubstance.getItemByPath(self.mVersions, aPath)
 
         if version is not None:
             return version
 
-        return self.unknown('UNKNOWN VERSION', aPath)
+        return UnknownSubstance.unknown('UNKNOWN VERSION', aPath)
 
     def getPathKey(self, aValue):
 
-        return self.getKeyPathByValue(self.mCalligraphicVersions, aValue)
+        return UnknownSubstance.getKeyPathByValue(
+            self.mCalligraphicVersions, aValue)

@@ -5,7 +5,6 @@ from core.unknownSubstance import UnknownSubstance
 class Types(UnknownSubstance):
 
     def __init__(self):
-        super(Types, self).__init__()
 
         self.x86 = 'x86'
         self.x64 = 'x64'
@@ -38,13 +37,14 @@ class Types(UnknownSubstance):
 
     def getType(self, aPath):
 
-        osType = self.getItemByPath(self.mTypes, aPath)
+        osType = UnknownSubstance.getItemByPath(self.mTypes, aPath)
 
         if osType is not None:
             return osType
 
-        return self.unknown('UNKNOWN TYPE', aPath)
+        return UnknownSubstance.unknown('UNKNOWN TYPE', aPath)
 
     def getPathKey(self, aValue):
 
-        return self.getKeyPathByValue(self.mCalligraphicTypes, aValue)
+        return UnknownSubstance.getKeyPathByValue(
+            self.mCalligraphicTypes, aValue)

@@ -19,7 +19,7 @@ def getKB(aPath):
         if endKB - startKB > 0:
             return int(aPath[startKB:endKB])
 
-    return UnknownSubstance().unknown('UNKNOWN KB', aPath)
+    return UnknownSubstance.unknown('UNKNOWN KB', aPath)
 
 
 def getKBsFromReport(aReport):
