@@ -132,6 +132,142 @@ class TestSequenceFunctions(unittest.TestCase):
             self.assertEqual(datetime.datetime(2013, 12, i), update['date'])
             i += 1
 
+    def test_addObjectIdField(self):
+
+        updates = []
+        updates.append({'KB': 3002657,
+                        'Path': '\\3002657\\WindowsServer2003\\X64\\DEU\\'
+                        'WindowsServer2003-KB3002657-x64-DEU.exe',
+                        'Version': 'Windows Server 2003',
+                        'Language': 'German',
+                        'Date': datetime.date(2015, 3, 10),
+                        'Type': 'x64'})
+        updates.append({'KB': 3002657,
+                        'Path': '\\3002657\\WindowsServer2003\\X64\\CHT\\'
+                        'WindowsServer2003-KB3002657-x64-CHT.exe',
+                        'Version': 'Windows Server 2003',
+                        'Language': 'Chinese (Traditional)',
+                        'Date': datetime.date(2015, 3, 10),
+                        'Type': 'x64'})
+        updates.append({'KB': 3002657,
+                        'Path': '\\3002657\\WindowsServer2003\\X64\\CHS\\'
+                        'WindowsServer2003-KB3002657-x64-CHS.exe',
+                        'Version': 'Windows Server 2003',
+                        'Language': 'Chinese (Simplified)',
+                        'Date': datetime.date(2015, 3, 10),
+                        'Type': 'x64'})
+        updates.append({'KB': 3002657,
+                        'Path': '\\3002657\\WindowsServer2003\\IA64\\JPN\\'
+                        'WindowsServer2003-KB3002657-ia64-JPN.exe',
+                        'Version': 'Windows Server 2003',
+                        'Language': 'Japanese',
+                        'Date': datetime.date(2015, 3, 10),
+                        'Type': 'IA64'})
+        updates.append({'KB': 3002657,
+                        'Path': '\\3002657\\WindowsServer2003\\IA64\\FRA\\'
+                        'WindowsServer2003-KB3002657-ia64-FRA.exe',
+                        'Version': 'Windows Server 2003',
+                        'Language': 'French',
+                        'Date': datetime.date(2015, 3, 10),
+                        'Type': 'IA64'})
+        updates.append({'KB': 3002657,
+                        'Path': '\\3002657\\WindowsServer2003\\IA64\\ENU\\'
+                        'WindowsServer2003-KB3002657-ia64-ENU.exe',
+                        'Version': 'Windows Server 2003',
+                        'Language': 'English',
+                        'Date': datetime.date(2015, 3, 10),
+                        'Type': 'IA64'})
+
+        updates = db.mongoDB.addObjectIdField(updates)
+
+        for up1 in updates:
+            objectId1 = up1['_id']
+            for up2 in updates:
+                if up1 is not up2:
+                    objectId2 = up2['_id']
+                    self.assertNotEquals(objectId1, objectId2)
+
+    def test_removeDubsByObjectId(self):
+
+        updates = []
+        updates.append({'KB': 3030377,
+                        'Path': '\\3030377\\Windows8.1\\X86\\NEU\\'
+                        'Windows8.1-KB3030377-x86.msu',
+                        'Version': 'Windows 8.1',
+                        'Language': 'Neutral',
+                        'Date': datetime.date(2015, 3, 10),
+                        'Type': 'x86'})
+        updates.append({'KB': 3030377,
+                        'Path': '\\3030377\\Windows8.1\\X64\\NEU\\'
+                        'Windows8.1-KB3030377-x64.msu',
+                        'Version': 'Windows 8.1',
+                        'Language': 'Neutral',
+                        'Date': datetime.date(2015, 3, 10),
+                        'Type': 'x64'})
+        updates.append({'KB': 3030377,
+                        'Path': '\\3030377\\Windows8.1\\ARM\\NEU\\'
+                        'Windows8.1-KB3030377-arm.msu',
+                        'Version': 'Windows 8.1',
+                        'Language': 'Neutral',
+                        'Date': datetime.date(2015, 3, 10),
+                        'Type': 'ARM'})
+        updates.append({'KB': 3030377,
+                        'Path': '\\3030377\\Windows8\\X86\\NEU\\'
+                        'Windows8-RT-KB3030377-x86.msu',
+                        'Version': 'Windows 8',
+                        'Language': 'Neutral',
+                        'Date': datetime.date(2015, 3, 10),
+                        'Type': 'x86'})
+        updates.append({'KB': 3030377,
+                        'Path': '\\3030377\\Windows8\\X64\\NEU\\'
+                        'Windows8-RT-KB3030377-x64.msu',
+                        'Version': 'Windows 8',
+                        'Language': 'Neutral',
+                        'Date': datetime.date(2015, 3, 10),
+                        'Type': 'x64'})
+        updates.append({'KB': 3030377,
+                        'Path': '\\3030377\\Windows8\\ARM\\NEU\\'
+                        'Windows8-RT-KB3030377-arm.msu',
+                        'Version': 'Windows 8',
+                        'Language': 'Neutral',
+                        'Date': datetime.date(2015, 3, 10),
+                        'Type': 'ARM'})
+
+        updates = db.mongoDB.pymongoDate2DateTime(updates, 'Date')
+        updates = db.mongoDB.addObjectIdField(updates)
+
+        dbClient.dropTableInDB(aDB='win64', aTable='updates3')
+        dbClient.insertToDB('win64', 'updates3', aItems=updates)
+
+        items = dbClient.getItemsFromDB('win64', 'updates3')
+
+        updatesCount = len(updates)
+        self.assertEquals(updatesCount, items.count())
+
+        updates.append({'KB': 3030398,
+                        'Path': '\\3030398\\WindowsVista\\X86\\NEU\\'
+                        'Windows6.0-KB3030398-x86.msu',
+                        'Version': 'Windows Vista',
+                        'Language': 'Neutral',
+                        'Date': datetime.date(2015, 3, 10),
+                        'Type': 'x86'})
+
+        updates = db.mongoDB.pymongoDate2DateTime(updates, 'Date')
+        updates = db.mongoDB.addObjectIdField(updates)
+        updates = db.mongoDB.removeDubsByObjectId('win64', 'updates3', updates)
+
+        self.assertEquals(1, len(updates))
+        updatesCount += 1
+
+        dbClient.insertToDB('win64', 'updates3', aItems=updates)
+
+        items = dbClient.getItemsFromDB('win64', 'updates3')
+
+        self.assertEquals(updatesCount, items.count())
+
+        dbClient.dropTableInDB(aDB='win64', aTable='updates3')
+
+
 if __name__ == '__main__':
 
     unittest.main()

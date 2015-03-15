@@ -103,3 +103,41 @@ def getUpdatesFromStorage(aPath):
             i += 1
 
     return updates
+
+
+def get(aUpdates, aQuery, aCondition):
+
+    updates = []
+
+    for update in aUpdates:
+        match = True
+        for key in aQuery.keys():
+            if not aCondition(update[key], aQuery.get(key)):
+                match = False
+                break
+        if match:
+            updates.append(update)
+
+    return updates
+
+
+def showDubs(aFiles):
+
+    updates = {}
+
+    for jFile in aFiles:
+        fileName = jFile[jFile.rfind(os.sep) + 1:]
+        ups = []
+        getUpdatesFromFile(jFile, ups)
+        updates[fileName] = ups
+
+    for key, value in updates.items():
+        for key1, value1 in updates.items():
+            if key == key1:
+                continue
+
+            for up in value:
+                for up1 in value1:
+                    if up == up1:
+                        print(key + ' <-> ' + key1)
+                        print(up)

@@ -38,26 +38,6 @@ class Updates:
             self.mData.append(aUpdate)
             self.mIndex += 1
 
-    def getUpdatesByCondition(self, aCondition, aQuery):
-
-        updates = []
-
-        for update in self:
-            match = True
-            for key in aQuery.keys():
-                if (False == aCondition(update[key], aQuery.get(key))):
-                    match = False
-                    break
-            if match:
-                updates.append(update)
-
-        return updates
-
-    def getUpdates(self, aQuery):
-
-        condition = lambda a, b: (a == b)
-        return self.getUpdatesByCondition(condition, aQuery)
-
     def __iter__(self):
 
         return self

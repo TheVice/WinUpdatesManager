@@ -1,6 +1,8 @@
 import sys
+import hashlib
 import datetime
 import pymongo
+import bson
 
 
 class MongoDBClient:
@@ -9,8 +11,6 @@ class MongoDBClient:
                        aDB,
                        aTable,
                        aHostAndPort=None,
-                       aWriteConcern='majority',
-                       aJournal=True,
                        aQuery={},
                        aProjection=None,
                        aSkip=None,
@@ -18,9 +18,7 @@ class MongoDBClient:
                        aSort=None):
 
         try:
-            client = pymongo.MongoClient(host=aHostAndPort,
-                                         w=aWriteConcern,
-                                         j=aJournal)
+            client = pymongo.MongoClient(host=aHostAndPort)
             db = client[aDB]
             table = db[aTable]
 
@@ -49,18 +47,17 @@ class MongoDBClient:
                    aDB,
                    aTable,
                    aHostAndPort=None,
-                   aWriteConcern=1,
-                   aJournal=True,
                    aItems=[]):
 
         try:
-            client = pymongo.MongoClient(host=aHostAndPort,
-                                         w=aWriteConcern,
-                                         j=aJournal)
+            client = pymongo.MongoClient(host=aHostAndPort)
             db = client[aDB]
             table = db[aTable]
 
             table.insert(aItems)
+
+        except pymongo.errors.DuplicateKeyError:
+            print('DuplicateKey:', sys.exc_info())
 
         except:
             raise Exception('Unexpected error:', sys.exc_info()[0])
@@ -69,14 +66,10 @@ class MongoDBClient:
                    aDB,
                    aTable,
                    aHostAndPort=None,
-                   aWriteConcern=1,
-                   aJournal=True,
                    aItems=[]):
 
         try:
-            client = pymongo.MongoClient(host=aHostAndPort,
-                                         w=aWriteConcern,
-                                         j=aJournal)
+            client = pymongo.MongoClient(host=aHostAndPort)
             db = client[aDB]
             table = db[aTable]
 
@@ -90,14 +83,10 @@ class MongoDBClient:
                      aDB,
                      aTable,
                      aHostAndPort=None,
-                     aWriteConcern=1,
-                     aJournal=True,
                      aItems=[]):
 
         try:
-            client = pymongo.MongoClient(host=aHostAndPort,
-                                         w=aWriteConcern,
-                                         j=aJournal)
+            client = pymongo.MongoClient(host=aHostAndPort)
             db = client[aDB]
             table = db[aTable]
 
@@ -110,14 +99,10 @@ class MongoDBClient:
     def dropTableInDB(self,
                       aDB,
                       aTable,
-                      aHostAndPort=None,
-                      aWriteConcern=1,
-                      aJournal=True):
+                      aHostAndPort=None):
 
         try:
-            client = pymongo.MongoClient(host=aHostAndPort,
-                                         w=aWriteConcern,
-                                         j=aJournal)
+            client = pymongo.MongoClient(host=aHostAndPort)
             db = client[aDB]
             table = db[aTable]
 
@@ -127,14 +112,10 @@ class MongoDBClient:
             raise Exception('Unexpected error:', sys.exc_info()[0])
 
     def getDBs(self,
-               aHostAndPort=None,
-               aWriteConcern='majority',
-               aJournal=True):
+               aHostAndPort=None):
 
         try:
-            client = pymongo.MongoClient(host=aHostAndPort,
-                                         w=aWriteConcern,
-                                         j=aJournal)
+            client = pymongo.MongoClient(host=aHostAndPort)
 
             return client.database_names()
 
@@ -143,14 +124,10 @@ class MongoDBClient:
 
     def getCollections(self,
                        aDB,
-                       aHostAndPort=None,
-                       aWriteConcern='majority',
-                       aJournal=True):
+                       aHostAndPort=None):
 
         try:
-            client = pymongo.MongoClient(host=aHostAndPort,
-                                         w=aWriteConcern,
-                                         j=aJournal)
+            client = pymongo.MongoClient(host=aHostAndPort)
 
             db = client[aDB]
             return db.collection_names()
@@ -162,14 +139,10 @@ class MongoDBClient:
                   aDB,
                   aTable,
                   aHostAndPort=None,
-                  aWriteConcern='majority',
-                  aJournal=True,
                   aAggregateExpression=[]):
 
         try:
-            client = pymongo.MongoClient(host=aHostAndPort,
-                                         w=aWriteConcern,
-                                         j=aJournal)
+            client = pymongo.MongoClient(host=aHostAndPort)
             db = client[aDB]
             table = db[aTable]
 
@@ -188,3 +161,108 @@ def pymongoDate2DateTime(aCollection=[], aFieldName=None):
                                                        date.day)
 
     return aCollection
+
+
+def addObjectIdField(aCollection=[]):
+
+    for i in range(0, len(aCollection)):
+        s = '{}{}{}{}{}{}'.format(aCollection[i]['Path'],
+                                  aCollection[i]['KB'],
+                                  aCollection[i]['Version'],
+                                  aCollection[i]['Type'],
+                                  aCollection[i]['Language'],
+                                  aCollection[i]['Date']
+                                  )
+        h = hashlib.new('sha256', s.encode('utf-8'))
+        s = h.hexdigest()[:12]
+        if bson.ObjectId.is_valid(s.encode('utf-8')):
+            aCollection[i]['_id'] = bson.objectid.ObjectId(s.encode('utf-8'))
+        else:
+            print('Unable set ObjectId for:', str(aCollection[i]))
+
+    return aCollection
+
+
+def removeDubsByObjectId(aDB, aTable, aCollection, aHostAndPort=None):
+
+    collection = []
+    dbClient = MongoDBClient()
+
+    for i in range(0, len(aCollection)):
+
+        objectId = aCollection[i]['_id']
+        items = dbClient.getItemsFromDB(aDB, aTable,
+                        aHostAndPort=aHostAndPort, aQuery={'_id': objectId})
+        itemsCount = items.count()
+        if 0 == itemsCount:
+            collection.append(aCollection[i])
+
+    return collection
+
+
+def deleteUpdateDubsFromTable(aDbName, aTableName, aHostAndPort=None):
+
+    dbClient = MongoDBClient()
+    items = dbClient.getItemsFromDB(aDbName, aTableName)
+    print(items.count())
+
+    updates = []
+    for it in items:
+        updates.append(it)
+
+    for update in updates:
+        query = {}
+        query['Path'] = update['Path']
+        query['KB'] = update['KB']
+        query['Version'] = update['Version']
+        query['Type'] = update['Type']
+        query['Language'] = update['Language']
+        #query['Date'] = update['Date']
+
+        items = dbClient.getItemsFromDB(aDbName, aTableName, aQuery=query)
+
+        if items.count() > 1:
+
+            dubUpdates = []
+            for it in items:
+                dubUpdates.append(it)
+
+            dubUpdates.remove(dubUpdates[0])
+            dbClient.deleteFromDB(aDbName, aTableName, aItems=dubUpdates)
+
+    items = dbClient.getItemsFromDB(aDbName, aTableName)
+    print(items.count())
+
+
+def getUpdateDubsFromTable(aDbName, aTableName, aHostAndPort=None,
+                           aSkip=0, aLimit=5):
+
+    expression = [
+                  {'$group':
+                      {'_id': {
+                              'Path': '$Path',
+                              'KB': '$KB',
+                              'Version': '$Version',
+                              'Type': '$Type',
+                              'Language': '$Language',
+                              'Date': '$Date'
+                              },
+                         'count': {'$sum': 1}
+                      }
+                  },
+                  {'$sort': {'count': -1}},
+                  {'$skip': aSkip},
+                  {'$limit': aLimit}]
+
+    client = pymongo.MongoClient(host=aHostAndPort)
+    result = client.aggregate(aDB=aDbName,
+                              aTable=aTableName,
+                              aAggregateExpression=expression)
+
+    try:
+        if result['result'][0]['count'] < 2:
+            return None
+    except:
+        raise Exception('Unexpected error:', sys.exc_info()[0])
+
+    return result

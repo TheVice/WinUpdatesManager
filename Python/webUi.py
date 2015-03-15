@@ -2,7 +2,7 @@ import sys
 import cherrypy
 import core.updates
 import core.kb
-import db.uif
+import db.storage
 import inspectReport
 import batchGenerator
 
@@ -214,16 +214,17 @@ if __name__ == '__main__':
     argc = len(sys.argv)
     if argc == 2:
         cherrypy.quickstart(
-            Main(core.updates.Updates.convertUifListIntoUpdates(
-                db.uif.getUpdatesFromStorage(sys.argv[1]))),
+            Main(db.storage.getStorage(sys.argv[1])),
             config=conf)
 
     elif argc == 3:
         cherrypy.quickstart(
-            Main(core.updates.Updates.convertUifListIntoUpdates(
-                db.uif.getUpdatesFromStorage(sys.argv[1]))),
+            Main(db.storage.getStorage(sys.argv[1])),
                  config=sys.argv[2])
 
     else:
-        print('Using', sys.argv[0],
-          '<Folder or file with update info (*.uif)>')
+        print('Using', sys.argv[0], '\n',
+              '\t<Folder or file with update info (*.uif)|\n'
+              '\tPath to SQLite base|\n'
+              '\tPath to MongoDB server, '
+              'for example mongodb://127.0.0.1:27017/>\n')

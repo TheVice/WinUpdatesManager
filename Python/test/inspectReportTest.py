@@ -2,6 +2,14 @@ import unittest
 import datetime
 import inspectReport
 import core.updates
+import db.uif
+
+
+class UpdatesWithGetMethod(core.updates.Updates):
+
+    def get(self, aQuery, aCondition=(lambda a, b: (a == b))):
+
+        return db.uif.get(self.mData, aQuery, aCondition)
 
 
 class TestSequenceFunctions(unittest.TestCase):
@@ -98,7 +106,7 @@ class TestSequenceFunctions(unittest.TestCase):
              '\\NEU\\Silverlight_Developer_x64.exe'}}
         ]
 
-        coreUpdates = core.updates.Updates()
+        coreUpdates = UpdatesWithGetMethod()
         coreUpdates.addUpdates(updates)
         data = inspectReport.getData(coreUpdates, [2977218], {})
         updates = data.get('Updates')

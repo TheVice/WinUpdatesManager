@@ -2,10 +2,6 @@ import unittest
 import os
 import datetime
 import core.updates
-import db.uif
-from core.versions import Versions
-from core.types import Types
-from core.languages import Languages
 
 
 class TestSequenceFunctions(unittest.TestCase):
@@ -103,96 +99,6 @@ class TestSequenceFunctions(unittest.TestCase):
 
         s = '{0}'.format(updates)
         self.assertNotEqual('', s)
-
-    def test_QueryUpdates(self):
-
-        items = []
-        items.append({'_id': 'ObjectId(\'52a8e53ef1b5a171803d4163\')',
-                      'Language': 'Neutral',
-                      'Type': 'x64',
-                      'KB': 2795944,
-                      'Date': 'ISODate(\'2013-02-12T00:00:00Z\')',
-                      'Version': 'Windows 8',
-                      'Path': '\\2795944\\Windows8\\NEU\\x64' +
-                      '\\Windows8-RT-KB2795944-x64.msu'})
-        items.append({'_id': 'ObjectId(\'52ac66c0f1b5a1372437be3c\')',
-                      'Language': 'Neutral',
-                      'Type': 'x64',
-                      'KB': 2795945,
-                      'Date': 'ISODate(\'2013-02-12T00:00:00Z\')',
-                      'Version': 'Windows 8',
-                      'Path': '\\2795945\\Windows8\\NEU\\x64' +
-                      '\\Windows8-RT-KB2795944-x64.msu'})
-        items.append({'_id': 'ObjectId(\'52ac6deff1b5a1b01096772d\')',
-                      'Language': 'Neutral',
-                      'Type': 'x64',
-                      'KB': 2795946,
-                      'Date': 'ISODate(\'2013-02-12T00:00:00Z\')',
-                      'Version': 'Windows 8',
-                      'Path': '\\2795946\\Windows8\\NEU\\x64' +
-                      '\\Windows8-RT-KB2795944-x64.msu'})
-
-        updates = core.updates.Updates()
-        updates.addUpdates(items)
-        query = {}
-        query['Path'] = ('\\2795944\\Windows8\\NEU\\' +
-                         'x64\\Windows8-RT-KB2795944-x64.msu')
-        query['KB'] = 2795944
-        query['Version'] = 'Windows 8'
-        query['Type'] = 'x64'
-        query['Language'] = 'Neutral'
-        query['Date'] = 'ISODate(\'2013-02-12T00:00:00Z\')'
-        up2 = updates.getUpdates(dict(query))
-        self.assertEqual(1, len(up2))
-
-        query = {}
-        query['Type'] = 'x64'
-        up2 = updates.getUpdates(dict(query))
-        self.assertEqual(3, len(up2))
-
-        query = {}
-        query['Language'] = 'Neutral'
-        up2 = updates.getUpdates(dict(query))
-        self.assertEqual(3, len(up2))
-
-        query = {}
-        query['Language'] = ''
-        up2 = updates.getUpdates(dict(query))
-        self.assertEqual(0, len(up2))
-
-        query = {}
-        up2 = updates.getUpdates(dict(query))
-        self.assertEqual(3, len(up2))
-
-    def test_QueryUpdates2(self):
-
-        lines = []
-        lines.append('{\'Date\': datetime.date(2014, 5, 13), \'Path\': \'\\2920189\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB2920189-x64.msu\', \'Type\': \'x64\', \'Version\': \'Windows Server 2012 R2\', \'KB\': 2920189, \'Language\': \'Neutral\'}')
-        lines.append('{\'Date\': datetime.date(2014, 5, 13), \'Path\': \'\\2920189\\WindowsServer2012\\X64\\NEU\\Windows8-RT-KB2920189-x64.msu\', \'Type\': \'x64\', \'Version\': \'Windows Server 2012\', \'KB\': 2920189, \'Language\': \'Neutral\'}')
-        lines.append('{\'Date\': datetime.date(2014, 5, 13), \'Path\': \'\\2920189\\Windows8.1\\X86\\NEU\\Windows8.1-KB2920189-x86.msu\', \'Type\': \'x86\', \'Version\': \'Windows 8.1\', \'KB\': 2920189, \'Language\': \'Neutral\'}')
-        lines.append('{\'Date\': datetime.date(2014, 5, 13), \'Path\': \'\\2920189\\Windows8.1\\X64\\NEU\\Windows8.1-KB2920189-x64.msu\', \'Type\': \'x64\', \'Version\': \'Windows 8.1\', \'KB\': 2920189, \'Language\': \'Neutral\'}')
-        lines.append('{\'Date\': datetime.date(2014, 5, 13), \'Path\': \'\\2920189\\Windows8\\X86\\NEU\\Windows8-RT-KB2920189-x86.msu\', \'Type\': \'x86\', \'Version\': \'Windows 8\', \'KB\': 2920189, \'Language\': \'Neutral\'}')
-        lines.append('{\'Date\': datetime.date(2014, 5, 13), \'Path\': \'\\2920189\\Windows8\\X64\\NEU\\Windows8-RT-KB2920189-x64.msu\', \'Type\': \'x64\', \'Version\': \'Windows 8\', \'KB\': 2920189, \'Language\': \'Neutral\'}')
-
-        updates = []
-        versions = Versions()
-        types = Types()
-        languages = Languages()
-
-        for line in lines:
-            db.uif.getUpdateFromLine(line, versions,
-                types, languages, updates)
-
-        self.assertEqual(len(lines), len(updates))
-        query = {}
-        query['Version'] = 'Windows 8'
-        query['Type'] = 'x64'
-        query['Language'] = 'Neutral'
-        updates2 = core.updates.Updates()
-        updates2.addUpdates(updates)
-        updates = updates2
-        up = updates.getUpdates(dict(query))
-        self.assertEqual(1, len(up))
 
     def test_getUpdatesFromPackage(self):
 
@@ -399,7 +305,8 @@ class TestSequenceFunctions(unittest.TestCase):
                       'Version': 'Windows 8',
                       'Path': '\\2795944\\Windows8\\NEU\\x64' +
                       '\\Windows8-RT-KB2795944-x64.msu'})
-        self.assertEqual(1, len(core.updates.Updates.convertUifListIntoUpdates(items)))
+        self.assertEqual(1,
+            len(core.updates.Updates.convertUifListIntoUpdates(items)))
 
 
 if __name__ == '__main__':

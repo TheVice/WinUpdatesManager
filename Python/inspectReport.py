@@ -1,7 +1,7 @@
 import sys
 import core.kb
 import core.updates
-import db.uif
+import db.storage
 
 
 def items2KBs(aItems):
@@ -28,9 +28,6 @@ def makeDefineUnknownUpdates(aKBs):
 
 def getData(aUpdates, aKBs, aQuery):
 
-    if (isinstance(aUpdates, list)):
-        aUpdates = core.updates.Updates.convertUifListIntoUpdates(aUpdates)
-
     ret = {}
     updates = core.updates.Updates()
 
@@ -40,17 +37,17 @@ def getData(aUpdates, aKBs, aQuery):
         for kb in aKBs:
             aQuery['Path'] = str(kb)
             updates.addUpdates(
-                aUpdates.getUpdatesByCondition(condition, aQuery))
+                aUpdates.get(aQuery, condition))
     else:
 
-        if (aKBs is None):
-            updates.addUpdates(aUpdates.getUpdates(aQuery))
+        if aKBs is None:
+            updates.addUpdates(aUpdates.get(aQuery))
         else:
             for kb in aKBs:
                 aQuery['KB'] = kb
-                updates.addUpdates(aUpdates.getUpdates(aQuery))
+                updates.addUpdates(aUpdates.get(aQuery))
 
-    if (aKBs is None):
+    if aKBs is None:
         ret['Updates'] = updates
         return ret
 
@@ -88,17 +85,11 @@ if __name__ == '__main__':
 
     argc = len(sys.argv)
     if 4 < argc:
-        uifData = db.uif.getUpdatesFromStorage(sys.argv[1])
+        uifData = db.storage.getStorage(sys.argv[1])
         reportFile = sys.argv[2]
         version = sys.argv[3]
         platform = sys.argv[4]
         language = sys.argv[5]
-
-        print('Converting from uif list into updates.\n'
-              'Please standing by...')
-        if (isinstance(uifData, list)):
-            uifData = core.updates.Updates.convertUifListIntoUpdates(uifData)
-        print('Uif converted')
 
         KBs = core.kb.getKBsFromReportFile(reportFile)
 
@@ -143,6 +134,9 @@ if __name__ == '__main__':
                     print(kb)
 
     else:
-        print('Using', sys.argv[0],
-              '<Folder or file with update info (*.uif)> ' +
-              '<Report file> <Version> <Type> <Language>')
+        print('Using', sys.argv[0], '\n',
+              '\t<Folder or file with update info (*.uif)|\n',
+              '\tPath to SQLite base|\n',
+              '\tPath to MongoDB server, '
+              'for example mongodb://127.0.0.1:27017/>\n',
+              '\t<Report file> <Version> <Type> <Language>')

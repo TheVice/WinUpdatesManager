@@ -1,7 +1,7 @@
 import os
 import sys
 import inspectReport
-import db.uif
+import db.storage
 import core.kb
 from core.versions import Versions
 from core.types import Types
@@ -11,7 +11,7 @@ if __name__ == '__main__':
 
     argc = len(sys.argv)
     if 4 < argc:
-        updates = db.uif.getUpdatesFromStorage(sys.argv[1])
+        updates = db.storage.getStorage(sys.argv[1])
 
         KBs = None
         if 5 < argc:
@@ -44,7 +44,9 @@ if __name__ == '__main__':
 
     else:
         print('Use next (for example): \n'
-              '<File with updates info>.uif '
+              '\t<Folder or file with update info (*.uif)|\n'
+              '\tPath to SQLite base|\n'
+              '\tPath to MongoDB server, for example http://127.0.0.1:8080>\n'
               '<Os name> '
               '<Type>x86|x64 '
               '<Language>English|Russian|Neutral '

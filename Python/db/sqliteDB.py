@@ -202,6 +202,50 @@ def addUpdate(aDb, aUpdate):
                 (kb_id, date_id, path_id, version_id, type_id, language_id))
 
 
+def addUpdates(aDb, aUpdates):
+
+    count = len(aUpdates)
+    i = 1
+    cursor = aDb.cursor()
+
+    for update in aUpdates:
+        kb = update['KB'] if not isinstance(update['KB'], dict) else -1
+        kb_id = getSetSubstanceID(aDb, 'KBs', 'id', kb)
+
+        osVersion = (update['Version']
+            if not isinstance(update['Version'], dict) else 'UNKNOWN VERSION')
+        version_id = getSetSubstanceID(aDb, 'Versions', 'Version',
+                                       '\'{}\''.format(osVersion))
+
+        osType = (
+            update['Type'] if not isinstance(update['Type'], dict) else
+                'UNKNOWN TYPE')
+        type_id = getSetSubstanceID(aDb, 'Types', 'Type',
+            '\'{}\''.format(osType))
+
+        language = (
+            update['Language'] if not isinstance(update['Language'], dict) else
+                'UNKNOWN LANGUAGE')
+        language_id = getSetSubstanceID(aDb, 'Languages', 'Language',
+                                        '\'{}\''.format(language))
+
+        date_id = getSetSubstanceID(aDb, 'Dates', 'Date',
+                                    '\'{}\''.format(update['Date']))
+        path_id = getSetSubstanceID(aDb, 'Paths', 'Path',
+                                    '\'{}\''.format(update['Path']))
+
+        cursor.execute('''INSERT INTO Updates
+                       (kb_id, date_id, path_id, version_id,
+                       type_id, language_id)
+                       VALUES ({}, {}, {}, {}, {}, {})'''.format
+               (kb_id, date_id, path_id, version_id, type_id, language_id))
+
+        print('{0} / {1}'.format(i, count))
+        i += 1
+
+    aDb.commit()
+
+
 def rawUpdatesToUpdates(aDb, aRawUpdates):
 
     updates = []
