@@ -28,7 +28,6 @@ For web you must install [cherrypy](http://www.cherrypy.org/) for your Python.
 ```python inspectReport.py <Path to SQLite file> <Path to report file> <Os name> <Os type> <Os language>```
 2)For ```updates4Target.py``` command the same, except path to report file, that you do not pass.
 3)For running ```webUi.py``` you pass only source data and than go through web browser to http://127.0.0.1:8080 where you can pass your target OS parameters.
-Except SQLite, there is a know issue that webUi do not work with this type of storage: ```sqlite3.ProgrammingError: SQLite objects created in a thread can only be used in that same thread.```
 
 =============
 
