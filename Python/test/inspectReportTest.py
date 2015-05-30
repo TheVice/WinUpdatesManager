@@ -55,7 +55,10 @@ class TestSequenceFunctions(unittest.TestCase):
 
         diff = inspectReport.getListDiff(KBs, founded)
 
-        self.assertEqual(refDiff, diff)
+        self.assertEqual(len(refDiff), len(diff))
+        for refKB in refDiff:
+            self.assertEqual(1, refDiff.count(refKB))
+
 
     def test_getData(self):
 

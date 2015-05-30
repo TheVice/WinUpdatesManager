@@ -5,6 +5,7 @@ import core.updates
 import db.mongoDB
 
 dbClient = db.mongoDB.MongoDBClient()
+gHostAndPort = None
 
 
 class TestSequenceFunctions(unittest.TestCase):
@@ -17,9 +18,9 @@ class TestSequenceFunctions(unittest.TestCase):
         date = datetime.datetime(2012, 12, 11)
         updates = core.updates.getUpdatesFromPackage(paths, date)
 
-        dbClient.dropTableInDB(aDB='win32', aTable='updates')
-        dbClient.insertToDB(aDB='win32', aTable='updates', aItems=updates)
-        items = dbClient.getItemsFromDB(aDB='win32', aTable='updates')
+        dbClient.dropTableInDB('win32', 'updates', gHostAndPort)
+        dbClient.insertToDB('win32', 'updates', gHostAndPort, updates)
+        items = dbClient.getItemsFromDB('win32', 'updates', gHostAndPort)
         self.assertEqual(len(updates), items.count())
 
         for i in range(len(updates)):
@@ -30,18 +31,18 @@ class TestSequenceFunctions(unittest.TestCase):
             self.assertEqual(updates[i]['Language'], items[i]['Language'])
             self.assertEqual(updates[i]['Date'], items[i]['Date'])
 
-        dbClient.deleteFromDB(aDB='win32', aTable='updates', aItems=items)
-        items = dbClient.getItemsFromDB(aDB='win32', aTable='updates')
+        dbClient.deleteFromDB('win32', 'updates', gHostAndPort, items)
+        items = dbClient.getItemsFromDB('win32', 'updates', gHostAndPort)
 
         self.assertEqual(0, items.count())
 
-        dbClient.insertToDB(aDB='win32', aTable='updates', aItems=updates)
-        items = dbClient.getItemsFromDB(aDB='win32', aTable='updates')
+        dbClient.insertToDB('win32', 'updates', gHostAndPort, updates)
+        items = dbClient.getItemsFromDB('win32', 'updates', gHostAndPort)
         self.assertEqual(len(updates), items.count())
 
-        dbClient.deleteFromDB(aDB='win32', aTable='updates',
-                                   aItems=updates)
-        items = dbClient.getItemsFromDB(aDB='win32', aTable='updates')
+        dbClient.deleteFromDB('win32', 'updates',
+                                   gHostAndPort, updates)
+        items = dbClient.getItemsFromDB('win32', 'updates', gHostAndPort)
         self.assertEqual(0, items.count())
 
         paths = ['E:' + os.sep + '0906' + os.sep + 'WINDOWS' + os.sep +
@@ -54,8 +55,8 @@ class TestSequenceFunctions(unittest.TestCase):
         date = datetime.datetime(2006, 9, 12)
         updates = core.updates.getUpdatesFromPackage(paths, date)
 
-        dbClient.insertToDB(aDB='win32', aTable='updates', aItems=updates)
-        items = dbClient.getItemsFromDB(aDB='win32', aTable='updates')
+        dbClient.insertToDB('win32', 'updates', gHostAndPort, updates)
+        items = dbClient.getItemsFromDB('win32', 'updates', gHostAndPort)
         self.assertEqual(len(updates), items.count())
 
         languages = ['Enu', 'Rus']
@@ -68,31 +69,34 @@ class TestSequenceFunctions(unittest.TestCase):
             updates[i]['Language'] = languages[i]
             ids.append({'_id': updates[i]['_id']})
 
-        dbClient.updateInDB(aDB='win32', aTable='updates', aItems=updates)
-        items = dbClient.getItemsFromDB(aDB='win32', aTable='updates')
+        dbClient.updateInDB('win32', 'updates', gHostAndPort, updates)
+        items = dbClient.getItemsFromDB('win32', 'updates', gHostAndPort)
         self.assertEqual(len(updates), items.count())
 
         for i in range(0, len(updates)):
             self.assertEqual(ids[i]['_id'], items[i]['_id'])
             self.assertEqual(languages[i], items[i]['Language'])
 
-        dbClient.dropTableInDB(aDB='win32', aTable='updates')
-        items = dbClient.getItemsFromDB(aDB='win32', aTable='updates')
+        dbClient.dropTableInDB('win32', 'updates', gHostAndPort)
+        items = dbClient.getItemsFromDB('win32', 'updates', gHostAndPort)
         self.assertEqual(0, items.count())
 
     def test_getDBsAndCollections(self):
 
-        dbClient.insertToDB(aDB='win16',
-                                 aTable='updates1',
-                                 aItems=[{'item1': 1}, {'item2': 2}])
-        dbClient.insertToDB(aDB='win16',
-                                 aTable='updates2',
-                                 aItems=[{'item3': 3}, {'item4': 4}])
-        dbClient.insertToDB(aDB='win64',
-                                 aTable='updates3',
-                                 aItems=[{'item5': 5}, {'item6': 6}])
+        dbClient.insertToDB('win16',
+                            'updates1',
+                            gHostAndPort,
+                            [{'item1': 1}, {'item2': 2}])
+        dbClient.insertToDB('win16',
+                            'updates2',
+                            gHostAndPort,
+                            [{'item3': 3}, {'item4': 4}])
+        dbClient.insertToDB('win64',
+                            'updates3',
+                            gHostAndPort,
+                            [{'item5': 5}, {'item6': 6}])
 
-        dbs = dbClient.getDBs()
+        dbs = dbClient.getDBs(gHostAndPort)
 
         db1 = False
         db2 = False
@@ -105,18 +109,18 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertTrue(db1)
         self.assertEqual(db1, db2)
 
-        collections = dbClient.getCollections('win16')
+        collections = dbClient.getCollections('win16', gHostAndPort)
         self.assertEqual(3, len(collections))
         self.assertEqual(['system.indexes', 'updates1', 'updates2'],
             collections)
 
-        collections = dbClient.getCollections('win64')
+        collections = dbClient.getCollections('win64', gHostAndPort)
         self.assertEqual(2, len(collections))
         self.assertEqual(['system.indexes', 'updates3'], collections)
 
-        dbClient.dropTableInDB(aDB='win16', aTable='updates1')
-        dbClient.dropTableInDB(aDB='win16', aTable='updates2')
-        dbClient.dropTableInDB(aDB='win64', aTable='updates3')
+        dbClient.dropTableInDB('win16', 'updates1', gHostAndPort)
+        dbClient.dropTableInDB('win16', 'updates2', gHostAndPort)
+        dbClient.dropTableInDB('win64', 'updates3', gHostAndPort)
 
     def test_pymongoDate2DateTime(self):
 
@@ -235,11 +239,10 @@ class TestSequenceFunctions(unittest.TestCase):
 
         updates = db.mongoDB.pymongoDate2DateTime(updates, 'Date')
         updates = db.mongoDB.addObjectIdField(updates)
+        dbClient.dropTableInDB('win64', 'updates3', gHostAndPort)
+        dbClient.insertToDB('win64', 'updates3', gHostAndPort, updates)
 
-        dbClient.dropTableInDB(aDB='win64', aTable='updates3')
-        dbClient.insertToDB('win64', 'updates3', aItems=updates)
-
-        items = dbClient.getItemsFromDB('win64', 'updates3')
+        items = dbClient.getItemsFromDB('win64', 'updates3', gHostAndPort)
 
         updatesCount = len(updates)
         self.assertEquals(updatesCount, items.count())
@@ -254,20 +257,18 @@ class TestSequenceFunctions(unittest.TestCase):
 
         updates = db.mongoDB.pymongoDate2DateTime(updates, 'Date')
         updates = db.mongoDB.addObjectIdField(updates)
-        updates = db.mongoDB.removeDubsByObjectId('win64', 'updates3', updates)
+        updates = db.mongoDB.removeDubsByObjectId('win64', 'updates3',
+                                                  gHostAndPort, updates)
 
         self.assertEquals(1, len(updates))
         updatesCount += 1
 
-        dbClient.insertToDB('win64', 'updates3', aItems=updates)
-
-        items = dbClient.getItemsFromDB('win64', 'updates3')
-
+        dbClient.insertToDB('win64', 'updates3', gHostAndPort, updates)
+        items = dbClient.getItemsFromDB('win64', 'updates3', gHostAndPort)
         self.assertEquals(updatesCount, items.count())
+        dbClient.dropTableInDB('win64', 'updates3', gHostAndPort)
 
-        dbClient.dropTableInDB(aDB='win64', aTable='updates3')
 
-
-if __name__ == '__main__':
+if __name__ is '__main__':
 
     unittest.main()

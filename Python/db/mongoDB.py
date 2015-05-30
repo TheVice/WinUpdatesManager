@@ -10,7 +10,7 @@ class MongoDBClient:
     def getItemsFromDB(self,
                        aDB,
                        aTable,
-                       aHostAndPort=None,
+                       aHostAndPort,
                        aQuery={},
                        aProjection=None,
                        aSkip=None,
@@ -46,7 +46,7 @@ class MongoDBClient:
     def insertToDB(self,
                    aDB,
                    aTable,
-                   aHostAndPort=None,
+                   aHostAndPort,
                    aItems=[]):
 
         try:
@@ -65,7 +65,7 @@ class MongoDBClient:
     def updateInDB(self,
                    aDB,
                    aTable,
-                   aHostAndPort=None,
+                   aHostAndPort,
                    aItems=[]):
 
         try:
@@ -82,7 +82,7 @@ class MongoDBClient:
     def deleteFromDB(self,
                      aDB,
                      aTable,
-                     aHostAndPort=None,
+                     aHostAndPort,
                      aItems=[]):
 
         try:
@@ -99,7 +99,7 @@ class MongoDBClient:
     def dropTableInDB(self,
                       aDB,
                       aTable,
-                      aHostAndPort=None):
+                      aHostAndPort):
 
         try:
             client = pymongo.MongoClient(host=aHostAndPort)
@@ -112,7 +112,7 @@ class MongoDBClient:
             raise Exception('Unexpected error:', sys.exc_info()[0])
 
     def getDBs(self,
-               aHostAndPort=None):
+               aHostAndPort):
 
         try:
             client = pymongo.MongoClient(host=aHostAndPort)
@@ -124,7 +124,7 @@ class MongoDBClient:
 
     def getCollections(self,
                        aDB,
-                       aHostAndPort=None):
+                       aHostAndPort):
 
         try:
             client = pymongo.MongoClient(host=aHostAndPort)
@@ -138,7 +138,7 @@ class MongoDBClient:
     def aggregate(self,
                   aDB,
                   aTable,
-                  aHostAndPort=None,
+                  aHostAndPort,
                   aAggregateExpression=[]):
 
         try:
@@ -183,24 +183,44 @@ def addObjectIdField(aCollection=[]):
     return aCollection
 
 
-def removeDubsByObjectId(aDB, aTable, aCollection, aHostAndPort=None):
+def getColumnFromCollection(aCollection, aColumnName):
+
+    columnList = []
+    for i in range(0, len(aCollection)):
+        columnList.append(aCollection[i][aColumnName])
+    return columnList
+
+
+def removeDubsByObjectId(aDB, aTable, aHostAndPort, aCollection):
 
     collection = []
-    dbClient = MongoDBClient()
+    objectIds = getColumnFromCollection(aCollection, '_id')
 
-    for i in range(0, len(aCollection)):
+    if 0 < len(objectIds):
 
-        objectId = aCollection[i]['_id']
-        items = dbClient.getItemsFromDB(aDB, aTable,
-                        aHostAndPort=aHostAndPort, aQuery={'_id': objectId})
-        itemsCount = items.count()
-        if 0 == itemsCount:
-            collection.append(aCollection[i])
+        dbClient = MongoDBClient()
+        query = {'_id': {'$in': objectIds}}
+        items = dbClient.getItemsFromDB(aDB, aTable, aHostAndPort, query)
+
+        internalItems = []
+        for item in items:
+            internalItems.append(item)
+
+        for inputItem in aCollection:
+            found = False
+
+            for item in internalItems:
+                if inputItem['_id'] == item['_id']:
+                    found = True
+                    break
+
+            if found is False:
+                collection.append(inputItem)
 
     return collection
 
 
-def deleteUpdateDubsFromTable(aDbName, aTableName, aHostAndPort=None):
+def deleteUpdateDubsFromTable(aDbName, aTableName, aHostAndPort):
 
     dbClient = MongoDBClient()
     items = dbClient.getItemsFromDB(aDbName, aTableName)
@@ -219,7 +239,8 @@ def deleteUpdateDubsFromTable(aDbName, aTableName, aHostAndPort=None):
         query['Language'] = update['Language']
         #query['Date'] = update['Date']
 
-        items = dbClient.getItemsFromDB(aDbName, aTableName, aQuery=query)
+        items = dbClient.getItemsFromDB(aDbName, aTableName,
+                                        aHostAndPort, aQuery=query)
 
         if items.count() > 1:
 
@@ -230,11 +251,11 @@ def deleteUpdateDubsFromTable(aDbName, aTableName, aHostAndPort=None):
             dubUpdates.remove(dubUpdates[0])
             dbClient.deleteFromDB(aDbName, aTableName, aItems=dubUpdates)
 
-    items = dbClient.getItemsFromDB(aDbName, aTableName)
+    items = dbClient.getItemsFromDB(aDbName, aTableName, aHostAndPort)
     print(items.count())
 
 
-def getUpdateDubsFromTable(aDbName, aTableName, aHostAndPort=None,
+def getUpdateDubsFromTable(aDbName, aTableName, aHostAndPort,
                            aSkip=0, aLimit=5):
 
     expression = [
