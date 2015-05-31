@@ -15,11 +15,32 @@ class Updates:
     def addUpdates(self, aUpdates):
 
         for up in aUpdates:
-            self.addUpdate(up['Path'], up['KB'], up['Version'],
-                       up['Type'], up['Language'], up['Date'])
 
-    def addUpdate(self, aPath=None, aKB=None, aOsVersion=None,
-                  aOsType=None, aLanguage=None, aDate=None):
+            path = None
+            KB = None
+            osVersion = None
+            osType = None
+            language = None
+            date = None
+
+            for key in up.keys():
+
+                if key == 'Path':
+                    path = up['Path']
+                elif key == 'KB':
+                    KB = up['KB']
+                elif key == 'Version':
+                    osVersion = up['Version']
+                elif key == 'Type':
+                    osType = up['Type']
+                elif key == 'Language':
+                    language = up['Language']
+                elif key == 'Date':
+                    date = up['Date']
+
+            self.addUpdate(path, KB, osVersion, osType, language, date)
+
+    def addUpdate(self, aPath, aKB, aOsVersion, aOsType, aLanguage, aDate):
 
         update = {}
 

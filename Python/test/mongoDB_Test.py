@@ -269,6 +269,6 @@ class TestSequenceFunctions(unittest.TestCase):
         dbClient.dropTableInDB('win64', 'updates3', gHostAndPort)
 
 
-if __name__ is '__main__':
+if __name__ == '__main__':
 
     unittest.main()

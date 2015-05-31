@@ -1,0 +1,7 @@
+{
+	"TargetTestFile": "batchGeneratorTest",
+	"test_batchTemplate": {"referenceTemplate": ":UP2\r\nIF NOT EXIST \"1.txt\" GOTO N2\r\n\r\necho Installing 1.txt UP2\r\ncopy \"1.txt\" \"%TEMP%\\1.txt\" /Y\r\n\"%TEMP%\\1.txt\" /quit\r\nGOTO Y2\r\n\r\n:N2\r\necho File 1.txt not present.\r\necho Please change media and press any key...\r\nPAUSE > nul:\r\nGOTO UP2\r\n:Y2\r\n"},
+	"test_generate": {"generate1": "@echo off\r\nif [%1] == [] GOTO UP1\r\nGOTO %1\r\n\r\n:UP1\r\nIF NOT EXIST \"update.exe\" GOTO N1\r\n\r\necho Installing update.exe UP1\r\ncopy \"update.exe\" \"%TEMP%\\update.exe\" /Y\r\n\"%TEMP%\\update.exe\" /quit /nobackup\r\nGOTO Y1\r\n\r\n:N1\r\necho File update.exe not present.\r\necho Please change media and press any key...\r\nPAUSE > nul:\r\nGOTO UP1\r\n:Y1\r\n",
+					  "generate2": "@echo off\r\nif [%1] == [] GOTO UP1\r\nGOTO %1\r\n\r\n:UP1\r\nIF NOT EXIST \"Z:\\update.exe\" GOTO N1\r\n\r\necho Installing Z:\\update.exe UP1\r\ncopy \"Z:\\update.exe\" \"%TEMP%\\update.exe\" /Y\r\n\"%TEMP%\\update.exe\" /quit /nobackup\r\nGOTO Y1\r\n\r\n:N1\r\necho File Z:\\update.exe not present.\r\necho Please change media and press any key...\r\nPAUSE > nul:\r\nGOTO UP1\r\n:Y1\r\n"
+					 }
+}
