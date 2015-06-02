@@ -32,6 +32,14 @@ class JsonHelper:
             tOutput.append(tData[tInput[len(tInput) - 1]])
         return zip(tInput, tOutput)
 
+    def GetDictionary(self, aTestName, aVariableName):
+
+        data = self.GetTestVariable(aTestName, aVariableName)
+        if not isinstance(data, dict):
+            raise TypeError('\'{1}\' at \'{0}\' is not an Dictionary'.format(aTestName, aVariableName))
+        return data
+
+
     def GetArray(self, aTestName, aVariableName):
 
         data = self.GetTestVariable(aTestName, aVariableName)
