@@ -1,25 +1,33 @@
 import sys
 import hashlib
 import datetime
-import pymongo
-import bson
+from pymongo import MongoClient
+from  pymongo.errors import ServerSelectionTimeoutError, DuplicateKeyError
+from bson import ObjectId
 
 
 class MongoDBClient:
 
-    def getItemsFromDB(self,
-                       aDB,
-                       aTable,
-                       aHostAndPort,
-                       aQuery={},
-                       aProjection=None,
-                       aSkip=None,
-                       aLimit=None,
-                       aSort=None):
+    def __init__(self, aHostAndPort, aServerSelectionTimeoutMS=1000):
+
+        self.mClient = None
+        self.changeServer(aHostAndPort, aServerSelectionTimeoutMS)
+
+    def changeServer(self, aHostAndPort, aServerSelectionTimeoutMS):
+
+        if self.mClient is not None:
+            self.mClient.close()
+
+        self.mClient = MongoClient(host=aHostAndPort, serverSelectionTimeoutMS=aServerSelectionTimeoutMS)
+        try:
+            self.mClient.server_info()
+        except ServerSelectionTimeoutError:
+            raise Exception(sys.exc_info())
+
+    def getItemsFromDB(self, aDB, aTable, aQuery={}, aProjection=None, aSkip=None, aLimit=None, aSort=None):
 
         try:
-            client = pymongo.MongoClient(host=aHostAndPort)
-            db = client[aDB]
+            db = self.mClient[aDB]
             table = db[aTable]
 
             items = {}
@@ -43,34 +51,24 @@ class MongoDBClient:
         except:
             raise Exception('Unexpected error:', sys.exc_info()[0])
 
-    def insertToDB(self,
-                   aDB,
-                   aTable,
-                   aHostAndPort,
-                   aItems=[]):
+    def insertToDB(self, aDB, aTable, aItems):
 
         try:
-            client = pymongo.MongoClient(host=aHostAndPort)
-            db = client[aDB]
+            db = self.mClient[aDB]
             table = db[aTable]
 
             table.insert(aItems)
 
-        except pymongo.errors.DuplicateKeyError:
-            print('DuplicateKey:', sys.exc_info())
+        except DuplicateKeyError:
+            raise Exception('DuplicateKey:', sys.exc_info())
 
         except:
             raise Exception('Unexpected error:', sys.exc_info()[0])
 
-    def updateInDB(self,
-                   aDB,
-                   aTable,
-                   aHostAndPort,
-                   aItems=[]):
+    def updateInDB(self, aDB, aTable, aItems):
 
         try:
-            client = pymongo.MongoClient(host=aHostAndPort)
-            db = client[aDB]
+            db = self.mClient[aDB]
             table = db[aTable]
 
             for item in aItems:
@@ -79,15 +77,10 @@ class MongoDBClient:
         except:
             raise('Unexpected error:', sys.exc_info()[0])
 
-    def deleteFromDB(self,
-                     aDB,
-                     aTable,
-                     aHostAndPort,
-                     aItems=[]):
+    def deleteFromDB(self, aDB, aTable, aItems):
 
         try:
-            client = pymongo.MongoClient(host=aHostAndPort)
-            db = client[aDB]
+            db = self.mClient[aDB]
             table = db[aTable]
 
             for item in aItems:
@@ -96,14 +89,18 @@ class MongoDBClient:
         except:
             raise Exception('Unexpected error:', sys.exc_info()[0])
 
-    def dropTableInDB(self,
-                      aDB,
-                      aTable,
-                      aHostAndPort):
+    def dropDB(self, aDB):
 
         try:
-            client = pymongo.MongoClient(host=aHostAndPort)
-            db = client[aDB]
+            self.mClient.drop_database(aDB)
+
+        except:
+            raise Exception('Unexpected error:', sys.exc_info()[0])
+
+    def dropCollectionsInDB(self, aDB, aTable):
+
+        try:
+            db = self.mClient[aDB]
             table = db[aTable]
 
             table.drop()
@@ -111,39 +108,27 @@ class MongoDBClient:
         except:
             raise Exception('Unexpected error:', sys.exc_info()[0])
 
-    def getDBs(self,
-               aHostAndPort):
+    def getDBs(self):
 
         try:
-            client = pymongo.MongoClient(host=aHostAndPort)
-
-            return client.database_names()
+            return self.mClient.database_names()
 
         except:
             raise Exception('Unexpected error:', sys.exc_info()[0])
 
-    def getCollections(self,
-                       aDB,
-                       aHostAndPort):
+    def getCollectionsFromDB(self, aDB):
 
         try:
-            client = pymongo.MongoClient(host=aHostAndPort)
-
-            db = client[aDB]
+            db = self.mClient[aDB]
             return db.collection_names()
 
         except:
             raise Exception('Unexpected error:', sys.exc_info()[0])
 
-    def aggregate(self,
-                  aDB,
-                  aTable,
-                  aHostAndPort,
-                  aAggregateExpression=[]):
+    def aggregate(self, aDB, aTable, aAggregateExpression):
 
         try:
-            client = pymongo.MongoClient(host=aHostAndPort)
-            db = client[aDB]
+            db = self.mClient[aDB]
             table = db[aTable]
 
             return table.aggregate(aAggregateExpression)
@@ -151,139 +136,122 @@ class MongoDBClient:
         except:
             raise Exception('Unexpected error:', sys.exc_info()[0])
 
+    def removeDubsFromCollectionByObjectId(self, aDB, aTable, aCollection):
 
-def pymongoDate2DateTime(aCollection=[], aFieldName=None):
+        collection = []
 
-    for i in range(0, len(aCollection)):
-        date = aCollection[i][aFieldName]
-        aCollection[i][aFieldName] = datetime.datetime(date.year,
-                                                       date.month,
-                                                       date.day)
+        inputObjectIds = []
+        for item in aCollection:
+            inputObjectIds.append(item['_id'])
 
-    return aCollection
+        if 0 < len(inputObjectIds):
 
+            query = {'_id': {'$in': inputObjectIds}}
+            items = list(self.getItemsFromDB(aDB, aTable, query))
 
-def addObjectIdField(aCollection=[]):
+            dataBaseObjectIds = []
+            for item in items:
+                dataBaseObjectIds.append(item['_id'])
 
-    for i in range(0, len(aCollection)):
-        s = '{}{}{}{}{}{}'.format(aCollection[i]['Path'],
-                                  aCollection[i]['KB'],
-                                  aCollection[i]['Version'],
-                                  aCollection[i]['Type'],
-                                  aCollection[i]['Language'],
-                                  aCollection[i]['Date']
-                                  )
-        h = hashlib.new('sha256', s.encode('utf-8'))
-        s = h.hexdigest()[:12]
-        if bson.ObjectId.is_valid(s.encode('utf-8')):
-            aCollection[i]['_id'] = bson.objectid.ObjectId(s.encode('utf-8'))
+            uniqueObjectIds = list(set(inputObjectIds) - set(dataBaseObjectIds))
+            if 0 < len(uniqueObjectIds):
+                for id in uniqueObjectIds:
+                    for inputItem in aCollection:
+                        if id == inputItem['_id']:
+                            collection.append(inputItem)
+                            break
+
+        return collection
+
+    def deleteUpdateDubsFromTable(self, aDB, aTableName):
+
+        items = self.getItemsFromDB(aDB, aTableName)
+
+        updates = []
+        for it in items:
+            updates.append(it)
+
+        for update in updates:
+            query = {}
+            query['Path'] = update['Path']
+            query['KB'] = update['KB']
+            query['Version'] = update['Version']
+            query['Type'] = update['Type']
+            query['Language'] = update['Language']
+            #query['Date'] = update['Date']
+
+            items = self.getItemsFromDB(aDB, aTableName, query)
+
+            if items.count() > 1:
+
+                dubUpdates = []
+                for it in items:
+                    dubUpdates.append(it)
+
+                dubUpdates.remove(dubUpdates[0])
+                self.deleteFromDB(aDB, aTableName, dubUpdates)
+
+    def getUpdateDubsFromTable(self, aDB, aTableName, aSkip=0, aLimit=5):
+
+        expression = [
+                      {'$group':
+                          {'_id': {
+                                  'Path': '$Path',
+                                  'KB': '$KB',
+                                  'Version': '$Version',
+                                  'Type': '$Type',
+                                  'Language': '$Language',
+                                  'Date': '$Date'
+                                  },
+                             'count': {'$sum': 1}
+                          }
+                      },
+                      {'$sort': {'count': -1}},
+                      {'$skip': aSkip},
+                      {'$limit': aLimit}]
+
+        result = self.aggregate(aDB=aDB,
+                                  aTable=aTableName,
+                                  aAggregateExpression=expression)
+
+        try:
+            if result['result'][0]['count'] < 2:
+                return None
+        except:
+            raise Exception('Unexpected error:', sys.exc_info()[0])
+
+        return result
+
+    @staticmethod
+    def pymongoDate2DateTimeAtCollection(aCollection, aFieldName):
+
+        for i in range(0, len(aCollection)):
+            date = aCollection[i][aFieldName]
+            aCollection[i][aFieldName] = datetime.datetime(date.year, date.month, date.day)
+
+        return aCollection
+
+    @staticmethod
+    def generateObjectId(aString):
+
+        h = hashlib.new('sha256', aString.encode('utf-8'))
+        aString = h.hexdigest()[:12]
+        if ObjectId.is_valid(aString.encode('utf-8')):
+           return ObjectId(aString.encode('utf-8'))
         else:
-            print('Unable set ObjectId for:', str(aCollection[i]))
+            raise Exception('Unable to generate ObjectId for:', aString)
 
-    return aCollection
+    @staticmethod
+    def addObjectIdFieldAtCollection(aCollection):
 
+        for item in aCollection:
+            s = '{}{}{}{}{}{}'.format(item['Path'],
+                                      item['KB'],
+                                      item['Version'],
+                                      item['Type'],
+                                      item['Language'],
+                                      item['Date']
+                                      )
+            item['_id'] = MongoDBClient.generateObjectId(s)
 
-def getColumnFromCollection(aCollection, aColumnName):
-
-    columnList = []
-    for i in range(0, len(aCollection)):
-        columnList.append(aCollection[i][aColumnName])
-    return columnList
-
-
-def removeDubsByObjectId(aDB, aTable, aHostAndPort, aCollection):
-
-    collection = []
-    objectIds = getColumnFromCollection(aCollection, '_id')
-
-    if 0 < len(objectIds):
-
-        dbClient = MongoDBClient()
-        query = {'_id': {'$in': objectIds}}
-        items = dbClient.getItemsFromDB(aDB, aTable, aHostAndPort, query)
-
-        internalItems = []
-        for item in items:
-            internalItems.append(item)
-
-        for inputItem in aCollection:
-            found = False
-
-            for item in internalItems:
-                if inputItem['_id'] == item['_id']:
-                    found = True
-                    break
-
-            if found is False:
-                collection.append(inputItem)
-
-    return collection
-
-
-def deleteUpdateDubsFromTable(aDbName, aTableName, aHostAndPort):
-
-    dbClient = MongoDBClient()
-    items = dbClient.getItemsFromDB(aDbName, aTableName)
-    print(items.count())
-
-    updates = []
-    for it in items:
-        updates.append(it)
-
-    for update in updates:
-        query = {}
-        query['Path'] = update['Path']
-        query['KB'] = update['KB']
-        query['Version'] = update['Version']
-        query['Type'] = update['Type']
-        query['Language'] = update['Language']
-        #query['Date'] = update['Date']
-
-        items = dbClient.getItemsFromDB(aDbName, aTableName,
-                                        aHostAndPort, aQuery=query)
-
-        if items.count() > 1:
-
-            dubUpdates = []
-            for it in items:
-                dubUpdates.append(it)
-
-            dubUpdates.remove(dubUpdates[0])
-            dbClient.deleteFromDB(aDbName, aTableName, aItems=dubUpdates)
-
-    items = dbClient.getItemsFromDB(aDbName, aTableName, aHostAndPort)
-    print(items.count())
-
-
-def getUpdateDubsFromTable(aDbName, aTableName, aHostAndPort,
-                           aSkip=0, aLimit=5):
-
-    expression = [
-                  {'$group':
-                      {'_id': {
-                              'Path': '$Path',
-                              'KB': '$KB',
-                              'Version': '$Version',
-                              'Type': '$Type',
-                              'Language': '$Language',
-                              'Date': '$Date'
-                              },
-                         'count': {'$sum': 1}
-                      }
-                  },
-                  {'$sort': {'count': -1}},
-                  {'$skip': aSkip},
-                  {'$limit': aLimit}]
-
-    client = pymongo.MongoClient(host=aHostAndPort)
-    result = client.aggregate(aDB=aDbName,
-                              aTable=aTableName,
-                              aAggregateExpression=expression)
-
-    try:
-        if result['result'][0]['count'] < 2:
-            return None
-    except:
-        raise Exception('Unexpected error:', sys.exc_info()[0])
-
-    return result
+        return aCollection

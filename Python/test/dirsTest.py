@@ -7,6 +7,7 @@ from test.jsonHelper import JsonHelper
 class TestSequenceFunctions(unittest.TestCase):
 
     def setUp(self):
+
         path = '{}{}{}{}{}'.format(os.path.abspath(os.curdir), os.sep, 'test', os.sep, 'dirsTest.json')
         self.mJsonHelper = JsonHelper(path)
 

@@ -14,11 +14,6 @@ def items2KBs(aItems):
     return kbs
 
 
-def getListDiff(aParentList, aChildList):
-
-    return list(set(aParentList) - set(aChildList))
-
-
 def makeDefineUnknownUpdates(aKBs):
 
     for i in range(0, len(aKBs)):
@@ -55,7 +50,7 @@ def getData(aUpdates, aKBs, aQuery):
 
         items = items2KBs(updates)
         makeDefineUnknownUpdates(items)
-        KBs = getListDiff(aKBs, items)
+        KBs = list(set(aKBs) - set(items))
 
         ret['Updates'] = updates
         ret['KBs'] = KBs

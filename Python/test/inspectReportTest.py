@@ -19,6 +19,7 @@ class UpdatesWithGetMethod():
 class TestSequenceFunctions(unittest.TestCase):
 
     def setUp(self):
+
         path = '{}{}{}{}{}'.format(os.path.abspath(os.curdir), os.sep, 'test', os.sep, 'inspectReportTest.json')
         self.mJsonHelper = JsonHelper(path)
 
@@ -29,18 +30,6 @@ class TestSequenceFunctions(unittest.TestCase):
         kbList = inspectReport.items2KBs(items)
 
         self.assertEqual(refKbList, kbList)
-
-    def test_getListDiff(self):
-
-        KBs = self.mJsonHelper.GetIntegerArray('test_getListDiff', 'KBs')
-        founded = self.mJsonHelper.GetIntegerArray('test_getListDiff', 'founded')
-        different = self.mJsonHelper.GetIntegerArray('test_getListDiff', 'different')
-
-        diff = inspectReport.getListDiff(KBs, founded)
-
-        self.assertEqual(len(different), len(diff))
-        for refKB in different:
-            self.assertEqual(1, different.count(refKB))
 
     def test_getData(self):
 

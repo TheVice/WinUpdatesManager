@@ -1,0 +1,9 @@
+{
+  "TargetTestFile": "languagesTest",
+  "test_getLanguage": [{"\\middle\\of\\nowhere\\": {"UNKNOWN LANGUAGE": "\\middle\\of\\nowhere\\"}},
+                       {"\\NEU\\": "Neutral"}
+                      ],
+  "test_getPathKey": [{"": "\\\\"},
+                      {"Neutral": "\\Neutral\\"}
+                     ]
+}

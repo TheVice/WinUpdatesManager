@@ -1,272 +1,165 @@
-import unittest
 import os
 import datetime
-import core.updates
-import db.mongoDB
-
-dbClient = db.mongoDB.MongoDBClient()
-gHostAndPort = None
+import unittest
+from db.mongoDB import MongoDBClient
+from test.jsonHelper import JsonHelper
 
 
 class TestSequenceFunctions(unittest.TestCase):
 
-    def test_complex(self):
+    def setUp(self):
 
-        paths = ['E:' + os.sep + '1212' + os.sep + '2779030' + os.sep +
-            'Windows8' + os.sep + 'x86' + os.sep + 'NEU' + os.sep +
-            'WINDOWS8-RT-KB2779030-X86.MSU']
-        date = datetime.datetime(2012, 12, 11)
-        updates = core.updates.getUpdatesFromPackage(paths, date)
+        path = '{}{}{}{}{}'.format(os.path.abspath(os.curdir), os.sep, 'test', os.sep, 'mongoDB_Test.json')
+        self.mJsonHelper = JsonHelper(path)
+        self.mHostAndPort = self.mJsonHelper.GetSting('MongoClient', 'HostAndPort')
+        self.mDbClient = MongoDBClient(self.mHostAndPort)
 
-        dbClient.dropTableInDB('win32', 'updates', gHostAndPort)
-        dbClient.insertToDB('win32', 'updates', gHostAndPort, updates)
-        items = dbClient.getItemsFromDB('win32', 'updates', gHostAndPort)
-        self.assertEqual(len(updates), items.count())
+    def test_changeServer(self):
 
-        for i in range(len(updates)):
-            self.assertEqual(updates[i]['Path'], items[i]['Path'])
-            self.assertEqual(updates[i]['KB'], items[i]['KB'])
-            self.assertEqual(updates[i]['Version'], items[i]['Version'])
-            self.assertEqual(updates[i]['Type'], items[i]['Type'])
-            self.assertEqual(updates[i]['Language'], items[i]['Language'])
-            self.assertEqual(updates[i]['Date'], items[i]['Date'])
+        self.mDbClient.changeServer(self.mHostAndPort, 500)
 
-        dbClient.deleteFromDB('win32', 'updates', gHostAndPort, items)
-        items = dbClient.getItemsFromDB('win32', 'updates', gHostAndPort)
+    def test_getItemsFromDB(self):
 
-        self.assertEqual(0, items.count())
+        items = self.mDbClient.getItemsFromDB('win32', 'updates')
+        self.assertLess(0, items.count())
 
-        dbClient.insertToDB('win32', 'updates', gHostAndPort, updates)
-        items = dbClient.getItemsFromDB('win32', 'updates', gHostAndPort)
-        self.assertEqual(len(updates), items.count())
+    def test_insertToDB(self):
 
-        dbClient.deleteFromDB('win32', 'updates',
-                                   gHostAndPort, updates)
-        items = dbClient.getItemsFromDB('win32', 'updates', gHostAndPort)
-        self.assertEqual(0, items.count())
+        itemToInsert = {'_id': MongoDBClient.generateObjectId('{}{}'.format('test', 'insertToDB')),
+                        'test': 'insertToDB'}
+        items = self.mDbClient.getItemsFromDB('win32', 'updates', itemToInsert)
+        self.assertEquals(0, items.count())
 
-        paths = ['E:' + os.sep + '0906' + os.sep + 'WINDOWS' + os.sep +
-                'WINDOWS2000' + os.sep + '920685' + os.sep +
-                'X86' + os.sep + 'ENGLISH' + os.sep +
-                'WINDOWS2000-KB920685-X86-ENU.EXE',
-                'E:' + os.sep + '0906' + os.sep + 'WINDOWS' + os.sep +
-                'WINDOWS2000' + os.sep + '920685' + os.sep + 'X86' + os.sep +
-                'RUSSIAN' + os.sep + 'WINDOWS2000-KB920685-X86-RUS.EXE']
-        date = datetime.datetime(2006, 9, 12)
-        updates = core.updates.getUpdatesFromPackage(paths, date)
+        self.mDbClient.insertToDB('win32', 'updates', [itemToInsert])
 
-        dbClient.insertToDB('win32', 'updates', gHostAndPort, updates)
-        items = dbClient.getItemsFromDB('win32', 'updates', gHostAndPort)
-        self.assertEqual(len(updates), items.count())
+        items = self.mDbClient.getItemsFromDB('win32', 'updates', itemToInsert)
+        self.assertEquals(1, items.count())
+        self.mDbClient.deleteFromDB('win32', 'updates', [itemToInsert])
 
-        languages = ['Enu', 'Rus']
-        ids = []
+    def test_updateInDB(self):
 
-        updates = []
+        itemToInsert = {'_id': MongoDBClient.generateObjectId('{}{}'.format('test', 'insertToDB')),
+                        'test': 'insertToDB'}
+        items = self.mDbClient.getItemsFromDB('win32', 'updates', itemToInsert)
+        self.assertEquals(0, items.count())
+        self.mDbClient.insertToDB('win32', 'updates', [itemToInsert])
+        items = self.mDbClient.getItemsFromDB('win32', 'updates', itemToInsert)
+        self.assertEquals(1, items.count())
+        itemToUpdate = items[0]
+        itemToUpdate['test'] = 'updateInDB'
+        items = self.mDbClient.getItemsFromDB('win32', 'updates', itemToUpdate)
+        self.assertEquals(0, items.count())
 
-        for i in range(0, max(items.count(), len(languages))):
-            updates.append(items[i])
-            updates[i]['Language'] = languages[i]
-            ids.append({'_id': updates[i]['_id']})
+        self.mDbClient.updateInDB('win32', 'updates', [itemToUpdate])
 
-        dbClient.updateInDB('win32', 'updates', gHostAndPort, updates)
-        items = dbClient.getItemsFromDB('win32', 'updates', gHostAndPort)
-        self.assertEqual(len(updates), items.count())
+        items = self.mDbClient.getItemsFromDB('win32', 'updates', itemToInsert)
+        self.assertEquals(0, items.count())
+        items = self.mDbClient.getItemsFromDB('win32', 'updates', itemToUpdate)
+        self.assertEquals(1, items.count())
+        self.mDbClient.deleteFromDB('win32', 'updates', [itemToUpdate])
 
-        for i in range(0, len(updates)):
-            self.assertEqual(ids[i]['_id'], items[i]['_id'])
-            self.assertEqual(languages[i], items[i]['Language'])
+    def test_deleteFromDB(self):
 
-        dbClient.dropTableInDB('win32', 'updates', gHostAndPort)
-        items = dbClient.getItemsFromDB('win32', 'updates', gHostAndPort)
-        self.assertEqual(0, items.count())
+        self.test_insertToDB()
 
-    def test_getDBsAndCollections(self):
+    def test_dropDB(self):
 
-        dbClient.insertToDB('win16',
-                            'updates1',
-                            gHostAndPort,
-                            [{'item1': 1}, {'item2': 2}])
-        dbClient.insertToDB('win16',
-                            'updates2',
-                            gHostAndPort,
-                            [{'item3': 3}, {'item4': 4}])
-        dbClient.insertToDB('win64',
-                            'updates3',
-                            gHostAndPort,
-                            [{'item5': 5}, {'item6': 6}])
+        dbs = self.mDbClient.getDBs()
+        self.assertEqual(0, list(dbs).count('win16'))
+        self.mDbClient.insertToDB('win16', 'updates2', [{}])
+        dbs = self.mDbClient.getDBs()
+        self.assertEqual(1, list(dbs).count('win16'))
 
-        dbs = dbClient.getDBs(gHostAndPort)
+        self.mDbClient.dropDB('win16')
 
-        db1 = False
-        db2 = False
-        for dataBase in dbs:
-            if(dataBase == 'win32'):
-                db1 = True
-            elif(dataBase == 'win64'):
-                db2 = True
+        dbs = self.mDbClient.getDBs()
+        self.assertEqual(0, list(dbs).count('win16'))
 
-        self.assertTrue(db1)
-        self.assertEqual(db1, db2)
+    def test_droCollectionsInDB(self):
 
-        collections = dbClient.getCollections('win16', gHostAndPort)
-        self.assertEqual(3, len(collections))
-        self.assertEqual(['system.indexes', 'updates1', 'updates2'],
-            collections)
+        tables = self.mDbClient.getCollectionsFromDB('win32')
+        self.assertEqual(0, list(tables).count('updates2'))
+        self.mDbClient.insertToDB('win32', 'updates2', [{}])
+        tables = self.mDbClient.getCollectionsFromDB('win32')
+        self.assertEqual(1, list(tables).count('updates2'))
 
-        collections = dbClient.getCollections('win64', gHostAndPort)
-        self.assertEqual(2, len(collections))
-        self.assertEqual(['system.indexes', 'updates3'], collections)
+        self.mDbClient.dropCollectionsInDB('win32', 'updates2')
 
-        dbClient.dropTableInDB('win16', 'updates1', gHostAndPort)
-        dbClient.dropTableInDB('win16', 'updates2', gHostAndPort)
-        dbClient.dropTableInDB('win64', 'updates3', gHostAndPort)
+        tables = self.mDbClient.getCollectionsFromDB('win32')
+        self.assertEqual(0, list(tables).count('updates2'))
 
-    def test_pymongoDate2DateTime(self):
+    def test_getDBs(self):
 
-        updates = []
-        for i in range(1, 31):
-            data = {}
-            data['date'] = datetime.date(2013, 12, i)
-            updates.append(data)
+        self.test_dropDB()
 
-        updates = db.mongoDB.pymongoDate2DateTime(updates, 'date')
-        i = 1
-        for update in updates:
-            self.assertEqual(datetime.datetime(2013, 12, i), update['date'])
-            i += 1
+    def test_getCollectionsFromDB(self):
 
-    def test_addObjectIdField(self):
+        self.test_droCollectionsInDB()
 
-        updates = []
-        updates.append({'KB': 3002657,
-                        'Path': '\\3002657\\WindowsServer2003\\X64\\DEU\\'
-                        'WindowsServer2003-KB3002657-x64-DEU.exe',
-                        'Version': 'Windows Server 2003',
-                        'Language': 'German',
-                        'Date': datetime.date(2015, 3, 10),
-                        'Type': 'x64'})
-        updates.append({'KB': 3002657,
-                        'Path': '\\3002657\\WindowsServer2003\\X64\\CHT\\'
-                        'WindowsServer2003-KB3002657-x64-CHT.exe',
-                        'Version': 'Windows Server 2003',
-                        'Language': 'Chinese (Traditional)',
-                        'Date': datetime.date(2015, 3, 10),
-                        'Type': 'x64'})
-        updates.append({'KB': 3002657,
-                        'Path': '\\3002657\\WindowsServer2003\\X64\\CHS\\'
-                        'WindowsServer2003-KB3002657-x64-CHS.exe',
-                        'Version': 'Windows Server 2003',
-                        'Language': 'Chinese (Simplified)',
-                        'Date': datetime.date(2015, 3, 10),
-                        'Type': 'x64'})
-        updates.append({'KB': 3002657,
-                        'Path': '\\3002657\\WindowsServer2003\\IA64\\JPN\\'
-                        'WindowsServer2003-KB3002657-ia64-JPN.exe',
-                        'Version': 'Windows Server 2003',
-                        'Language': 'Japanese',
-                        'Date': datetime.date(2015, 3, 10),
-                        'Type': 'IA64'})
-        updates.append({'KB': 3002657,
-                        'Path': '\\3002657\\WindowsServer2003\\IA64\\FRA\\'
-                        'WindowsServer2003-KB3002657-ia64-FRA.exe',
-                        'Version': 'Windows Server 2003',
-                        'Language': 'French',
-                        'Date': datetime.date(2015, 3, 10),
-                        'Type': 'IA64'})
-        updates.append({'KB': 3002657,
-                        'Path': '\\3002657\\WindowsServer2003\\IA64\\ENU\\'
-                        'WindowsServer2003-KB3002657-ia64-ENU.exe',
-                        'Version': 'Windows Server 2003',
-                        'Language': 'English',
-                        'Date': datetime.date(2015, 3, 10),
-                        'Type': 'IA64'})
+    # def test_aggregate(self):
 
-        updates = db.mongoDB.addObjectIdField(updates)
+    def test_removeDubsFromCollectionByObjectId(self):
 
-        for up1 in updates:
-            objectId1 = up1['_id']
-            for up2 in updates:
-                if up1 is not up2:
-                    objectId2 = up2['_id']
-                    self.assertNotEquals(objectId1, objectId2)
+        updates = self.mJsonHelper.GetArray('test_removeDubsByObjectId', 'updates')
+        for up in updates:
+            date = JsonHelper.string2intList(up['Date'])
+            up['Date'] = datetime.date(date[0], date[1], date[2])
 
-    def test_removeDubsByObjectId(self):
+        updates = MongoDBClient.pymongoDate2DateTimeAtCollection(updates, 'Date')
+        updates = MongoDBClient.addObjectIdFieldAtCollection(updates)
 
-        updates = []
-        updates.append({'KB': 3030377,
-                        'Path': '\\3030377\\Windows8.1\\X86\\NEU\\'
-                        'Windows8.1-KB3030377-x86.msu',
-                        'Version': 'Windows 8.1',
-                        'Language': 'Neutral',
-                        'Date': datetime.date(2015, 3, 10),
-                        'Type': 'x86'})
-        updates.append({'KB': 3030377,
-                        'Path': '\\3030377\\Windows8.1\\X64\\NEU\\'
-                        'Windows8.1-KB3030377-x64.msu',
-                        'Version': 'Windows 8.1',
-                        'Language': 'Neutral',
-                        'Date': datetime.date(2015, 3, 10),
-                        'Type': 'x64'})
-        updates.append({'KB': 3030377,
-                        'Path': '\\3030377\\Windows8.1\\ARM\\NEU\\'
-                        'Windows8.1-KB3030377-arm.msu',
-                        'Version': 'Windows 8.1',
-                        'Language': 'Neutral',
-                        'Date': datetime.date(2015, 3, 10),
-                        'Type': 'ARM'})
-        updates.append({'KB': 3030377,
-                        'Path': '\\3030377\\Windows8\\X86\\NEU\\'
-                        'Windows8-RT-KB3030377-x86.msu',
-                        'Version': 'Windows 8',
-                        'Language': 'Neutral',
-                        'Date': datetime.date(2015, 3, 10),
-                        'Type': 'x86'})
-        updates.append({'KB': 3030377,
-                        'Path': '\\3030377\\Windows8\\X64\\NEU\\'
-                        'Windows8-RT-KB3030377-x64.msu',
-                        'Version': 'Windows 8',
-                        'Language': 'Neutral',
-                        'Date': datetime.date(2015, 3, 10),
-                        'Type': 'x64'})
-        updates.append({'KB': 3030377,
-                        'Path': '\\3030377\\Windows8\\ARM\\NEU\\'
-                        'Windows8-RT-KB3030377-arm.msu',
-                        'Version': 'Windows 8',
-                        'Language': 'Neutral',
-                        'Date': datetime.date(2015, 3, 10),
-                        'Type': 'ARM'})
-
-        updates = db.mongoDB.pymongoDate2DateTime(updates, 'Date')
-        updates = db.mongoDB.addObjectIdField(updates)
-        dbClient.dropTableInDB('win64', 'updates3', gHostAndPort)
-        dbClient.insertToDB('win64', 'updates3', gHostAndPort, updates)
-
-        items = dbClient.getItemsFromDB('win64', 'updates3', gHostAndPort)
+        self.mDbClient.dropDB('win16')
+        self.mDbClient.insertToDB('win16', 'updates2', updates)
 
         updatesCount = len(updates)
+        items = self.mDbClient.getItemsFromDB('win16', 'updates2')
         self.assertEquals(updatesCount, items.count())
 
-        updates.append({'KB': 3030398,
-                        'Path': '\\3030398\\WindowsVista\\X86\\NEU\\'
-                        'Windows6.0-KB3030398-x86.msu',
-                        'Version': 'Windows Vista',
-                        'Language': 'Neutral',
-                        'Date': datetime.date(2015, 3, 10),
-                        'Type': 'x86'})
+        uniqueUpdates = self.mJsonHelper.GetArray('test_removeDubsByObjectId', 'uniqueUpdates')
+        for up in uniqueUpdates:
+            date = JsonHelper.string2intList(up['Date'])
+            up['Date'] = datetime.date(date[0], date[1], date[2])
 
-        updates = db.mongoDB.pymongoDate2DateTime(updates, 'Date')
-        updates = db.mongoDB.addObjectIdField(updates)
-        updates = db.mongoDB.removeDubsByObjectId('win64', 'updates3',
-                                                  gHostAndPort, updates)
+        uniqueUpdates = MongoDBClient.pymongoDate2DateTimeAtCollection(uniqueUpdates, 'Date')
+        uniqueUpdates = MongoDBClient.addObjectIdFieldAtCollection(uniqueUpdates)
+        updatesCount += len(uniqueUpdates)
 
-        self.assertEquals(1, len(updates))
-        updatesCount += 1
-
-        dbClient.insertToDB('win64', 'updates3', gHostAndPort, updates)
-        items = dbClient.getItemsFromDB('win64', 'updates3', gHostAndPort)
+        updates.extend(uniqueUpdates)
+        updates = self.mDbClient.removeDubsFromCollectionByObjectId('win16', 'updates2', updates)
+        self.assertEqual(uniqueUpdates, updates)
+        self.mDbClient.insertToDB('win16', 'updates2', updates)
+        items = self.mDbClient.getItemsFromDB('win16', 'updates2')
         self.assertEquals(updatesCount, items.count())
-        dbClient.dropTableInDB('win64', 'updates3', gHostAndPort)
+
+        self.mDbClient.dropDB('win16')
+
+    # def test_deleteUpdateDubsFromTable(self):
+
+    # def test_getUpdateDubsFromTable(self):
+
+    def test_pymongoDate2DateTimeAtCollection(self):
+
+        data = self.mJsonHelper.GetTestRoot('test_pymongoDate2DateTimeAtCollection')
+        for i in data:
+
+            inputValue = JsonHelper.string2intList(i)
+            outputValue = datetime.datetime(inputValue[0], inputValue[1], inputValue[2])
+            inputValue = datetime.date(inputValue[0], inputValue[1], inputValue[2])
+            self.assertEqual(outputValue,
+                    MongoDBClient.pymongoDate2DateTimeAtCollection([{'date':inputValue}], 'date')[0]['date'])
+
+    def test_addObjectIdFieldAtCollection(self):
+
+        updates = self.mJsonHelper.GetArray('test_addObjectIdFieldAtCollection', 'updates')
+        for up in updates:
+            date = JsonHelper.string2intList(up['Date'])
+            up['Date'] = datetime.date(date[0], date[1], date[2])
+
+        updates = MongoDBClient.addObjectIdFieldAtCollection(updates)
+        hashes = self.mJsonHelper.GetArray('test_addObjectIdFieldAtCollection', 'hashes')
+
+        for i in zip(updates, hashes):
+            self.assertEquals(str(i[1]), str(i[0]['_id']))
 
 
 if __name__ == '__main__':

@@ -1,0 +1,161 @@
+{
+  "TargetTestFile": "mongoDB_Test",
+  "MongoClient": {
+    "HostAndPort": "mongodb://localhost:27017/"
+  },
+  "test_pymongoDate2DateTimeAtCollection": [
+    "2013, 12, 1",
+    "2013, 12, 2",
+    "2013, 12, 3",
+    "2013, 12, 4",
+    "2013, 12, 5",
+    "2013, 12, 6",
+    "2013, 12, 7",
+    "2013, 12, 8",
+    "2013, 12, 9",
+    "2013, 12, 10",
+    "2013, 12, 11",
+    "2013, 12, 12",
+    "2013, 12, 13",
+    "2013, 12, 14",
+    "2013, 12, 15",
+    "2013, 12, 16",
+    "2013, 12, 17",
+    "2013, 12, 18",
+    "2013, 12, 19",
+    "2013, 12, 20",
+    "2013, 12, 21",
+    "2013, 12, 22",
+    "2013, 12, 23",
+    "2013, 12, 24",
+    "2013, 12, 25",
+    "2013, 12, 26",
+    "2013, 12, 27",
+    "2013, 12, 28",
+    "2013, 12, 29",
+    "2013, 12, 30",
+    "2013, 12, 31"
+  ],
+  "test_addObjectIdFieldAtCollection": {
+    "updates": [
+      {
+        "KB": 3002657,
+        "Path": "\\3002657\\WindowsServer2003\\X64\\DEU\\WindowsServer2003-KB3002657-x64-DEU.exe",
+        "Version": "Windows Server 2003",
+        "Language": "German",
+        "Date": "2015, 3, 10",
+        "Type": "x64"
+      },
+      {
+        "KB": 3002657,
+        "Path": "\\3002657\\WindowsServer2003\\X64\\CHT\\WindowsServer2003-KB3002657-x64-CHT.exe",
+        "Version": "Windows Server 2003",
+        "Language": "Chinese (Traditional)",
+        "Date": "2015, 3, 10",
+        "Type": "x64"
+      },
+      {
+        "KB": 3002657,
+        "Path": "\\3002657\\WindowsServer2003\\X64\\CHS\\WindowsServer2003-KB3002657-x64-CHS.exe",
+        "Version": "Windows Server 2003",
+        "Language": "Chinese (Simplified)",
+        "Date": "2015, 3, 10",
+        "Type": "x64"
+      },
+      {
+        "KB": 3002657,
+        "Path": "\\3002657\\WindowsServer2003\\IA64\\JPN\\WindowsServer2003-KB3002657-ia64-JPN.exe",
+        "Version": "Windows Server 2003",
+        "Language": "Japanese",
+        "Date": "2015, 3, 10",
+        "Type": "IA64"
+      },
+      {
+        "KB": 3002657,
+        "Path": "\\3002657\\WindowsServer2003\\IA64\\FRA\\WindowsServer2003-KB3002657-ia64-FRA.exe",
+        "Version": "Windows Server 2003",
+        "Language": "French",
+        "Date": "2015, 3, 10",
+        "Type": "IA64"
+      },
+      {
+        "KB": 3002657,
+        "Path": "\\3002657\\WindowsServer2003\\IA64\\ENU\\WindowsServer2003-KB3002657-ia64-ENU.exe",
+        "Version": "Windows Server 2003",
+        "Language": "English",
+        "Date": "2015, 3, 10",
+        "Type": "IA64"
+      }
+    ],
+    "hashes": [
+      623665316337356236356334,
+      656266353438323161643162,
+      656561343036396434346363,
+      626261313530313261323330,
+      643866313033323139346339,
+      343266323963376236303965
+    ]
+  },
+  "test_removeDubsByObjectId": {
+    "updates": [
+      {
+        "KB": 3030377,
+        "Path": "\\3030377\\Windows8.1\\X86\\NEU\\Windows8.1-KB3030377-x86.msu",
+        "Version": "Windows 8.1",
+        "Language": "Neutral",
+        "Date": "2015, 3, 10",
+        "Type": "x86"
+      },
+      {
+        "KB": 3030377,
+        "Path": "\\3030377\\Windows8.1\\X64\\NEU\\Windows8.1-KB3030377-x64.msu",
+        "Version": "Windows 8.1",
+        "Language": "Neutral",
+        "Date": "2015, 3, 10",
+        "Type": "x64"
+      },
+      {
+        "KB": 3030377,
+        "Path": "\\3030377\\Windows8.1\\ARM\\NEU\\Windows8.1-KB3030377-arm.msu",
+        "Version": "Windows 8.1",
+        "Language": "Neutral",
+        "Date": "2015, 3, 10",
+        "Type": "ARM"
+      },
+      {
+        "KB": 3030377,
+        "Path": "\\3030377\\Windows8\\X86\\NEU\\Windows8-RT-KB3030377-x86.msu",
+        "Version": "Windows 8",
+        "Language": "Neutral",
+        "Date": "2015, 3, 10",
+        "Type": "x86"
+      },
+      {
+        "KB": 3030377,
+        "Path": "\\3030377\\Windows8\\X64\\NEU\\Windows8-RT-KB3030377-x64.msu",
+        "Version": "Windows 8",
+        "Language": "Neutral",
+        "Date": "2015, 3, 10",
+        "Type": "x64"
+      },
+      {
+        "KB": 3030377,
+        "Path": "\\3030377\\Windows8\\ARM\\NEU\\Windows8-RT-KB3030377-arm.msu",
+        "Version": "Windows 8",
+        "Language": "Neutral",
+        "Date": "2015, 3, 10",
+        "Type": "ARM"
+      }
+    ],
+    "uniqueUpdates": [
+      {
+        "KB": 3030398,
+        "Path": "\\3030398\\WindowsVista\\X86\\NEU\\Windows6.0-KB3030398-x86.msu",
+        "Version": "Windows Vista",
+        "Language": "Neutral",
+        "Date": "2015, 3, 10",
+        "Type": "x86"
+      }
+    ]
+  }
+}

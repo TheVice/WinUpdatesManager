@@ -49,16 +49,12 @@ class MongoDB(Storage):
     def __init__(self, aInit):
 
         super(MongoDB, self).__init__('MongoDB')
-        self.mDbClient = db.mongoDB.MongoDBClient()
-        self.mHostAndPort = aInit
+        self.mDbClient = db.mongoDB.MongoDBClient(aInit)
 
     def get(self, aQuery, aCondition=(lambda a, b: (a == b))):
 
         # TODO: aCondition not used
-        return self.mDbClient.getItemsFromDB('win32',
-                                              'updates',
-                                              aHostAndPort=self.mHostAndPort,
-                                              aQuery=aQuery)
+        return self.mDbClient.getItemsFromDB('win32', 'updates', aQuery)
 
 
 def getStorage(aInit):
@@ -85,6 +81,10 @@ def getStorage(aInit):
         else:
 
             print('Path {0} does not exist'.format(aInit))
+
+    elif ':memory:' == aInit:
+
+        return SQLite(aInit)
     else:
 
         return MongoDB(aInit)
