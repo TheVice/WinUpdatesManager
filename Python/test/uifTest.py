@@ -1,45 +1,38 @@
+import os
 import unittest
 import db.uif
+from test.jsonHelper import JsonHelper
 
 
 class TestSequenceFunctions(unittest.TestCase):
 
+    def setUp(self):
+
+        path = '{}{}{}{}{}'.format(os.path.abspath(os.curdir), os.sep, 'test', os.sep, 'uifTest.json')
+        self.mJsonHelper = JsonHelper(path)
+
     def test_prepareLineToParse(self):
 
-        line = ('{\'Type\': \'x86\', \'Date\': datetime.date(2013, 2, 12),' +
-            ' \'KB\': 2802968, \'Language\': \'Turkish\', \'Path\':' +
-            ' \'\\2802968\\WindowsXP\\x86\\TRK\\' +
-            'WINDOWSXP-KB2802968-X86-TRK.EXE\', \'Version\': \'Windows XP\'}')
+        inLine = self.mJsonHelper.GetTestVariable('test_prepareLineToParse', 'inLine')
+        outLine = self.mJsonHelper.GetTestVariable('test_prepareLineToParse', 'outLine')
+        self.assertEqual(outLine, db.uif.prepareLineToParse(inLine))
 
-        line = db.uif.prepareLineToParse(line)
-        newLine = ('{\'Type\': \'x86\',' +
-            '\t\'Date\': \'datetime.date(2013, 2, 12),' +
-            '\t\'KB\': \'2802968,\t\'Language\': \'Turkish\',\t\'Path\':' +
-            ' \'\\2802968\\WindowsXP\\x86\\TRK\\' +
-            'WINDOWSXP-KB2802968-X86-TRK.EXE\',' +
-            '\t\'Version\': \'Windows XP\'\t}')
-        self.assertEqual(newLine, line)
+    def test_getValue(self):
 
-    def test_getUIFvalue(self):
+        inLine = self.mJsonHelper.GetTestVariable('test_getValue', 'inLine')
+        inLine = db.uif.prepareLineToParse(inLine)
+        self.assertEqual(self.mJsonHelper.GetTestVariable('test_getValue', 'Path'), db.uif.getValue(inLine, 'Path'))
+        self.assertEqual(self.mJsonHelper.GetTestVariable('test_getValue', 'KB'), int(db.uif.getValue(inLine, 'KB')))
+        self.assertEqual(self.mJsonHelper.GetTestVariable('test_getValue', 'Version'), db.uif.getValue(inLine, 'Version'))
+        self.assertEqual(self.mJsonHelper.GetTestVariable('test_getValue', 'Type'), db.uif.getValue(inLine, 'Type'))
+        self.assertEqual(self.mJsonHelper.GetTestVariable('test_getValue', 'Language'), db.uif.getValue(inLine, 'Language'))
+        self.assertEqual(self.mJsonHelper.GetTestVariable('test_getValue', 'Date'), db.uif.getValue(inLine, 'Date'))
 
-        line = ('{\'Type\': \'x86\', \'Date\': datetime.date(2013, 2, 12),' +
-            ' \'KB\': 2802968, \'Language\': \'Turkish\', \'Path\':' +
-            ' \'\\2802968\\WindowsXP\\x86\\TRK\\' +
-            'WINDOWSXP-KB2802968-X86-TRK.EXE\', \'Version\': \'Windows XP\'}')
-
-        line = db.uif.prepareLineToParse(line)
-
-        self.assertEqual('\\2802968\\WindowsXP\\x86\\TRK\\' +
-            'WINDOWSXP-KB2802968-X86-TRK.EXE',
-            db.uif.getValue(line, 'Path'))
-        self.assertEqual(2802968, int(db.uif.getValue(line, 'KB')))
-        self.assertEqual('Windows XP',
-            db.uif.getValue(line, 'Version'))
-        self.assertEqual('x86', db.uif.getValue(line, 'Type'))
-        self.assertEqual('Turkish',
-            db.uif.getValue(line, 'Language'))
-        self.assertEqual('datetime.date(2013, 2, 12)',
-            db.uif.getValue(line, 'Date'))
+    # def test_getUpdateFromLine(self):
+    # def test_getUpdatesFromFile(self):
+    # def test_getUpdatesFromStorage(self):
+    # def test_get(self):
+    # def test_showDubs(self):
 
 if __name__ == '__main__':
 

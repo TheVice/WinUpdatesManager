@@ -33,9 +33,8 @@ class TestSequenceFunctions(unittest.TestCase):
 
         data = self.mJsonHelper.GetTestInputOutputData('test_getDatesFromUIF_Recode')
         for i in data:
-            outputValue = JsonHelper.string2intList(i[1])
-            self.assertEqual(datetime.date(outputValue[0], outputValue[1], outputValue[2]),
-                             core.dates.getDatesFromUIF_Recode(i[0]))
+            outputValue = JsonHelper.intList2Date(JsonHelper.string2intList(i[1]))
+            self.assertEqual(outputValue, core.dates.getDatesFromUIF_Recode(i[0]))
 
 if __name__ == '__main__':
 

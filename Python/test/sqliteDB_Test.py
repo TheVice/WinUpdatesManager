@@ -109,8 +109,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
         updates = self.mJsonHelper.GetArray('test_getUpdates', 'updates')
         for up in updates:
-            date = JsonHelper.string2intList(up['Date'])
-            up['Date'] = datetime.date(date[0], date[1], date[2])
+            up['Date'] = JsonHelper.intList2Date(JsonHelper.string2intList(up['Date']))
 
         db.sqliteDB.addUpdates(self.dataBase, updates)
 
@@ -124,8 +123,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
         updates = self.mJsonHelper.GetArray('test_getUpdatesByKBInPath', 'updates')
         for up in updates:
-            date = JsonHelper.string2intList(up['Date'])
-            up['Date'] = datetime.date(date[0], date[1], date[2])
+            up['Date'] = JsonHelper.intList2Date(JsonHelper.string2intList(up['Date']))
 
         db.sqliteDB.addUpdates(self.dataBase, updates)
 

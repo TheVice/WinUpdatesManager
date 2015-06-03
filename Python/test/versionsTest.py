@@ -1,22 +1,28 @@
-import unittest
 import os
+import unittest
 from core.versions import Versions
+from test.jsonHelper import JsonHelper
 
 
 class TestSequenceFunctions(unittest.TestCase):
 
-    def test_Versions(self):
+    def setUp(self):
 
-        versions = Versions()
+        path = '{}{}{}{}{}'.format(os.path.abspath(os.curdir), os.sep, 'test', os.sep, 'versionsTest.json')
+        self.mJsonHelper = JsonHelper(path)
+        self.mTypes = Versions()
 
-        path = os.sep + 'middle' + os.sep + 'of' + os.sep + 'nowhere' + os.sep
-        self.assertEqual({'UNKNOWN VERSION': path}, versions.getVersion(path))
-        self.assertEqual(versions.Win2k,
-                        versions.getVersion(os.sep + 'Windows2000' + os.sep))
+    def test_getVersion(self):
 
-        self.assertEqual(os.sep + os.sep, versions.getPathKey(''))
-        self.assertEqual(os.sep + 'Windows2000' + os.sep,
-                         versions.getPathKey(versions.Win2k))
+        testData = self.mJsonHelper.GetTestInputOutputData('test_getVersion')
+        for i in testData:
+            self.assertEqual(i[1], self.mTypes.getVersion(i[0]))
+
+    def test_getPathKey(self):
+
+        testData = self.mJsonHelper.GetTestInputOutputData('test_getPathKey')
+        for i in testData:
+            self.assertEqual(i[1], self.mTypes.getPathKey(i[0]))
 
 if __name__ == '__main__':
 

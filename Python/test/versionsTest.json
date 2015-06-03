@@ -1,0 +1,9 @@
+{
+  "TargetTestFile": "versionsTest",
+  "test_getVersion": [{"\\middle\\of\\nowhere\\": {"UNKNOWN VERSION": "\\middle\\of\\nowhere\\"}},
+                       {"\\Windows2000\\": "Windows 2000"}
+                      ],
+  "test_getPathKey": [{"": "\\\\"},
+                      {"Windows 2000": "\\Windows2000\\"}
+                     ]
+}

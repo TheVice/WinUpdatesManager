@@ -1,44 +1,35 @@
-import unittest
 import os
+import unittest
 from core.unknownSubstance import UnknownSubstance
+from test.jsonHelper import JsonHelper
 
 
 class TestSequenceFunctions(unittest.TestCase):
 
+    def setUp(self):
+
+        path = '{}{}{}{}{}'.format(os.path.abspath(os.curdir), os.sep, 'test', os.sep, 'unknownSubstanceTest.json')
+        self.mJsonHelper = JsonHelper(path)
+
     def test_unknownSubstance(self):
 
-        kb = 123
-        lang = 'NEU'
-        osType = 'x86'
-
-        substance = UnknownSubstance.unknown('KB', kb)
-        self.assertEqual({'KB': 123}, substance)
-        substance = UnknownSubstance.unknown('Lang', lang)
-        self.assertEqual({'Lang': 'NEU'}, substance)
-        substance = UnknownSubstance.unknown('Type', osType)
-        self.assertEqual({'Type': 'x86'}, substance)
+        data = self.mJsonHelper.GetTestRoot('test_unknownSubstance')
+        for d in data:
+            key = list(d.keys())[0]
+            self.assertEqual(d, UnknownSubstance.unknown(key, d[key]))
 
     def test_getItemByPath(self):
 
-        self.assertEqual(None, UnknownSubstance.getItemByPath({}, ''))
-        d = {}
-        d['kb'] = 123
-        d['lang'] = 'NEU'
-        d['osType'] = 'x86'
-        d['path'] = 'Root'
-        self.assertEqual('Root', UnknownSubstance.getItemByPath(d, 'path'))
+        data = self.mJsonHelper.GetTestRoot('test_getItemByPath')
+        for d in data:
+            self.assertEqual(d['output'], UnknownSubstance.getItemByPath(d['update'], d['input']))
 
     def test_getKeyPathByValue(self):
 
-        self.assertEqual(os.sep + os.sep,
-            UnknownSubstance.getKeyPathByValue({}, ''))
-        d = {}
-        d['kb'] = 123
-        d['lang'] = 'NEU'
-        d['osType'] = 'x86'
-        d['path'] = 'Root'
-        self.assertEqual('path',
-            UnknownSubstance.getKeyPathByValue(d, 'Root'))
+        data = self.mJsonHelper.GetTestRoot('test_getKeyPathByValue')
+        for d in data:
+            self.assertEqual(d['output'], UnknownSubstance.getKeyPathByValue(d['update'], d['input']))
+
 
 if __name__ == '__main__':
 

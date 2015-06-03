@@ -1,5 +1,5 @@
-import io
 import json
+import datetime
 
 class JsonHelper:
 
@@ -97,3 +97,8 @@ class JsonHelper:
                 end = start + 1
 
         return output
+
+    @staticmethod
+    def intList2Date(aInput):
+
+        return datetime.date(aInput[0], aInput[1], aInput[2])

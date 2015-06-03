@@ -1,0 +1,7 @@
+{
+  "TargetTestFile": "updateToPackageTest",
+  "test_getPath": [
+    {"Windows8.1-KB2904266-x64.msu": "Windows8.1\\x64\\NEU"},
+    {"Windows8.1-KB2904266-x86.msu": "Windows8.1\\x86\\NEU"}
+  ]
+}

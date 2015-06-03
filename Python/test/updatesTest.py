@@ -1,312 +1,148 @@
-import unittest
 import os
+import unittest
 import datetime
 import core.updates
+from core.updates import Updates
+from test.jsonHelper import JsonHelper
 
 
 class TestSequenceFunctions(unittest.TestCase):
 
-    def test_AddUpdates(self):
+    def setUp(self):
 
-        items = []
-        items.append({'_id': 'ObjectId(\'52a8e53ef1b5a171803d4163\')',
-                      'Language': 'Neutral',
-                      'Type': 'x64',
-                      'KB': 2795944,
-                      'Date': 'ISODate(\'2013-02-12T00:00:00Z\')',
-                      'Version': 'Windows 8',
-                      'Path': '\\2795944\\Windows8\\NEU\\x64' +
-                      '\\Windows8-RT-KB2795944-x64.msu'})
-        items.append({'_id': 'ObjectId(\'52ac66c0f1b5a1372437be3c\')',
-                      'Language': 'Neutral',
-                      'Type': 'x64',
-                      'KB': 2795944,
-                      'Date': 'ISODate(\'2013-02-12T00:00:00Z\')',
-                      'Version': 'Windows 8',
-                      'Path': '\\2795944\\Windows8\\NEU\\x64' +
-                      '\\Windows8-RT-KB2795944-x64.msu'})
-        items.append({'_id': 'ObjectId(\'52ac6deff1b5a1b01096772d\')',
-                      'Language': 'Neutral',
-                      'Type': 'x64',
-                      'KB': 2795944,
-                      'Date': 'ISODate(\'2013-02-12T00:00:00Z\')',
-                      'Version': 'Windows 8',
-                      'Path': '\\2795944\\Windows8\\NEU\\x64' +
-                      '\\Windows8-RT-KB2795944-x64.msu'})
-        updates = core.updates.Updates()
-        updates.addUpdates(items)
-        self.assertEqual(1, len(updates))
+        path = '{}{}{}{}{}'.format(os.path.abspath(os.curdir), os.sep, 'test', os.sep, 'updatesTest.json')
+        self.mJsonHelper = JsonHelper(path)
 
-    def test_Updates(self):
+    def test_addUpdates(self):
 
-        updates = core.updates.Updates()
+        data = self.mJsonHelper.GetTestRoot('test_addUpdates')
+        for d in data:
+            updates = d['updates']
+            expectedCount = d['expectedCount']
+            coreUpdates = Updates()
+            coreUpdates.addUpdates(updates)
+            self.assertEqual(expectedCount, len(coreUpdates))
 
-        self.assertEqual(0, len(updates))
-        self.assertRaises(IndexError, updates.__getitem__, -1)
-        self.assertRaises(IndexError, updates.__getitem__, 0)
-        self.assertRaises(IndexError, updates.__getitem__, 1)
+    def test_addUpdate(self):
 
-        s = '{0}'.format(updates)
-        self.assertEqual('', s)
-
-        for update in updates:
-            self.fail('Actually there are no updates! ', update)
-
-        updates.addUpdate('Some' + os.sep + 'Path', 123,
-                'Win32', '80x86', 'English', datetime.datetime(1970, 1, 1))
-        updates.addUpdate('Some' + os.sep + 'Path', 123,
-                'Win32', '80x86', 'English', datetime.datetime(1970, 1, 1))
-        updates.addUpdate('Some' + os.sep + 'Path2', 456,
-                'Win64', 'x86-64', 'Russian', datetime.datetime(2008, 12, 11))
-        updates.addUpdate('Some' + os.sep + 'Path2', 456,
-                'Win64', 'x86-64', 'Russian', datetime.datetime(2008, 12, 11))
-
-        items = []
-        items.append({'Path': 'Some' + os.sep + 'Path', 'KB': 123,
-                      'Version': 'Win32', 'Type': '80x86',
-                      'Language': 'English',
-                      'Date': datetime.datetime(1970, 1, 1)})
-        items.append({'Path': 'Some' + os.sep + 'Path', 'KB': 123,
-                      'Version': 'Win32', 'Type': '80x86',
-                      'Language': 'English',
-                      'Date': datetime.datetime(1970, 1, 1)})
-        items.append({'Path': 'Some' + os.sep + 'Path2', 'KB': 456,
-                      'Version': 'Win64', 'Type': 'x86-64',
-                      'Language': 'Russian',
-                      'Date': datetime.datetime(2008, 12, 11)})
-
-        updates.addUpdates(items)
-
-        self.assertEqual(2, len(updates))
-        self.assertRaises(IndexError, updates.__getitem__, -1)
-        try:
-            self.assertEqual(updates.__getitem__(0)['Type'], '80x86')
-            self.assertEqual(updates.__getitem__(1)['Language'], 'Russian')
-        except:
-            self.fail('Actually there are present updates!')
-        self.assertRaises(IndexError, updates.__getitem__, 3)
-
-        versions = ['Win64', 'Win32']
-        for update, version in zip(updates, versions):
-            self.assertEqual(version, update['Version'])
-
-        versions = ['Win32', 'Win64']
-        for i in range(0, 2):
-            self.assertEqual(updates[i]['Version'], versions[i])
-
-        self.assertEqual('Win32', updates[0]['Version'])
-        self.assertEqual('Win64', updates[1]['Version'])
-
-        s = '{0}'.format(updates)
-        self.assertNotEqual('', s)
-
-    def test_getUpdatesFromPackage(self):
-
-        paths = ['E:' + os.sep + '1212' + os.sep + '2761465' + os.sep +
-            'WindowsServer2003' + os.sep + 'X64' + os.sep + 'ENU' +
-            os.sep + 'IE7-WINDOWSSERVER2003.WINDOWSXP-KB2761465-X64-ENU.EXE',
-           'E:' + os.sep + '1212' + os.sep + '2761465' + os.sep +
-           'WindowsServer2003' + os.sep + 'X64' + os.sep + 'ENU' + os.sep +
-           'IE7-WINDOWSSERVER2003.WINDOWSXP-KB2761465-X64-ENU.EXE']
-        date = datetime.datetime(2012, 12, 1)
-        updates = core.updates.getUpdatesFromPackage(paths, date)
-
-        updates = core.updates.Updates.convertUifListIntoUpdates(updates)
-        self.assertEqual(1, len(updates))
-
-        kbs = [2761465]
-        versions = [core.updates.Versions().Win2k3]
-        types = ['x64']
-        languages = ['English']
-
-        for i in range(0, len(updates)):
-            self.assertEqual(paths[i][2:], updates[i]['Path'])
-            self.assertEqual(kbs[i], updates[i]['KB'])
-            self.assertEqual(versions[i], updates[i]['Version'])
-            self.assertEqual(types[i], updates[i]['Type'])
-            self.assertEqual(languages[i], updates[i]['Language'])
-            self.assertEqual(date, updates[i]['Date'])
-
-    def test_separateToKnownAndUnknown(self):
-
-        updates = [{'KB': {}, 'Version': {}, 'Type': {}, 'Language': {}}]
-        data = core.updates.Updates.separateToKnownAndUnknown(updates)
-
-        self.assertEqual(1, len(data.get('unKnown')))
-        self.assertEqual(0, len(data.get('known')))
-
-        updates = [{'KB': 123, 'Version': {}, 'Type': {}, 'Language': {}}]
-        data = core.updates.Updates.separateToKnownAndUnknown(updates)
-
-        self.assertEqual(1, len(data.get('unKnown')))
-        self.assertEqual(0, len(data.get('known')))
-
-        updates = [{'KB': 123, 'Version': 'Windows',
-                    'Type': {}, 'Language': {}}]
-        data = core.updates.Updates.separateToKnownAndUnknown(updates)
-
-        self.assertEqual(1, len(data.get('unKnown')))
-        self.assertEqual(0, len(data.get('known')))
-
-        updates = [{'KB': 123, 'Version': 'Windows',
-                    'Type': 'x86', 'Language': {}}]
-        data = core.updates.Updates.separateToKnownAndUnknown(updates)
-
-        self.assertEqual(1, len(data.get('unKnown')))
-        self.assertEqual(0, len(data.get('known')))
-
-        updates = [{'KB': 123, 'Version': 'Windows',
-                    'Type': 'x86', 'Language': 'Neutral'}]
-        data = core.updates.Updates.separateToKnownAndUnknown(updates)
-
-        self.assertEqual(0, len(data.get('unKnown')))
-        self.assertEqual(1, len(data.get('known')))
+        data = self.mJsonHelper.GetTestRoot('test_addUpdate')
+        for d in data:
+            updates = d['updates']
+            expectedCount = d['expectedCount']
+            coreUpdates = Updates()
+            for u in updates:
+                coreUpdates.addUpdate(u['Path'], u['KB'], u['Version'], u['Type'], u['Language'], u['Date'])
+            self.assertEqual(expectedCount, len(coreUpdates))
 
     def test_assignmentUp2Up(self):
 
-        ups = core.updates.Updates()
-        ups.addUpdateDict({'Date': datetime.date(2014, 7, 11), 'KB': 324189})
-        ups.addUpdateDict({'Date': datetime.date(2014, 5, 13), 'KB': 292189})
-
-        core.updates.Updates.assignmentUp2Up(ups[0], ups[1])
-
-        self.assertEqual(ups[0], ups[1])
+        data = self.mJsonHelper.GetTestRoot('test_assignmentUp2Up')
+        for d in data:
+            ups = core.updates.Updates()
+            ups.addUpdates(d['updates'])
+            self.assertNotEqual(ups[0], ups[1])
+            Updates.assignmentUp2Up(ups[0], ups[1])
+            self.assertEqual(ups[0], ups[1])
 
     def test_exchangeUps(self):
 
-        ups = core.updates.Updates()
-        ups.addUpdateDict({'Date': datetime.date(2014, 7, 11), 'KB': 324189})
-        ups.addUpdateDict({'Date': datetime.date(2014, 5, 13), 'KB': 292189})
+       data = self.mJsonHelper.GetTestRoot('test_exchangeUps')
+       for d in data:
 
-        core.updates.Updates.exchangeUps(ups[0], ups[1])
+           ups1 = Updates()
+           ups1.addUpdates(d['updates'])
+           ups2 = Updates()
+           ups2.addUpdates(d['updates'])
 
-        self.assertNotEqual(ups[0], ups[1])
+           self.assertEqual(ups1[0], ups2[0])
+           self.assertEqual(ups1[1], ups2[1])
 
-    def test_sort_by_date(self):
+           Updates.exchangeUps(ups1[0], ups1[1])
 
-        upIn = core.updates.Updates()
-        upIn.addUpdateDict({'Date': datetime.date(2014, 1, 25), 'KB': 35764})
-        upIn.addUpdateDict({'Date': datetime.date(2014, 1, 25), 'KB': 52515})
-        upIn.addUpdateDict({'Date': datetime.date(2014, 1, 25), 'KB': 69413})
-        upIn.addUpdateDict({'Date': datetime.date(2014, 3, 28), 'KB': 43915})
-        upIn.addUpdateDict({'Date': datetime.date(2014, 6, 20), 'KB': 63237})
-        upIn.addUpdateDict({'Date': datetime.date(2014, 1, 1), 'KB': 29068})
-        upIn.addUpdateDict({'Date': datetime.date(2014, 1, 19), 'KB': 56402})
-        upIn.addUpdateDict({'Date': datetime.date(2014, 1, 19), 'KB': 53064})
-        upIn.addUpdateDict({'Date': datetime.date(2014, 1, 19), 'KB': 42119})
-        upIn.addUpdateDict({'KB': 72550, 'Date': datetime.date(2014, 6, 25)})
-        upIn.addUpdateDict({'KB': 65153, 'Date': datetime.date(2014, 3, 3)})
-        upIn.addUpdateDict({'KB': 64589, 'Date': datetime.date(2014, 3, 3)})
-        upIn.addUpdateDict({'KB': 32858, 'Date': datetime.date(2014, 3, 3)})
-        upIn.addUpdateDict({'KB': 75060, 'Date': datetime.date(2014, 5, 5)})
-        upIn.addUpdateDict({'KB': 52820, 'Date': datetime.date(2014, 3, 18)})
-        upIn.addUpdateDict({'KB': 52570, 'Date': datetime.date(2014, 3, 18)})
-        upIn.addUpdateDict({'KB': 61927, 'Date': datetime.date(2014, 3, 18)})
-        upIn.addUpdateDict({'KB': 26868, 'Date': datetime.date(2014, 3, 18)})
-        upIn.addUpdateDict({'KB': 83810, 'Date': datetime.date(2014, 3, 18)})
-        upIn.addUpdateDict({'KB': 31790, 'Date': datetime.date(2014, 2, 27)})
-        upIn.addUpdateDict({'KB': 84359, 'Date': datetime.date(2014, 2, 27)})
-        upIn.addUpdateDict({'KB': 19907, 'Date': datetime.date(2014, 2, 27)})
-        upIn.addUpdateDict({'KB': 61161, 'Date': datetime.date(2014, 2, 27)})
-        upIn.addUpdateDict({'Date': datetime.date(2014, 7, 11), 'KB': 324189})
-        upIn.addUpdateDict({'Date': datetime.date(2014, 5, 13), 'KB': 292189})
+           self.assertNotEqual(ups1[0], ups2[0])
+           self.assertNotEqual(ups1[1], ups2[1])
+           self.assertEqual(ups1[0], ups2[1])
+           self.assertEqual(ups1[1], ups2[0])
 
-        upRef = core.updates.Updates()
-        upRef.addUpdateDict({'Date': datetime.date(2014, 1, 1), 'KB': 29068})
-        upRef.addUpdateDict({'Date': datetime.date(2014, 1, 19), 'KB': 42119})
-        upRef.addUpdateDict({'Date': datetime.date(2014, 1, 19), 'KB': 53064})
-        upRef.addUpdateDict({'Date': datetime.date(2014, 1, 19), 'KB': 56402})
-        upRef.addUpdateDict({'Date': datetime.date(2014, 1, 25), 'KB': 35764})
-        upRef.addUpdateDict({'Date': datetime.date(2014, 1, 25), 'KB': 52515})
-        upRef.addUpdateDict({'Date': datetime.date(2014, 1, 25), 'KB': 69413})
-        upRef.addUpdateDict({'KB': 19907, 'Date': datetime.date(2014, 2, 27)})
-        upRef.addUpdateDict({'KB': 31790, 'Date': datetime.date(2014, 2, 27)})
-        upRef.addUpdateDict({'KB': 61161, 'Date': datetime.date(2014, 2, 27)})
-        upRef.addUpdateDict({'KB': 84359, 'Date': datetime.date(2014, 2, 27)})
-        upRef.addUpdateDict({'KB': 32858, 'Date': datetime.date(2014, 3, 3)})
-        upRef.addUpdateDict({'KB': 64589, 'Date': datetime.date(2014, 3, 3)})
-        upRef.addUpdateDict({'KB': 65153, 'Date': datetime.date(2014, 3, 3)})
-        upRef.addUpdateDict({'KB': 26868, 'Date': datetime.date(2014, 3, 18)})
-        upRef.addUpdateDict({'KB': 52570, 'Date': datetime.date(2014, 3, 18)})
-        upRef.addUpdateDict({'KB': 52820, 'Date': datetime.date(2014, 3, 18)})
-        upRef.addUpdateDict({'KB': 61927, 'Date': datetime.date(2014, 3, 18)})
-        upRef.addUpdateDict({'KB': 83810, 'Date': datetime.date(2014, 3, 18)})
-        upRef.addUpdateDict({'Date': datetime.date(2014, 3, 28), 'KB': 43915})
-        upRef.addUpdateDict({'KB': 75060, 'Date': datetime.date(2014, 5, 5)})
-        upRef.addUpdateDict({'Date': datetime.date(2014, 5, 13), 'KB': 292189})
-        upRef.addUpdateDict({'Date': datetime.date(2014, 6, 20), 'KB': 63237})
-        upRef.addUpdateDict({'KB': 72550, 'Date': datetime.date(2014, 6, 25)})
-        upRef.addUpdateDict({'Date': datetime.date(2014, 7, 11), 'KB': 324189})
+    def test_sortByFieldUpToDown(self):
 
-        core.updates.Updates.sortByFieldUpToDown(upIn, 'Date')
+        data = self.mJsonHelper.GetTestRoot('test_sortByFieldUpToDown')
+        for d in data:
+            inUpdates = d['inUpdates']
+            outUpdates = d['outUpdates']
+            sortField = d['sortField']
+            if 'Date' == sortField:
+                for u in inUpdates:
+                    u['Date'] = JsonHelper.intList2Date(JsonHelper.string2intList(u['Date']))
+                for u in outUpdates:
+                    u['Date'] = JsonHelper.intList2Date(JsonHelper.string2intList(u['Date']))
 
-        self.assertEqual(len(upIn), len(upRef))
-        for up, rf in zip(upIn, upRef):
-            self.assertEqual(up['Date'], rf['Date'])
+            upIn = core.updates.Updates()
+            upIn.addUpdates(inUpdates)
+            upOut = core.updates.Updates()
+            upOut.addUpdates(outUpdates)
 
-        upRef = core.updates.Updates()
-        upRef.addUpdateDict({'Date': datetime.date(2014, 7, 11), 'KB': 324189})
-        upRef.addUpdateDict({'KB': 72550, 'Date': datetime.date(2014, 6, 25)})
-        upRef.addUpdateDict({'Date': datetime.date(2014, 6, 20), 'KB': 63237})
-        upRef.addUpdateDict({'Date': datetime.date(2014, 5, 13), 'KB': 292189})
-        upRef.addUpdateDict({'KB': 75060, 'Date': datetime.date(2014, 5, 5)})
-        upRef.addUpdateDict({'Date': datetime.date(2014, 3, 28), 'KB': 43915})
-        upRef.addUpdateDict({'KB': 83810, 'Date': datetime.date(2014, 3, 18)})
-        upRef.addUpdateDict({'KB': 61927, 'Date': datetime.date(2014, 3, 18)})
-        upRef.addUpdateDict({'KB': 52820, 'Date': datetime.date(2014, 3, 18)})
-        upRef.addUpdateDict({'KB': 52570, 'Date': datetime.date(2014, 3, 18)})
-        upRef.addUpdateDict({'KB': 26868, 'Date': datetime.date(2014, 3, 18)})
-        upRef.addUpdateDict({'KB': 65153, 'Date': datetime.date(2014, 3, 3)})
-        upRef.addUpdateDict({'KB': 64589, 'Date': datetime.date(2014, 3, 3)})
-        upRef.addUpdateDict({'KB': 32858, 'Date': datetime.date(2014, 3, 3)})
-        upRef.addUpdateDict({'KB': 84359, 'Date': datetime.date(2014, 2, 27)})
-        upRef.addUpdateDict({'KB': 61161, 'Date': datetime.date(2014, 2, 27)})
-        upRef.addUpdateDict({'KB': 31790, 'Date': datetime.date(2014, 2, 27)})
-        upRef.addUpdateDict({'KB': 19907, 'Date': datetime.date(2014, 2, 27)})
-        upRef.addUpdateDict({'Date': datetime.date(2014, 1, 25), 'KB': 69413})
-        upRef.addUpdateDict({'Date': datetime.date(2014, 1, 25), 'KB': 52515})
-        upRef.addUpdateDict({'Date': datetime.date(2014, 1, 25), 'KB': 35764})
-        upRef.addUpdateDict({'Date': datetime.date(2014, 1, 19), 'KB': 56402})
-        upRef.addUpdateDict({'Date': datetime.date(2014, 1, 19), 'KB': 53064})
-        upRef.addUpdateDict({'Date': datetime.date(2014, 1, 19), 'KB': 42119})
-        upRef.addUpdateDict({'Date': datetime.date(2014, 1, 1), 'KB': 29068})
+            core.updates.Updates.sortByFieldUpToDown(upIn, sortField)
 
-        core.updates.Updates.sortByFieldDownToUp(upIn, 'Date')
+            self.assertEqual(len(upIn), len(upOut))
+            for up1, up2 in zip(upIn, upOut):
+                self.assertEqual(up1['Date'], up2['Date'])
 
-        self.assertEqual(len(upIn), len(upRef))
-        for up, rf in zip(upIn, upRef):
-            self.assertEqual(up['Date'], rf['Date'])
+    def test_sortByFieldDownToUp(self):
 
-    def test_sort_by_path(self):
+        data = self.mJsonHelper.GetTestRoot('test_sortByFieldDownToUp')
+        for d in data:
+            inUpdates = d['inUpdates']
+            outUpdates = d['outUpdates']
+            sortField = d['sortField']
+            if 'Date' == sortField:
+                for u in inUpdates:
+                    u['Date'] = JsonHelper.intList2Date(JsonHelper.string2intList(u['Date']))
+                for u in outUpdates:
+                    u['Date'] = JsonHelper.intList2Date(JsonHelper.string2intList(u['Date']))
 
-        upIn = core.updates.Updates()
-        upIn.addUpdateDict({'Path': 'B'})
-        upIn.addUpdateDict({'Path': 'C'})
-        upIn.addUpdateDict({'Path': 'A'})
+            upIn = core.updates.Updates()
+            upIn.addUpdates(inUpdates)
+            upOut = core.updates.Updates()
+            upOut.addUpdates(outUpdates)
 
-        upRef = core.updates.Updates()
-        upRef.addUpdateDict({'Path': 'A'})
-        upRef.addUpdateDict({'Path': 'B'})
-        upRef.addUpdateDict({'Path': 'C'})
+            core.updates.Updates.sortByFieldDownToUp(upIn, sortField)
 
-        core.updates.Updates.sortByFieldUpToDown(upIn, 'Path')
+            self.assertEqual(len(upIn), len(upOut))
+            for up1, up2 in zip(upIn, upOut):
+                self.assertEqual(up1['Date'], up2['Date'])
 
-        self.assertEqual(len(upIn), len(upRef))
-        for up, rf in zip(upIn, upRef):
-            self.assertEqual(up['Path'], rf['Path'])
+    def test_separateToKnownAndUnknown(self):
+
+        data = self.mJsonHelper.GetTestRoot('test_separateToKnownAndUnknown')
+        for d in data:
+            updates = d['updates']
+            unKnown = d['unKnown']
+            known = d['known']
+            self.assertEqual(unKnown, len(Updates.separateToKnownAndUnknown(updates).get('unKnown')))
+            self.assertEqual(known, len(Updates.separateToKnownAndUnknown(updates).get('known')))
 
     def test_convertUifListIntoUpdates(self):
 
-        items = []
-        items.append({'Language': 'Neutral',
-                      'Type': 'x64',
-                      'KB': 2795944,
-                      'Date': 'ISODate(\'2013-02-12T00:00:00Z\')',
-                      'Version': 'Windows 8',
-                      'Path': '\\2795944\\Windows8\\NEU\\x64' +
-                      '\\Windows8-RT-KB2795944-x64.msu'})
-        self.assertEqual(1,
-            len(core.updates.Updates.convertUifListIntoUpdates(items)))
+        data = self.mJsonHelper.GetTestRoot('test_convertUifListIntoUpdates')
+        for d in data:
+            updates = d['updates']
+            expectedCount = d['expectedCount']
+            self.assertEqual(expectedCount, len(Updates.convertUifListIntoUpdates(updates)))
+
+    def test_getUpdatesFromPackage(self):
+
+        data = self.mJsonHelper.GetTestRoot('test_getUpdatesFromPackage')
+        for d in data:
+
+            paths = d['paths']
+            date = JsonHelper.string2intList(d['date'])
+            date = datetime.datetime(date[0], date[1], date[2])
+            updates = d['updates']
+            for u in updates:
+                u['Date'] = JsonHelper.string2intList(u['Date'])
+                u['Date'] = datetime.datetime(u['Date'][0], u['Date'][1], u['Date'][2])
+            self.assertEqual(updates, core.updates.getUpdatesFromPackage(paths, date))
 
 
 if __name__ == '__main__':
