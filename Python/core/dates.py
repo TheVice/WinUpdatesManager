@@ -20,25 +20,19 @@ def getDayFromYearMonthAndWeek(aYear, aMonth, aWeekOfMonth, aDayOfWeek):
     return day
 
 
-def getDatesOfUpdates(aFolders):
+def getDate(aFolderName):
 
-    dates = []
+    if(len(aFolderName) != 4):
+        return None
 
-    for folder in aFolders:
+    year = '20{}'.format(aFolderName[2:4])
+    month = aFolderName[0:2]
 
-        if(len(folder) < 4):
-            continue
+    if not year.isdigit() or not month.isdigit() or int(month) > 12:
+        return None
 
-        year = '20' + folder[2:4]
-        month = folder[0:2]
-
-        if not year.isdigit() or not month.isdigit() or int(month) > 12:
-            continue
-
-        day = getDayFromYearMonthAndWeek(int(year), int(month), 2, 2)
-        dates.append(datetime.date(int(year), int(month), day))
-
-    return dates
+    day = getDayFromYearMonthAndWeek(int(year), int(month), 2, 2)
+    return datetime.date(int(year), int(month), day)
 
 
 def getDatesFromUIF_Recode(aRecord):

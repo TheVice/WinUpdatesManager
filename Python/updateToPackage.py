@@ -1,6 +1,7 @@
 import sys
 import os
-
+import core.dirs
+from test.jsonHelper import JsonHelper
 
 class UpFile:
 
@@ -86,32 +87,72 @@ class UpFile:
 
 def moveUp(aSrc, aDest):
 
-    dest = os.path.join(os.getcwd(), aDest, os.path.basename(aSrc))
-    print('Source -', aSrc)
-    print('Destination -', dest)
+    try:
+        os.renames(aSrc, aDest)
+        print('{} -> {}'.format(aSrc, aDest))
+    except FileExistsError:
+        print('Cannot move {} to {} because file already exists'.format(aSrc, aDest))
 
-    os.renames(aSrc, dest)
+def relPaths2Full(aRoot, aPaths):
+
+    retFiles = []
+
+    files = core.dirs.getSubDirectoryFiles(aRoot)
+    for p in aPaths:
+        for f in files:
+            if -1 != f.find(p):
+                retFiles.append(os.path.normpath('{}{}'.format(aRoot, f)))
+
+    return retFiles
+
 
 if __name__ == '__main__':
 
     argc = len(sys.argv)
-    if argc > 1:
+    if argc == 2:
 
-        dPath = None
-        upList = None
-        for dirPath, subDirList, fileList in os.walk(sys.argv[1]):
-            dPath = dirPath
-            upList = fileList
-            break
+        folderPath = sys.argv[1]
+        if os.path.isdir(folderPath):
 
-        if upList is not None:
-            for up in upList:
+            dPath = None
+            upList = None
 
+            for dirPath, subDirList, fileList in os.walk(folderPath):
+                dPath = dirPath
+                upList = fileList
+                break
+
+            if upList is not None:
+                for up in upList:
+
+                    try:
+                        src = os.path.join(dPath, up)
+                        uf = UpFile(src)
+                        moveUp(src, os.path.join(os.getcwd(), uf.getPath(), os.path.basename(src)))
+
+                    except:
+                        print(sys.exc_info()[1])
+
+    elif argc == 3:
+        filePath = sys.argv[1]
+        folderPath = sys.argv[2]
+        if os.path.isfile(filePath) and os.path.isdir(folderPath):
+
+            jsonHelper = JsonHelper(filePath)
+            paths = jsonHelper.GetTestRoot('Paths')
+            sourcePaths = relPaths2Full(folderPath, paths)
+            for src in sourcePaths:
                 try:
-                    src = os.path.join(dPath, up)
                     uf = UpFile(src)
-                    moveUp(src, uf.getPath())
                 except:
-                    print('Skipping', up)
+                    print(sys.exc_info()[1])
+                    continue
+                dest = os.path.split(src)
+                dest = os.path.join(dest[0], uf.getPath(), dest[1])
+                moveUp(src, dest)
+
     else:
-        print('Using', sys.argv[0], '<path to dir with updates>')
+        print('Using:{}{} <path to dir with updates>{}'
+              '{} <path to json file with paths to updates> <root of updates storage>'.format(os.linesep,
+                                                                                              sys.argv[0], os.linesep,
+                                                                                              sys.argv[0]))

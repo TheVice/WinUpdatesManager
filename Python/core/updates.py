@@ -167,8 +167,6 @@ def getUpdatesFromPackage(aFiles, aDate):
 
     for updateFile in aFiles:
 
-        updateFile = updateFile[updateFile.find(os.sep):]
-
         kb = core.kb.getKB(updateFile)
         osVersion = versions.getVersion(updateFile)
         osType = types.getType(updateFile)

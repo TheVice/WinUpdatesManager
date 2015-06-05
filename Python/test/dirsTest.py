@@ -1,6 +1,7 @@
 import os
 import unittest
 import core.dirs
+from unittest.mock import MagicMock
 from test.jsonHelper import JsonHelper
 
 
@@ -11,38 +12,22 @@ class TestSequenceFunctions(unittest.TestCase):
         path = '{}{}{}{}{}'.format(os.path.abspath(os.curdir), os.sep, 'test', os.sep, 'dirsTest.json')
         self.mJsonHelper = JsonHelper(path)
 
-    def test_Paths(self):
+    def test_getSubDirectoryFiles(self):
 
-        inputPaths = self.mJsonHelper.GetStingArray('test_Paths', 'inputPaths')
-        correctRootPaths = self.mJsonHelper.GetStingArray('test_Paths', 'correctRootPaths')
-        correctRootObjects = self.mJsonHelper.GetStingArray('test_Paths', 'correctRootObjects')
+        data = self.mJsonHelper.GetTestRoot('test_getSubDirectoryFiles')
+        for d in data:
+            mock_return_value = []
+            osWalkArray = d['mockData']
 
-        paths = core.dirs.Paths(inputPaths)
+            for p in osWalkArray:
+                mock_return_value.append((p['root'], p['dirs'], p['files']))
 
-        self.assertEqual(inputPaths, paths.getFullPaths())
-        self.assertEqual(correctRootPaths, paths.getRootPaths())
-        self.assertEqual(correctRootObjects, paths.getRootObjects())
+            os.walk = MagicMock(return_value=mock_return_value )
 
-    def test_getRootPaths(self):
+            files = core.dirs.getSubDirectoryFiles(osWalkArray[0]['root'])
 
-        paths = self.mJsonHelper.GetStingArray('test_getRootPaths', 'paths')
-        correctRootPaths = self.mJsonHelper.GetStingArray('test_getRootPaths', 'correctRootPaths')
-
-        rootPaths = core.dirs.getRootPaths(paths)
-
-        for correctPath, path in zip(correctRootPaths, rootPaths):
-            self.assertEqual(correctPath, path)
-
-    def test_getRootObjects(self):
-
-        paths = self.mJsonHelper.GetStingArray('test_getRootObjects', 'paths')
-        correctRootObjects = self.mJsonHelper.GetStingArray('test_getRootObjects', 'correctRootObjects')
-
-        rootObjects = core.dirs.getRootObjects(paths)
-
-        for correctPath, path in zip(correctRootObjects, rootObjects):
-            self.assertEqual(correctPath, path)
-
+            expectedFiles = d['expectedFiles']
+            self.assertEqual(expectedFiles, files)
 
 if __name__ == '__main__':
 

@@ -94,7 +94,12 @@ def getUpdatesFromStorage(aPath):
     if os.path.isfile(aPath):
         getUpdatesFromFile(aPath, updates)
     elif os.path.isdir(aPath):
-        files = core.dirs.getFilesInDirectory(aPath, '.uif')
+        files = []
+        allFiles = core.dirs.getSubDirectoryFiles(aPath)
+        for f in allFiles:
+            if -1 != f.rfind('.uif'):
+                files.append(os.path.normpath('{}{}'.format(aPath, f)))
+
         count = len(files)
         i = 1
         for f in files:

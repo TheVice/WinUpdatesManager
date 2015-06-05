@@ -25,10 +25,9 @@ if __name__ == '__main__':
             updates = dataBase.removeDubsFromCollectionByObjectId(dataBaseName, tableName, updates)
 
             if 0 < len(updates):
-                dataBase.insertToDB(dataBaseName, tableName, hostAndPort, updates)
+                dataBase.insertToDB(dataBaseName, tableName, updates)
 
-            itemsCount = dataBase.getItemsFromDB(dataBaseName, tableName,
-                                                 hostAndPort).count()
+            itemsCount = dataBase.getItemsFromDB(dataBaseName, tableName).count()
             print('At table \'{0}\' of database \'{1}\' now {2} items'.format(
                                         tableName, dataBaseName, itemsCount))
         else:

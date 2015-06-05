@@ -1,6 +1,5 @@
 import os
 import unittest
-import datetime
 import core.dates
 from test.jsonHelper import JsonHelper
 
@@ -22,12 +21,9 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def test_getDatesForYearEdition(self):
 
-        files = self.mJsonHelper.GetStingArray('test_getDatesForYearEdition', 'files')
-        dates = core.dates.getDatesOfUpdates(files)
-        correctDays = self.mJsonHelper.GetIntegerArray('test_getDatesForYearEdition', 'correctDays')
-
-        for correctDay, date in zip(correctDays, dates):
-            self.assertEqual(correctDay, date.day)
+        data = self.mJsonHelper.GetTestInputOutputData('test_getDatesForYearEdition')
+        for i in data:
+            self.assertEqual(i[1], core.dates.getDate(i[0]).day)
 
     def test_getDatesFromUIF_Recode(self):
 

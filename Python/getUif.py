@@ -1,55 +1,69 @@
 import os
 import sys
+# import json
 import core.dates
 import core.dirs
 import core.updates
 
+
+def printUpdates(aUpdates):
+
+    for update in aUpdates['known']:
+        print(update)
+
+    for update in aUpdates['unKnown']:
+        print(update)
+
+    # print('-----------updateToPackage-----------')
+    # paths = []
+    # for update in aUpdates['unKnown']:
+    #     if not isinstance(update['KB'], dict):
+    #         paths.append(update['Path'])
+    #
+    # s = []
+    # s.append('{\"Paths\": [')
+    # s.append(os.linesep)
+    # for path in paths:
+    #     s.append(json.dumps(path))
+    #     s.append(',')
+    #     s.append(os.linesep)
+    #
+    # del s[len(s)-2:len(s)-1]
+    # s.append(']}')
+    # print(''.join(s))
+    # print('-----------updateToPackage-----------')
 
 if __name__ == '__main__':
 
     argc = len(sys.argv)
 
     if argc == 2:
-        files = core.dirs.getSubDirectoryFiles(os.path.abspath(sys.argv[1]))
-        if 0 < len(files):
-            paths = core.dirs.Paths(files)
-            dates = core.dates.getDatesOfUpdates(paths.getRootObjects())
-            updates = {'known': [], 'unKnown': []}
+        inputPath = os.path.abspath(sys.argv[1])
+        subFolders = os.listdir(inputPath)
+        updates = []
 
-            for path, date in zip(paths.getRootPaths(), dates):
-                files = paths.getSubObjects(path, True)
-                monthUpdates = core.updates.getUpdatesFromPackage(files, date)
-                monthUpdates = core.updates.Updates.separateToKnownAndUnknown(
-                    monthUpdates)
-                updates['known'].append(monthUpdates['known'])
-                updates['unKnown'].append(monthUpdates['unKnown'])
+        for folder in subFolders:
+            subInputPath = os.path.join(inputPath, folder)
+            files = core.dirs.getSubDirectoryFiles(subInputPath)
 
-            for monthUpdates in updates['known']:
-                for update in monthUpdates:
-                    print(update)
+            if 0 < len(files):
+                date = core.dates.getDate(folder)
+                updates.extend(core.updates.getUpdatesFromPackage(files, date))
 
-            for monthUpdates in updates['unKnown']:
-                for update in monthUpdates:
-                    print(update)
-        else:
-            print('There is no files at ' + str(sys.argv[1]))
+        updates = core.updates.Updates.separateToKnownAndUnknown(updates)
+        printUpdates(updates)
 
     elif argc == 3:
-        files = core.dirs.getSubDirectoryFiles(os.path.abspath(sys.argv[1]))
+        inputPath = os.path.abspath(sys.argv[1])
+        files = core.dirs.getSubDirectoryFiles(inputPath)
+
         if 0 < len(files):
-            updates = core.updates.getUpdatesFromPackage(files,
-                      core.dates.getDatesOfUpdates([sys.argv[2]])[0])
+            date = core.dates.getDate(sys.argv[2])
+            updates = core.updates.getUpdatesFromPackage(files, date)
+
             updates = core.updates.Updates.separateToKnownAndUnknown(updates)
-
-            for update in updates['known']:
-                print(update)
-
-            for update in updates['unKnown']:
-                print(update)
-        else:
-            print('There is no files at ' + str(sys.argv[1]))
+            printUpdates(updates)
 
     else:
-        print('Using:')
-        print(sys.argv[0] + ' <path to directory with updates>' +
-                            ' <date (MMYY), only for non year edition>')
+        print('Using:{}{} <path to directory with updates>'
+              '<date (MMYY), only for non year edition>'.format(os.linesep, sys.argv[0]))

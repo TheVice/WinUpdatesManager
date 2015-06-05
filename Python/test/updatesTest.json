@@ -310,7 +310,7 @@
         {
           "Type": "x64",
           "Date": "2012, 12, 1",
-          "Path": "\\1212\\2761465\\WindowsServer2003\\X64\\ENU\\IE7-WINDOWSSERVER2003.WINDOWSXP-KB2761465-X64-ENU.EXE",
+          "Path": "E:\\1212\\2761465\\WindowsServer2003\\X64\\ENU\\IE7-WINDOWSSERVER2003.WINDOWSXP-KB2761465-X64-ENU.EXE",
           "Version": "Windows Server 2003",
           "KB": 2761465,
           "Language": "English"
@@ -318,7 +318,7 @@
         {
           "Type": "x64",
           "Date": "2012, 12, 1",
-          "Path": "\\1212\\2761465\\WindowsServer2003\\X64\\ENU\\IE7-WINDOWSSERVER2003.WINDOWSXP-KB2761465-X64-ENU.EXE",
+          "Path": "E:\\1212\\2761465\\WindowsServer2003\\X64\\ENU\\IE7-WINDOWSSERVER2003.WINDOWSXP-KB2761465-X64-ENU.EXE",
           "Version": "Windows Server 2003",
           "KB": 2761465,
           "Language": "English"
