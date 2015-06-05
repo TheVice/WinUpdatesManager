@@ -1,3 +1,4 @@
+import sys
 import json
 import datetime
 
@@ -50,6 +51,8 @@ class JsonHelper:
     def GetSting(self, aTestName, aVariableName):
 
         data = self.GetTestVariable(aTestName, aVariableName)
+        if 2 == sys.version_info[0]:
+            data = data.encode('utf-8')
         if not isinstance(data, str):
             raise TypeError('\'{1}\' at \'{0}\' is not a String'.format(aTestName, aVariableName))
         return data

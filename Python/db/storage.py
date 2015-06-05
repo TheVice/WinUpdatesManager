@@ -1,3 +1,4 @@
+import sys
 import os.path
 import db.uif
 import db.sqliteDB
@@ -35,7 +36,10 @@ class SQLite(Storage):
 
     def __init__(self, aInit):
 
-        super(SQLite, self).__init__('SQLite')
+        if 2 == sys.version_info[0]:
+            Storage.__init__(self, 'SQLite')
+        else:
+            super(SQLite, self).__init__('SQLite')
         self.mDb = db.sqliteDB.connect(aInit)
 
     def get(self, aQuery, aCondition=(lambda a, b: (a == b))):
@@ -48,7 +52,10 @@ class MongoDB(Storage):
 
     def __init__(self, aInit):
 
-        super(MongoDB, self).__init__('MongoDB')
+        if 2 == sys.version_info[0]:
+            Storage.__init__(self, 'MongoDB')
+        else:
+            super(MongoDB, self).__init__('MongoDB')
         self.mDbClient = db.mongoDB.MongoDBClient(aInit)
 
     def get(self, aQuery, aCondition=(lambda a, b: (a == b))):
