@@ -139,6 +139,5 @@
     {
       "1113": 12
     }
-  ],
-    "test_getDatesFromUIF_Recode": [{"datetime.date(2013, 2, 12)": "2013, 2, 12"}]
+  ]
 }

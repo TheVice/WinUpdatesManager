@@ -1,7 +1,7 @@
 import os
+import json
 import unittest
 import datetime
-import core.updates
 from core.updates import Updates
 from test.jsonHelper import JsonHelper
 
@@ -38,7 +38,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
         data = self.mJsonHelper.GetTestRoot('test_assignmentUp2Up')
         for d in data:
-            ups = core.updates.Updates()
+            ups = Updates()
             ups.addUpdates(d['updates'])
             self.assertNotEqual(ups[0], ups[1])
             Updates.assignmentUp2Up(ups[0], ups[1])
@@ -77,12 +77,12 @@ class TestSequenceFunctions(unittest.TestCase):
                 for u in outUpdates:
                     u['Date'] = JsonHelper.intList2Date(JsonHelper.string2intList(u['Date']))
 
-            upIn = core.updates.Updates()
+            upIn = Updates()
             upIn.addUpdates(inUpdates)
-            upOut = core.updates.Updates()
+            upOut = Updates()
             upOut.addUpdates(outUpdates)
 
-            core.updates.Updates.sortByFieldUpToDown(upIn, sortField)
+            Updates.sortByFieldUpToDown(upIn, sortField)
 
             self.assertEqual(len(upIn), len(upOut))
             for up1, up2 in zip(upIn, upOut):
@@ -101,12 +101,12 @@ class TestSequenceFunctions(unittest.TestCase):
                 for u in outUpdates:
                     u['Date'] = JsonHelper.intList2Date(JsonHelper.string2intList(u['Date']))
 
-            upIn = core.updates.Updates()
+            upIn = Updates()
             upIn.addUpdates(inUpdates)
-            upOut = core.updates.Updates()
+            upOut = Updates()
             upOut.addUpdates(outUpdates)
 
-            core.updates.Updates.sortByFieldDownToUp(upIn, sortField)
+            Updates.sortByFieldDownToUp(upIn, sortField)
 
             self.assertEqual(len(upIn), len(upOut))
             for up1, up2 in zip(upIn, upOut):
@@ -122,14 +122,6 @@ class TestSequenceFunctions(unittest.TestCase):
             self.assertEqual(unKnown, len(Updates.separateToKnownAndUnknown(updates).get('unKnown')))
             self.assertEqual(known, len(Updates.separateToKnownAndUnknown(updates).get('known')))
 
-    def test_convertUifListIntoUpdates(self):
-
-        data = self.mJsonHelper.GetTestRoot('test_convertUifListIntoUpdates')
-        for d in data:
-            updates = d['updates']
-            expectedCount = d['expectedCount']
-            self.assertEqual(expectedCount, len(Updates.convertUifListIntoUpdates(updates)))
-
     def test_getUpdatesFromPackage(self):
 
         data = self.mJsonHelper.GetTestRoot('test_getUpdatesFromPackage')
@@ -138,11 +130,11 @@ class TestSequenceFunctions(unittest.TestCase):
             paths = d['paths']
             date = JsonHelper.string2intList(d['date'])
             date = datetime.datetime(date[0], date[1], date[2])
-            updates = d['updates']
-            for u in updates:
-                u['Date'] = JsonHelper.string2intList(u['Date'])
-                u['Date'] = datetime.datetime(u['Date'][0], u['Date'][1], u['Date'][2])
-            self.assertEqual(updates, core.updates.getUpdatesFromPackage(paths, date))
+            expectedUpdates = d['updates']
+            updates = Updates.getUpdatesFromPackage(paths, date)
+            for i in range(0, len(updates)):
+                updates[i] = json.loads(updates[i])
+            self.assertEqual(expectedUpdates, updates)
 
 
 if __name__ == '__main__':

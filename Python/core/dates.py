@@ -33,9 +33,3 @@ def getDate(aFolderName):
 
     day = getDayFromYearMonthAndWeek(int(year), int(month), 2, 2)
     return datetime.date(int(year), int(month), day)
-
-
-def getDatesFromUIF_Recode(aRecord):
-
-    d = datetime.datetime.strptime(aRecord, 'datetime.date(%Y, %m, %d)')
-    return d.date()

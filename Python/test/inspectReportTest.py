@@ -1,19 +1,15 @@
 import os
 import unittest
 import inspectReport
-import db.uif
+from db.storage import Uif
 from test.jsonHelper import JsonHelper
 
 
-class UpdatesWithGetMethod():
+class UpdatesWithGetMethod(Uif):
 
     def __init__(self, aData):
 
-        self.mData = aData
-
-    def get(self, aQuery, aCondition=(lambda a, b: (a == b))):
-
-        return db.uif.get(self.mData, aQuery, aCondition)
+        self.mUpdates = aData
 
 
 class TestSequenceFunctions(unittest.TestCase):

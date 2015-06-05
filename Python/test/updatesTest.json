@@ -260,22 +260,22 @@
   ],
   "test_separateToKnownAndUnknown": [
     {
-      "updates": [{"KB": {}, "Version": {}, "Type": {}, "Language": {}}],
+      "updates": [{"KB": {"UNKNOWN KB": ""}, "Version": {"UNKNOWN VERSION": ""}, "Type": {"UNKNOWN TYPE": ""}, "Language": {"UNKNOWN LANGUAGE": ""}}],
       "unKnown": 1,
       "known": 0
     },
     {
-      "updates": [{"KB": 123, "Version": {}, "Type": {}, "Language": {}}],
+      "updates": [{"KB": 123, "Version": {"UNKNOWN VERSION": ""}, "Type": {"UNKNOWN TYPE": ""}, "Language": {"UNKNOWN LANGUAGE": ""}}],
       "unKnown": 1,
       "known": 0
     },
     {
-      "updates": [{"KB": 123, "Version": "Windows", "Type": {}, "Language": {}}],
+      "updates": [{"KB": 123, "Version": "Windows", "Type": {"UNKNOWN TYPE": ""}, "Language": {"UNKNOWN LANGUAGE": ""}}],
       "unKnown": 1,
       "known": 0
     },
     {
-      "updates": [{"KB": 123, "Version": "Windows", "Type": "x86", "Language": {}}],
+      "updates": [{"KB": 123, "Version": "Windows", "Type": "x86", "Language": {"UNKNOWN LANGUAGE": ""}}],
       "unKnown": 1,
       "known": 0
     },
@@ -283,20 +283,6 @@
       "updates": [{"KB": 123, "Version": "Windows", "Type": "x86", "Language": "Neutral"}],
       "unKnown": 0,
       "known": 1
-    }
-  ],
-  "test_convertUifListIntoUpdates": [
-    {
-      "updates": [
-        {
-          "Language": "Neutral",
-          "Type": "x64",
-          "KB": 2795944,
-          "Version": "Windows 8",
-          "Path": "\\2795944\\Windows8\\NEU\\x64\\Windows8-RT-KB2795944-x64.msu"
-        }
-      ],
-      "expectedCount": 1
     }
   ],
   "test_getUpdatesFromPackage": [

@@ -3,7 +3,7 @@ WinUpdatesManager
 
 Series of scripts to manage of MS DLC from KB913086 and others.
 
-Support to process data through uif files, [MongoDB](https://www.mongodb.org/) or [SQLite](https://sqlite.org/).
+Support to process data through uif(JSON list) files, [MongoDB](https://www.mongodb.org/) or [SQLite](https://sqlite.org/).
 Major storage - series of ```uif``` (```U```pdates ```I```n```F```ormation) files.
 To work through MongoDB installing of [pymongo](https://pypi.python.org/pypi/pymongo/) required.
 
@@ -28,6 +28,10 @@ For web you must install [cherrypy](http://www.cherrypy.org/) for your Python.
 ```python inspectReport.py <Path to SQLite file> <Path to report file> <Os name> <Os type> <Os language>```
 2)For ```updates4Target.py``` command the same, except path to report file, that you do not pass.
 3)For running ```webUi.py``` you pass only source data and than go through web browser to http://127.0.0.1:8080 where you can pass your target OS parameters.
+
+Converting from uif2jsonList
+To process convertion from uif to uif(JSON list) process a command
+```python uif2JsonList.py <source folder><file name>.uif > <destination folder><new file name>.uif```
 
 =============
 

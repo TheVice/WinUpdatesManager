@@ -1,5 +1,5 @@
 import sys
-import db.uif
+from db.storage import Uif
 import db.sqliteDB
 
 if __name__ == '__main__':
@@ -7,7 +7,7 @@ if __name__ == '__main__':
     argc = len(sys.argv)
     if 2 < argc:
 
-        updates = db.uif.getUpdatesFromStorage(sys.argv[1])
+        updates = Uif.getUpdatesFromStorage(sys.argv[1])
 
         if len(updates) > 0:
             print('At {0} found {1} update objects'.format(sys.argv[1],

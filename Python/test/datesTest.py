@@ -25,12 +25,6 @@ class TestSequenceFunctions(unittest.TestCase):
         for i in data:
             self.assertEqual(i[1], core.dates.getDate(i[0]).day)
 
-    def test_getDatesFromUIF_Recode(self):
-
-        data = self.mJsonHelper.GetTestInputOutputData('test_getDatesFromUIF_Recode')
-        for i in data:
-            outputValue = JsonHelper.intList2Date(JsonHelper.string2intList(i[1]))
-            self.assertEqual(outputValue, core.dates.getDatesFromUIF_Recode(i[0]))
 
 if __name__ == '__main__':
 

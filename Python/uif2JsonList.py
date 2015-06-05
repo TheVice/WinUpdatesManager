@@ -1,8 +1,10 @@
 import os
 import re
+import sys
 import core.kb
-import core.dates
+import datetime
 import core.dirs
+import core.updates
 from core.versions import Versions
 from core.types import Types
 from core.languages import Languages
@@ -67,7 +69,7 @@ def getUpdateFromLine(aLine, aVersions, aTypes, aLanguages, aUpdates):
 
     aUpdates.append({'Path': path, 'KB': kb, 'Version': osVersion,
                      'Type': osType, 'Language': language,
-                      'Date': core.dates.getDatesFromUIF_Recode(date)})
+                     'Date': getDatesFromUIF_Recode(date)})
 
 
 def getUpdatesFromFile(aFile, aUpdates):
@@ -110,39 +112,21 @@ def getUpdatesFromStorage(aPath):
     return updates
 
 
-def get(aUpdates, aQuery, aCondition):
+def getDatesFromUIF_Recode(aRecord):
 
-    updates = []
-
-    for update in aUpdates:
-        match = True
-        for key in aQuery.keys():
-            if not aCondition(update[key], aQuery.get(key)):
-                match = False
-                break
-        if match:
-            updates.append(update)
-
-    return updates
+    d = datetime.datetime.strptime(aRecord, 'datetime.date(%Y, %m, %d)')
+    date = d.date()
+    return '{}, {}, {}'.format(date.year, date.month, date.day)
 
 
-def showDubs(aFiles):
+if __name__ == '__main__':
 
-    updates = {}
-
-    for jFile in aFiles:
-        fileName = jFile[jFile.rfind(os.sep) + 1:]
-        ups = []
-        getUpdatesFromFile(jFile, ups)
-        updates[fileName] = ups
-
-    for key, value in updates.items():
-        for key1, value1 in updates.items():
-            if key == key1:
-                continue
-
-            for up in value:
-                for up1 in value1:
-                    if up == up1:
-                        print(key + ' <-> ' + key1)
-                        print(up)
+    argc = len(sys.argv)
+    if argc > 1:
+        updates =  getUpdatesFromStorage(sys.argv[1])
+        coreUpdates = core.updates.Updates()
+        coreUpdates.addUpdates(updates)
+        print(coreUpdates)
+    else:
+        print('Using', sys.argv[0],
+              '<Folder or file with update info (*.uif)>')

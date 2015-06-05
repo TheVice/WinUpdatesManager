@@ -105,3 +105,8 @@ class JsonHelper:
     def intList2Date(aInput):
 
         return datetime.date(aInput[0], aInput[1], aInput[2])
+
+    @staticmethod
+    def intList2DateTime(aInput):
+
+        return datetime.datetime(aInput[0], aInput[1], aInput[2])

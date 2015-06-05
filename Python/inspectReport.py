@@ -80,7 +80,7 @@ if __name__ == '__main__':
 
     argc = len(sys.argv)
     if 4 < argc:
-        uifData = db.storage.getStorage(sys.argv[1])
+        storage = db.storage.getStorage(sys.argv[1])
         reportFile = sys.argv[2]
         version = sys.argv[3]
         platform = sys.argv[4]
@@ -91,7 +91,7 @@ if __name__ == '__main__':
         print('At the input report', reportFile, 'located', KBs)
         print('Count', len(KBs))
 
-        data = getDataByVersionTypeLanguage(uifData, KBs, version, platform,
+        data = getDataByVersionTypeLanguage(storage, KBs, version, platform,
                                             language)
         updates = data.get('Updates')
 
@@ -111,7 +111,7 @@ if __name__ == '__main__':
             for kb in KBs:
                 print(kb)
 
-            data = getDataByKbPath(uifData, KBs)
+            data = getDataByKbPath(storage, KBs)
             updates = data.get('Updates')
 
             if updates is not None:

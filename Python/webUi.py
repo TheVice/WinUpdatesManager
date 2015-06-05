@@ -34,9 +34,9 @@ class Main(Page):
 
     mTitle = 'Windows Updates Getter'
 
-    def __init__(self, aUifData):
+    def __init__(self, aStorage):
 
-        self.uifData = aUifData
+        self.mStorage = aStorage
 
     @cherrypy.expose
     def index(self):
@@ -103,7 +103,7 @@ class Main(Page):
         str_list.append(str(len(KBs)))
         str_list.append('</H1>')
 
-        data = inspectReport.getDataByVersionTypeLanguage(self.uifData,
+        data = inspectReport.getDataByVersionTypeLanguage(self.mStorage,
                                     KBs, aVersion, aPlatform, aLanguage)
         updates = data.get('Updates')
 
@@ -128,7 +128,7 @@ class Main(Page):
                 str_list.append(str(kb))
                 str_list.append('</I>')
 
-            data = inspectReport.getDataByKbPath(self.uifData, KBs)
+            data = inspectReport.getDataByKbPath(self.mStorage, KBs)
             updates = data.get('Updates')
 
             if updates is not None:

@@ -1,8 +1,9 @@
 import sys
+import json
 import os.path
-import db.uif
-import db.sqliteDB
+import core.dirs
 import db.mongoDB
+import db.sqliteDB
 
 
 class Storage:
@@ -24,13 +25,66 @@ class Uif(Storage):
 
     def __init__(self, aInit):
 
-        super(Uif, self).__init__('Uif')
-        self.mUpdates = db.uif.getUpdatesFromStorage(aInit)
+        if 2 == sys.version_info[0]:
+            Storage.__init__(self, 'Uif')
+        else:
+            super(Uif, self).__init__('Uif')
+        self.mUpdates = Uif.getUpdatesFromStorage(aInit)
 
     def get(self, aQuery, aCondition=(lambda a, b: (a == b))):
 
-        return db.uif.get(self.mUpdates, aQuery, aCondition)
+        updates = []
 
+        for update in self.mUpdates:
+            match = True
+
+            for key in aQuery.keys():
+                if not aCondition(update[key], aQuery.get(key)):
+                    match = False
+                    break
+
+            if match:
+                updates.append(update)
+
+        return updates
+
+    @staticmethod
+    def getUpdatesFromFile(aFile):
+
+        updates = []
+
+        try:
+            inputFile = open(aFile, 'r')
+
+            for line in inputFile:
+                updates.append(json.loads(line))
+
+            inputFile.close()
+        except:
+            raise Exception('Unexpected error while work with file {} {}'.format(aFile, sys.exc_info[1]))
+
+        return updates
+
+    @staticmethod
+    def getUpdatesFromStorage(aPath):
+
+        updates = []
+        if os.path.isfile(aPath):
+            updates.extend(Uif.getUpdatesFromFile(aPath))
+        elif os.path.isdir(aPath):
+            files = []
+            allFiles = core.dirs.getSubDirectoryFiles(aPath)
+            for f in allFiles:
+                if -1 != f.rfind('.uif'):
+                    files.append(os.path.normpath('{}{}'.format(aPath, f)))
+
+            count = len(files)
+            i = 1
+            for f in files:
+                updates.extend(Uif.getUpdatesFromFile(f))
+                print(str(i) + ' / ' + str(count) + ' ' + str(f))
+                i += 1
+        return updates
 
 class SQLite(Storage):
 

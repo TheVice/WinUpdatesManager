@@ -1,7 +1,8 @@
 import sys
 import os
 import core.dirs
-from test.jsonHelper import JsonHelper
+from db.storage import Uif
+from core.updates import Updates
 
 class UpFile:
 
@@ -138,14 +139,20 @@ if __name__ == '__main__':
         folderPath = sys.argv[2]
         if os.path.isfile(filePath) and os.path.isdir(folderPath):
 
-            jsonHelper = JsonHelper(filePath)
-            paths = jsonHelper.GetTestRoot('Paths')
+            updates = Uif.getUpdatesFromStorage(filePath)
+            updates = Updates.separateToKnownAndUnknown(updates)
+
+            paths = []
+            for up in updates['unKnown']:
+                if not isinstance(up['KB'], dict):
+                    paths.append(up['Path'])
+
             sourcePaths = relPaths2Full(folderPath, paths)
             for src in sourcePaths:
                 try:
                     uf = UpFile(src)
                 except:
-                    print(sys.exc_info()[1])
+                    print('Cannot move: {}'.format(sys.exc_info()[1]))
                     continue
                 dest = os.path.split(src)
                 dest = os.path.join(dest[0], uf.getPath(), dest[1])

@@ -1,9 +1,8 @@
 import os
 import sys
-# import json
 import core.dates
 import core.dirs
-import core.updates
+from core.updates import Updates
 
 
 def printUpdates(aUpdates):
@@ -14,24 +13,6 @@ def printUpdates(aUpdates):
     for update in aUpdates['unKnown']:
         print(update)
 
-    # print('-----------updateToPackage-----------')
-    # paths = []
-    # for update in aUpdates['unKnown']:
-    #     if not isinstance(update['KB'], dict):
-    #         paths.append(update['Path'])
-    #
-    # s = []
-    # s.append('{\"Paths\": [')
-    # s.append(os.linesep)
-    # for path in paths:
-    #     s.append(json.dumps(path))
-    #     s.append(',')
-    #     s.append(os.linesep)
-    #
-    # del s[len(s)-2:len(s)-1]
-    # s.append(']}')
-    # print(''.join(s))
-    # print('-----------updateToPackage-----------')
 
 if __name__ == '__main__':
 
@@ -48,9 +29,9 @@ if __name__ == '__main__':
 
             if 0 < len(files):
                 date = core.dates.getDate(folder)
-                updates.extend(core.updates.getUpdatesFromPackage(files, date))
+                updates.extend(Updates.getUpdatesFromPackage(files, date))
 
-        updates = core.updates.Updates.separateToKnownAndUnknown(updates)
+        updates = Updates.separateToKnownAndUnknown(updates)
         printUpdates(updates)
 
     elif argc == 3:
@@ -59,9 +40,9 @@ if __name__ == '__main__':
 
         if 0 < len(files):
             date = core.dates.getDate(sys.argv[2])
-            updates = core.updates.getUpdatesFromPackage(files, date)
+            updates = Updates.getUpdatesFromPackage(files, date)
 
-            updates = core.updates.Updates.separateToKnownAndUnknown(updates)
+            updates = Updates.separateToKnownAndUnknown(updates)
             printUpdates(updates)
 
     else:

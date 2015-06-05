@@ -1,4 +1,5 @@
 import os
+import json
 import core.kb
 from core.versions import Versions
 from core.types import Types
@@ -91,7 +92,7 @@ class Updates:
 
         updates = []
         for up in self:
-            updates.append(str(up))
+            updates.append(json.dumps(up))
             updates.append(os.linesep)
 
         return ''.join(updates)
@@ -139,11 +140,7 @@ class Updates:
         updates = {'known': [], 'unKnown': []}
 
         for up in aUpdates:
-            if (isinstance(up['KB'], dict) or
-                isinstance(up['Version'], dict) or
-                isinstance(up['Type'], dict) or
-                isinstance(up['Language'], dict)):
-
+            if -1 != str(up).find('UNKNOWN'):
                 updates['unKnown'].append(up)
             else:
                 updates['known'].append(up)
@@ -151,32 +148,27 @@ class Updates:
         return updates
 
     @staticmethod
-    def convertUifListIntoUpdates(aList):
+    def getUpdatesFromPackage(aFiles, aDate):
 
-        updates = core.updates.Updates()
-        updates.addUpdates(aList)
+        updates = []
+        versions = Versions()
+        types = Types()
+        languages = Languages()
+        date = '{}, {}, {}'.format(aDate.year, aDate.month, aDate.day)
+
+        for updateFile in aFiles:
+
+            path = os.path.normpath(updateFile)
+            kb = core.kb.getKB(updateFile)
+            osVersion = versions.getVersion(updateFile)
+            osType = types.getType(updateFile)
+            language = languages.getLanguage(updateFile)
+
+            updates.append(json.dumps({'Path': path,
+                                        'KB': kb,
+                                        'Version': osVersion,
+                                        'Type': osType,
+                                        'Language': language,
+                                        'Date': date}))
+
         return updates
-
-
-def getUpdatesFromPackage(aFiles, aDate):
-
-    updates = []
-    versions = Versions()
-    types = Types()
-    languages = Languages()
-
-    for updateFile in aFiles:
-
-        kb = core.kb.getKB(updateFile)
-        osVersion = versions.getVersion(updateFile)
-        osType = types.getType(updateFile)
-        language = languages.getLanguage(updateFile)
-
-        updates.append({'Path': updateFile,
-                        'KB': kb,
-                        'Version': osVersion,
-                        'Type': osType,
-                        'Language': language,
-                        'Date': aDate})
-
-    return updates
