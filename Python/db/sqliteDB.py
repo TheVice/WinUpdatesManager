@@ -4,7 +4,7 @@ from core.unknownSubstance import UnknownSubstance
 
 def connect(aDbName):
 
-    db = sqlite3.connect(aDbName, check_same_thread=False)
+    db = sqlite3.connect(aDbName)
     return db
 
 

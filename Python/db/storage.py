@@ -1,5 +1,6 @@
 import sys
 import json
+import _thread
 import os.path
 import core.dirs
 import db.mongoDB
@@ -94,13 +95,25 @@ class SQLite(Storage):
             Storage.__init__(self, 'SQLite')
         else:
             super(SQLite, self).__init__('SQLite')
-        self.mDb = db.sqliteDB.connect(aInit)
+        self.mInit = aInit
+
+    @staticmethod
+    def _get(aMutex, aPath, aQuery, aUpdates):
+
+        sqlite = db.sqliteDB.connect(aPath)
+        aUpdates.extend(db.sqliteDB.getUpdates(sqlite, aQuery))
+        db.sqliteDB.disconnect(sqlite)
+        aMutex.acquire()
 
     def get(self, aQuery, aCondition=(lambda a, b: (a == b))):
 
         # TODO: aCondition not used
-        return db.sqliteDB.getUpdates(self.mDb, aQuery)
-
+        mutex = _thread.allocate_lock()
+        updates = []
+        _thread.start_new_thread(SQLite._get, (mutex, self.mInit, aQuery, updates))
+        while not mutex.locked():
+            pass
+        return updates
 
 class MongoDB(Storage):
 
