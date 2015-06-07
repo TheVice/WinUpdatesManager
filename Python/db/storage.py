@@ -1,6 +1,9 @@
 import sys
 import json
-import _thread
+if 2 == sys.version_info[0]:
+    import thread
+else:
+    import _thread as thread
 import os.path
 import core.dirs
 import db.mongoDB
@@ -13,14 +16,13 @@ class Storage:
 
         self.mType = aType
 
-    def get(self, aQuery, aCondition=(lambda a, b: (a == b))):
+    def get(self, aQuery):
 
         pass
 
     def __str__(self):
 
         return str(self.mType)
-
 
 class Uif(Storage):
 
@@ -32,7 +34,7 @@ class Uif(Storage):
             super(Uif, self).__init__('Uif')
         self.mUpdates = Uif.getUpdatesFromStorage(aInit)
 
-    def get(self, aQuery, aCondition=(lambda a, b: (a == b))):
+    def get(self, aQuery):
 
         updates = []
 
@@ -40,7 +42,7 @@ class Uif(Storage):
             match = True
 
             for key in aQuery.keys():
-                if not aCondition(update[key], aQuery.get(key)):
+                if not update[key] == aQuery.get(key):
                     match = False
                     break
 
@@ -105,12 +107,11 @@ class SQLite(Storage):
         db.sqliteDB.disconnect(sqlite)
         aMutex.acquire()
 
-    def get(self, aQuery, aCondition=(lambda a, b: (a == b))):
+    def get(self, aQuery):
 
-        # TODO: aCondition not used
-        mutex = _thread.allocate_lock()
+        mutex = thread.allocate_lock()
         updates = []
-        _thread.start_new_thread(SQLite._get, (mutex, self.mInit, aQuery, updates))
+        thread.start_new_thread(SQLite._get, (mutex, self.mInit, aQuery, updates))
         while not mutex.locked():
             pass
         return updates
@@ -125,11 +126,9 @@ class MongoDB(Storage):
             super(MongoDB, self).__init__('MongoDB')
         self.mDbClient = db.mongoDB.MongoDBClient(aInit)
 
-    def get(self, aQuery, aCondition=(lambda a, b: (a == b))):
+    def get(self, aQuery):
 
-        # TODO: aCondition not used
         return self.mDbClient.getItemsFromDB('win32', 'updates', aQuery)
-
 
 def getStorage(aInit):
 

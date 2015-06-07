@@ -1,37 +1,30 @@
 WinUpdatesManager
 =================
 
-Series of scripts to manage of MS DLC from KB913086 and others.
-
-Support to process data through uif(JSON list) files, [MongoDB](https://www.mongodb.org/) or [SQLite](https://sqlite.org/).
-Major storage - series of ```uif``` (```U```pdates ```I```n```F```ormation) files.
-To work through MongoDB installing of [pymongo](https://pypi.python.org/pypi/pymongo/) required.
+Series of scripts to manage of MS DLC from KB913086 and others
+* Support to process data through uif(JSON list) files, [MongoDB](https://www.mongodb.org/) or [SQLite](https://sqlite.org/)
+* Major storage - series of *uif* (*U*pdates *I*n*F*ormation) files
+* To work through MongoDB installing of [pymongo](https://pypi.python.org/pypi/pymongo/) required
 
 Sample using
 =================
 
 Collect data
-1)Mount ```ISO-9660 DVD5 image``` with [security updates](http://support.microsoft.com/kb/913086/).
-2)Execute ```python getUif.py <path> <MMYY>```
-3)List of update description in ```uif``` format (Python dictionary in list), so you can save to file, just add to command ```> file.uif```.
-4)After this you can import stored info into MongoDB by typing ```python uif2MongoDB.py <file.uif>or<folder with *.uif> <database> <table> <address of server, for example mongodb://127.0.0.1:27017/>(optional, if not set using local)```
-Please note that on convention you can use any names from database and table, but while query used database ```win32``` and table(collection) ```updates```
-5)You can also convert data into SQLite database ```python uif2SQLite.py <file.uif>or<folder with *.uif> <path to SQLite file, if not exist it will be created>```
-Please note that extension of SQLite file can be any except ```uif```
+* Mount ```ISO-9660 DVD5 image``` with [security updates](http://support.microsoft.com/kb/913086/).
+* Execute ```python getUif.py <path> <MMYY>```.
+* List of update description in ```uif``` format (JSON list), so you can save to file, just add to command ```> file.uif```
+* You can import stored info into MongoDB by typing ```python uif2MongoDB.py <file.uif>or<folder with *.uif> <database> <table> <address of server, for example mongodb://127.0.0.1:27017/>(optional, if not set using local)```. On convention you can use any names for database and table, but while query used database ```win32``` and table(collection) ```updates```.
+* You can also convert data into SQLite database ```python uif2SQLite.py <file.uif>or<folder with *.uif> <path to SQLite file, if not exist it will be created>```. Extension of SQLite file can be any except ```uif```.
 
 Query.
-There are two types of query tool: through command line or web.
-For web you must install [cherrypy](http://www.cherrypy.org/) for your Python.
-1)Depend of data storage running of ```inspectReport.py``` will be next:
-```python inspectReport.py <file.uif>or<folder with *.uif> <Path to report file> <Os name> <Os type> <Os language>```
-```python inspectReport.py <Path to MongoDB server, for example mongodb://127.0.0.1:27017/> <Path to report file> <Os name> <Os type> <Os language>```
-```python inspectReport.py <Path to SQLite file> <Path to report file> <Os name> <Os type> <Os language>```
-2)For ```updates4Target.py``` command the same, except path to report file, that you do not pass.
-3)For running ```webUi.py``` you pass only source data and than go through web browser to http://127.0.0.1:8080 where you can pass your target OS parameters.
-
-Converting from uif2jsonList
-To process convertion from uif to uif(JSON list) process a command
-```python uif2JsonList.py <source folder><file name>.uif > <destination folder><new file name>.uif```
+There are two types of query tool: through command line (*updates4Target*) or web (*webUi*).
+For web you must install [cherrypy](http://www.cherrypy.org/) for your Python
+* Depend of data storage running of ```inspectReport.py``` will be next:
+```python updates4Target.py <file.uif>or<folder with *.uif> <Os name> <Os type> <Os language> <Path to report file>```
+```python updates4Target.py <Path to MongoDB server, for example mongodb://127.0.0.1:27017/> <Os name> <Os type> <Os language> <Path to report file>```
+```python updates4Target.py <Path to SQLite file> <Os name> <Os type> <Os language> <Path to report file>```
+* Path to report file is optional
+* For running ```webUi.py``` you pass only source data and than go through web browser to http://127.0.0.1:8080 where you can pass your target OS parameters with required report
 
 =============
 

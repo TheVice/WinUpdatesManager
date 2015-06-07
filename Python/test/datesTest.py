@@ -3,6 +3,23 @@ import unittest
 import core.dates
 from test.jsonHelper import JsonHelper
 
+def string2intList(aInput):
+
+    output = []
+    start = 0
+    end = 1
+
+    while start < end:
+
+        end = aInput.find(',', start)
+        if -1 == end:
+            output.append(int(aInput[start:]))
+        else:
+            output.append(int(aInput[start:end]))
+            start = end + 1
+            end = start + 1
+
+    return output
 
 class TestSequenceFunctions(unittest.TestCase):
 
@@ -15,7 +32,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
         data = self.mJsonHelper.GetTestInputOutputData('test_getDayFromYearMonthAndWeek')
         for i in data:
-            inputValue = JsonHelper.string2intList(i[0])
+            inputValue = string2intList(i[0])
             self.assertEqual(i[1], core.dates.getDayFromYearMonthAndWeek(inputValue[0], inputValue[1],
                                                                          inputValue[2], inputValue[3]))
 

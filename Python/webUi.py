@@ -1,9 +1,7 @@
 import sys
 import cherrypy
-import core.updates
 import core.kb
 import db.storage
-import inspectReport
 import batchGenerator
 
 
@@ -41,25 +39,25 @@ class Main(Page):
     @cherrypy.expose
     def index(self):
 
-        return (
-        self.header() +
-        '<a href=\'/update_viewer\'>Go to update viewer</a>' +
-        '<br>' +
-        '<a href=\'/batch_generator\'>Go to batch generator</a>' +
-        self.footer())
+        return ('{}{}{}'.format(self.header(),
+                '<a href=\'/report_submit\'>Go to report submit</a>'
+                '<br>'
+                '<a href=\'/batch_generator\'>Go to batch generator</a>',
+                self.footer()))
 
     @cherrypy.expose
-    def update_viewer(self):
+    def report_submit(self):
 
-        return (
-        self.header() +
+        return ('{}{}{}'.format(self.header(),
         '<form action=\'process_report\' method=\'post\'>'
         '<p><label>Windows Version <input list=\'WinVersions\''
         ' name=aVersion required type=\'text\'></label>'
         '<datalist id=\'WinVersions\'>'
-        '<option value=\'Vista\'></option>'
+        '<option value=\'Windows Vista\'></option>'
         '<option value=\'Windows 7\'></option>'
-        '<option value=\'Eight\'></option>'
+        '<option value=\'Windows 8\'></option>'
+        '<option value=\'Windows 8.1\'></option>'
+        '<option value=\'Windows 10\'></option>'
         '</datalist>'
         '</p>'
         '<p><label>Platform <input list=\'platformList\''
@@ -76,99 +74,70 @@ class Main(Page):
         '<textarea name=aReport cols=100 rows=25 required></textarea>'
         '</label></p>'
         '<p><input type=submit value=\'Make request\'></p>'
-        '</form>' +
-        self.footer())
+        '</form>',
+        self.footer()))
 
     @cherrypy.expose
-    def process_report(self, aVersion=None, aPlatform=None, aLanguage=None,
-                       aReport=None):
+    def process_report(self, aReport, aVersion, aPlatform, aLanguage=None):
 
         KBs = core.kb.getKBsFromReport(aReport)
         if len(KBs) == 0:
+            return '{}{}{}'.format(self.header(), '<H1>Nothing to show. KBs\' list is empty.</H1>', self.footer())
 
-            return (
-            self.header() +
-            '<H1>Nothing to show. KBs\' list is empty.</H1>' +
-            self.footer())
+        if aLanguage is None:
+            aLanguage = 'Neutral'
 
         str_list = []
 
         str_list.append('At the input report located')
         for kb in KBs:
-            str_list.append('<br><I>')
-            str_list.append(str(kb))
-            str_list.append('</I>')
+            str_list.append('<br><I>{}</I>'.format(kb))
 
-        str_list.append('<br><H1>Count - ')
-        str_list.append(str(len(KBs)))
-        str_list.append('</H1>')
+        str_list.append('<br><H1>Count - {}</H1>'.format(len(KBs)))
 
-        data = inspectReport.getDataByVersionTypeLanguage(self.mStorage,
-                                    KBs, aVersion, aPlatform, aLanguage)
-        updates = data.get('Updates')
+        updates = []
 
-        if updates is not None:
-            str_list.append('<br>Count of updates queried from db - ')
-            str_list.append(str(len(updates)))
+        if isinstance(self.mStorage, db.storage.MongoDB):
+            query = {'KB': {'$in': KBs}, 'Version': aVersion, 'Type': aPlatform, 'Language': aLanguage}
+            updates.extend(self.mStorage.get(query))
+        elif isinstance(self.mStorage, db.storage.Uif) or isinstance(self.mStorage, db.storage.SQLite):
+            for kb in KBs:
+                query = {'KB': kb, 'Version': aVersion, 'Type': aPlatform, 'Language': aLanguage}
+                updates.extend(self.mStorage.get(query))
+
+        if 0 < len(updates):
+            str_list.append('<br>Count of updates queried from db - {}'.format(len(updates)))
 
             for up in updates:
-                str_list.append('<br><I>')
-                str_list.append(up['Path'])
-                str_list.append('</I>')
+                str_list.append('<br><I>{}</I>'.format(up['Path']))
         else:
             str_list.append('<br>Unable to find any updates')
 
-        KBs = data.get('KBs')
+        foundedKBs = []
+        for item in updates:
+            foundedKBs.append(item['KB'])
 
-        if 0 != len(KBs):
+        notFoundedKBs = list(set(KBs) - set(foundedKBs))
+        if 0 < len(notFoundedKBs):
             str_list.append('<br>Not founded by strict query')
+            str_list.append(Main.kbsToTable(notFoundedKBs))
 
-            for kb in KBs:
-                str_list.append('<br><I>')
-                str_list.append(str(kb))
-                str_list.append('</I>')
+        return '{}{}{}'.format(self.header(), ''.join(str_list), self.footer())
 
-            data = inspectReport.getDataByKbPath(self.mStorage, KBs)
-            updates = data.get('Updates')
+    @staticmethod
+    def kbsToTable(aKBs):
 
-            if updates is not None:
-                str_list.append('<br>Founded by number only')
-
-                for up in updates:
-                    str_list.append('<br><I>')
-                    str_list.append(up['Path'])
-                    str_list.append('</I>')
-
-            KBs = data.get('KBs')
-
-            if 0 != len(KBs):
-                str_list.append('<br>Not founded')
-
-                KBs = self.kbsToTable(KBs)
-
-                for kb in KBs:
-                    str_list.append(str(kb))
-
-        return (
-                self.header() +
-                ''.join(str_list) +
-                self.footer())
-
-    def kbsToTable(self, aKBs):
-
-        kbItems = '<p><ul>'
+        kbItems = []
+        kbItems.append('<p><ul>')
         for kb in aKBs:
-            kbItems = (kbItems +
-            '<li><a href=\'http://support.microsoft.com/KB/{0}\'>{0}</a></li>'.
-            format(kb, kb))
-        kbItems = kbItems + '</ul><p>'
-        return kbItems
+            kbItems.append('<li><a href=\'http://support.microsoft.com/KB/{0}\'>{0}</a></li>'.format(kb, kb))
+        kbItems.append('</ul><p>')
+        return ''.join(kbItems)
 
     @cherrypy.expose
     def batch_generator(self):
 
-        return (
-        self.header() +
+        return '{}{}{}'.format(self.header(),
         '<form action=\'process_generation\' method=\'post\'>'
         '<p><label>Root path (if req): <input list=\'Roots\''
         ' name=aRoot type=\'text\'></label>'
@@ -188,22 +157,21 @@ class Main(Page):
         '<textarea name=aReport cols=100 rows=25 required></textarea>'
         '</label></p>'
         '<p><input type=submit value=\'Generate\'></p>'
-        '</form>' +
+        '</form>',
         self.footer())
 
     @cherrypy.expose
     def process_generation(self, aReport, aSwitch, aRoot=None):
 
-        return (
-        self.header() +
-        '<textarea cols=100 rows=25>' +
-        batchGenerator.generate(aReport.split('\n'), aRoot, aSwitch) +
-        '</textarea>' +
-        '<br>' +
-        '<a href=\'/update_viewer\'>Go to update viewer</a>' +
-        '<br>' +
-        '<a href=\'/batch_generator\'>Go to batch generator</a>' +
-        self.footer())
+        return '{}{}{}{}{}'.format(self.header(),
+               '<textarea cols=100 rows=25>',
+               batchGenerator.generate(aReport.split('\n'), aRoot, aSwitch),
+               '</textarea>'
+               '<br>'
+               '<a href=\'/report_submit\'>Go to report submit</a>'
+               '<br>'
+               '<a href=\'/batch_generator\'>Go to batch generator</a>',
+               self.footer())
 
 conf = {'/global': {'server.socket_host': '127.0.0.1',
                     'server.socket_port': 8080,
@@ -213,14 +181,10 @@ if __name__ == '__main__':
 
     argc = len(sys.argv)
     if argc == 2:
-        cherrypy.quickstart(
-            Main(db.storage.getStorage(sys.argv[1])),
-            config=conf)
+        cherrypy.quickstart(Main(db.storage.getStorage(sys.argv[1])), config=conf)
 
     elif argc == 3:
-        cherrypy.quickstart(
-            Main(db.storage.getStorage(sys.argv[1])),
-                 config=sys.argv[2])
+        cherrypy.quickstart( Main(db.storage.getStorage(sys.argv[1])), config=sys.argv[2])
 
     else:
         print('Using', sys.argv[0], '\n',

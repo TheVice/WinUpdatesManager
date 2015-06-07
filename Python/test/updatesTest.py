@@ -73,9 +73,9 @@ class TestSequenceFunctions(unittest.TestCase):
             sortField = d['sortField']
             if 'Date' == sortField:
                 for u in inUpdates:
-                    u['Date'] = JsonHelper.intList2Date(JsonHelper.string2intList(u['Date']))
+                    u['Date'] = datetime.datetime.strptime(u['Date'], '%Y, %m, %d')
                 for u in outUpdates:
-                    u['Date'] = JsonHelper.intList2Date(JsonHelper.string2intList(u['Date']))
+                    u['Date'] = datetime.datetime.strptime(u['Date'], '%Y, %m, %d')
 
             upIn = Updates()
             upIn.addUpdates(inUpdates)
@@ -97,9 +97,9 @@ class TestSequenceFunctions(unittest.TestCase):
             sortField = d['sortField']
             if 'Date' == sortField:
                 for u in inUpdates:
-                    u['Date'] = JsonHelper.intList2Date(JsonHelper.string2intList(u['Date']))
+                    u['Date'] = datetime.datetime.strptime(u['Date'], '%Y, %m, %d')
                 for u in outUpdates:
-                    u['Date'] = JsonHelper.intList2Date(JsonHelper.string2intList(u['Date']))
+                    u['Date'] = datetime.datetime.strptime(u['Date'], '%Y, %m, %d')
 
             upIn = Updates()
             upIn.addUpdates(inUpdates)
@@ -128,8 +128,7 @@ class TestSequenceFunctions(unittest.TestCase):
         for d in data:
 
             paths = d['paths']
-            date = JsonHelper.string2intList(d['date'])
-            date = datetime.datetime(date[0], date[1], date[2])
+            date = datetime.datetime.strptime(d['date'], '%Y, %m, %d')
             expectedUpdates = d['updates']
             updates = Updates.getUpdatesFromPackage(paths, date)
             for i in range(0, len(updates)):

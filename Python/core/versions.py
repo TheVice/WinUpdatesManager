@@ -83,3 +83,14 @@ class Versions(UnknownSubstance):
 
         return UnknownSubstance.getKeyPathByValue(
             self.mCalligraphicVersions, aValue)
+
+    def isLanguageCanBeNeutral(self, aVersion):
+
+        return (aVersion is self.Vista or
+                aVersion is self.Win2k8 or
+                aVersion is self.Seven or
+                aVersion is self.Win2k8R2 or
+                aVersion is self.Eight or
+                aVersion is self.Win2k12 or
+                aVersion is self.EightDotOne or
+                aVersion is self.Win2k12R2)

@@ -1,5 +1,5 @@
 import sys
-from test.jsonHelper import JsonHelper
+import datetime
 from db.storage import Uif
 from db.mongoDB import MongoDBClient
 
@@ -21,7 +21,7 @@ if __name__ == '__main__':
                 hostAndPort = sys.argv[4]
 
             for update in updates:
-                update['Date'] = JsonHelper.intList2DateTime(JsonHelper.string2intList(update['Date']))
+                update['Date'] = datetime.datetime.strptime(update['Date'], '%Y, %m, %d')
 
             updates = MongoDBClient.addObjectIdFieldAtCollection(updates)
             dataBase = MongoDBClient(hostAndPort)

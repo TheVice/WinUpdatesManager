@@ -81,32 +81,3 @@ class JsonHelper:
         if len(data) < 1 or not isinstance(data[0], int):
             raise TypeError('\'{1}\' at \'{0}\' is not an Integer Array'.format(aTestName, aVariableName))
         return data
-
-    @staticmethod
-    def string2intList(aInput):
-
-        output = []
-        start = 0
-        end = 1
-
-        while start < end:
-
-            end = aInput.find(',', start)
-            if (end == -1):
-                output.append(int(aInput[start:]))
-            else:
-                output.append(int(aInput[start:end]))
-                start = end + 1
-                end = start + 1
-
-        return output
-
-    @staticmethod
-    def intList2Date(aInput):
-
-        return datetime.date(aInput[0], aInput[1], aInput[2])
-
-    @staticmethod
-    def intList2DateTime(aInput):
-
-        return datetime.datetime(aInput[0], aInput[1], aInput[2])

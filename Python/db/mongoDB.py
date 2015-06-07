@@ -1,8 +1,7 @@
 import sys
 import hashlib
-import datetime
 from pymongo import MongoClient
-from  pymongo.errors import ServerSelectionTimeoutError, DuplicateKeyError
+from pymongo.errors import ServerSelectionTimeoutError, DuplicateKeyError
 from bson import ObjectId
 
 
@@ -221,15 +220,6 @@ class MongoDBClient:
             raise Exception('Unexpected error:', sys.exc_info()[0])
 
         return result
-
-    @staticmethod
-    def pymongoDate2DateTimeAtCollection(aCollection, aFieldName):
-
-        for i in range(0, len(aCollection)):
-            date = aCollection[i][aFieldName]
-            aCollection[i][aFieldName] = datetime.datetime(date.year, date.month, date.day)
-
-        return aCollection
 
     @staticmethod
     def generateObjectId(aString):

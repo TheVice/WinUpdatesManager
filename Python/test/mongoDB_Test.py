@@ -101,10 +101,9 @@ class TestSequenceFunctions(unittest.TestCase):
     def test_removeDubsFromCollectionByObjectId(self):
 
         updates = self.mJsonHelper.GetArray('test_removeDubsByObjectId', 'updates')
-        for up in updates:
-            up['Date'] = JsonHelper.intList2Date(JsonHelper.string2intList(up['Date']))
+        for update in updates:
+            update['Date'] = datetime.datetime.strptime(update['Date'], '%Y, %m, %d')
 
-        updates = MongoDBClient.pymongoDate2DateTimeAtCollection(updates, 'Date')
         updates = MongoDBClient.addObjectIdFieldAtCollection(updates)
 
         self.mDbClient.dropDB('win16')
@@ -115,10 +114,9 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEquals(updatesCount, items.count())
 
         uniqueUpdates = self.mJsonHelper.GetArray('test_removeDubsByObjectId', 'uniqueUpdates')
-        for up in uniqueUpdates:
-            up['Date'] = JsonHelper.intList2Date(JsonHelper.string2intList(up['Date']))
+        for update in uniqueUpdates:
+            update['Date'] = datetime.datetime.strptime(update['Date'], '%Y, %m, %d')
 
-        uniqueUpdates = MongoDBClient.pymongoDate2DateTimeAtCollection(uniqueUpdates, 'Date')
         uniqueUpdates = MongoDBClient.addObjectIdFieldAtCollection(uniqueUpdates)
         updatesCount += len(uniqueUpdates)
 
@@ -135,22 +133,11 @@ class TestSequenceFunctions(unittest.TestCase):
 
     # def test_getUpdateDubsFromTable(self):
 
-    def test_pymongoDate2DateTimeAtCollection(self):
-
-        data = self.mJsonHelper.GetTestRoot('test_pymongoDate2DateTimeAtCollection')
-        for i in data:
-
-            inputValue = JsonHelper.string2intList(i)
-            outputValue = datetime.datetime(inputValue[0], inputValue[1], inputValue[2])
-            inputValue = JsonHelper.intList2Date(inputValue)
-            self.assertEqual(outputValue,
-                    MongoDBClient.pymongoDate2DateTimeAtCollection([{'date':inputValue}], 'date')[0]['date'])
-
     def test_addObjectIdFieldAtCollection(self):
 
         updates = self.mJsonHelper.GetArray('test_addObjectIdFieldAtCollection', 'updates')
-        for up in updates:
-            up['Date'] = JsonHelper.intList2Date(JsonHelper.string2intList(up['Date']))
+        for update in updates:
+            update['Date'] = datetime.datetime.strptime(update['Date'], '%Y, %m, %d').date()
 
         updates = MongoDBClient.addObjectIdFieldAtCollection(updates)
         hashes = self.mJsonHelper.GetArray('test_addObjectIdFieldAtCollection', 'hashes')
