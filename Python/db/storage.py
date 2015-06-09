@@ -126,6 +126,10 @@ class MongoDB(Storage):
             super(MongoDB, self).__init__('MongoDB')
         self.mDbClient = db.mongoDB.MongoDBClient(aInit)
 
+    def getWithSkipLimitAndSort(self, aQuery, aSkip, aLimit, aSort):
+
+        return self.mDbClient.getItemsFromDB('win32', 'updates', aQuery, {'_id': 0}, aSkip, aLimit, aSort)
+
     def get(self, aQuery):
 
         return self.mDbClient.getItemsFromDB('win32', 'updates', aQuery)
