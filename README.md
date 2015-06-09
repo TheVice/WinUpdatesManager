@@ -5,7 +5,7 @@ Series of scripts to manage MS DLC from KB913086 and others
 * Support to process data through uif(JSON list) files, [MongoDB](https://www.mongodb.org/) or [SQLite](https://sqlite.org/)
 * Collect data provided to *uif* (Updates InFormation) files that can be converted to MongoDB or SQLite through accompaniment tools *uif2MongoDB* and *uif2SQLite*
 * To work through MongoDB installing of [pymongo](https://pypi.python.org/pypi/pymongo/) required
-* For web UI installing of [cherrypy](http://www.cherrypy.org/) required
+* For web UI installing of [cherrypy](https://pypi.python.org/pypi/CherryPy) required
 
 Sample using
 =================
@@ -25,7 +25,7 @@ There are two types of query tool: through command line (*updates4Target*) or we
    - ```python updates4Target.py <Path to uif file> or <Path to folder with uif files> <Os name> <Os type> <Os language> <Path to report file>(optional)```
    - ```python updates4Target.py <Path to MongoDB server, for example mongodb://127.0.0.1:27017/> <Os name> <Os type> <Os language> <Path to report file>(optional)```
    - ```python updates4Target.py <Path to SQLite file> <Os name> <Os type> <Os language> <Path to report file>(optional)```
-* For running ```webUi.py``` you pass only source data (<Path to uif file>, <Path to folder with uif files>, <Path to MongoDB server> or <Path to SQLite file>) and than go through web browser to http://127.0.0.1:8080 where you can pass your target OS parameters with required report
+* For running ```webUi.py``` you pass only source data and than open in web browser link http://127.0.0.1:8080 where you can choose your target OS parameters and put required report
 
 =============
 

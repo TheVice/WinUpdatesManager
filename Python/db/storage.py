@@ -16,6 +16,18 @@ class Storage:
 
         self.mType = aType
 
+    def getAvalibleVersions(self):
+
+        pass
+
+    def getAvalibleTypes(self):
+
+        pass
+
+    def getAvalibleLanguages(self):
+
+        pass
+
     def get(self, aQuery):
 
         pass
@@ -33,6 +45,18 @@ class Uif(Storage):
         else:
             super(Uif, self).__init__('Uif')
         self.mUpdates = Uif.getUpdatesFromStorage(aInit)
+
+    def getAvalibleVersions(self):
+
+        return Uif.makeAvalibleList(self.mUpdates, 'Version')
+
+    def getAvalibleTypes(self):
+
+        return Uif.makeAvalibleList(self.mUpdates, 'Type')
+
+    def getAvalibleLanguages(self):
+
+        return Uif.makeAvalibleList(self.mUpdates, 'Language')
 
     def get(self, aQuery):
 
@@ -75,19 +99,23 @@ class Uif(Storage):
         if os.path.isfile(aPath):
             updates.extend(Uif.getUpdatesFromFile(aPath))
         elif os.path.isdir(aPath):
-            files = []
-            allFiles = core.dirs.getSubDirectoryFiles(aPath)
-            for f in allFiles:
-                if -1 != f.rfind('.uif'):
-                    files.append(os.path.normpath('{}{}'.format(aPath, f)))
-
-            count = len(files)
-            i = 1
+            files = core.dirs.getSubDirectoryFiles(aPath)
             for f in files:
-                updates.extend(Uif.getUpdatesFromFile(f))
-                print(str(i) + ' / ' + str(count) + ' ' + str(f))
-                i += 1
+                if -1 != f.rfind('.uif'):
+                    f = os.path.normpath('{}{}'.format(aPath, f))
+                    updates.extend(Uif.getUpdatesFromFile(f))
+
         return updates
+
+    @staticmethod
+    def makeAvalibleList(aUpdates, aKey):
+
+        items = set()
+        for update in aUpdates:
+            if isinstance(update, dict) and aKey in update:
+                if not isinstance(update[aKey], dict):
+                    items.add(update[aKey])
+        return list(items)
 
 class SQLite(Storage):
 

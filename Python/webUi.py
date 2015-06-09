@@ -33,10 +33,9 @@ class Main(Page):
     def __init__(self, aStorage):
 
         self.mStorage = aStorage
-        if isinstance(self.mStorage, db.storage.SQLite) or isinstance(self.mStorage, db.storage.MongoDB):
-            self.mVersions = self.mStorage.getAvalibleVersions()
-            self.mTypes = self.mStorage.getAvalibleTypes()
-            self.mLanguages = self.mStorage.getAvalibleLanguages()
+        self.mVersions = self.mStorage.getAvalibleVersions()
+        self.mTypes = self.mStorage.getAvalibleTypes()
+        self.mLanguages = self.mStorage.getAvalibleLanguages()
 
     @cherrypy.expose
     def index(self):
@@ -96,36 +95,6 @@ class Main(Page):
 
     @cherrypy.expose
     def report_submit(self):
-
-        if isinstance(self.mStorage, db.storage.Uif):
-            return ('{}{}{}'.format(self.header(),
-            '<form action=\'process_report\' method=\'post\'>'
-            '<p><label>Windows Version <input list=\'WinVersions\''
-            ' name=aVersion required type=\'text\'></label>'
-            '<datalist id=\'WinVersions\'>'
-            '<option value=\'Windows Vista\'></option>'
-            '<option value=\'Windows 7\'></option>'
-            '<option value=\'Windows 8\'></option>'
-            '<option value=\'Windows 8.1\'></option>'
-            '<option value=\'Windows 10\'></option>'
-            '</datalist>'
-            '</p>'
-            '<p><label>Platform <input list=\'platformList\''
-            ' name=aPlatform required type=\'text\'></label>'
-            '<datalist id=\'platformList\'>'
-            '<option value=\'x86\'></option>'
-            '<option value=\'x64\'></option>'
-            '<option value=\'ARM\'></option>'
-            '</datalist>'
-            '</p>'
-            '<p><label>Language'
-            ' <input name=aLanguage value=\'Neutral\' type=\'text\'></label></p>'
-            '<p><label>Windows Update Report<br><br>'
-            '<textarea name=aReport cols=100 rows=25 required></textarea>'
-            '</label></p>'
-            '<p><input type=submit value=\'Make request\'></p>'
-            '</form>',
-            self.footer()))
 
         str_list = []
         if 0 < len(self.mVersions) and 0 < len(self.mTypes) and 0 < len(self.mLanguages):
@@ -208,7 +177,7 @@ class Main(Page):
         str_list = []
         str_list.append('<p><ul>')
         for kb in aKBs:
-            str_list.append('<li><a href=\'http://support.microsoft.com/KB/{0}\'>{0}</a></li>'.format(kb, kb))
+            str_list.append('<li><a href=\'http://support.microsoft.com/KB/{0}\'>{0}</a></li>'.format(kb))
         str_list.append('</ul><p>')
         return str_list
 
