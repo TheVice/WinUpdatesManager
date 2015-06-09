@@ -74,6 +74,43 @@ def listTables(aDb):
     return tables
 
 
+def listCollections(aDb, aTable):
+
+    query = '''SELECT * FROM {}'''.format(aTable)
+    rawData = readFromDataBase(aDb, query).fetchall()
+    items = []
+
+    if 'KBs' == aTable:
+        for d in rawData:
+            if -1 != d[1]:
+                items.append(d[1])
+            else:
+                items.append(UnknownSubstance.unknown('UNKNOWN KB', -1))
+    elif 'Versions' == aTable:
+        for d in rawData:
+            if 'UNKNOWN VERSION' != d[1]:
+                items.append(d[1])
+            else:
+                items.append(UnknownSubstance.unknown('UNKNOWN VERSION', ''))
+    elif 'Types' == aTable:
+        for d in rawData:
+            if 'UNKNOWN TYPE' != d[1]:
+                items.append(d[1])
+            else:
+                items.append(UnknownSubstance.unknown('UNKNOWN TYPE', ''))
+    elif 'Languages' == aTable:
+        for d in rawData:
+            if 'UNKNOWN LANGUAGE' != d[1]:
+                items.append(d[1])
+            else:
+                items.append(UnknownSubstance.unknown('UNKNOWN LANGUAGE', ''))
+    else:
+        for d in rawData:
+            items.append(d[1])
+
+    return items
+
+
 def createTableKBs(aDb):
 
     writeToDataBase(aDb, '''CREATE TABLE KBs (
@@ -249,18 +286,38 @@ def addUpdates(aDb, aUpdates):
 def rawUpdatesToUpdates(aDb, aRawUpdates):
 
     updates = []
+
     for rawUpdate in aRawUpdates:
 
         update = {}
-        update['KB'] = (
-            rawUpdate[0] if -1 != rawUpdate[0] else
-            UnknownSubstance.unknown('UNKNOWN KB',
-                getPathByID(aDb, rawUpdate[2])))
-        update['Date'] = getDateByID(aDb, rawUpdate[1])
+
         update['Path'] = getPathByID(aDb, rawUpdate[2])
-        update['Version'] = getVersionByID(aDb, rawUpdate[3])
-        update['Type'] = getTypeByID(aDb, rawUpdate[4])
-        update['Language'] = getLanguageByID(aDb, rawUpdate[5])
+
+        kb = rawUpdate[0]
+        if -1 != kb:
+            update['KB'] = kb
+        else:
+            update['KB'] = UnknownSubstance.unknown('UNKNOWN KB', update['Path'])
+
+        version = getVersionByID(aDb, rawUpdate[3])
+        if 'UNKNOWN VERSION' != version:
+            update['Version'] = version
+        else:
+            update['Version'] = UnknownSubstance.unknown('UNKNOWN VERSION', update['Path'])
+
+        osType = getTypeByID(aDb, rawUpdate[4])
+        if 'UNKNOWN TYPE' != osType:
+            update['Type'] = osType
+        else:
+            update['Type'] = UnknownSubstance.unknown('UNKNOWN TYPE', update['Path'])
+
+        osLanguage = getLanguageByID(aDb, rawUpdate[5])
+        if 'UNKNOWN LANGUAGE' != osLanguage:
+            update['Language'] = osLanguage
+        else:
+            update['Language'] = UnknownSubstance.unknown('UNKNOWN LANGUAGE', update['Path'])
+
+        update['Date'] = getDateByID(aDb, rawUpdate[1])
 
         updates.append(update)
 
@@ -270,7 +327,7 @@ def rawUpdatesToUpdates(aDb, aRawUpdates):
 def getUpdates(aDb, aQuery):
 
     query = None
-    if(aQuery == {}):
+    if aQuery == {}:
         query = '''SELECT kb_id, date_id, path_id, version_id,
                    type_id, language_id FROM Updates'''
     else:

@@ -100,12 +100,63 @@ class SQLite(Storage):
         self.mInit = aInit
 
     @staticmethod
+    def _getAvalibleVersions(aMutex, aPath, aItems):
+
+        sqlite = db.sqliteDB.connect(aPath)
+        aItems.extend(db.sqliteDB.listCollections(sqlite, 'Versions'))
+        db.sqliteDB.disconnect(sqlite)
+        aMutex.acquire()
+
+    @staticmethod
+    def _getAvalibleTypes(aMutex, aPath, aItems):
+
+        sqlite = db.sqliteDB.connect(aPath)
+        aItems.extend(db.sqliteDB.listCollections(sqlite, 'Types'))
+        db.sqliteDB.disconnect(sqlite)
+        aMutex.acquire()
+
+    @staticmethod
+    def _getAvalibleLanguages(aMutex, aPath, aItems):
+
+        sqlite = db.sqliteDB.connect(aPath)
+        aItems.extend(db.sqliteDB.listCollections(sqlite, 'Languages'))
+        db.sqliteDB.disconnect(sqlite)
+        aMutex.acquire()
+
+    @staticmethod
     def _get(aMutex, aPath, aQuery, aUpdates):
 
         sqlite = db.sqliteDB.connect(aPath)
         aUpdates.extend(db.sqliteDB.getUpdates(sqlite, aQuery))
         db.sqliteDB.disconnect(sqlite)
         aMutex.acquire()
+
+    def getAvalibleVersions(self):
+
+        mutex = thread.allocate_lock()
+        items = []
+        thread.start_new_thread(SQLite._getAvalibleVersions, (mutex, self.mInit, items))
+        while not mutex.locked():
+            pass
+        return SQLite.makeAvalibleList(items)
+
+    def getAvalibleTypes(self):
+
+        mutex = thread.allocate_lock()
+        items = []
+        thread.start_new_thread(SQLite._getAvalibleTypes, (mutex, self.mInit, items))
+        while not mutex.locked():
+            pass
+        return SQLite.makeAvalibleList(items)
+
+    def getAvalibleLanguages(self):
+
+        mutex = thread.allocate_lock()
+        items = []
+        thread.start_new_thread(SQLite._getAvalibleLanguages, (mutex, self.mInit, items))
+        while not mutex.locked():
+            pass
+        return SQLite.makeAvalibleList(items)
 
     def get(self, aQuery):
 
@@ -115,6 +166,15 @@ class SQLite(Storage):
         while not mutex.locked():
             pass
         return updates
+
+    @staticmethod
+    def makeAvalibleList(aList):
+
+        items = []
+        for i in aList:
+            if not isinstance(i, dict):
+                items.append(i)
+        return items
 
 class MongoDB(Storage):
 
@@ -126,6 +186,30 @@ class MongoDB(Storage):
             super(MongoDB, self).__init__('MongoDB')
         self.mDbClient = db.mongoDB.MongoDBClient(aInit)
 
+    def getAvalibleVersions(self):
+
+        expression = []
+        expression.append({'$group': {'_id': {'Version': '$Version'}, 'count': {'$sum': 1}}})
+        expression.append({'$sort': {'count': -1}})
+        expression.append({'$project': {'_id':'$_id.Version', 'count': '$_id.count'}})
+        return MongoDB.makeAvalibleList(self.mDbClient.aggregate('win32', 'updates', expression))
+
+    def getAvalibleTypes(self):
+
+        expression = []
+        expression.append({'$group': {'_id': {'Type': '$Type'}, 'count': {'$sum': 1}}})
+        expression.append({'$sort': {'count': -1}})
+        expression.append({'$project': {'_id': '$_id.Type', 'count': '$_id.count'}})
+        return MongoDB.makeAvalibleList(self.mDbClient.aggregate('win32', 'updates', expression))
+
+    def getAvalibleLanguages(self):
+
+        expression = []
+        expression.append({'$group': {'_id': {'Language': '$Language'}, 'count': {'$sum': 1}}})
+        expression.append({'$sort': {'count': -1}})
+        expression.append({'$project': {'_id':'$_id.Language', 'count': '$_id.count'}})
+        return MongoDB.makeAvalibleList(self.mDbClient.aggregate('win32', 'updates', expression))
+
     def getWithSkipLimitAndSort(self, aQuery, aSkip, aLimit, aSort):
 
         return self.mDbClient.getItemsFromDB('win32', 'updates', aQuery, {'_id': 0}, aSkip, aLimit, aSort)
@@ -133,6 +217,17 @@ class MongoDB(Storage):
     def get(self, aQuery):
 
         return self.mDbClient.getItemsFromDB('win32', 'updates', aQuery)
+
+    @staticmethod
+    def makeAvalibleList(aList):
+
+        items = []
+        for i in aList:
+            key = list(i.keys())[0]
+            if not isinstance(i[key], dict):
+                items.append(i[key])
+        return items
+
 
 def getStorage(aInit):
 

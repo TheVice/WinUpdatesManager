@@ -13,7 +13,13 @@ class Page:
 
     def header(self):
 
-        return '<!DOCTYPE html><html><head><meta charset=\'utf-8\'><title>{}</title></head><body>'.format(self.mTitle)
+        str_list = []
+        str_list.append('<!DOCTYPE html>')
+        str_list.append('<html><head>')
+        str_list.append('<meta charset=\'utf-8\'>')
+        str_list.append('<title>{}</title>'.format(self.mTitle))
+        str_list.append('</head><body>')
+        return ''.join(str_list)
 
     def footer(self):
 
@@ -27,15 +33,20 @@ class Main(Page):
     def __init__(self, aStorage):
 
         self.mStorage = aStorage
+        if isinstance(self.mStorage, db.storage.SQLite) or isinstance(self.mStorage, db.storage.MongoDB):
+            self.mVersions = self.mStorage.getAvalibleVersions()
+            self.mTypes = self.mStorage.getAvalibleTypes()
+            self.mLanguages = self.mStorage.getAvalibleLanguages()
 
     @cherrypy.expose
     def index(self):
 
-        return ('{}'
-                '<a href=\'/report_submit\'>Go to report submit</a>'
-                '<br>'
-                '<a href=\'/batch_generator\'>Go to batch generator</a>'
-                '{}'.format(self.header(), self.footer()))
+        str_list = []
+        if isinstance(self.mStorage, db.storage.MongoDB):
+            str_list.append('<a href=\'/view_updates\'>Go to view updates</a><br>')
+        str_list.append('<a href=\'/report_submit\'>Go to report submit</a><br>')
+        str_list.append('<a href=\'/batch_generator\'>Go to batch generator</a><br>')
+        return '{}{}{}'.format(self.header(), ''.join(str_list), self.footer())
 
     @cherrypy.expose
     def view_updates(self, aSkip=None, aLimit=None, aSort=None, aQuery=None):
@@ -86,44 +97,73 @@ class Main(Page):
     @cherrypy.expose
     def report_submit(self):
 
-        return ('{}{}{}'.format(self.header(),
-        '<form action=\'process_report\' method=\'post\'>'
-        '<p><label>Windows Version <input list=\'WinVersions\''
-        ' name=aVersion required type=\'text\'></label>'
-        '<datalist id=\'WinVersions\'>'
-        '<option value=\'Windows Vista\'></option>'
-        '<option value=\'Windows 7\'></option>'
-        '<option value=\'Windows 8\'></option>'
-        '<option value=\'Windows 8.1\'></option>'
-        '<option value=\'Windows 10\'></option>'
-        '</datalist>'
-        '</p>'
-        '<p><label>Platform <input list=\'platformList\''
-        ' name=aPlatform required type=\'text\'></label>'
-        '<datalist id=\'platformList\'>'
-        '<option value=\'x86\'></option>'
-        '<option value=\'x64\'></option>'
-        '<option value=\'ARM\'></option>'
-        '</datalist>'
-        '</p>'
-        '<p><label>Language'
-        ' <input name=aLanguage value=\'Neutral\' type=\'text\'></label></p>'
-        '<p><label>Windows Update Report<br><br>'
-        '<textarea name=aReport cols=100 rows=25 required></textarea>'
-        '</label></p>'
-        '<p><input type=submit value=\'Make request\'></p>'
-        '</form>',
-        self.footer()))
+        if isinstance(self.mStorage, db.storage.Uif):
+            return ('{}{}{}'.format(self.header(),
+            '<form action=\'process_report\' method=\'post\'>'
+            '<p><label>Windows Version <input list=\'WinVersions\''
+            ' name=aVersion required type=\'text\'></label>'
+            '<datalist id=\'WinVersions\'>'
+            '<option value=\'Windows Vista\'></option>'
+            '<option value=\'Windows 7\'></option>'
+            '<option value=\'Windows 8\'></option>'
+            '<option value=\'Windows 8.1\'></option>'
+            '<option value=\'Windows 10\'></option>'
+            '</datalist>'
+            '</p>'
+            '<p><label>Platform <input list=\'platformList\''
+            ' name=aPlatform required type=\'text\'></label>'
+            '<datalist id=\'platformList\'>'
+            '<option value=\'x86\'></option>'
+            '<option value=\'x64\'></option>'
+            '<option value=\'ARM\'></option>'
+            '</datalist>'
+            '</p>'
+            '<p><label>Language'
+            ' <input name=aLanguage value=\'Neutral\' type=\'text\'></label></p>'
+            '<p><label>Windows Update Report<br><br>'
+            '<textarea name=aReport cols=100 rows=25 required></textarea>'
+            '</label></p>'
+            '<p><input type=submit value=\'Make request\'></p>'
+            '</form>',
+            self.footer()))
+
+        str_list = []
+        if 0 < len(self.mVersions) and 0 < len(self.mTypes) and 0 < len(self.mLanguages):
+            str_list.append('<form action=\'process_report\' method=\'post\'>')
+
+            str_list.append('<p><label>Windows Version ')
+            str_list.append('<select name=aVersion>')
+            for version in self.mVersions:
+                str_list.append('<option value=\'{0}\'>{0}'.format(version))
+            str_list.append('</select></p>')
+
+            str_list.append('<p><label>Platform ')
+            str_list.append('<select name=aPlatform>')
+            for platform in self.mTypes:
+                str_list.append('<option value=\'{0}\'>{0}'.format(platform))
+            str_list.append('</select></p>')
+
+            str_list.append('<p><label>Language ')
+            str_list.append('<select name=aLanguage>')
+            for language in self.mLanguages:
+                str_list.append('<option value=\'{0}\'>{0}'.format(language))
+            str_list.append('</select></p>')
+
+            str_list.append('<p><label>Windows Update Report<br><br>')
+            str_list.append('<textarea name=aReport cols=100 rows=25 required></textarea>')
+            str_list.append('</label></p>')
+            str_list.append('<p><input type=submit value=\'Make request\'></p>')
+
+            str_list.append('</form>')
+
+        return '{}{}{}'.format(self.header(), ''.join(str_list), self.footer())
 
     @cherrypy.expose
-    def process_report(self, aReport, aVersion, aPlatform, aLanguage=None):
+    def process_report(self, aReport, aVersion, aPlatform, aLanguage):
 
         KBs = core.kb.getKBsFromReport(aReport)
         if len(KBs) == 0:
             return '{}{}{}'.format(self.header(), '<H1>Nothing to show. KBs\' list is empty.</H1>', self.footer())
-
-        if aLanguage is None:
-            aLanguage = 'Neutral'
 
         str_list = []
 
@@ -328,9 +368,16 @@ class Main(Page):
 
         str_list = []
         for key in aQuery.keys():
-            value = '{}'.format(aQuery[key])
-            if -1 == value.find('{'):
-                str_list.append('{},{},'.format(key, value))
+            if 'Date' == key and isinstance(aQuery[key], datetime.datetime):
+                try:
+                    value = '{}'.format(aQuery[key].date())
+                    str_list.append('{},{},'.format(key, value))
+                except:
+                    pass
+            else:
+                value = '{}'.format(aQuery[key])
+                if -1 == value.find('{'):
+                    str_list.append('{},{},'.format(key, value))
 
         if 0 < len(str_list):
             last = str_list[len(str_list) - 1]

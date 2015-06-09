@@ -16,7 +16,7 @@ Collect data
 * Execute ```python getUif.py <path> <MMYY>```
 * List of update description in ```uif``` format (JSON list), so you can save to file, just add to command ```> file.uif```
 * To import stored info into MongoDB type and execute ```python uif2MongoDB.py <file.uif>or<folder with *.uif> <database> <table> <address of server, for example mongodb://127.0.0.1:27017/>(optional, if not set using local)```. Names for database and table(collection) can be any, but while query used database ```win32``` and table(collection) ```updates```
-* You can also convert data into SQLite database ```python uif2SQLite.py <file.uif>or<folder with *.uif> <path to SQLite file, if not exist it will be created>```. Extension of SQLite file can be any except ```uif```
+* To import stored info into SQLite type and execute ```python uif2SQLite.py <file.uif>or<folder with *.uif> <path to SQLite file, if not exist it will be created>```. Extension of SQLite file can be any except ```uif```
 
 Query
 ------
