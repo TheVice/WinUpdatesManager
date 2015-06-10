@@ -1,5 +1,4 @@
 import os
-import json
 import unittest
 import datetime
 from core.updates import Updates
@@ -121,19 +120,6 @@ class TestSequenceFunctions(unittest.TestCase):
             known = d['known']
             self.assertEqual(unKnown, len(Updates.separateToKnownAndUnknown(updates).get('unKnown')))
             self.assertEqual(known, len(Updates.separateToKnownAndUnknown(updates).get('known')))
-
-    def test_getUpdatesFromPackage(self):
-
-        data = self.mJsonHelper.GetTestRoot('test_getUpdatesFromPackage')
-        for d in data:
-
-            paths = d['paths']
-            date = datetime.datetime.strptime(d['date'], '%Y, %m, %d')
-            expectedUpdates = d['updates']
-            updates = Updates.getUpdatesFromPackage(paths, date)
-            for i in range(0, len(updates)):
-                updates[i] = json.loads(updates[i])
-            self.assertEqual(expectedUpdates, updates)
 
 
 if __name__ == '__main__':

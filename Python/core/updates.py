@@ -1,9 +1,5 @@
 import os
 import json
-import core.kb
-from core.versions import Versions
-from core.types import Types
-from core.languages import Languages
 
 
 class Updates:
@@ -144,31 +140,5 @@ class Updates:
                 updates['unKnown'].append(up)
             else:
                 updates['known'].append(up)
-
-        return updates
-
-    @staticmethod
-    def getUpdatesFromPackage(aFiles, aDate):
-
-        updates = []
-        versions = Versions()
-        types = Types()
-        languages = Languages()
-        date = '{}, {}, {}'.format(aDate.year, aDate.month, aDate.day)
-
-        for updateFile in aFiles:
-
-            path = os.path.normpath(updateFile)
-            kb = core.kb.getKB(updateFile)
-            osVersion = versions.getVersion(updateFile)
-            osType = types.getType(updateFile)
-            language = languages.getLanguage(updateFile)
-
-            updates.append(json.dumps({'Path': path,
-                                        'KB': kb,
-                                        'Version': osVersion,
-                                        'Type': osType,
-                                        'Language': language,
-                                        'Date': date}))
 
         return updates
