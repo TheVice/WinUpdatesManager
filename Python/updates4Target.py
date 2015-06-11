@@ -1,53 +1,74 @@
 import os
 import sys
-import inspectReport
-import db.storage
 import core.kb
-from core.versions import Versions
+import db.storage
 from core.types import Types
+from core.updates import Updates
+from core.versions import Versions
 from core.languages import Languages
+
+
+def updates4Target(aStorage, aVersion, aPlatform, aLanguage, aPathToReport):
+
+    KBs = core.kb.getKBsFromReportFile(aPathToReport) if None != pathToReport else None
+    version = Versions().getVersion('{0}{1}{0}'.format(os.sep, aVersion.replace(' ', '')))
+    platform = Types().getType('{0}{1}{0}'.format(os.sep, aPlatform))
+    language = Languages().getLanguage('{0}{1}{0}'.format(os.sep, aLanguage))
+
+    query = {}
+    if None != KBs and KBs != []:
+        query['KB'] = KBs
+    if not isinstance(version, dict):
+        query['Version'] = version
+    if not isinstance(platform, dict):
+        query['Type'] = platform
+    if not isinstance(language, dict):
+        query['Language'] = language
+
+    updates = aStorage.get(query)
+    Updates.sortByFieldUpToDown(updates, 'Path')
+
+    return (updates, KBs)
+
 
 if __name__ == '__main__':
 
     argc = len(sys.argv)
-    if 4 < argc:
-        updates = db.storage.getStorage(sys.argv[1])
+    if 5 == argc or 6 == argc:
+        storagePath = sys.argv[1]
+        storage = db.storage.getStorage(storagePath)
+        itemsCount = len(storage.get({}))
 
-        KBs = None
-        if 5 < argc:
-            KBs = core.kb.getKBsFromReportFile(sys.argv[5])
+        if 0 < itemsCount:
+            print('At \'{}\' found {} update objects'.format(storagePath, itemsCount))
 
-        version = Versions().getVersion(
-                    '{0}{1}{0}'.format(os.sep, sys.argv[2].replace(' ', '')))
-        platform = Types().getType(
-                                    '{0}{1}{0}'.format(os.sep, sys.argv[3]))
-        language = Languages().getLanguage(
-                                    '{0}{1}{0}'.format(os.sep, sys.argv[4]))
+            version = sys.argv[2]
+            platform = sys.argv[3]
+            language = sys.argv[4]
+            pathToReport = sys.argv[5] if 6 == argc else None
 
-        print('Target:\n'
-              '\tVersion - {}\n'
-              '\tPlatform - {}\n'
-              '\tLanguage - {}\n'
-              '\tKBs - {}\n'.format(version, platform, language, KBs))
+            updates, KBs = updates4Target(storage, version, platform, language, pathToReport)
 
-        updates = inspectReport.getDataByVersionTypeLanguage(updates,
-                                                             KBs,
-                                                             version,
-                                                             platform,
-                                                             language)
+            if 0 < len(updates):
+                for up in updates:
+                    print(up['Path'])
+            else:
+                print('There is no updates for given target{0}'
+                      'Version - {1}{0}'
+                      'Platform - {2}{0}'
+                      'Language - {3}{0}'
+                      'Path to report - {4}{0}'
+                      'KBs - {5}'.format(os.linesep, version, platform, language, pathToReport, KBs))
 
-        updates = updates['Updates']
-        core.updates.Updates.sortByFieldUpToDown(updates, 'Path')
-
-        for up in updates:
-            print(up['Path'])
+        else:
+            print('Not found update objects at {}'.format(storagePath))
 
     else:
-        print('Use next (for example): \n'
-              '\t<Folder or file with update info (*.uif)|\n'
-              '\tPath to SQLite base|\n'
-              '\tPath to MongoDB server, for example http://127.0.0.1:8080>\n'
-              '<Os name> '
-              '<Type>x86|x64 '
-              '<Language>English|Russian|Neutral '
-              '<Report.txt> [Optional]')
+        print('Using', sys.argv[0],
+              '<Folder or file with update info (*.uif)|'
+              'Path to SQLite base|'
+              'Path to MongoDB server, for example http://127.0.0.1:8080>',
+              '<Os name>',
+              '<Type>',
+              '<Language>',
+              '<Path to report file>[Optional]')

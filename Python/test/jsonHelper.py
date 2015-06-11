@@ -37,15 +37,14 @@ class JsonHelper:
 
         data = self.GetTestVariable(aTestName, aVariableName)
         if not isinstance(data, dict):
-            raise TypeError('\'{1}\' at \'{0}\' is not an Dictionary'.format(aTestName, aVariableName))
+            raise TypeError('\'{}\' at \'{}\' is not an Dictionary'.format(aVariableName, aTestName))
         return data
-
 
     def GetArray(self, aTestName, aVariableName):
 
         data = self.GetTestVariable(aTestName, aVariableName)
         if not isinstance(data, list):
-            raise TypeError('\'{1}\' at \'{0}\' is not an Array'.format(aTestName, aVariableName))
+            raise TypeError('\'{}\' at \'{}\' is not an Array'.format(aVariableName, aTestName))
         return data
 
     def GetSting(self, aTestName, aVariableName):
@@ -54,30 +53,5 @@ class JsonHelper:
         if 2 == sys.version_info[0]:
             data = data.encode('utf-8')
         if not isinstance(data, str):
-            raise TypeError('\'{1}\' at \'{0}\' is not a String'.format(aTestName, aVariableName))
-        return data
-
-    def GetStingArray(self, aTestName, aVariableName):
-
-        data = self.GetTestVariable(aTestName, aVariableName)
-        if not isinstance(data, list):
-            raise TypeError('\'{1}\' at \'{0}\' is not an Array'.format(aTestName, aVariableName))
-        if len(data) < 1 or not isinstance(data[0], str):
-            raise TypeError('\'{1}\' at \'{0}\' is not a String Array'.format(aTestName, aVariableName))
-        return data
-
-    def GetInteger(self, aTestName, aVariableName):
-
-        data = self.GetTestVariable(aTestName, aVariableName)
-        if not isinstance(data, int):
-            raise TypeError('\'{1}\' at \'{0}\' is not an Integer'.format(aTestName, aVariableName))
-        return data
-
-    def GetIntegerArray(self, aTestName, aVariableName):
-
-        data = self.GetTestVariable(aTestName, aVariableName)
-        if not isinstance(data, list):
-            raise TypeError('\'{1}\' at \'{0}\' is not an Array'.format(aTestName, aVariableName))
-        if len(data) < 1 or not isinstance(data[0], int):
-            raise TypeError('\'{1}\' at \'{0}\' is not an Integer Array'.format(aTestName, aVariableName))
+            raise TypeError('\'{}\' at \'{}\' is not a String'.format(aVariableName, aTestName))
         return data

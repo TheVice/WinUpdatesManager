@@ -98,59 +98,70 @@ def relPaths2Full(aRoot, aPaths):
     return retFiles
 
 
+def processFolder(aFolderPath):
+
+    dPath = None
+    upList = None
+
+    for dirPath, subDirList, fileList in os.walk(aFolderPath):
+        dPath = dirPath
+        upList = fileList
+        break
+
+    if upList is not None:
+        for up in upList:
+
+            try:
+                src = os.path.join(dPath, up)
+                uf = UpFile(src)
+                moveUp(src, os.path.join(os.getcwd(), uf.getPath(), os.path.basename(src)))
+
+            except:
+                print(sys.exc_info()[1])
+
+
+def processFolderViaListFromFile(aFilePath, aFolderPath):
+
+    updates = Uif.getUpdatesFromStorage(aFilePath)
+    updates = Updates.separateToKnownAndUnknown(updates)
+
+    paths = []
+    for up in updates['unKnown']:
+        if not isinstance(up['KB'], dict):
+            paths.append(up['Path'])
+
+    sourcePaths = relPaths2Full(aFolderPath, paths)
+    for src in sourcePaths:
+        try:
+            uf = UpFile(src)
+        except:
+            print('Cannot move: {}'.format(sys.exc_info()[1]))
+            continue
+        dest = os.path.split(src)
+        dest = os.path.join(dest[0], uf.getPath(), dest[1])
+        moveUp(src, dest)
+
+
 if __name__ == '__main__':
 
     argc = len(sys.argv)
     if argc == 2:
-
         folderPath = sys.argv[1]
+
         if os.path.isdir(folderPath):
+            processFolder(folderPath)
 
-            dPath = None
-            upList = None
-
-            for dirPath, subDirList, fileList in os.walk(folderPath):
-                dPath = dirPath
-                upList = fileList
-                break
-
-            if upList is not None:
-                for up in upList:
-
-                    try:
-                        src = os.path.join(dPath, up)
-                        uf = UpFile(src)
-                        moveUp(src, os.path.join(os.getcwd(), uf.getPath(), os.path.basename(src)))
-
-                    except:
-                        print(sys.exc_info()[1])
 
     elif argc == 3:
         filePath = sys.argv[1]
         folderPath = sys.argv[2]
+
         if os.path.isfile(filePath) and os.path.isdir(folderPath):
-
-            updates = Uif.getUpdatesFromStorage(filePath)
-            updates = Updates.separateToKnownAndUnknown(updates)
-
-            paths = []
-            for up in updates['unKnown']:
-                if not isinstance(up['KB'], dict):
-                    paths.append(up['Path'])
-
-            sourcePaths = relPaths2Full(folderPath, paths)
-            for src in sourcePaths:
-                try:
-                    uf = UpFile(src)
-                except:
-                    print('Cannot move: {}'.format(sys.exc_info()[1]))
-                    continue
-                dest = os.path.split(src)
-                dest = os.path.join(dest[0], uf.getPath(), dest[1])
-                moveUp(src, dest)
+            processFolderViaListFromFile(filePath, folderPath)
 
     else:
-        print('Using:{}{} <path to dir with updates>{}'
-              '{} <path to json file with paths to updates> <root of updates storage>'.format(os.linesep,
-                                                                                              sys.argv[0], os.linesep,
-                                                                                              sys.argv[0]))
+        print('Using {0}'
+              ' <folder with updates>{1}'
+              'Using {0}'
+              ' <path to Uif file with updates contain unknown field(s)>'
+              ' <root of updates storage>'.format(sys.argv[0], os.linesep))

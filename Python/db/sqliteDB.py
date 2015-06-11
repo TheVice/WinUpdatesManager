@@ -277,7 +277,7 @@ def addUpdates(aDb, aUpdates):
                        VALUES ({}, {}, {}, {}, {}, {})'''.format
                (kb_id, date_id, path_id, version_id, type_id, language_id))
 
-        print('{0} / {1}'.format(i, count))
+        print('{} / {}'.format(i, count))
         i += 1
 
     aDb.commit()

@@ -66,7 +66,11 @@ class Uif(Storage):
             match = True
 
             for key in aQuery.keys():
-                if not update[key] == aQuery.get(key):
+                if isinstance(aQuery.get(key), list):
+                    if 0 == aQuery.get(key).count(update[key]):
+                        match = False
+                        break
+                elif not update[key] == aQuery.get(key):
                     match = False
                     break
 
@@ -280,7 +284,7 @@ def getStorage(aInit):
                     return SQLite(aInit)
         else:
 
-            print('Path {0} does not exist'.format(aInit))
+            print('Path {} does not exist'.format(aInit))
 
     elif ':memory:' == aInit:
 

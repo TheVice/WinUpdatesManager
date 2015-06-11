@@ -3,41 +3,45 @@ import datetime
 from db.storage import Uif
 from db.mongoDB import MongoDBClient
 
+
+def uif2MongoDB(aUpdates, aDataBaseName, aTableName, aHostAndPort):
+
+    for update in aUpdates:
+        update['Date'] = datetime.datetime.strptime(update['Date'], '%Y, %m, %d')
+
+    updates = MongoDBClient.addObjectIdFieldAtCollection(aUpdates)
+    dataBase = MongoDBClient(aHostAndPort)
+    updates = dataBase.removeDubsFromCollectionByObjectId(aDataBaseName, aTableName, updates)
+
+    if 0 < len(updates):
+        dataBase.insertToDB(dataBaseName, tableName, updates)
+
+    return dataBase.getItemsFromDB(dataBaseName, tableName).count()
+
+
 if __name__ == '__main__':
 
     argc = len(sys.argv)
-    if 3 < argc:
+    if 4 == argc or 5 == argc:
+        storagePath = sys.argv[1]
+        updates = Uif.getUpdatesFromStorage(storagePath)
+        itemsCount = len(updates)
 
-        updates = Uif.getUpdatesFromStorage(sys.argv[1])
-
-        if 0 < len(updates):
-            print('At \'{0}\' found {1} update objects'.format(sys.argv[1],
-                                                           len(updates)))
+        if 0 < itemsCount:
+            print('At \'{}\' found {} update objects'.format(storagePath, itemsCount))
 
             dataBaseName = sys.argv[2]
             tableName = sys.argv[3]
-            hostAndPort = None
-            if 4 < argc:
-                hostAndPort = sys.argv[4]
+            hostAndPort = sys.argv[4] if 5 == argc else None
 
-            for update in updates:
-                update['Date'] = datetime.datetime.strptime(update['Date'], '%Y, %m, %d')
+            itemsCount = uif2MongoDB(updates, dataBaseName, tableName, hostAndPort)
 
-            updates = MongoDBClient.addObjectIdFieldAtCollection(updates)
-            dataBase = MongoDBClient(hostAndPort)
-            updates = dataBase.removeDubsFromCollectionByObjectId(dataBaseName, tableName, updates)
-
-            if 0 < len(updates):
-                dataBase.insertToDB(dataBaseName, tableName, updates)
-
-            itemsCount = dataBase.getItemsFromDB(dataBaseName, tableName).count()
-            print('At table \'{0}\' of database \'{1}\' now {2} items'.format(
-                                        tableName, dataBaseName, itemsCount))
+            print('At table \'{}\' of database \'{}\' now {} items'.format(tableName, dataBaseName, itemsCount))
         else:
-            print('Not found update objects at {0}'.format(sys.argv[1]))
+            print('Not found update objects at {}'.format(storagePath))
 
     else:
         print('Using', sys.argv[0],
               '<Folder or file with update info (*.uif)>',
-              '<db name> <table name> <host address and port>[optional, '
-              'if not set used mongodb://127.0.0.1:27017/]')
+              '<db name> <table name> <host address and port>[optional]',
+              'if not set used mongodb://127.0.0.1:27017/')

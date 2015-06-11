@@ -143,11 +143,13 @@ class Main(Page):
         str_list.append('<br><H1>Count - {}</H1>'.format(len(KBs)))
 
         updates = []
-
         if isinstance(self.mStorage, db.storage.MongoDB):
             query = {'KB': {'$in': KBs}, 'Version': aVersion, 'Type': aPlatform, 'Language': aLanguage}
             updates.extend(self.mStorage.get(query))
-        elif isinstance(self.mStorage, db.storage.Uif) or isinstance(self.mStorage, db.storage.SQLite):
+        elif isinstance(self.mStorage, db.storage.Uif):
+            query = {'KB': KBs, 'Version': aVersion, 'Type': aPlatform, 'Language': aLanguage}
+            updates.extend(self.mStorage.get(query))
+        elif isinstance(self.mStorage, db.storage.SQLite):
             for kb in KBs:
                 query = {'KB': kb, 'Version': aVersion, 'Type': aPlatform, 'Language': aLanguage}
                 updates.extend(self.mStorage.get(query))

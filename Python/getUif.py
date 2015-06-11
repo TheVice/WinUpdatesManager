@@ -73,22 +73,17 @@ def getUpdates(aSysArgv):
     return updates
 
 
-def printUpdates(aUpdates):
-
-    for update in aUpdates['known']:
-        print(update)
-
-    for update in aUpdates['unKnown']:
-        print(update)
-
-
 if __name__ == '__main__':
 
     argc = len(sys.argv)
 
     if argc == 2 or argc == 3:
-        printUpdates(getUpdates(sys.argv))
+        updates = getUpdates(sys.argv)
+        for update in updates['known']:
+            print(update)
+        for update in updates['unKnown']:
+            print(update)
     else:
-        print('Using:{}{} <path to directory with updates>'
-              '<date (MMYY), only for non year edition>'.format(os.linesep,
-                                                                sys.argv[0]))
+        print('Using', sys.argv[0],
+              '<path to directory with updates>',
+              '<date (MMYY)>[Only for non year edition]')
