@@ -241,8 +241,8 @@ def addUpdate(aDb, aUpdate):
 
 def addUpdates(aDb, aUpdates):
 
-    count = len(aUpdates)
     i = 1
+    count = len(aUpdates)
     cursor = aDb.cursor()
 
     for update in aUpdates:
@@ -297,25 +297,29 @@ def rawUpdatesToUpdates(aDb, aRawUpdates):
         if -1 != kb:
             update['KB'] = kb
         else:
-            update['KB'] = UnknownSubstance.unknown('UNKNOWN KB', update['Path'])
+            update['KB'] = UnknownSubstance.unknown('UNKNOWN KB',
+                                                    update['Path'])
 
         version = getVersionByID(aDb, rawUpdate[3])
         if 'UNKNOWN VERSION' != version:
             update['Version'] = version
         else:
-            update['Version'] = UnknownSubstance.unknown('UNKNOWN VERSION', update['Path'])
+            update['Version'] = UnknownSubstance.unknown('UNKNOWN VERSION',
+                                                         update['Path'])
 
         osType = getTypeByID(aDb, rawUpdate[4])
         if 'UNKNOWN TYPE' != osType:
             update['Type'] = osType
         else:
-            update['Type'] = UnknownSubstance.unknown('UNKNOWN TYPE', update['Path'])
+            update['Type'] = UnknownSubstance.unknown('UNKNOWN TYPE',
+                                                      update['Path'])
 
         osLanguage = getLanguageByID(aDb, rawUpdate[5])
         if 'UNKNOWN LANGUAGE' != osLanguage:
             update['Language'] = osLanguage
         else:
-            update['Language'] = UnknownSubstance.unknown('UNKNOWN LANGUAGE', update['Path'])
+            update['Language'] = UnknownSubstance.unknown('UNKNOWN LANGUAGE',
+                                                          update['Path'])
 
         update['Date'] = getDateByID(aDb, rawUpdate[1])
 

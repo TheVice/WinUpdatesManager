@@ -17,13 +17,15 @@ class MongoDBClient:
         if self.mClient is not None:
             self.mClient.close()
 
-        self.mClient = MongoClient(host=aHostAndPort, serverSelectionTimeoutMS=aServerSelectionTimeoutMS)
+        self.mClient = MongoClient(host=aHostAndPort,
+                            serverSelectionTimeoutMS=aServerSelectionTimeoutMS)
         try:
             self.mClient.server_info()
         except ServerSelectionTimeoutError:
             raise Exception(sys.exc_info())
 
-    def getItemsFromDB(self, aDB, aTable, aQuery={}, aProjection=None, aSkip=None, aLimit=None, aSort=None):
+    def getItemsFromDB(self, aDB, aTable, aQuery={}, aProjection=None,
+                       aSkip=None, aLimit=None, aSort=None):
 
         try:
             db = self.mClient[aDB]
@@ -152,7 +154,8 @@ class MongoDBClient:
             for item in items:
                 dataBaseObjectIds.append(item['_id'])
 
-            uniqueObjectIds = list(set(inputObjectIds) - set(dataBaseObjectIds))
+            uniqueObjectIds = list(set(inputObjectIds) -
+                                   set(dataBaseObjectIds))
             if 0 < len(uniqueObjectIds):
                 for id in uniqueObjectIds:
                     for inputItem in aCollection:
@@ -227,7 +230,7 @@ class MongoDBClient:
         h = hashlib.new('sha256', aString.encode('utf-8'))
         aString = h.hexdigest()[:12]
         if ObjectId.is_valid(aString.encode('utf-8')):
-           return ObjectId(aString.encode('utf-8'))
+            return ObjectId(aString.encode('utf-8'))
         else:
             raise Exception('Unable to generate ObjectId for:', aString)
 

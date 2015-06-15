@@ -1,5 +1,6 @@
 import os
 
+
 def getSubDirectoryFiles(aPath):
 
     files = []

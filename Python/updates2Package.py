@@ -1,11 +1,11 @@
-import sys
 import os
+import sys
 import core.dirs
-from core.versions import Versions
-from core.types import Types
-from core.languages import Languages
 from db.storage import Uif
+from core.types import Types
 from core.updates import Updates
+from core.versions import Versions
+from core.languages import Languages
 
 versions = Versions()
 types = Types()
@@ -51,6 +51,7 @@ languages.mLanguages['SVE'] = languages.Swedish
 languages.mLanguages['TRK'] = languages.Turkish
 languages.mCalligraphicLanguages = languages.mLanguages
 
+
 class UpFile:
 
     def __init__(self, aPath):
@@ -72,9 +73,10 @@ class UpFile:
 
     def getPath(self):
 
-        return os.path.join(versions.getPathKey(self.mVersion).replace(os.sep, ''),
-                            types.getPathKey(self.mType).replace(os.sep, ''),
-                            languages.getPathKey(self.mLanguage))
+        return os.path.join(
+            versions.getPathKey(self.mVersion).replace(os.sep, ''),
+            types.getPathKey(self.mType).replace(os.sep, ''),
+            languages.getPathKey(self.mLanguage))
 
 
 def moveUp(aSrc, aDest):
@@ -83,82 +85,89 @@ def moveUp(aSrc, aDest):
         os.renames(aSrc, aDest)
         print('{} -> {}'.format(aSrc, aDest))
     except FileExistsError:
-        print('Cannot move {} to {} because file already exists'.format(aSrc, aDest))
-
-def relPaths2Full(aRoot, aPaths):
-
-    retFiles = []
-
-    files = core.dirs.getSubDirectoryFiles(aRoot)
-    for p in aPaths:
-        for f in files:
-            if -1 != f.find(p):
-                retFiles.append(os.path.normpath('{}{}'.format(aRoot, f)))
-
-    return retFiles
+        print('Cannot move {} to {} because file already exists'.format(aSrc,
+                                                                        aDest))
 
 
-def processFolder(aFolderPath):
+def moveFilesToNewLocations(aSourcePaths):
 
-    dPath = None
-    upList = None
+    for src in aSourcePaths:
 
-    for dirPath, subDirList, fileList in os.walk(aFolderPath):
-        dPath = dirPath
-        upList = fileList
-        break
-
-    if upList is not None:
-        for up in upList:
-
-            try:
-                src = os.path.join(dPath, up)
-                uf = UpFile(src)
-                moveUp(src, os.path.join(os.getcwd(), uf.getPath(), os.path.basename(src)))
-
-            except:
-                print(sys.exc_info()[1])
-
-
-def processFolderViaListFromFile(aFilePath, aFolderPath):
-
-    updates = Uif.getUpdatesFromStorage(aFilePath)
-    updates = Updates.separateToKnownAndUnknown(updates)
-
-    paths = []
-    for up in updates['unKnown']:
-        if not isinstance(up['KB'], dict):
-            paths.append(up['Path'])
-
-    sourcePaths = relPaths2Full(aFolderPath, paths)
-    for src in sourcePaths:
         try:
             uf = UpFile(src)
         except:
-            print('Cannot move: {}'.format(sys.exc_info()[1]))
+            print(sys.exc_info()[1])
             continue
+
         dest = os.path.split(src)
         dest = os.path.join(dest[0], uf.getPath(), dest[1])
         moveUp(src, dest)
 
 
+def getFullPath2UnknownUpdatesAtFolder(aFolderPath):
+
+    files = []
+
+    objects = os.listdir(aFolderPath)
+    for o in objects:
+        path = os.path.normpath('{}{}{}'.format(aFolderPath, os.path.sep, o))
+        if os.path.isfile(path):
+            files.append(path)
+
+    return files
+
+
+def relPaths2Full(aRoot, aPaths):
+
+    files = []
+
+    updatesFiles = core.dirs.getSubDirectoryFiles(aRoot)
+    for p in aPaths:
+        for uf in updatesFiles:
+            if -1 != uf.find(p):
+                files.append(os.path.normpath('{}{}'.format(aRoot, uf)))
+
+    return files
+
+
+def getFullPath2UnknownUpdatesAtList(aPathToUifFile,
+                                     aPathToRootFolderWihtUpdates):
+
+    updates = Uif.getUpdatesFromStorage(aPathToUifFile)
+    updates = Updates.separateToKnownAndUnknown(updates)
+
+    files = []
+    for up in updates['unKnown']:
+        if not isinstance(up['KB'], dict):
+            files.append(up['Path'])
+
+    if 0 < len(files):
+        return relPaths2Full(aPathToRootFolderWihtUpdates, files)
+
+    return []
+
+
 if __name__ == '__main__':
 
     argc = len(sys.argv)
-    if argc == 2:
-        folderPath = sys.argv[1]
 
-        if os.path.isdir(folderPath):
-            processFolder(folderPath)
+    if argc == 2 or argc == 3:
+        paths = None
 
+        if argc == 2:
+            folderPath = sys.argv[1]
+            if os.path.isdir(folderPath):
+                paths = getFullPath2UnknownUpdatesAtFolder(folderPath)
+        elif argc == 3:
+            filePath = sys.argv[1]
+            folderPath = sys.argv[2]
+            if os.path.isfile(filePath) and os.path.isdir(folderPath):
+                paths = getFullPath2UnknownUpdatesAtList(filePath, folderPath)
 
-    elif argc == 3:
-        filePath = sys.argv[1]
-        folderPath = sys.argv[2]
-
-        if os.path.isfile(filePath) and os.path.isdir(folderPath):
-            processFolderViaListFromFile(filePath, folderPath)
-
+        if None != paths and 0 < len(paths):
+            moveFilesToNewLocations(paths)
+        else:
+            print('No operation performed')
     else:
         print('Using {0}'
               ' <folder with updates>{1}'

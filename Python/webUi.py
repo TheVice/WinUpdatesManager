@@ -1,4 +1,5 @@
 import re
+import os
 import sys
 import core.kb
 import datetime
@@ -51,7 +52,13 @@ class Main(Page):
     def view_updates(self, aSkip=None, aLimit=None, aSort=None, aQuery=None):
 
         str_list = []
-        if isinstance(self.mStorage, db.storage.MongoDB):
+        if (isinstance(self.mStorage, db.storage.MongoDB) and
+            0 < len(self.mVersions) and
+            0 < len(self.mTypes) and
+            0 < len(self.mLanguages) and
+            None != self.mVersions[0] and
+            None != self.mTypes[0] and
+            None != self.mTypes[0]):
 
             aQuery = Main.normalizeQuery(aQuery, {})
             aLimit = Main.normalizeLimit(aLimit, 15)
@@ -63,7 +70,8 @@ class Main(Page):
             if 0 < count:
                 aSkip = Main.normalizeSkip(aSkip, count)
                 aSort = Main.normalizeSort(aSort, 'Date,-1')
-                updates = self.mStorage.getWithSkipLimitAndSort(aQuery, aSkip, aLimit, aSort)
+                updates = self.mStorage.getWithSkipLimitAndSort(aQuery, aSkip,
+                                                                aLimit, aSort)
                 str_list.extend(Main.updates2HtmlTable(updates))
                 aSort = ''.join(Main.encodeSort(aSort))
                 aQuery = Main.encodeQuery(aQuery)
@@ -90,6 +98,8 @@ class Main(Page):
                     if None != aQuery:
                         str_list.append('&amp;aQuery={}'.format(aQuery))
                     str_list.append('\'>{}</a><br>'.format('Forward'))
+        else:
+            str_list.append('There are no valid data in the storage.')
 
         return '{}{}{}'.format(self.header(), ''.join(str_list), self.footer())
 
@@ -97,7 +107,13 @@ class Main(Page):
     def report_submit(self):
 
         str_list = []
-        if 0 < len(self.mVersions) and 0 < len(self.mTypes) and 0 < len(self.mLanguages):
+        if (0 < len(self.mVersions) and
+            0 < len(self.mTypes) and
+            0 < len(self.mLanguages) and
+            None != self.mVersions[0] and
+            None != self.mTypes[0] and
+            None != self.mTypes[0]):
+
             str_list.append('<form action=\'process_report\' method=\'post\'>')
 
             str_list.append('<p><label>Windows Version ')
@@ -124,6 +140,8 @@ class Main(Page):
             str_list.append('<p><input type=submit value=\'Make request\'></p>')
 
             str_list.append('</form>')
+        else:
+            str_list.append('There are no valid data in the storage.')
 
         return '{}{}{}'.format(self.header(), ''.join(str_list), self.footer())
 
@@ -254,7 +272,8 @@ class Main(Page):
         languagePattern = 'Language,{}'.format(digitPattern)
         datePattern = 'Date,{}'.format(digitPattern)
 
-        patterns = [kbPattern, pathPattern, versionPattern, typePattern, languagePattern, datePattern]
+        patterns = [kbPattern, pathPattern, versionPattern, typePattern,
+                    languagePattern, datePattern]
 
         for p in patterns:
             m = re.search(p, aSort)
@@ -303,7 +322,8 @@ class Main(Page):
         languagePattern = 'Language,'
         datePattern = 'Date,'
 
-        patterns = [kbPattern, pathPattern, versionPattern, typePattern, languagePattern, datePattern]
+        patterns = [kbPattern, pathPattern, versionPattern, typePattern,
+                    languagePattern, datePattern]
 
         for p in patterns:
             m = aQuery.find(p)
@@ -326,7 +346,8 @@ class Main(Page):
                         pass
                 elif 'Date' == pattern:
                     try:
-                        query[pattern] = datetime.datetime.strptime(value, '%Y-%m-%d')
+                        query[pattern] = datetime.datetime.strptime(value,
+                                                                    '%Y-%m-%d')
                     except:
                         pass
                 else:
@@ -404,14 +425,17 @@ if __name__ == '__main__':
 
     argc = len(sys.argv)
     if argc == 2:
-        cherrypy.quickstart(Main(db.storage.getStorage(sys.argv[1])), config=conf)
-
+        cherrypy.quickstart(Main(db.storage.getStorage(sys.argv[1])),
+                                                       config=conf)
     elif argc == 3:
-        cherrypy.quickstart(Main(db.storage.getStorage(sys.argv[1])), config=sys.argv[2])
-
+        cherrypy.quickstart(Main(db.storage.getStorage(sys.argv[1])),
+                                                       config=sys.argv[2])
     else:
-        print('Using', sys.argv[0], '\n',
-              '\t<Folder or file with update info (*.uif)|\n'
-              '\tPath to SQLite base|\n'
-              '\tPath to MongoDB server, '
-              'for example mongodb://127.0.0.1:27017/>\n')
+        print('Using {0}'
+              ' <Folder or file with update info (*.uif)>{1}'
+              'Using {0}'
+              ' <Path to SQLite base>{1}'
+              'Using {0}'
+              ' <Path to MongoDB server'
+              ' for example mongodb://127.0.0.1:27017/>'.format(sys.argv[0],
+                                                                os.linesep))

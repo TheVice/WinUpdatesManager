@@ -36,6 +36,7 @@ class Storage:
 
         return str(self.mType)
 
+
 class Uif(Storage):
 
     def __init__(self, aInit):
@@ -120,6 +121,7 @@ class Uif(Storage):
                 if not isinstance(update[aKey], dict):
                     items.add(update[aKey])
         return list(items)
+
 
 class SQLite(Storage):
 
@@ -208,6 +210,7 @@ class SQLite(Storage):
                 items.append(i)
         return items
 
+
 class MongoDB(Storage):
 
     def __init__(self, aInit):
@@ -264,31 +267,19 @@ class MongoDB(Storage):
 def getStorage(aInit):
 
     if os.path.isdir(aInit) or os.path.isfile(aInit):
-
         if os.path.exists(aInit):
-
             if os.path.isdir(aInit):
-
                 return Uif(aInit)
-
             else:
                 name, extension = os.path.splitext(aInit)
                 extension = os.path.normcase(os.path.normpath(extension))
-
                 if '.uif' == extension:
-
                     return Uif(aInit)
-
                 else:
-
                     return SQLite(aInit)
         else:
-
-            print('Path {} does not exist'.format(aInit))
-
+            raise IOError('Path {} does not exist'.format(aInit))
     elif ':memory:' == aInit:
-
         return SQLite(aInit)
     else:
-
         return MongoDB(aInit)

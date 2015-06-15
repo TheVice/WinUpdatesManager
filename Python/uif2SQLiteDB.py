@@ -3,7 +3,7 @@ from db.storage import Uif
 import db.sqliteDB
 
 
-def uif2SQLite(aPath2DataBase):
+def uif2SQLiteDB(aPath2DataBase):
 
     dataBase = db.sqliteDB.connect(aPath2DataBase)
     tables = db.sqliteDB.listTables(dataBase)
@@ -42,11 +42,12 @@ if __name__ == '__main__':
         itemsCount = len(updates)
 
         if 0 < itemsCount:
-            print('At \'{}\' found {} update objects'.format(storagePath, itemsCount))
+            print('At \'{}\' found {} update objects'.format(storagePath,
+                                                             itemsCount))
 
             dataBasePath = sys.argv[2]
 
-            uif2SQLite(dataBasePath)
+            uif2SQLiteDB(dataBasePath)
         else:
             print('Not found update objects at {}'.format(storagePath))
 
