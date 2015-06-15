@@ -10,7 +10,7 @@ from core.languages import Languages
 
 def updates4Target(aStorage, aVersion, aPlatform, aLanguage, aPathToReport):
 
-    KBs = core.kb.getKBsFromReportFile(aPathToReport) if None != pathToReport else None
+    KBs = core.kb.getKBsFromReportFile(aPathToReport) if None != aPathToReport else None
     version = Versions().getVersion('{0}{1}{0}'.format(os.sep, aVersion.replace(' ', '')))
     platform = Types().getType('{0}{1}{0}'.format(os.sep, aPlatform))
     language = Languages().getLanguage('{0}{1}{0}'.format(os.sep, aLanguage))
@@ -28,7 +28,7 @@ def updates4Target(aStorage, aVersion, aPlatform, aLanguage, aPathToReport):
     updates = aStorage.get(query)
     Updates.sortByFieldUpToDown(updates, 'Path')
 
-    return (updates, KBs)
+    return (updates, version, platform, language, KBs)
 
 
 if __name__ == '__main__':
@@ -47,7 +47,7 @@ if __name__ == '__main__':
             language = sys.argv[4]
             pathToReport = sys.argv[5] if 6 == argc else None
 
-            updates, KBs = updates4Target(storage, version, platform, language, pathToReport)
+            updates, version, platform, language, KBs = updates4Target(storage, version, platform, language, pathToReport)
 
             if 0 < len(updates):
                 for up in updates:
