@@ -1,4 +1,5 @@
 import os
+import sys
 import unittest
 import datetime
 from core.updates import Updates
@@ -9,117 +10,140 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def setUp(self):
 
-        path = '{}{}{}{}{}'.format(os.path.abspath(os.curdir), os.sep, 'test', os.sep, 'updatesTest.json')
-        self.mJsonHelper = JsonHelper(path)
+        self.mJsonHelper = JsonHelper(__file__.replace('.py', '.json'))
 
     def test_addUpdates(self):
 
-        data = self.mJsonHelper.GetTestRoot('test_addUpdates')
-        for d in data:
-            updates = d['updates']
-            expectedCount = d['expectedCount']
-            coreUpdates = Updates()
-            coreUpdates.addUpdates(updates)
-            self.assertEqual(expectedCount, len(coreUpdates))
+        testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
+        for testData in testsData:
+            updates = Updates()
+            updates.addUpdates(testData['updates'])
+            self.assertEqual(len(testData['expectedUpdates']), len(updates))
+            for refUp, up in zip(testData['expectedUpdates'], updates):
+                self.assertEqual(refUp, up)
 
     def test_addUpdate(self):
 
-        data = self.mJsonHelper.GetTestRoot('test_addUpdate')
-        for d in data:
-            updates = d['updates']
-            expectedCount = d['expectedCount']
-            coreUpdates = Updates()
-            for u in updates:
-                coreUpdates.addUpdate(u['Path'], u['KB'], u['Version'], u['Type'], u['Language'], u['Date'])
-            self.assertEqual(expectedCount, len(coreUpdates))
+        testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
+        for testData in testsData:
+            updates = Updates()
+            for update in  testData['updates']:
+                updates.addUpdate(update['Path'], update['KB'], update['Version'], update['Type'], update['Language'], update['Date'])
+            self.assertEqual(len(testData['expectedUpdates']), len(updates))
+            for refUp, up in zip(testData['expectedUpdates'], updates):
+                self.assertEqual(refUp, up)
+
+    def test_next(self):
+
+        updates = Updates()
+        updates.addUpdateDict({'KB': 1})
+        updates.addUpdateDict({'KB': 2})
+
+        self.assertEqual({'KB': 2}, updates.__next__())
+        self.assertEqual({'KB': 1}, updates.next())
+
+    def test___getitem__(self):
+
+        updates = Updates()
+        updates.addUpdateDict({})
+        with self.assertRaises(IndexError):
+            updates[-1]
+        with self.assertRaises(IndexError):
+            updates[len(updates)]
+
+    def test___str__(self):
+
+        updates = Updates()
+        updates.addUpdateDict({})
+        self.assertEqual('{}{}{}'.format('{', '}', os.linesep), '{}'.format(updates))
 
     def test_assignmentUp2Up(self):
 
-        data = self.mJsonHelper.GetTestRoot('test_assignmentUp2Up')
-        for d in data:
-            ups = Updates()
-            ups.addUpdates(d['updates'])
-            self.assertNotEqual(ups[0], ups[1])
-            Updates.assignmentUp2Up(ups[0], ups[1])
-            self.assertEqual(ups[0], ups[1])
+        testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
+        for testData in testsData:
+            updates = Updates()
+            updates.addUpdates(testData['updates'])
+            self.assertNotEqual(updates[0], updates[1])
+            Updates.assignmentUp2Up(updates[0], updates[1])
+            self.assertEqual(updates[0], updates[1])
 
     def test_exchangeUps(self):
 
-       data = self.mJsonHelper.GetTestRoot('test_exchangeUps')
-       for d in data:
+        testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
+        for testData in testsData:
 
-           ups1 = Updates()
-           ups1.addUpdates(d['updates'])
-           ups2 = Updates()
-           ups2.addUpdates(d['updates'])
+            updates1 = Updates()
+            updates1.addUpdates(testData['updates'])
+            updates2 = Updates()
+            updates2.addUpdates(testData['updates'])
 
-           self.assertEqual(ups1[0], ups2[0])
-           self.assertEqual(ups1[1], ups2[1])
+            self.assertEqual(updates1[0], updates2[0])
+            self.assertEqual(updates1[1], updates2[1])
+            self.assertNotEqual(updates1[0], updates2[1])
+            self.assertNotEqual(updates1[1], updates2[0])
 
-           Updates.exchangeUps(ups1[0], ups1[1])
+            Updates.exchangeUps(updates1[0], updates1[1])
 
-           self.assertNotEqual(ups1[0], ups2[0])
-           self.assertNotEqual(ups1[1], ups2[1])
-           self.assertEqual(ups1[0], ups2[1])
-           self.assertEqual(ups1[1], ups2[0])
+            self.assertNotEqual(updates1[0], updates2[0])
+            self.assertNotEqual(updates1[1], updates2[1])
+            self.assertEqual(updates1[0], updates2[1])
+            self.assertEqual(updates1[1], updates2[0])
 
     def test_sortByFieldUpToDown(self):
 
-        data = self.mJsonHelper.GetTestRoot('test_sortByFieldUpToDown')
-        for d in data:
-            inUpdates = d['inUpdates']
-            outUpdates = d['outUpdates']
-            sortField = d['sortField']
+        testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
+        for testData in testsData:
+            updates = testData['updates']
+            expectedUpdates = testData['expectedUpdates']
+            sortField = testData['sortField']
+
             if 'Date' == sortField:
-                for u in inUpdates:
-                    u['Date'] = datetime.datetime.strptime(u['Date'], '%Y, %m, %d')
-                for u in outUpdates:
-                    u['Date'] = datetime.datetime.strptime(u['Date'], '%Y, %m, %d')
+                for update in updates:
+                    update['Date'] = datetime.datetime.strptime(update['Date'], '%Y, %m, %d')
+                for update in expectedUpdates:
+                    update['Date'] = datetime.datetime.strptime(update['Date'], '%Y, %m, %d')
 
-            upIn = Updates()
-            upIn.addUpdates(inUpdates)
-            upOut = Updates()
-            upOut.addUpdates(outUpdates)
+            coreUpdates = Updates()
+            coreUpdates.addUpdates(updates)
+            coreExpectedUpdates = Updates()
+            coreExpectedUpdates.addUpdates(expectedUpdates)
 
-            Updates.sortByFieldUpToDown(upIn, sortField)
+            Updates.sortByFieldUpToDown(coreUpdates, sortField)
 
-            self.assertEqual(len(upIn), len(upOut))
-            for up1, up2 in zip(upIn, upOut):
-                self.assertEqual(up1['Date'], up2['Date'])
+            self.assertEqual(len(coreExpectedUpdates), len(coreUpdates))
+            for refUp, up in zip(coreExpectedUpdates, coreUpdates):
+                self.assertEqual(refUp['Date'], up['Date'])
 
     def test_sortByFieldDownToUp(self):
 
-        data = self.mJsonHelper.GetTestRoot('test_sortByFieldDownToUp')
-        for d in data:
-            inUpdates = d['inUpdates']
-            outUpdates = d['outUpdates']
-            sortField = d['sortField']
+        testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
+        for testData in testsData:
+            updates = testData['updates']
+            expectedUpdates = testData['expectedUpdates']
+            sortField = testData['sortField']
             if 'Date' == sortField:
-                for u in inUpdates:
-                    u['Date'] = datetime.datetime.strptime(u['Date'], '%Y, %m, %d')
-                for u in outUpdates:
-                    u['Date'] = datetime.datetime.strptime(u['Date'], '%Y, %m, %d')
+                for update in updates:
+                    update['Date'] = datetime.datetime.strptime(update['Date'], '%Y, %m, %d')
+                for update in expectedUpdates:
+                    update['Date'] = datetime.datetime.strptime(update['Date'], '%Y, %m, %d')
 
-            upIn = Updates()
-            upIn.addUpdates(inUpdates)
-            upOut = Updates()
-            upOut.addUpdates(outUpdates)
+            coreUpdates = Updates()
+            coreUpdates.addUpdates(updates)
+            coreExpectedUpdates = Updates()
+            coreExpectedUpdates.addUpdates(expectedUpdates)
 
-            Updates.sortByFieldDownToUp(upIn, sortField)
+            Updates.sortByFieldDownToUp(coreUpdates, sortField)
 
-            self.assertEqual(len(upIn), len(upOut))
-            for up1, up2 in zip(upIn, upOut):
-                self.assertEqual(up1['Date'], up2['Date'])
+            self.assertEqual(len(coreExpectedUpdates), len(coreUpdates))
+            for refUp, up in zip(coreExpectedUpdates, coreUpdates):
+                self.assertEqual(refUp['Date'], up['Date'])
 
     def test_separateToKnownAndUnknown(self):
 
-        data = self.mJsonHelper.GetTestRoot('test_separateToKnownAndUnknown')
-        for d in data:
-            updates = d['updates']
-            unKnown = d['unKnown']
-            known = d['known']
-            self.assertEqual(unKnown, len(Updates.separateToKnownAndUnknown(updates).get('unKnown')))
-            self.assertEqual(known, len(Updates.separateToKnownAndUnknown(updates).get('known')))
+        testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
+        for testData in testsData:
+            self.assertEqual(testData['unKnown'], len(Updates.separateToKnownAndUnknown(testData['updates']).get('unKnown')))
+            self.assertEqual(testData['known'], len(Updates.separateToKnownAndUnknown(testData['updates']).get('known')))
 
 
 if __name__ == '__main__':

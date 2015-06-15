@@ -25,7 +25,16 @@
           "Path": "\\2795944\\Windows8\\NEU\\x64\\Windows8-RT-KB2795944-x64.msu"
         }
       ],
-      "expectedCount": 1
+      "expectedUpdates": [
+        {
+          "Language": "Neutral",
+          "Type": "x64",
+          "KB": 2795944,
+          "Version": "Windows 8",
+          "Path": "\\2795944\\Windows8\\NEU\\x64\\Windows8-RT-KB2795944-x64.msu",
+          "Date": null
+        }
+      ]
     }
   ],
   "test_addUpdate": [
@@ -88,7 +97,24 @@
           "Date": "2008, 12, 11"
         }
       ],
-      "expectedCount": 2
+      "expectedUpdates": [
+        {
+          "Path": "Some\\Path2",
+          "KB": 456,
+          "Version": "Win64",
+          "Type": "x86-64",
+          "Language": "Russian",
+          "Date": "2008, 12, 11"
+        },
+        {
+          "Path": "Some\\Path",
+          "KB": 123,
+          "Version": "Win32",
+          "Type": "80x86",
+          "Language": "English",
+          "Date": "1970, 1, 1"
+        }
+      ]
     }
   ],
   "test_assignmentUp2Up": [
@@ -117,7 +143,7 @@
   ],
   "test_sortByFieldUpToDown": [
     {
-      "inUpdates": [
+      "updates": [
         {"Date": "2014, 1, 25", "KB": 35764},
         {"Date": "2014, 1, 25", "KB": 52515},
         {"Date": "2014, 1, 25", "KB": 69413},
@@ -145,7 +171,7 @@
         {"Date": "2014, 5, 13", "KB": 292189}
       ],
       "sortField": "Date",
-      "outUpdates": [
+      "expectedUpdates": [
         {"Date": "2014, 1, 1", "KB": 29068},
         {"Date": "2014, 1, 19", "KB": 42119},
         {"Date": "2014, 1, 19", "KB": 53064},
@@ -174,7 +200,7 @@
       ]
     },
     {
-      "inUpdates": [
+      "updates": [
         {
           "Path": "B"
         },
@@ -186,7 +212,7 @@
         }
       ],
       "sortField": "Path",
-      "outUpdates": [
+      "expectedUpdates": [
         {
           "Path": "A"
         },
@@ -201,7 +227,7 @@
   ],
   "test_sortByFieldDownToUp": [
     {
-      "inUpdates": [
+      "updates": [
         {"Date": "2014, 1, 25", "KB": 35764},
         {"Date": "2014, 1, 25", "KB": 52515},
         {"Date": "2014, 1, 25", "KB": 69413},
@@ -229,7 +255,7 @@
         {"Date": "2014, 5, 13", "KB": 292189}
       ],
       "sortField": "Date",
-      "outUpdates": [
+      "expectedUpdates": [
         {"Date": "2014, 7, 11", "KB": 324189},
         {"KB": 72550, "Date": "2014, 6, 25"},
         {"Date": "2014, 6, 20", "KB": 63237},
