@@ -138,6 +138,21 @@
     },
     {
       "1113": 12
+    },
+    {
+      "12345": "Length of folder name '12345' not equal to 4"
+    },
+    {
+      "AABB": "Year '20BB' or month 'AA' not digital or month is great than 12"
+    },
+    {
+      "15BB": "Year '20BB' or month '15' not digital or month is great than 12"
+    },
+    {
+      "BB15": "Year '2015' or month 'BB' not digital or month is great than 12"
+    },
+    {
+      "1513": "Year '2013' or month '15' not digital or month is great than 12"
     }
   ]
 }

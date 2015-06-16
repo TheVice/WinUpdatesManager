@@ -1,4 +1,4 @@
-import os
+import sys
 import unittest
 import core.dates
 from test.jsonHelper import JsonHelper
@@ -24,23 +24,22 @@ def string2intList(aInput):
 class TestSequenceFunctions(unittest.TestCase):
 
     def setUp(self):
-
-        path = '{}{}{}{}{}'.format(os.path.abspath(os.curdir), os.sep, 'test', os.sep, 'datesTest.json')
-        self.mJsonHelper = JsonHelper(path)
+        self.mJsonHelper = JsonHelper(__file__.replace('.py', '.json'))
 
     def test_getDayFromYearMonthAndWeek(self):
-
-        data = self.mJsonHelper.GetTestInputOutputData('test_getDayFromYearMonthAndWeek')
-        for i in data:
-            inputValue = string2intList(i[0])
-            self.assertEqual(i[1], core.dates.getDayFromYearMonthAndWeek(inputValue[0], inputValue[1],
-                                                                         inputValue[2], inputValue[3]))
+        testsData = self.mJsonHelper.GetTestInputOutputData(sys._getframe().f_code.co_name)
+        for testData in testsData:
+            inputValue = string2intList(testData[0])
+            self.assertEqual(testData[1], core.dates.getDayFromYearMonthAndWeek(inputValue[0], inputValue[1],
+                                                                                inputValue[2], inputValue[3]))
 
     def test_getDatesForYearEdition(self):
-
-        data = self.mJsonHelper.GetTestInputOutputData('test_getDatesForYearEdition')
-        for i in data:
-            self.assertEqual(i[1], core.dates.getDate(i[0]).day)
+        testsData = self.mJsonHelper.GetTestInputOutputData(sys._getframe().f_code.co_name)
+        for testData in testsData:
+            try:
+                self.assertEqual(testData[1], core.dates.getDate(testData[0]).day)
+            except Exception:
+                self.assertEqual(testData[1], str(sys.exc_info()[1]))
 
 
 if __name__ == '__main__':

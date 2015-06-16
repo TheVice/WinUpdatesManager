@@ -3968,5 +3968,1286 @@
         }
       ]
     }
+  ],
+  "test_fromPathAndDate": [
+    {
+      "mockData": {
+        "0515": [
+          {"root": "0515", "dirs": ["3050945", "3061518"], "files": []},
+          {"root": "0515\\3050945", "dirs": ["WindowsServer2003", "WindowsServer2008", "WindowsVista", "WindowsXPEmbedded"], "files": []},
+          {"root": "0515\\3050945\\WindowsServer2003", "dirs": ["IA64", "X64", "X86"], "files": []},
+          {"root": "0515\\3050945\\WindowsServer2003\\IA64", "dirs": ["DEU", "ENU", "FRA", "JPN"], "files": []},
+          {"root": "0515\\3050945\\WindowsServer2003\\IA64\\DEU", "dirs": [], "files": ["WindowsServer2003-KB3050945-ia64-DEU.exe"]},
+          {"root": "0515\\3050945\\WindowsServer2003\\IA64\\ENU", "dirs": [], "files": ["WindowsServer2003-KB3050945-ia64-ENU.exe"]},
+          {"root": "0515\\3050945\\WindowsServer2003\\IA64\\FRA", "dirs": [], "files": ["WindowsServer2003-KB3050945-ia64-FRA.exe"]},
+          {"root": "0515\\3050945\\WindowsServer2003\\IA64\\JPN", "dirs": [], "files": ["WindowsServer2003-KB3050945-ia64-JPN.exe"]},
+          {"root": "0515\\3050945\\WindowsServer2003\\X64", "dirs": ["CHS", "CHT", "DEU", "ENU", "ESN", "FRA", "ITA", "JPN", "KOR", "PTB", "RUS"], "files": []},
+          {"root": "0515\\3050945\\WindowsServer2003\\X64\\CHS", "dirs": [], "files": ["WindowsServer2003-KB3050945-x64-CHS.exe"]},
+          {"root": "0515\\3050945\\WindowsServer2003\\X64\\CHT", "dirs": [], "files": ["WindowsServer2003-KB3050945-x64-CHT.exe"]},
+          {"root": "0515\\3050945\\WindowsServer2003\\X64\\DEU", "dirs": [], "files": ["WindowsServer2003-KB3050945-x64-DEU.exe"]},
+          {"root": "0515\\3050945\\WindowsServer2003\\X64\\ENU", "dirs": [], "files": ["WindowsServer2003-KB3050945-x64-ENU.exe"]},
+          {"root": "0515\\3050945\\WindowsServer2003\\X64\\ESN", "dirs": [], "files": ["WindowsServer2003-KB3050945-x64-ESN.exe"]},
+          {"root": "0515\\3050945\\WindowsServer2003\\X64\\FRA", "dirs": [], "files": ["WindowsServer2003-KB3050945-x64-FRA.exe"]},
+          {"root": "0515\\3050945\\WindowsServer2003\\X64\\ITA", "dirs": [], "files": ["WindowsServer2003-KB3050945-x64-ITA.exe"]},
+          {"root": "0515\\3050945\\WindowsServer2003\\X64\\JPN", "dirs": [], "files": ["WindowsServer2003-KB3050945-x64-JPN.exe"]},
+          {"root": "0515\\3050945\\WindowsServer2003\\X64\\KOR", "dirs": [], "files": ["WindowsServer2003-KB3050945-x64-KOR.exe"]},
+          {"root": "0515\\3050945\\WindowsServer2003\\X64\\PTB", "dirs": [], "files": ["WindowsServer2003-KB3050945-x64-PTB.exe"]},
+          {"root": "0515\\3050945\\WindowsServer2003\\X64\\RUS", "dirs": [], "files": ["WindowsServer2003-KB3050945-x64-RUS.exe"]},
+          {"root": "0515\\3050945\\WindowsServer2003\\X86", "dirs": ["CHS", "CHT", "CSY", "DEU", "ENU", "ESN", "FRA", "HUN", "ITA", "JPN", "KOR", "NLD", "PLK", "PTB", "PTG", "RUS", "SVE", "TRK"], "files": []},
+          {"root": "0515\\3050945\\WindowsServer2003\\X86\\CHS", "dirs": [], "files": ["WindowsServer2003-KB3050945-x86-CHS.exe"]},
+          {"root": "0515\\3050945\\WindowsServer2003\\X86\\CHT", "dirs": [], "files": ["WindowsServer2003-KB3050945-x86-CHT.exe"]},
+          {"root": "0515\\3050945\\WindowsServer2003\\X86\\CSY", "dirs": [], "files": ["WindowsServer2003-KB3050945-x86-CSY.exe"]},
+          {"root": "0515\\3050945\\WindowsServer2003\\X86\\DEU", "dirs": [], "files": ["WindowsServer2003-KB3050945-x86-DEU.exe"]},
+          {"root": "0515\\3050945\\WindowsServer2003\\X86\\ENU", "dirs": [], "files": ["WindowsServer2003-KB3050945-x86-ENU.exe"]},
+          {"root": "0515\\3050945\\WindowsServer2003\\X86\\ESN", "dirs": [], "files": ["WindowsServer2003-KB3050945-x86-ESN.exe"]},
+          {"root": "0515\\3050945\\WindowsServer2003\\X86\\FRA", "dirs": [], "files": ["WindowsServer2003-KB3050945-x86-FRA.exe"]},
+          {"root": "0515\\3050945\\WindowsServer2003\\X86\\HUN", "dirs": [], "files": ["WindowsServer2003-KB3050945-x86-HUN.exe"]},
+          {"root": "0515\\3050945\\WindowsServer2003\\X86\\ITA", "dirs": [], "files": ["WindowsServer2003-KB3050945-x86-ITA.exe"]},
+          {"root": "0515\\3050945\\WindowsServer2003\\X86\\JPN", "dirs": [], "files": ["WindowsServer2003-KB3050945-x86-JPN.exe"]},
+          {"root": "0515\\3050945\\WindowsServer2003\\X86\\KOR", "dirs": [], "files": ["WindowsServer2003-KB3050945-x86-KOR.exe"]},
+          {"root": "0515\\3050945\\WindowsServer2003\\X86\\NLD", "dirs": [], "files": ["WindowsServer2003-KB3050945-x86-NLD.exe"]},
+          {"root": "0515\\3050945\\WindowsServer2003\\X86\\PLK", "dirs": [], "files": ["WindowsServer2003-KB3050945-x86-PLK.exe"]},
+          {"root": "0515\\3050945\\WindowsServer2003\\X86\\PTB", "dirs": [], "files": ["WindowsServer2003-KB3050945-x86-PTB.exe"]},
+          {"root": "0515\\3050945\\WindowsServer2003\\X86\\PTG", "dirs": [], "files": ["WindowsServer2003-KB3050945-x86-PTG.exe"]},
+          {"root": "0515\\3050945\\WindowsServer2003\\X86\\RUS", "dirs": [], "files": ["WindowsServer2003-KB3050945-x86-RUS.exe"]},
+          {"root": "0515\\3050945\\WindowsServer2003\\X86\\SVE", "dirs": [], "files": ["WindowsServer2003-KB3050945-x86-SVE.exe"]},
+          {"root": "0515\\3050945\\WindowsServer2003\\X86\\TRK", "dirs": [], "files": ["WindowsServer2003-KB3050945-x86-TRK.exe"]},
+          {"root": "0515\\3050945\\WindowsServer2008", "dirs": ["IA64", "X64", "X86"], "files": []},
+          {"root": "0515\\3050945\\WindowsServer2008\\IA64", "dirs": ["NEU"], "files": []},
+          {"root": "0515\\3050945\\WindowsServer2008\\IA64\\NEU", "dirs": [], "files": ["Windows6.0-KB3050945-ia64.msu"]},
+          {"root": "0515\\3050945\\WindowsServer2008\\X64", "dirs": ["NEU"], "files": []},
+          {"root": "0515\\3050945\\WindowsServer2008\\X64\\NEU", "dirs": [], "files": ["Windows6.0-KB3050945-x64.msu"]},
+          {"root": "0515\\3050945\\WindowsServer2008\\X86", "dirs": ["NEU"], "files": []},
+          {"root": "0515\\3050945\\WindowsServer2008\\X86\\NEU", "dirs": [], "files": ["Windows6.0-KB3050945-x86.msu"]},
+          {"root": "0515\\3050945\\WindowsVista", "dirs": ["X64", "X86"], "files": []},
+          {"root": "0515\\3050945\\WindowsVista\\X64", "dirs": ["NEU"], "files": []},
+          {"root": "0515\\3050945\\WindowsVista\\X64\\NEU", "dirs": [], "files": ["Windows6.0-KB3050945-x64.msu"]},
+          {"root": "0515\\3050945\\WindowsVista\\X86", "dirs": ["NEU"], "files": []},
+          {"root": "0515\\3050945\\WindowsVista\\X86\\NEU", "dirs": [], "files": ["Windows6.0-KB3050945-x86.msu"]},
+          {"root": "0515\\3050945\\WindowsXPEmbedded", "dirs": ["X86"], "files": []},
+          {"root": "0515\\3050945\\WindowsXPEmbedded\\X86", "dirs": ["ARA", "CHS", "CHT", "CSY", "DAN", "DEU", "ELL", "ENU", "ESN", "FIN", "FRA", "HEB", "HUN", "ITA", "JPN", "KOR", "NLD", "NOR", "PLK", "PTB", "PTG", "RUS", "SVE", "TRK"], "files": []},
+          {"root": "0515\\3050945\\WindowsXPEmbedded\\X86\\ARA", "dirs": [], "files": ["WindowsXP-KB3050945-x86-Embedded-ARA.exe"]},
+          {"root": "0515\\3050945\\WindowsXPEmbedded\\X86\\CHS", "dirs": [], "files": ["WindowsXP-KB3050945-x86-Embedded-CHS.exe"]},
+          {"root": "0515\\3050945\\WindowsXPEmbedded\\X86\\CHT", "dirs": [], "files": ["WindowsXP-KB3050945-x86-Embedded-CHT.exe"]},
+          {"root": "0515\\3050945\\WindowsXPEmbedded\\X86\\CSY", "dirs": [], "files": ["WindowsXP-KB3050945-x86-Embedded-CSY.exe"]},
+          {"root": "0515\\3050945\\WindowsXPEmbedded\\X86\\DAN", "dirs": [], "files": ["WindowsXP-KB3050945-x86-Embedded-DAN.exe"]},
+          {"root": "0515\\3050945\\WindowsXPEmbedded\\X86\\DEU", "dirs": [], "files": ["WindowsXP-KB3050945-x86-Embedded-DEU.exe"]},
+          {"root": "0515\\3050945\\WindowsXPEmbedded\\X86\\ELL", "dirs": [], "files": ["WindowsXP-KB3050945-x86-Embedded-ELL.exe"]},
+          {"root": "0515\\3050945\\WindowsXPEmbedded\\X86\\ENU", "dirs": [], "files": ["WindowsXP-KB3050945-x86-Embedded-ENU.exe"]},
+          {"root": "0515\\3050945\\WindowsXPEmbedded\\X86\\ESN", "dirs": [], "files": ["WindowsXP-KB3050945-x86-Embedded-ESN.exe"]},
+          {"root": "0515\\3050945\\WindowsXPEmbedded\\X86\\FIN", "dirs": [], "files": ["WindowsXP-KB3050945-x86-Embedded-FIN.exe"]},
+          {"root": "0515\\3050945\\WindowsXPEmbedded\\X86\\FRA", "dirs": [], "files": ["WindowsXP-KB3050945-x86-Embedded-FRA.exe"]},
+          {"root": "0515\\3050945\\WindowsXPEmbedded\\X86\\HEB", "dirs": [], "files": ["WindowsXP-KB3050945-x86-Embedded-HEB.exe"]},
+          {"root": "0515\\3050945\\WindowsXPEmbedded\\X86\\HUN", "dirs": [], "files": ["WindowsXP-KB3050945-x86-Embedded-HUN.exe"]},
+          {"root": "0515\\3050945\\WindowsXPEmbedded\\X86\\ITA", "dirs": [], "files": ["WindowsXP-KB3050945-x86-Embedded-ITA.exe"]},
+          {"root": "0515\\3050945\\WindowsXPEmbedded\\X86\\JPN", "dirs": [], "files": ["WindowsXP-KB3050945-x86-Embedded-JPN.exe"]},
+          {"root": "0515\\3050945\\WindowsXPEmbedded\\X86\\KOR", "dirs": [], "files": ["WindowsXP-KB3050945-x86-Embedded-KOR.exe"]},
+          {"root": "0515\\3050945\\WindowsXPEmbedded\\X86\\NLD", "dirs": [], "files": ["WindowsXP-KB3050945-x86-Embedded-NLD.exe"]},
+          {"root": "0515\\3050945\\WindowsXPEmbedded\\X86\\NOR", "dirs": [], "files": ["WindowsXP-KB3050945-x86-Embedded-NOR.exe"]},
+          {"root": "0515\\3050945\\WindowsXPEmbedded\\X86\\PLK", "dirs": [], "files": ["WindowsXP-KB3050945-x86-Embedded-PLK.exe"]},
+          {"root": "0515\\3050945\\WindowsXPEmbedded\\X86\\PTB", "dirs": [], "files": ["WindowsXP-KB3050945-x86-Embedded-PTB.exe"]},
+          {"root": "0515\\3050945\\WindowsXPEmbedded\\X86\\PTG", "dirs": [], "files": ["WindowsXP-KB3050945-x86-Embedded-PTG.exe"]},
+          {"root": "0515\\3050945\\WindowsXPEmbedded\\X86\\RUS", "dirs": [], "files": ["WindowsXP-KB3050945-x86-Embedded-RUS.exe"]},
+          {"root": "0515\\3050945\\WindowsXPEmbedded\\X86\\SVE", "dirs": [], "files": ["WindowsXP-KB3050945-x86-Embedded-SVE.exe"]},
+          {"root": "0515\\3050945\\WindowsXPEmbedded\\X86\\TRK", "dirs": [], "files": ["WindowsXP-KB3050945-x86-Embedded-TRK.exe"]},
+          {"root": "0515\\3061518", "dirs": ["Windows7", "Windows8", "Windows8.1", "WindowsServer2003", "WindowsServer2008", "WindowsServer2008R2", "WindowsServer2012", "WindowsServer2012R2", "WindowsVista", "WindowsXPEmbedded"], "files": []},
+          {"root": "0515\\3061518\\Windows7", "dirs": ["X64", "X86"], "files": []},
+          {"root": "0515\\3061518\\Windows7\\X64", "dirs": ["NEU"], "files": []},
+          {"root": "0515\\3061518\\Windows7\\X64\\NEU", "dirs": [], "files": ["Windows6.1-KB3061518-x64.msu"]},
+          {"root": "0515\\3061518\\Windows7\\X86", "dirs": ["NEU"], "files": []},
+          {"root": "0515\\3061518\\Windows7\\X86\\NEU", "dirs": [], "files": ["Windows6.1-KB3061518-x86.msu"]},
+          {"root": "0515\\3061518\\Windows8", "dirs": ["ARM", "X64", "X86"], "files": []},
+          {"root": "0515\\3061518\\Windows8\\ARM", "dirs": ["NEU"], "files": []},
+          {"root": "0515\\3061518\\Windows8\\ARM\\NEU", "dirs": [], "files": ["Windows8-RT-KB3061518-arm.msu"]},
+          {"root": "0515\\3061518\\Windows8\\X64", "dirs": ["NEU"], "files": []},
+          {"root": "0515\\3061518\\Windows8\\X64\\NEU", "dirs": [], "files": ["Windows8-RT-KB3061518-x64.msu"]},
+          {"root": "0515\\3061518\\Windows8\\X86", "dirs": ["NEU"], "files": []},
+          {"root": "0515\\3061518\\Windows8\\X86\\NEU", "dirs": [], "files": ["Windows8-RT-KB3061518-x86.msu"]},
+          {"root": "0515\\3061518\\Windows8.1", "dirs": ["ARM", "X64", "X86"], "files": []},
+          {"root": "0515\\3061518\\Windows8.1\\ARM", "dirs": ["NEU"], "files": []},
+          {"root": "0515\\3061518\\Windows8.1\\ARM\\NEU", "dirs": [], "files": ["Windows8.1-KB3061518-arm.msu"]},
+          {"root": "0515\\3061518\\Windows8.1\\X64", "dirs": ["NEU"], "files": []},
+          {"root": "0515\\3061518\\Windows8.1\\X64\\NEU", "dirs": [], "files": ["Windows8.1-KB3061518-x64.msu"]},
+          {"root": "0515\\3061518\\Windows8.1\\X86", "dirs": ["NEU"], "files": []},
+          {"root": "0515\\3061518\\Windows8.1\\X86\\NEU", "dirs": [], "files": ["Windows8.1-KB3061518-x86.msu"]},
+          {"root": "0515\\3061518\\WindowsServer2003", "dirs": ["IA64", "X64", "X86"], "files": []},
+          {"root": "0515\\3061518\\WindowsServer2003\\IA64", "dirs": ["DEU", "ENU", "FRA", "JPN"], "files": []},
+          {"root": "0515\\3061518\\WindowsServer2003\\IA64\\DEU", "dirs": [], "files": ["WindowsServer2003-KB3061518-ia64-DEU.exe"]},
+          {"root": "0515\\3061518\\WindowsServer2003\\IA64\\ENU", "dirs": [], "files": ["WindowsServer2003-KB3061518-ia64-ENU.exe"]},
+          {"root": "0515\\3061518\\WindowsServer2003\\IA64\\FRA", "dirs": [], "files": ["WindowsServer2003-KB3061518-ia64-FRA.exe"]},
+          {"root": "0515\\3061518\\WindowsServer2003\\IA64\\JPN", "dirs": [], "files": ["WindowsServer2003-KB3061518-ia64-JPN.exe"]},
+          {"root": "0515\\3061518\\WindowsServer2003\\X64", "dirs": ["CHS", "CHT", "DEU", "ENU", "ESN", "FRA", "ITA", "JPN", "KOR", "PTB", "RUS"], "files": []},
+          {"root": "0515\\3061518\\WindowsServer2003\\X64\\CHS", "dirs": [], "files": ["WindowsServer2003-KB3061518-x64-CHS.exe"]},
+          {"root": "0515\\3061518\\WindowsServer2003\\X64\\CHT", "dirs": [], "files": ["WindowsServer2003-KB3061518-x64-CHT.exe"]},
+          {"root": "0515\\3061518\\WindowsServer2003\\X64\\DEU", "dirs": [], "files": ["WindowsServer2003-KB3061518-x64-DEU.exe"]},
+          {"root": "0515\\3061518\\WindowsServer2003\\X64\\ENU", "dirs": [], "files": ["WindowsServer2003-KB3061518-x64-ENU.exe"]},
+          {"root": "0515\\3061518\\WindowsServer2003\\X64\\ESN", "dirs": [], "files": ["WindowsServer2003-KB3061518-x64-ESN.exe"]},
+          {"root": "0515\\3061518\\WindowsServer2003\\X64\\FRA", "dirs": [], "files": ["WindowsServer2003-KB3061518-x64-FRA.exe"]},
+          {"root": "0515\\3061518\\WindowsServer2003\\X64\\ITA", "dirs": [], "files": ["WindowsServer2003-KB3061518-x64-ITA.exe"]},
+          {"root": "0515\\3061518\\WindowsServer2003\\X64\\JPN", "dirs": [], "files": ["WindowsServer2003-KB3061518-x64-JPN.exe"]},
+          {"root": "0515\\3061518\\WindowsServer2003\\X64\\KOR", "dirs": [], "files": ["WindowsServer2003-KB3061518-x64-KOR.exe"]},
+          {"root": "0515\\3061518\\WindowsServer2003\\X64\\PTB", "dirs": [], "files": ["WindowsServer2003-KB3061518-x64-PTB.exe"]},
+          {"root": "0515\\3061518\\WindowsServer2003\\X64\\RUS", "dirs": [], "files": ["WindowsServer2003-KB3061518-x64-RUS.exe"]},
+          {"root": "0515\\3061518\\WindowsServer2003\\X86", "dirs": ["CHS", "CHT", "CSY", "DEU", "ENU", "ESN", "FRA", "HUN", "ITA", "JPN", "KOR", "NLD", "PLK", "PTB", "PTG", "RUS", "SVE", "TRK"], "files": []},
+          {"root": "0515\\3061518\\WindowsServer2003\\X86\\CHS", "dirs": [], "files": ["WindowsServer2003-KB3061518-x86-CHS.exe"]},
+          {"root": "0515\\3061518\\WindowsServer2003\\X86\\CHT", "dirs": [], "files": ["WindowsServer2003-KB3061518-x86-CHT.exe"]},
+          {"root": "0515\\3061518\\WindowsServer2003\\X86\\CSY", "dirs": [], "files": ["WindowsServer2003-KB3061518-x86-CSY.exe"]},
+          {"root": "0515\\3061518\\WindowsServer2003\\X86\\DEU", "dirs": [], "files": ["WindowsServer2003-KB3061518-x86-DEU.exe"]},
+          {"root": "0515\\3061518\\WindowsServer2003\\X86\\ENU", "dirs": [], "files": ["WindowsServer2003-KB3061518-x86-ENU.exe"]},
+          {"root": "0515\\3061518\\WindowsServer2003\\X86\\ESN", "dirs": [], "files": ["WindowsServer2003-KB3061518-x86-ESN.exe"]},
+          {"root": "0515\\3061518\\WindowsServer2003\\X86\\FRA", "dirs": [], "files": ["WindowsServer2003-KB3061518-x86-FRA.exe"]},
+          {"root": "0515\\3061518\\WindowsServer2003\\X86\\HUN", "dirs": [], "files": ["WindowsServer2003-KB3061518-x86-HUN.exe"]},
+          {"root": "0515\\3061518\\WindowsServer2003\\X86\\ITA", "dirs": [], "files": ["WindowsServer2003-KB3061518-x86-ITA.exe"]},
+          {"root": "0515\\3061518\\WindowsServer2003\\X86\\JPN", "dirs": [], "files": ["WindowsServer2003-KB3061518-x86-JPN.exe"]},
+          {"root": "0515\\3061518\\WindowsServer2003\\X86\\KOR", "dirs": [], "files": ["WindowsServer2003-KB3061518-x86-KOR.exe"]},
+          {"root": "0515\\3061518\\WindowsServer2003\\X86\\NLD", "dirs": [], "files": ["WindowsServer2003-KB3061518-x86-NLD.exe"]},
+          {"root": "0515\\3061518\\WindowsServer2003\\X86\\PLK", "dirs": [], "files": ["WindowsServer2003-KB3061518-x86-PLK.exe"]},
+          {"root": "0515\\3061518\\WindowsServer2003\\X86\\PTB", "dirs": [], "files": ["WindowsServer2003-KB3061518-x86-PTB.exe"]},
+          {"root": "0515\\3061518\\WindowsServer2003\\X86\\PTG", "dirs": [], "files": ["WindowsServer2003-KB3061518-x86-PTG.exe"]},
+          {"root": "0515\\3061518\\WindowsServer2003\\X86\\RUS", "dirs": [], "files": ["WindowsServer2003-KB3061518-x86-RUS.exe"]},
+          {"root": "0515\\3061518\\WindowsServer2003\\X86\\SVE", "dirs": [], "files": ["WindowsServer2003-KB3061518-x86-SVE.exe"]},
+          {"root": "0515\\3061518\\WindowsServer2003\\X86\\TRK", "dirs": [], "files": ["WindowsServer2003-KB3061518-x86-TRK.exe"]},
+          {"root": "0515\\3061518\\WindowsServer2008", "dirs": ["IA64", "X64", "X86"], "files": []},
+          {"root": "0515\\3061518\\WindowsServer2008\\IA64", "dirs": ["NEU"], "files": []},
+          {"root": "0515\\3061518\\WindowsServer2008\\IA64\\NEU", "dirs": [], "files": ["Windows6.0-KB3061518-ia64.msu"]},
+          {"root": "0515\\3061518\\WindowsServer2008\\X64", "dirs": ["NEU"], "files": []},
+          {"root": "0515\\3061518\\WindowsServer2008\\X64\\NEU", "dirs": [], "files": ["Windows6.0-KB3061518-x64.msu"]},
+          {"root": "0515\\3061518\\WindowsServer2008\\X86", "dirs": ["NEU"], "files": []},
+          {"root": "0515\\3061518\\WindowsServer2008\\X86\\NEU", "dirs": [], "files": ["Windows6.0-KB3061518-x86.msu"]},
+          {"root": "0515\\3061518\\WindowsServer2008R2", "dirs": ["IA64", "X64"], "files": []},
+          {"root": "0515\\3061518\\WindowsServer2008R2\\IA64", "dirs": ["NEU"], "files": []},
+          {"root": "0515\\3061518\\WindowsServer2008R2\\IA64\\NEU", "dirs": [], "files": ["Windows6.1-KB3061518-ia64.msu"]},
+          {"root": "0515\\3061518\\WindowsServer2008R2\\X64", "dirs": ["NEU"], "files": []},
+          {"root": "0515\\3061518\\WindowsServer2008R2\\X64\\NEU", "dirs": [], "files": ["Windows6.1-KB3061518-x64.msu"]},
+          {"root": "0515\\3061518\\WindowsServer2012", "dirs": ["X64"], "files": []},
+          {"root": "0515\\3061518\\WindowsServer2012\\X64", "dirs": ["NEU"], "files": []},
+          {"root": "0515\\3061518\\WindowsServer2012\\X64\\NEU", "dirs": [], "files": ["Windows8-RT-KB3061518-x64.msu"]},
+          {"root": "0515\\3061518\\WindowsServer2012R2", "dirs": ["X64"], "files": []},
+          {"root": "0515\\3061518\\WindowsServer2012R2\\X64", "dirs": ["NEU"], "files": []},
+          {"root": "0515\\3061518\\WindowsServer2012R2\\X64\\NEU", "dirs": [], "files": ["Windows8.1-KB3061518-x64.msu"]},
+          {"root": "0515\\3061518\\WindowsVista", "dirs": ["X64", "X86"], "files": []},
+          {"root": "0515\\3061518\\WindowsVista\\X64", "dirs": ["NEU"], "files": []},
+          {"root": "0515\\3061518\\WindowsVista\\X64\\NEU", "dirs": [], "files": ["Windows6.0-KB3061518-x64.msu"]},
+          {"root": "0515\\3061518\\WindowsVista\\X86", "dirs": ["NEU"], "files": []},
+          {"root": "0515\\3061518\\WindowsVista\\X86\\NEU", "dirs": [], "files": ["Windows6.0-KB3061518-x86.msu"]},
+          {"root": "0515\\3061518\\WindowsXPEmbedded", "dirs": ["X86"], "files": []},
+          {"root": "0515\\3061518\\WindowsXPEmbedded\\X86", "dirs": ["ARA", "CHS", "CHT", "CSY", "DAN", "DEU", "ELL", "ENU", "ESN", "FIN", "FRA", "HEB", "HUN", "ITA", "JPN", "KOR", "NLD", "NOR", "PLK", "PTB", "PTG", "RUS", "SVE", "TRK"], "files": []},
+          {"root": "0515\\3061518\\WindowsXPEmbedded\\X86\\ARA", "dirs": [], "files": ["WindowsXP-KB3061518-x86-Embedded-ARA.exe"]},
+          {"root": "0515\\3061518\\WindowsXPEmbedded\\X86\\CHS", "dirs": [], "files": ["WindowsXP-KB3061518-x86-Embedded-CHS.exe"]},
+          {"root": "0515\\3061518\\WindowsXPEmbedded\\X86\\CHT", "dirs": [], "files": ["WindowsXP-KB3061518-x86-Embedded-CHT.exe"]},
+          {"root": "0515\\3061518\\WindowsXPEmbedded\\X86\\CSY", "dirs": [], "files": ["WindowsXP-KB3061518-x86-Embedded-CSY.exe"]},
+          {"root": "0515\\3061518\\WindowsXPEmbedded\\X86\\DAN", "dirs": [], "files": ["WindowsXP-KB3061518-x86-Embedded-DAN.exe"]},
+          {"root": "0515\\3061518\\WindowsXPEmbedded\\X86\\DEU", "dirs": [], "files": ["WindowsXP-KB3061518-x86-Embedded-DEU.exe"]},
+          {"root": "0515\\3061518\\WindowsXPEmbedded\\X86\\ELL", "dirs": [], "files": ["WindowsXP-KB3061518-x86-Embedded-ELL.exe"]},
+          {"root": "0515\\3061518\\WindowsXPEmbedded\\X86\\ENU", "dirs": [], "files": ["WindowsXP-KB3061518-x86-Embedded-ENU.exe"]},
+          {"root": "0515\\3061518\\WindowsXPEmbedded\\X86\\ESN", "dirs": [], "files": ["WindowsXP-KB3061518-x86-Embedded-ESN.exe"]},
+          {"root": "0515\\3061518\\WindowsXPEmbedded\\X86\\FIN", "dirs": [], "files": ["WindowsXP-KB3061518-x86-Embedded-FIN.exe"]},
+          {"root": "0515\\3061518\\WindowsXPEmbedded\\X86\\FRA", "dirs": [], "files": ["WindowsXP-KB3061518-x86-Embedded-FRA.exe"]},
+          {"root": "0515\\3061518\\WindowsXPEmbedded\\X86\\HEB", "dirs": [], "files": ["WindowsXP-KB3061518-x86-Embedded-HEB.exe"]},
+          {"root": "0515\\3061518\\WindowsXPEmbedded\\X86\\HUN", "dirs": [], "files": ["WindowsXP-KB3061518-x86-Embedded-HUN.exe"]},
+          {"root": "0515\\3061518\\WindowsXPEmbedded\\X86\\ITA", "dirs": [], "files": ["WindowsXP-KB3061518-x86-Embedded-ITA.exe"]},
+          {"root": "0515\\3061518\\WindowsXPEmbedded\\X86\\JPN", "dirs": [], "files": ["WindowsXP-KB3061518-x86-Embedded-JPN.exe"]},
+          {"root": "0515\\3061518\\WindowsXPEmbedded\\X86\\KOR", "dirs": [], "files": ["WindowsXP-KB3061518-x86-Embedded-KOR.exe"]},
+          {"root": "0515\\3061518\\WindowsXPEmbedded\\X86\\NLD", "dirs": [], "files": ["WindowsXP-KB3061518-x86-Embedded-NLD.exe"]},
+          {"root": "0515\\3061518\\WindowsXPEmbedded\\X86\\NOR", "dirs": [], "files": ["WindowsXP-KB3061518-x86-Embedded-NOR.exe"]},
+          {"root": "0515\\3061518\\WindowsXPEmbedded\\X86\\PLK", "dirs": [], "files": ["WindowsXP-KB3061518-x86-Embedded-PLK.exe"]},
+          {"root": "0515\\3061518\\WindowsXPEmbedded\\X86\\PTB", "dirs": [], "files": ["WindowsXP-KB3061518-x86-Embedded-PTB.exe"]},
+          {"root": "0515\\3061518\\WindowsXPEmbedded\\X86\\PTG", "dirs": [], "files": ["WindowsXP-KB3061518-x86-Embedded-PTG.exe"]},
+          {"root": "0515\\3061518\\WindowsXPEmbedded\\X86\\RUS", "dirs": [], "files": ["WindowsXP-KB3061518-x86-Embedded-RUS.exe"]},
+          {"root": "0515\\3061518\\WindowsXPEmbedded\\X86\\SVE", "dirs": [], "files": ["WindowsXP-KB3061518-x86-Embedded-SVE.exe"]},
+          {"root": "0515\\3061518\\WindowsXPEmbedded\\X86\\TRK", "dirs": [], "files": ["WindowsXP-KB3061518-x86-Embedded-TRK.exe"]}
+        ]
+      },
+      "updates": [
+        {
+          "Path": "\\3050945\\WindowsServer2003\\IA64\\DEU\\WindowsServer2003-KB3050945-ia64-DEU.exe",
+          "KB": 3050945,
+          "Version": "Windows Server 2003",
+          "Type": "IA64",
+          "Language": "German",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2003\\IA64\\ENU\\WindowsServer2003-KB3050945-ia64-ENU.exe",
+          "KB": 3050945,
+          "Version": "Windows Server 2003",
+          "Type": "IA64",
+          "Language": "English",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2003\\IA64\\FRA\\WindowsServer2003-KB3050945-ia64-FRA.exe",
+          "KB": 3050945,
+          "Version": "Windows Server 2003",
+          "Type": "IA64",
+          "Language": "French",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2003\\IA64\\JPN\\WindowsServer2003-KB3050945-ia64-JPN.exe",
+          "KB": 3050945,
+          "Version": "Windows Server 2003",
+          "Type": "IA64",
+          "Language": "Japanese",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2003\\X64\\CHS\\WindowsServer2003-KB3050945-x64-CHS.exe",
+          "KB": 3050945,
+          "Version": "Windows Server 2003",
+          "Type": "x64",
+          "Language": "Chinese (Simplified)",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2003\\X64\\CHT\\WindowsServer2003-KB3050945-x64-CHT.exe",
+          "KB": 3050945,
+          "Version": "Windows Server 2003",
+          "Type": "x64",
+          "Language": "Chinese (Traditional)",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2003\\X64\\DEU\\WindowsServer2003-KB3050945-x64-DEU.exe",
+          "KB": 3050945,
+          "Version": "Windows Server 2003",
+          "Type": "x64",
+          "Language": "German",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2003\\X64\\ENU\\WindowsServer2003-KB3050945-x64-ENU.exe",
+          "KB": 3050945,
+          "Version": "Windows Server 2003",
+          "Type": "x64",
+          "Language": "English",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2003\\X64\\ESN\\WindowsServer2003-KB3050945-x64-ESN.exe",
+          "KB": 3050945,
+          "Version": "Windows Server 2003",
+          "Type": "x64",
+          "Language": "Spanish",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2003\\X64\\FRA\\WindowsServer2003-KB3050945-x64-FRA.exe",
+          "KB": 3050945,
+          "Version": "Windows Server 2003",
+          "Type": "x64",
+          "Language": "French",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2003\\X64\\ITA\\WindowsServer2003-KB3050945-x64-ITA.exe",
+          "KB": 3050945,
+          "Version": "Windows Server 2003",
+          "Type": "x64",
+          "Language": "Italian",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2003\\X64\\JPN\\WindowsServer2003-KB3050945-x64-JPN.exe",
+          "KB": 3050945,
+          "Version": "Windows Server 2003",
+          "Type": "x64",
+          "Language": "Japanese",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2003\\X64\\KOR\\WindowsServer2003-KB3050945-x64-KOR.exe",
+          "KB": 3050945,
+          "Version": "Windows Server 2003",
+          "Type": "x64",
+          "Language": "Korean",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2003\\X64\\PTB\\WindowsServer2003-KB3050945-x64-PTB.exe",
+          "KB": 3050945,
+          "Version": "Windows Server 2003",
+          "Type": "x64",
+          "Language": "Portuguese (Brazil)",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2003\\X64\\RUS\\WindowsServer2003-KB3050945-x64-RUS.exe",
+          "KB": 3050945,
+          "Version": "Windows Server 2003",
+          "Type": "x64",
+          "Language": "Russian",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2003\\X86\\CHS\\WindowsServer2003-KB3050945-x86-CHS.exe",
+          "KB": 3050945,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "Chinese (Simplified)",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2003\\X86\\CHT\\WindowsServer2003-KB3050945-x86-CHT.exe",
+          "KB": 3050945,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "Chinese (Traditional)",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2003\\X86\\CSY\\WindowsServer2003-KB3050945-x86-CSY.exe",
+          "KB": 3050945,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "Czech",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2003\\X86\\DEU\\WindowsServer2003-KB3050945-x86-DEU.exe",
+          "KB": 3050945,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "German",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2003\\X86\\ENU\\WindowsServer2003-KB3050945-x86-ENU.exe",
+          "KB": 3050945,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "English",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2003\\X86\\ESN\\WindowsServer2003-KB3050945-x86-ESN.exe",
+          "KB": 3050945,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "Spanish",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2003\\X86\\FRA\\WindowsServer2003-KB3050945-x86-FRA.exe",
+          "KB": 3050945,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "French",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2003\\X86\\HUN\\WindowsServer2003-KB3050945-x86-HUN.exe",
+          "KB": 3050945,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "Hungarian",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2003\\X86\\ITA\\WindowsServer2003-KB3050945-x86-ITA.exe",
+          "KB": 3050945,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "Italian",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2003\\X86\\JPN\\WindowsServer2003-KB3050945-x86-JPN.exe",
+          "KB": 3050945,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "Japanese",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2003\\X86\\KOR\\WindowsServer2003-KB3050945-x86-KOR.exe",
+          "KB": 3050945,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "Korean",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2003\\X86\\NLD\\WindowsServer2003-KB3050945-x86-NLD.exe",
+          "KB": 3050945,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "Dutch",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2003\\X86\\PLK\\WindowsServer2003-KB3050945-x86-PLK.exe",
+          "KB": 3050945,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "Polish",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2003\\X86\\PTB\\WindowsServer2003-KB3050945-x86-PTB.exe",
+          "KB": 3050945,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "Portuguese (Brazil)",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2003\\X86\\PTG\\WindowsServer2003-KB3050945-x86-PTG.exe",
+          "KB": 3050945,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "Portuguese (Portugal)",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2003\\X86\\RUS\\WindowsServer2003-KB3050945-x86-RUS.exe",
+          "KB": 3050945,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "Russian",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2003\\X86\\SVE\\WindowsServer2003-KB3050945-x86-SVE.exe",
+          "KB": 3050945,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "Swedish",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2003\\X86\\TRK\\WindowsServer2003-KB3050945-x86-TRK.exe",
+          "KB": 3050945,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "Turkish",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2008\\IA64\\NEU\\Windows6.0-KB3050945-ia64.msu",
+          "KB": 3050945,
+          "Version": "Windows Server 2008",
+          "Type": "IA64",
+          "Language": "Neutral",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2008\\X64\\NEU\\Windows6.0-KB3050945-x64.msu",
+          "KB": 3050945,
+          "Version": "Windows Server 2008",
+          "Type": "x64",
+          "Language": "Neutral",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsServer2008\\X86\\NEU\\Windows6.0-KB3050945-x86.msu",
+          "KB": 3050945,
+          "Version": "Windows Server 2008",
+          "Type": "x86",
+          "Language": "Neutral",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsVista\\X64\\NEU\\Windows6.0-KB3050945-x64.msu",
+          "KB": 3050945,
+          "Version": "Windows Vista",
+          "Type": "x64",
+          "Language": "Neutral",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsVista\\X86\\NEU\\Windows6.0-KB3050945-x86.msu",
+          "KB": 3050945,
+          "Version": "Windows Vista",
+          "Type": "x86",
+          "Language": "Neutral",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsXPEmbedded\\X86\\ARA\\WindowsXP-KB3050945-x86-Embedded-ARA.exe",
+          "KB": 3050945,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Arabic",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsXPEmbedded\\X86\\CHS\\WindowsXP-KB3050945-x86-Embedded-CHS.exe",
+          "KB": 3050945,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Chinese (Simplified)",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsXPEmbedded\\X86\\CHT\\WindowsXP-KB3050945-x86-Embedded-CHT.exe",
+          "KB": 3050945,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Chinese (Traditional)",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsXPEmbedded\\X86\\CSY\\WindowsXP-KB3050945-x86-Embedded-CSY.exe",
+          "KB": 3050945,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Czech",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsXPEmbedded\\X86\\DAN\\WindowsXP-KB3050945-x86-Embedded-DAN.exe",
+          "KB": 3050945,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Danish",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsXPEmbedded\\X86\\DEU\\WindowsXP-KB3050945-x86-Embedded-DEU.exe",
+          "KB": 3050945,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "German",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsXPEmbedded\\X86\\ELL\\WindowsXP-KB3050945-x86-Embedded-ELL.exe",
+          "KB": 3050945,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Greek",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsXPEmbedded\\X86\\ENU\\WindowsXP-KB3050945-x86-Embedded-ENU.exe",
+          "KB": 3050945,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "English",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsXPEmbedded\\X86\\ESN\\WindowsXP-KB3050945-x86-Embedded-ESN.exe",
+          "KB": 3050945,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Spanish",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsXPEmbedded\\X86\\FIN\\WindowsXP-KB3050945-x86-Embedded-FIN.exe",
+          "KB": 3050945,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Finnish",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsXPEmbedded\\X86\\FRA\\WindowsXP-KB3050945-x86-Embedded-FRA.exe",
+          "KB": 3050945,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "French",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsXPEmbedded\\X86\\HEB\\WindowsXP-KB3050945-x86-Embedded-HEB.exe",
+          "KB": 3050945,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Hebrew",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsXPEmbedded\\X86\\HUN\\WindowsXP-KB3050945-x86-Embedded-HUN.exe",
+          "KB": 3050945,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Hungarian",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsXPEmbedded\\X86\\ITA\\WindowsXP-KB3050945-x86-Embedded-ITA.exe",
+          "KB": 3050945,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Italian",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsXPEmbedded\\X86\\JPN\\WindowsXP-KB3050945-x86-Embedded-JPN.exe",
+          "KB": 3050945,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Japanese",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsXPEmbedded\\X86\\KOR\\WindowsXP-KB3050945-x86-Embedded-KOR.exe",
+          "KB": 3050945,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Korean",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsXPEmbedded\\X86\\NLD\\WindowsXP-KB3050945-x86-Embedded-NLD.exe",
+          "KB": 3050945,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Dutch",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsXPEmbedded\\X86\\NOR\\WindowsXP-KB3050945-x86-Embedded-NOR.exe",
+          "KB": 3050945,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Norwegian",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsXPEmbedded\\X86\\PLK\\WindowsXP-KB3050945-x86-Embedded-PLK.exe",
+          "KB": 3050945,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Polish",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsXPEmbedded\\X86\\PTB\\WindowsXP-KB3050945-x86-Embedded-PTB.exe",
+          "KB": 3050945,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Portuguese (Brazil)",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsXPEmbedded\\X86\\PTG\\WindowsXP-KB3050945-x86-Embedded-PTG.exe",
+          "KB": 3050945,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Portuguese (Portugal)",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsXPEmbedded\\X86\\RUS\\WindowsXP-KB3050945-x86-Embedded-RUS.exe",
+          "KB": 3050945,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Russian",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsXPEmbedded\\X86\\SVE\\WindowsXP-KB3050945-x86-Embedded-SVE.exe",
+          "KB": 3050945,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Swedish",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3050945\\WindowsXPEmbedded\\X86\\TRK\\WindowsXP-KB3050945-x86-Embedded-TRK.exe",
+          "KB": 3050945,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Turkish",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\Windows7\\X64\\NEU\\Windows6.1-KB3061518-x64.msu",
+          "KB": 3061518,
+          "Version": "Windows 7",
+          "Type": "x64",
+          "Language": "Neutral",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\Windows7\\X86\\NEU\\Windows6.1-KB3061518-x86.msu",
+          "KB": 3061518,
+          "Version": "Windows 7",
+          "Type": "x86",
+          "Language": "Neutral",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\Windows8\\ARM\\NEU\\Windows8-RT-KB3061518-arm.msu",
+          "KB": 3061518,
+          "Version": "Windows 8",
+          "Type": "ARM",
+          "Language": "Neutral",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\Windows8\\X64\\NEU\\Windows8-RT-KB3061518-x64.msu",
+          "KB": 3061518,
+          "Version": "Windows 8",
+          "Type": "x64",
+          "Language": "Neutral",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\Windows8\\X86\\NEU\\Windows8-RT-KB3061518-x86.msu",
+          "KB": 3061518,
+          "Version": "Windows 8",
+          "Type": "x86",
+          "Language": "Neutral",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\Windows8.1\\ARM\\NEU\\Windows8.1-KB3061518-arm.msu",
+          "KB": 3061518,
+          "Version": "Windows 8.1",
+          "Type": "ARM",
+          "Language": "Neutral",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\Windows8.1\\X64\\NEU\\Windows8.1-KB3061518-x64.msu",
+          "KB": 3061518,
+          "Version": "Windows 8.1",
+          "Type": "x64",
+          "Language": "Neutral",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\Windows8.1\\X86\\NEU\\Windows8.1-KB3061518-x86.msu",
+          "KB": 3061518,
+          "Version": "Windows 8.1",
+          "Type": "x86",
+          "Language": "Neutral",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2003\\IA64\\DEU\\WindowsServer2003-KB3061518-ia64-DEU.exe",
+          "KB": 3061518,
+          "Version": "Windows Server 2003",
+          "Type": "IA64",
+          "Language": "German",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2003\\IA64\\ENU\\WindowsServer2003-KB3061518-ia64-ENU.exe",
+          "KB": 3061518,
+          "Version": "Windows Server 2003",
+          "Type": "IA64",
+          "Language": "English",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2003\\IA64\\FRA\\WindowsServer2003-KB3061518-ia64-FRA.exe",
+          "KB": 3061518,
+          "Version": "Windows Server 2003",
+          "Type": "IA64",
+          "Language": "French",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2003\\IA64\\JPN\\WindowsServer2003-KB3061518-ia64-JPN.exe",
+          "KB": 3061518,
+          "Version": "Windows Server 2003",
+          "Type": "IA64",
+          "Language": "Japanese",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2003\\X64\\CHS\\WindowsServer2003-KB3061518-x64-CHS.exe",
+          "KB": 3061518,
+          "Version": "Windows Server 2003",
+          "Type": "x64",
+          "Language": "Chinese (Simplified)",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2003\\X64\\CHT\\WindowsServer2003-KB3061518-x64-CHT.exe",
+          "KB": 3061518,
+          "Version": "Windows Server 2003",
+          "Type": "x64",
+          "Language": "Chinese (Traditional)",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2003\\X64\\DEU\\WindowsServer2003-KB3061518-x64-DEU.exe",
+          "KB": 3061518,
+          "Version": "Windows Server 2003",
+          "Type": "x64",
+          "Language": "German",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2003\\X64\\ENU\\WindowsServer2003-KB3061518-x64-ENU.exe",
+          "KB": 3061518,
+          "Version": "Windows Server 2003",
+          "Type": "x64",
+          "Language": "English",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2003\\X64\\ESN\\WindowsServer2003-KB3061518-x64-ESN.exe",
+          "KB": 3061518,
+          "Version": "Windows Server 2003",
+          "Type": "x64",
+          "Language": "Spanish",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2003\\X64\\FRA\\WindowsServer2003-KB3061518-x64-FRA.exe",
+          "KB": 3061518,
+          "Version": "Windows Server 2003",
+          "Type": "x64",
+          "Language": "French",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2003\\X64\\ITA\\WindowsServer2003-KB3061518-x64-ITA.exe",
+          "KB": 3061518,
+          "Version": "Windows Server 2003",
+          "Type": "x64",
+          "Language": "Italian",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2003\\X64\\JPN\\WindowsServer2003-KB3061518-x64-JPN.exe",
+          "KB": 3061518,
+          "Version": "Windows Server 2003",
+          "Type": "x64",
+          "Language": "Japanese",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2003\\X64\\KOR\\WindowsServer2003-KB3061518-x64-KOR.exe",
+          "KB": 3061518,
+          "Version": "Windows Server 2003",
+          "Type": "x64",
+          "Language": "Korean",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2003\\X64\\PTB\\WindowsServer2003-KB3061518-x64-PTB.exe",
+          "KB": 3061518,
+          "Version": "Windows Server 2003",
+          "Type": "x64",
+          "Language": "Portuguese (Brazil)",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2003\\X64\\RUS\\WindowsServer2003-KB3061518-x64-RUS.exe",
+          "KB": 3061518,
+          "Version": "Windows Server 2003",
+          "Type": "x64",
+          "Language": "Russian",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2003\\X86\\CHS\\WindowsServer2003-KB3061518-x86-CHS.exe",
+          "KB": 3061518,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "Chinese (Simplified)",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2003\\X86\\CHT\\WindowsServer2003-KB3061518-x86-CHT.exe",
+          "KB": 3061518,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "Chinese (Traditional)",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2003\\X86\\CSY\\WindowsServer2003-KB3061518-x86-CSY.exe",
+          "KB": 3061518,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "Czech",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2003\\X86\\DEU\\WindowsServer2003-KB3061518-x86-DEU.exe",
+          "KB": 3061518,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "German",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2003\\X86\\ENU\\WindowsServer2003-KB3061518-x86-ENU.exe",
+          "KB": 3061518,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "English",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2003\\X86\\ESN\\WindowsServer2003-KB3061518-x86-ESN.exe",
+          "KB": 3061518,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "Spanish",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2003\\X86\\FRA\\WindowsServer2003-KB3061518-x86-FRA.exe",
+          "KB": 3061518,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "French",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2003\\X86\\HUN\\WindowsServer2003-KB3061518-x86-HUN.exe",
+          "KB": 3061518,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "Hungarian",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2003\\X86\\ITA\\WindowsServer2003-KB3061518-x86-ITA.exe",
+          "KB": 3061518,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "Italian",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2003\\X86\\JPN\\WindowsServer2003-KB3061518-x86-JPN.exe",
+          "KB": 3061518,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "Japanese",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2003\\X86\\KOR\\WindowsServer2003-KB3061518-x86-KOR.exe",
+          "KB": 3061518,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "Korean",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2003\\X86\\NLD\\WindowsServer2003-KB3061518-x86-NLD.exe",
+          "KB": 3061518,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "Dutch",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2003\\X86\\PLK\\WindowsServer2003-KB3061518-x86-PLK.exe",
+          "KB": 3061518,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "Polish",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2003\\X86\\PTB\\WindowsServer2003-KB3061518-x86-PTB.exe",
+          "KB": 3061518,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "Portuguese (Brazil)",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2003\\X86\\PTG\\WindowsServer2003-KB3061518-x86-PTG.exe",
+          "KB": 3061518,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "Portuguese (Portugal)",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2003\\X86\\RUS\\WindowsServer2003-KB3061518-x86-RUS.exe",
+          "KB": 3061518,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "Russian",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2003\\X86\\SVE\\WindowsServer2003-KB3061518-x86-SVE.exe",
+          "KB": 3061518,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "Swedish",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2003\\X86\\TRK\\WindowsServer2003-KB3061518-x86-TRK.exe",
+          "KB": 3061518,
+          "Version": "Windows Server 2003",
+          "Type": "x86",
+          "Language": "Turkish",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2008\\IA64\\NEU\\Windows6.0-KB3061518-ia64.msu",
+          "KB": 3061518,
+          "Version": "Windows Server 2008",
+          "Type": "IA64",
+          "Language": "Neutral",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2008\\X64\\NEU\\Windows6.0-KB3061518-x64.msu",
+          "KB": 3061518,
+          "Version": "Windows Server 2008",
+          "Type": "x64",
+          "Language": "Neutral",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2008\\X86\\NEU\\Windows6.0-KB3061518-x86.msu",
+          "KB": 3061518,
+          "Version": "Windows Server 2008",
+          "Type": "x86",
+          "Language": "Neutral",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2008R2\\IA64\\NEU\\Windows6.1-KB3061518-ia64.msu",
+          "KB": 3061518,
+          "Version": "Windows Server 2008 R2",
+          "Type": "IA64",
+          "Language": "Neutral",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2008R2\\X64\\NEU\\Windows6.1-KB3061518-x64.msu",
+          "KB": 3061518,
+          "Version": "Windows Server 2008 R2",
+          "Type": "x64",
+          "Language": "Neutral",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2012\\X64\\NEU\\Windows8-RT-KB3061518-x64.msu",
+          "KB": 3061518,
+          "Version": "Windows Server 2012",
+          "Type": "x64",
+          "Language": "Neutral",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3061518-x64.msu",
+          "KB": 3061518,
+          "Version": "Windows Server 2012 R2",
+          "Type": "x64",
+          "Language": "Neutral",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsVista\\X64\\NEU\\Windows6.0-KB3061518-x64.msu",
+          "KB": 3061518,
+          "Version": "Windows Vista",
+          "Type": "x64",
+          "Language": "Neutral",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsVista\\X86\\NEU\\Windows6.0-KB3061518-x86.msu",
+          "KB": 3061518,
+          "Version": "Windows Vista",
+          "Type": "x86",
+          "Language": "Neutral",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsXPEmbedded\\X86\\ARA\\WindowsXP-KB3061518-x86-Embedded-ARA.exe",
+          "KB": 3061518,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Arabic",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsXPEmbedded\\X86\\CHS\\WindowsXP-KB3061518-x86-Embedded-CHS.exe",
+          "KB": 3061518,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Chinese (Simplified)",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsXPEmbedded\\X86\\CHT\\WindowsXP-KB3061518-x86-Embedded-CHT.exe",
+          "KB": 3061518,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Chinese (Traditional)",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsXPEmbedded\\X86\\CSY\\WindowsXP-KB3061518-x86-Embedded-CSY.exe",
+          "KB": 3061518,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Czech",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsXPEmbedded\\X86\\DAN\\WindowsXP-KB3061518-x86-Embedded-DAN.exe",
+          "KB": 3061518,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Danish",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsXPEmbedded\\X86\\DEU\\WindowsXP-KB3061518-x86-Embedded-DEU.exe",
+          "KB": 3061518,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "German",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsXPEmbedded\\X86\\ELL\\WindowsXP-KB3061518-x86-Embedded-ELL.exe",
+          "KB": 3061518,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Greek",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsXPEmbedded\\X86\\ENU\\WindowsXP-KB3061518-x86-Embedded-ENU.exe",
+          "KB": 3061518,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "English",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsXPEmbedded\\X86\\ESN\\WindowsXP-KB3061518-x86-Embedded-ESN.exe",
+          "KB": 3061518,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Spanish",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsXPEmbedded\\X86\\FIN\\WindowsXP-KB3061518-x86-Embedded-FIN.exe",
+          "KB": 3061518,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Finnish",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsXPEmbedded\\X86\\FRA\\WindowsXP-KB3061518-x86-Embedded-FRA.exe",
+          "KB": 3061518,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "French",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsXPEmbedded\\X86\\HEB\\WindowsXP-KB3061518-x86-Embedded-HEB.exe",
+          "KB": 3061518,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Hebrew",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsXPEmbedded\\X86\\HUN\\WindowsXP-KB3061518-x86-Embedded-HUN.exe",
+          "KB": 3061518,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Hungarian",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsXPEmbedded\\X86\\ITA\\WindowsXP-KB3061518-x86-Embedded-ITA.exe",
+          "KB": 3061518,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Italian",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsXPEmbedded\\X86\\JPN\\WindowsXP-KB3061518-x86-Embedded-JPN.exe",
+          "KB": 3061518,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Japanese",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsXPEmbedded\\X86\\KOR\\WindowsXP-KB3061518-x86-Embedded-KOR.exe",
+          "KB": 3061518,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Korean",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsXPEmbedded\\X86\\NLD\\WindowsXP-KB3061518-x86-Embedded-NLD.exe",
+          "KB": 3061518,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Dutch",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsXPEmbedded\\X86\\NOR\\WindowsXP-KB3061518-x86-Embedded-NOR.exe",
+          "KB": 3061518,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Norwegian",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsXPEmbedded\\X86\\PLK\\WindowsXP-KB3061518-x86-Embedded-PLK.exe",
+          "KB": 3061518,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Polish",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsXPEmbedded\\X86\\PTB\\WindowsXP-KB3061518-x86-Embedded-PTB.exe",
+          "KB": 3061518,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Portuguese (Brazil)",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsXPEmbedded\\X86\\PTG\\WindowsXP-KB3061518-x86-Embedded-PTG.exe",
+          "KB": 3061518,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Portuguese (Portugal)",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsXPEmbedded\\X86\\RUS\\WindowsXP-KB3061518-x86-Embedded-RUS.exe",
+          "KB": 3061518,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Russian",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsXPEmbedded\\X86\\SVE\\WindowsXP-KB3061518-x86-Embedded-SVE.exe",
+          "KB": 3061518,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Swedish",
+          "Date": "2015, 5, 12"
+        },
+        {
+          "Path": "\\3061518\\WindowsXPEmbedded\\X86\\TRK\\WindowsXP-KB3061518-x86-Embedded-TRK.exe",
+          "KB": 3061518,
+          "Version": "Windows XP Embedded",
+          "Type": "x86",
+          "Language": "Turkish",
+          "Date": "2015, 5, 12"
+        }
+      ]
+    }
   ]
 }

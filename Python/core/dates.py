@@ -23,13 +23,13 @@ def getDayFromYearMonthAndWeek(aYear, aMonth, aWeekOfMonth, aDayOfWeek):
 def getDate(aFolderName):
 
     if(len(aFolderName) != 4):
-        return None
+        raise Exception('Length of folder name \'{}\' not equal to 4'.format(aFolderName))
 
     year = '20{}'.format(aFolderName[2:4])
     month = aFolderName[0:2]
 
     if not year.isdigit() or not month.isdigit() or int(month) > 12:
-        return None
+        raise Exception('Year \'{}\' or month \'{}\' not digital or month is great than 12'.format(year, month))
 
     day = getDayFromYearMonthAndWeek(int(year), int(month), 2, 2)
     return datetime.date(int(year), int(month), day)

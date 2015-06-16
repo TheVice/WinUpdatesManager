@@ -1,4 +1,5 @@
 import os
+import sys
 import unittest
 import core.dirs
 from unittest.mock import MagicMock
@@ -8,16 +9,14 @@ from test.jsonHelper import JsonHelper
 class TestSequenceFunctions(unittest.TestCase):
 
     def setUp(self):
-
-        path = '{}{}{}{}{}'.format(os.path.abspath(os.curdir), os.sep, 'test', os.sep, 'dirsTest.json')
-        self.mJsonHelper = JsonHelper(path)
+        self.mJsonHelper = JsonHelper(__file__.replace('.py', '.json'))
 
     def test_getSubDirectoryFiles(self):
 
-        data = self.mJsonHelper.GetTestRoot('test_getSubDirectoryFiles')
-        for d in data:
+        testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
+        for testData in testsData:
             mock_return_value = []
-            osWalkArray = d['mockData']
+            osWalkArray = testData['mockData']
 
             for p in osWalkArray:
                 mock_return_value.append((p['root'], p['dirs'], p['files']))
@@ -29,8 +28,9 @@ class TestSequenceFunctions(unittest.TestCase):
 
             os.walk = osWalk
 
-            expectedFiles = d['expectedFiles']
+            expectedFiles = testData['expectedFiles']
             self.assertEqual(expectedFiles, files)
+
 
 if __name__ == '__main__':
 

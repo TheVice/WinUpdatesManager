@@ -55,4 +55,5 @@ def getKBsFromReportFile(aFileName):
         inputFile.close()
         return getKBsFromReport(report)
     except:
-        raise Exception('Unexpected error while work with file {} {}'.format(aFileName, sys.exc_info[1]))
+        raise Exception('Unexpected error while work with file \'{}\' {}'.format(
+            aFileName, sys.exc_info()[1]))

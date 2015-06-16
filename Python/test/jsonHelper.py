@@ -1,6 +1,7 @@
+import os
 import sys
 import json
-import datetime
+
 
 class JsonHelper:
 
@@ -8,6 +9,8 @@ class JsonHelper:
 
         inputFile = open(aFileName, 'r')
         fileContent = inputFile.read()
+        if os.name != 'nt':
+            fileContent = fileContent.replace('\\r', '')
         self.mData = json.loads(fileContent)
         inputFile.close()
 
