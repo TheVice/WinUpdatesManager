@@ -1,4 +1,4 @@
-import os
+import sys
 import unittest
 from core.versions import Versions
 from test.jsonHelper import JsonHelper
@@ -8,21 +8,27 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def setUp(self):
 
-        path = '{}{}{}{}{}'.format(os.path.abspath(os.curdir), os.sep, 'test', os.sep, 'versionsTest.json')
-        self.mJsonHelper = JsonHelper(path)
+        self.mJsonHelper = JsonHelper(__file__.replace('.py', '.json'))
         self.mTypes = Versions()
 
     def test_getVersion(self):
 
-        testData = self.mJsonHelper.GetTestInputOutputData('test_getVersion')
-        for i in testData:
-            self.assertEqual(i[1], self.mTypes.getVersion(i[0]))
+        testsData = self.mJsonHelper.GetTestInputOutputData(sys._getframe().f_code.co_name)
+        for testData in testsData:
+            self.assertEqual(testData[1], self.mTypes.getVersion(testData[0]))
 
     def test_getPathKey(self):
 
-        testData = self.mJsonHelper.GetTestInputOutputData('test_getPathKey')
-        for i in testData:
-            self.assertEqual(i[1], self.mTypes.getPathKey(i[0]))
+        testsData = self.mJsonHelper.GetTestInputOutputData(sys._getframe().f_code.co_name)
+        for testData in testsData:
+            self.assertEqual(testData[1], self.mTypes.getPathKey(testData[0]))
+
+    def test_isLanguageCanBeNeutral(self):
+
+        testsData = self.mJsonHelper.GetTestInputOutputData(sys._getframe().f_code.co_name)
+        for testData in testsData:
+            self.assertEqual(testData[1], self.mTypes.isLanguageCanBeNeutral(testData[0]))
+
 
 if __name__ == '__main__':
 

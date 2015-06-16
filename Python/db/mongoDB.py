@@ -76,7 +76,7 @@ class MongoDBClient:
                 table.save(item)
 
         except:
-            raise('Unexpected error:', sys.exc_info()[0])
+            raise Exception('Unexpected error:', sys.exc_info()[0])
 
     def deleteFromDB(self, aDB, aTable, aItems):
 

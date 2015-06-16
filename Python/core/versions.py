@@ -86,11 +86,11 @@ class Versions(UnknownSubstance):
 
     def isLanguageCanBeNeutral(self, aVersion):
 
-        return (aVersion is self.Vista or
-                aVersion is self.Win2k8 or
-                aVersion is self.Seven or
-                aVersion is self.Win2k8R2 or
-                aVersion is self.Eight or
-                aVersion is self.Win2k12 or
-                aVersion is self.EightDotOne or
-                aVersion is self.Win2k12R2)
+        return (aVersion == self.Vista or
+                aVersion == self.Win2k8 or
+                aVersion == self.Seven or
+                aVersion == self.Win2k8R2 or
+                aVersion == self.Eight or
+                aVersion == self.Win2k12 or
+                aVersion == self.EightDotOne or
+                aVersion == self.Win2k12R2)

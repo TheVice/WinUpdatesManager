@@ -393,9 +393,12 @@ class Main(Page):
         '<p><label>Switch: <input list=\'Switchs\''
         ' name=aSwitch type=\'text\'></label>'
         '<datalist id=\'Switchs\'>'
-        '<option value=\' /quiet /norestart\'></option>'
-        '<option value=\' -u -q -norestart\'></option>'
+        '<option value=\'/quiet /norestart\'></option>'
+        '<option value=\'-u -q -norestart\'></option>'
         '</datalist>'
+        '</p>'
+        '<p>'
+        '<input type="checkbox" name="aCopyRequired">Copy updates into %TEMP% before installing<br>'
         '</p>'
         '<p><label><u>List of paths</u><br><br>'
         '<textarea name=aReport cols=100 rows=25 required></textarea>'
@@ -405,11 +408,11 @@ class Main(Page):
         self.footer())
 
     @cherrypy.expose
-    def process_generation(self, aReport, aSwitch, aRoot=None):
+    def process_generation(self, aReport, aSwitch, aRoot, aCopyRequired=False):
 
         return '{}{}{}{}{}'.format(self.header(),
                '<textarea cols=100 rows=25>',
-               batchGenerator.generate(aReport.split('\n'), aRoot, aSwitch),
+               batchGenerator.generate(aReport.split('\n'), aRoot, aSwitch, aCopyRequired),
                '</textarea>'
                '<br>'
                '<a href=\'/report_submit\'>Go to report submit</a>'

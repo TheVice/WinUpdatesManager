@@ -1,3 +1,4 @@
+import sys
 from core.unknownSubstance import UnknownSubstance
 
 
@@ -48,12 +49,10 @@ def getKBsFromReport(aReport):
 
 def getKBsFromReportFile(aFileName):
 
-    report = None
     try:
         inputFile = open(aFileName, 'r')
         report = inputFile.read()
         inputFile.close()
+        return getKBsFromReport(report)
     except:
-        raise('Unable to read from file', aFileName)
-
-    return getKBsFromReport(report)
+        raise Exception('Unexpected error while work with file {} {}'.format(aFileName, sys.exc_info[1]))
