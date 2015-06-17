@@ -52,6 +52,7 @@ class Languages(UnknownSubstance):
         languages[os.sep + 'Hungarian' + os.sep] = self.Hungarian
         languages[os.sep + 'Italian' + os.sep] = self.Italian
         languages[os.sep + 'Japanese (Japan)' + os.sep] = self.Japanese
+        languages[os.sep + 'Japanese' + os.sep] = self.Japanese
         languages[os.sep + 'Korean' + os.sep] = self.Korean
         languages[os.sep + 'Norwegian'] = self.Norwegian
         languages[os.sep + 'Polish' + os.sep] = self.Polish
@@ -117,6 +118,7 @@ class Languages(UnknownSubstance):
         languages[os.sep + 'HUNGARIAN' + os.sep] = self.Hungarian
         languages[os.sep + 'ITALIAN' + os.sep] = self.Italian
         languages[os.sep + 'JAPANESE (JAPAN)' + os.sep] = self.Japanese
+        languages[os.sep + 'JAPANESE' + os.sep] = self.Japanese
         languages[os.sep + 'KOREAN' + os.sep] = self.Korean
         languages[os.sep + 'NORWEGIAN'] = self.Norwegian
         languages[os.sep + 'POLISH' + os.sep] = self.Polish

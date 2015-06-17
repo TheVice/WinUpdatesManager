@@ -44,3 +44,8 @@ class TestSequenceFunctions(unittest.TestCase):
 
             if None != pathToReport:
                 core.kb.getKBsFromReportFile = coreKbGetKBsFromReportFile
+
+
+if __name__ == '__main__':
+
+    unittest.main()

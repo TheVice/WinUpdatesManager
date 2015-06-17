@@ -1,8 +1,255 @@
 {
   "TargetTestFile": "mongoDB_Test",
   "MongoClient": {
-    "HostAndPort": "mongodb://localhost:27017/"
+    "HostAndPort": "mongodb://localhost:27017/",
+    "ServerSelectionTimeoutMS": 500,
+    "dataBase": "win32",
+    "table": "mongoDB_Test",
+    "itemsForTest": [
+      {
+        "Language": "English", "Type": "x86", "Date": "2013, 4, 9", "KB": 2817183, "Version": "Windows 2000", "Path": "\\2817183\\Windows2000\\IE6.0SP1\\ENU\\IE6.0SP1-KB2817183-WINDOWS2000-X86-ENU.EXE"
+      },
+      {
+        "Language": "English", "Type": "x86", "Date": "2013, 4, 9", "KB": 2817183, "Version": "Windows XP", "Path": "\\2817183\\WindowsXP\\x86\\ENU\\IE7-WINDOWSXP-KB2817183-X86-ENU.EXE"
+      },
+      {
+        "Language": "English", "Type": "x86", "Date": "2013, 4, 9", "KB": 2817183, "Version": "Windows XP", "Path": "\\2817183\\WindowsXP\\x86\\ENU\\IE8-WINDOWSXP-KB2817183-X86-ENU.EXE"
+      },
+      {
+        "Language": "English", "Type": "x86", "Date": "2013, 4, 9", "KB": 2817183, "Version": "Windows XP", "Path": "\\2817183\\WindowsXP\\x86\\ENU\\WINDOWSXP-KB2817183-X86-ENU.EXE"
+      },
+      {
+        "Date": "2013, 3, 12", "Type": "x86", "Language": "English", "Path": "\\2809289\\Windows2000\\IE6.0SP1\\ENU\\IE6.0SP1-KB2809289-WINDOWS2000-X86-ENU.EXE", "Version": "Windows 2000", "KB": 2809289
+      },
+      {
+        "Date": "2007, 1, 9", "Path": "\\WINDOWS\\WINDOWSVISTA\\929969\\X64\\NEUTRAL\\WINDOWS6.0-KB929969-X64-RC1.MSU", "Language": "Neutral", "Type": "x64", "KB": 929969, "Version": "Windows Vista"
+      },
+      {
+        "Date": "2007, 1, 9", "Path": "\\WINDOWS\\WINDOWSVISTA\\929969\\X86\\NEUTRAL\\WINDOWS6.0-KB929969-X86-RC1.MSU", "Language": "Neutral", "Type": "x86", "KB": 929969, "Version": "Windows Vista"
+      },
+      {
+        "Version": {"UNKNOWN VERSION": "\\2916036\\X86\\ENU\\WindowsXP-KB2916036-x86-ENU.exe"}, "KB": 2916036, "Language": "English", "Date": "2014, 2, 11", "Path": "\\2916036\\X86\\ENU\\WindowsXP-KB2916036-x86-ENU.exe", "Type": "x86"
+      },
+      {
+        "Version": {"UNKNOWN VERSION": "\\2916036\\X64\\ENU\\WindowsServer2003.WindowsXP-KB2916036-x64-ENU.exe"}, "KB": 2916036, "Language": "English", "Date": "2014, 2, 11", "Path": "\\2916036\\X64\\ENU\\WindowsServer2003.WindowsXP-KB2916036-x64-ENU.exe", "Type": "x64"
+      },
+      {
+        "Version": {"UNKNOWN VERSION": "\\2909921\\X86\\ENU\\WindowsXP-KB2909921-x86-ENU.exe"}, "KB": 2909921, "Language": "English", "Date": "2014, 2, 11", "Path": "\\2909921\\X86\\ENU\\WindowsXP-KB2909921-x86-ENU.exe", "Type": "x86"
+      },
+      {
+        "Version": {"UNKNOWN VERSION": "\\2909921\\X86\\ENU\\IE8-WindowsXP-KB2909921-x86-ENU.exe"}, "KB": 2909921, "Language": "English", "Date": "2014, 2, 11", "Path": "\\2909921\\X86\\ENU\\IE8-WindowsXP-KB2909921-x86-ENU.exe", "Type": "x86"
+      },
+      {
+        "Version": {"UNKNOWN VERSION": "\\2909921\\X64\\ENU\\IE8-WindowsServer2003.WindowsXP-KB2909921-x64-ENU.exe"}, "KB": 2909921, "Language": "English", "Date": "2014, 2, 11", "Path": "\\2909921\\X64\\ENU\\IE8-WindowsServer2003.WindowsXP-KB2909921-x64-ENU.exe", "Type": "x64"
+      },
+      {
+        "Version": {"UNKNOWN VERSION": "\\2909921\\X64\\ENU\\IE7-WindowsServer2003.WindowsXP-KB2909921-x64-ENU.exe"}, "KB": 2909921, "Language": "English", "Date": "2014, 2, 11", "Path": "\\2909921\\X64\\ENU\\IE7-WindowsServer2003.WindowsXP-KB2909921-x64-ENU.exe", "Type": "x64"
+      },
+      {
+        "Version": {"UNKNOWN VERSION": "\\2909212\\X86\\ENU\\WindowsXP-KB2909212-x86-ENU.exe"}, "KB": 2909212, "Language": "English", "Date": "2014, 2, 11", "Path": "\\2909212\\X86\\ENU\\WindowsXP-KB2909212-x86-ENU.exe", "Type": "x86"
+      },
+      {
+        "Version": {"UNKNOWN VERSION": "\\2909210\\X64\\ENU\\IE8-WindowsServer2003.WindowsXP-KB2909210-x64-ENU.exe"}, "KB": 2909210, "Language": "English", "Date": "2014, 2, 11", "Path": "\\2909210\\X64\\ENU\\IE8-WindowsServer2003.WindowsXP-KB2909210-x64-ENU.exe", "Type": "x64"
+      }
+    ]
   },
+  "test_changeServer": [
+    {
+      "mongodb://localhost:27017/": null
+    },
+    {
+      "mongodb://localhost:27018/": "No servers found yet"
+    }
+  ],
+  "test_getItemsFromDB": [
+    {
+      "query": {},
+      "projection": {"_id": 0},
+      "skip": null,
+      "limit": null,
+      "sort": null,
+      "expectedItems": [
+        {
+          "Language": "English", "Type": "x86", "Date": "2013, 4, 9", "KB": 2817183, "Version": "Windows 2000", "Path": "\\2817183\\Windows2000\\IE6.0SP1\\ENU\\IE6.0SP1-KB2817183-WINDOWS2000-X86-ENU.EXE"
+        },
+        {
+          "Language": "English", "Type": "x86", "Date": "2013, 4, 9", "KB": 2817183, "Version": "Windows XP", "Path": "\\2817183\\WindowsXP\\x86\\ENU\\IE7-WINDOWSXP-KB2817183-X86-ENU.EXE"
+        },
+        {
+          "Language": "English", "Type": "x86", "Date": "2013, 4, 9", "KB": 2817183, "Version": "Windows XP", "Path": "\\2817183\\WindowsXP\\x86\\ENU\\IE8-WINDOWSXP-KB2817183-X86-ENU.EXE"
+        },
+        {
+          "Language": "English", "Type": "x86", "Date": "2013, 4, 9", "KB": 2817183, "Version": "Windows XP", "Path": "\\2817183\\WindowsXP\\x86\\ENU\\WINDOWSXP-KB2817183-X86-ENU.EXE"
+        },
+        {
+          "Date": "2013, 3, 12", "Type": "x86", "Language": "English", "Path": "\\2809289\\Windows2000\\IE6.0SP1\\ENU\\IE6.0SP1-KB2809289-WINDOWS2000-X86-ENU.EXE", "Version": "Windows 2000", "KB": 2809289
+        },
+        {
+          "Date": "2007, 1, 9", "Path": "\\WINDOWS\\WINDOWSVISTA\\929969\\X64\\NEUTRAL\\WINDOWS6.0-KB929969-X64-RC1.MSU", "Language": "Neutral", "Type": "x64", "KB": 929969, "Version": "Windows Vista"
+        },
+        {
+          "Date": "2007, 1, 9", "Path": "\\WINDOWS\\WINDOWSVISTA\\929969\\X86\\NEUTRAL\\WINDOWS6.0-KB929969-X86-RC1.MSU", "Language": "Neutral", "Type": "x86", "KB": 929969, "Version": "Windows Vista"
+        },
+        {
+          "Version": {"UNKNOWN VERSION": "\\2916036\\X86\\ENU\\WindowsXP-KB2916036-x86-ENU.exe"}, "KB": 2916036, "Language": "English", "Date": "2014, 2, 11", "Path": "\\2916036\\X86\\ENU\\WindowsXP-KB2916036-x86-ENU.exe", "Type": "x86"
+        },
+        {
+          "Version": {"UNKNOWN VERSION": "\\2916036\\X64\\ENU\\WindowsServer2003.WindowsXP-KB2916036-x64-ENU.exe"}, "KB": 2916036, "Language": "English", "Date": "2014, 2, 11", "Path": "\\2916036\\X64\\ENU\\WindowsServer2003.WindowsXP-KB2916036-x64-ENU.exe", "Type": "x64"
+        },
+        {
+          "Version": {"UNKNOWN VERSION": "\\2909921\\X86\\ENU\\WindowsXP-KB2909921-x86-ENU.exe"}, "KB": 2909921, "Language": "English", "Date": "2014, 2, 11", "Path": "\\2909921\\X86\\ENU\\WindowsXP-KB2909921-x86-ENU.exe", "Type": "x86"
+        },
+        {
+          "Version": {"UNKNOWN VERSION": "\\2909921\\X86\\ENU\\IE8-WindowsXP-KB2909921-x86-ENU.exe"}, "KB": 2909921, "Language": "English", "Date": "2014, 2, 11", "Path": "\\2909921\\X86\\ENU\\IE8-WindowsXP-KB2909921-x86-ENU.exe", "Type": "x86"
+        },
+        {
+          "Version": {"UNKNOWN VERSION": "\\2909921\\X64\\ENU\\IE8-WindowsServer2003.WindowsXP-KB2909921-x64-ENU.exe"}, "KB": 2909921, "Language": "English", "Date": "2014, 2, 11", "Path": "\\2909921\\X64\\ENU\\IE8-WindowsServer2003.WindowsXP-KB2909921-x64-ENU.exe", "Type": "x64"
+        },
+        {
+          "Version": {"UNKNOWN VERSION": "\\2909921\\X64\\ENU\\IE7-WindowsServer2003.WindowsXP-KB2909921-x64-ENU.exe"}, "KB": 2909921, "Language": "English", "Date": "2014, 2, 11", "Path": "\\2909921\\X64\\ENU\\IE7-WindowsServer2003.WindowsXP-KB2909921-x64-ENU.exe", "Type": "x64"
+        },
+        {
+          "Version": {"UNKNOWN VERSION": "\\2909212\\X86\\ENU\\WindowsXP-KB2909212-x86-ENU.exe"}, "KB": 2909212, "Language": "English", "Date": "2014, 2, 11", "Path": "\\2909212\\X86\\ENU\\WindowsXP-KB2909212-x86-ENU.exe", "Type": "x86"
+        },
+        {
+          "Version": {"UNKNOWN VERSION": "\\2909210\\X64\\ENU\\IE8-WindowsServer2003.WindowsXP-KB2909210-x64-ENU.exe"}, "KB": 2909210, "Language": "English", "Date": "2014, 2, 11", "Path": "\\2909210\\X64\\ENU\\IE8-WindowsServer2003.WindowsXP-KB2909210-x64-ENU.exe", "Type": "x64"
+        }
+      ]
+    },
+    {
+      "query": {},
+      "projection": {"_id": 0, "Type": 1},
+      "skip": null,
+      "limit": null,
+      "sort": null,
+      "expectedItems": [
+        {"Type": "x86"},
+        {"Type": "x86"},
+        {"Type": "x86"},
+        {"Type": "x86"},
+        {"Type": "x86"},
+        {"Type": "x64"},
+        {"Type": "x86"},
+        {"Type": "x86"},
+        {"Type": "x64"},
+        {"Type": "x86"},
+        {"Type": "x86"},
+        {"Type": "x64"},
+        {"Type": "x64"},
+        {"Type": "x86"},
+        {"Type": "x64"}
+      ]
+    },
+    {
+      "query": {},
+      "projection": {"_id": 0, "Path": 0, "KB": 0, "Version": 0, "Type": 0, "Language": 0, "Date": 0},
+      "skip": null,
+      "limit": null,
+      "sort": null,
+      "expectedItems": [
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {}
+      ]
+    },
+    {
+      "query": {},
+      "projection": {"_id": 0, "Path": 0, "KB": 0, "Version": 0, "Type": 0, "Language": 0, "Date": 0},
+      "skip": 5,
+      "limit": null,
+      "sort": null,
+      "expectedItems": [
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {}
+      ]
+    },
+    {
+      "query": {},
+      "projection": {"_id": 0, "Path": 0, "KB": 0, "Version": 0, "Type": 0, "Language": 0, "Date": 0},
+      "skip": 5,
+      "limit": 3,
+      "sort": null,
+      "expectedItems": [
+        {},
+        {},
+        {}
+      ]
+    },
+    {
+      "query": {},
+      "projection": {"_id": 0, "Date": 1},
+      "skip": null,
+      "limit": null,
+      "sort": [{"Date": 1}],
+      "expectedItems": [
+        {
+          "Date": "2007, 1, 9"
+        },
+        {
+          "Date": "2007, 1, 9"
+        },
+        {
+          "Date": "2013, 3, 12"
+        },
+        {
+          "Date": "2013, 4, 9"
+        },
+        {
+          "Date": "2013, 4, 9"
+        },
+        {
+          "Date": "2013, 4, 9"
+        },
+        {
+          "Date": "2013, 4, 9"
+        },
+        {
+          "Date": "2014, 2, 11"
+        },
+        {
+          "Date": "2014, 2, 11"
+        },
+        {
+          "Date": "2014, 2, 11"
+        },
+        {
+          "Date": "2014, 2, 11"
+        },
+        {
+          "Date": "2014, 2, 11"
+        },
+        {
+          "Date": "2014, 2, 11"
+        },
+        {
+          "Date": "2014, 2, 11"
+        },
+        {
+          "Date": "2014, 2, 11"
+        }
+      ]
+    }
+  ],
   "test_addObjectIdFieldAtCollection": {
     "updates": [
       {

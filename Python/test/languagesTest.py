@@ -1,5 +1,5 @@
+import sys
 import unittest
-import os
 from core.languages import Languages
 from test.jsonHelper import JsonHelper
 
@@ -7,22 +7,19 @@ from test.jsonHelper import JsonHelper
 class TestSequenceFunctions(unittest.TestCase):
 
     def setUp(self):
-
-        path = '{}{}{}{}{}'.format(os.path.abspath(os.curdir), os.sep, 'test', os.sep, 'languagesTest.json')
-        self.mJsonHelper = JsonHelper(path)
+        self.mJsonHelper = JsonHelper(__file__.replace('.py', '.json'))
         self.mLanguages = Languages()
 
     def test_getLanguage(self):
-
-        testData = self.mJsonHelper.GetTestInputOutputData('test_getLanguage')
-        for i in testData:
-            self.assertEqual(i[1], self.mLanguages.getLanguage(i[0]))
+        testsData = self.mJsonHelper.GetTestInputOutputData(sys._getframe().f_code.co_name)
+        for testData in testsData:
+            self.assertEqual(testData[1], self.mLanguages.getLanguage(testData[0]))
 
     def test_getPathKey(self):
+        testsData = self.mJsonHelper.GetTestInputOutputData(sys._getframe().f_code.co_name)
+        for testData in testsData:
+            self.assertEqual(testData[1], self.mLanguages.getPathKey(testData[0]))
 
-        testData = self.mJsonHelper.GetTestInputOutputData('test_getPathKey')
-        for i in testData:
-            self.assertEqual(i[1], self.mLanguages.getPathKey(i[0]))
 
 if __name__ == '__main__':
 

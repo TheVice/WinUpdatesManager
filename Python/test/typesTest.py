@@ -24,6 +24,7 @@ class TestSequenceFunctions(unittest.TestCase):
         for i in testData:
             self.assertEqual(i[1], self.mTypes.getPathKey(i[0]))
 
+
 if __name__ == '__main__':
 
     unittest.main()

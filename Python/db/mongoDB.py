@@ -22,7 +22,7 @@ class MongoDBClient:
         try:
             self.mClient.server_info()
         except ServerSelectionTimeoutError:
-            raise Exception(sys.exc_info())
+            raise Exception(sys.exc_info()[1])
 
     def getItemsFromDB(self, aDB, aTable, aQuery={}, aProjection=None,
                        aSkip=None, aLimit=None, aSort=None):
@@ -157,9 +157,9 @@ class MongoDBClient:
             uniqueObjectIds = list(set(inputObjectIds) -
                                    set(dataBaseObjectIds))
             if 0 < len(uniqueObjectIds):
-                for id in uniqueObjectIds:
+                for objectId in uniqueObjectIds:
                     for inputItem in aCollection:
-                        if id == inputItem['_id']:
+                        if objectId == inputItem['_id']:
                             collection.append(inputItem)
                             break
 

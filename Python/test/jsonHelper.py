@@ -58,3 +58,10 @@ class JsonHelper:
         if not isinstance(data, str):
             raise TypeError('\'{}\' at \'{}\' is not a String'.format(aVariableName, aTestName))
         return data
+
+    def GetInteger(self, aTestName, aVariableName):
+
+        data = self.GetTestVariable(aTestName, aVariableName)
+        if not isinstance(data, int):
+            raise TypeError('\'{}\' at \'{}\' is not an Integer'.format(aVariableName, aTestName))
+        return data

@@ -14,6 +14,7 @@ class TestSequenceFunctions(unittest.TestCase):
         storage = db.storage.getStorage('mongodb://localhost:27017/')
         self.assertLess(0, len(list(storage.get({}))))
 
+
 if __name__ == '__main__':
 
     unittest.main()

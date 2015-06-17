@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import core.kb
+import datetime
 import core.dirs
 import core.dates
 from core.types import Types
@@ -43,7 +44,17 @@ def fromPath(aPath):
 
     for folder in folders:
         path = os.path.join(aPath, folder)
-        updates.extend(fromPathAndDate(path, folder))
+        try:
+            updates.extend(fromPathAndDate(path, folder))
+        except:
+            date = datetime.datetime.now().date()
+            date = '{}, {}, {}'.format(date.year, date.month, date.day)
+            updates.append(json.dumps({'Path': folder,
+                                       'KB': core.kb.getKB(folder),
+                                       'Version': Versions().getVersion(folder),
+                                       'Type': Types().getType(folder),
+                                       'Language': Languages().getLanguage(folder),
+                                       'Date': date}))
 
     return updates
 

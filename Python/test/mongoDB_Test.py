@@ -1,4 +1,4 @@
-import os
+import sys
 import datetime
 import unittest
 from db.mongoDB import MongoDBClient
@@ -8,20 +8,41 @@ from test.jsonHelper import JsonHelper
 class TestSequenceFunctions(unittest.TestCase):
 
     def setUp(self):
-
-        path = '{}{}{}{}{}'.format(os.path.abspath(os.curdir), os.sep, 'test', os.sep, 'mongoDB_Test.json')
-        self.mJsonHelper = JsonHelper(path)
+        self.mJsonHelper = JsonHelper(__file__.replace('.py', '.json'))
         self.mHostAndPort = self.mJsonHelper.GetSting('MongoClient', 'HostAndPort')
+        self.mServerSelectionTimeoutMS = self.mJsonHelper.GetInteger('MongoClient', 'ServerSelectionTimeoutMS')
+        self.mDataBase = self.mJsonHelper.GetSting('MongoClient', 'dataBase')
+        self.mTable = self.mJsonHelper.GetSting('MongoClient', 'table')
+        self.mItemsForTest = self.mJsonHelper.GetArray('MongoClient', 'itemsForTest')
         self.mDbClient = MongoDBClient(self.mHostAndPort)
 
-    def test_changeServer(self):
+        self.mDbClient.dropDB(self.mDataBase)
+        self.mDbClient.insertToDB(self.mDataBase, self.mTable, self.mItemsForTest)
 
-        self.mDbClient.changeServer(self.mHostAndPort, 500)
+    def test_changeServer(self):
+        testsData = self.mJsonHelper.GetTestInputOutputData(sys._getframe().f_code.co_name)
+        for testData in testsData:
+            try:
+                self.assertEqual(testData[1], self.mDbClient.changeServer(testData[0], self.mServerSelectionTimeoutMS))
+            except Exception:
+                self.assertEqual(testData[1], str(sys.exc_info()[1]))
 
     def test_getItemsFromDB(self):
+        testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
+        for testData in testsData:
 
-        items = self.mDbClient.getItemsFromDB('win32', 'updates')
-        self.assertLess(0, items.count())
+            sort = []
+            if testData['sort'] is None:
+                sort = None
+            else:
+                for s in testData['sort']:
+                    key = list(s.keys())[0]
+                    sort.append((key, s[key]))
+
+            items = self.mDbClient.getItemsFromDB(self.mDataBase, self.mTable, testData['query'],
+                                                  testData['projection'], testData['skip'],
+                                                  testData['limit'], sort)
+            self.assertEqual(testData['expectedItems'], list(items))
 
     def test_insertToDB(self):
 
