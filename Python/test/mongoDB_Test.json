@@ -3,8 +3,8 @@
   "MongoClient": {
     "HostAndPort": "mongodb://localhost:27017/",
     "ServerSelectionTimeoutMS": 500,
-    "dataBase": "win32",
-    "table": "mongoDB_Test",
+    "dataBase": "testDB",
+    "table": "table4test",
     "itemsForTest": [
       {
         "Language": "English", "Type": "x86", "Date": "2013, 4, 9", "KB": 2817183, "Version": "Windows 2000", "Path": "\\2817183\\Windows2000\\IE6.0SP1\\ENU\\IE6.0SP1-KB2817183-WINDOWS2000-X86-ENU.EXE"
@@ -58,7 +58,7 @@
       "mongodb://localhost:27017/": null
     },
     {
-      "mongodb://localhost:27018/": "No servers found yet"
+      "mongodb://localhost:27018/": ["No servers found yet", "localhost:27018: [WinError 10061] No connection could be made because the target machine actively refused it"]
     }
   ],
   "test_getItemsFromDB": [
@@ -314,7 +314,23 @@
       "limit": null,
       "sort": null,
       "expectedItems": "database error: Can't canonicalize query: BadValue Projection cannot have a mix of inclusion and exclusion."
+    },
+    {
+      "query": {"Version": "Windows 10"},
+      "projection": {
+        "_id": 0
+      },
+      "skip": null,
+      "limit": null,
+      "sort": null,
+      "expectedItems": []
     }
+  ],
+  "test_insertToDB": [
+    {"items": {"firstItem": 1}},
+    {"items": [{"firstItem": 1}, {"secondItem": 2}, {"thirdItem": 3}]},
+    {"documents must be a non-empty list": []},
+    {"items": {}}
   ],
   "test_addObjectIdFieldAtCollection": {
     "updates": [

@@ -19,7 +19,6 @@ class TestSequenceFunctions(unittest.TestCase):
 
         self.mDbClient = MongoDBClient(self.mHostAndPort)
         self.mDbClient.dropDB(self.mDataBase)
-        self.mDbClient.insertToDB(self.mDataBase, self.mTable, self.mItemsForTest)
 
     def test_changeServer(self):
         testsData = self.mJsonHelper.GetTestInputOutputData(sys._getframe().f_code.co_name)
@@ -27,10 +26,14 @@ class TestSequenceFunctions(unittest.TestCase):
             try:
                 self.assertEqual(testData[1], self.mDbClient.changeServer(testData[0], self.mServerSelectionTimeoutMS))
             except Exception:
-                self.assertEqual(testData[1], str(sys.exc_info()[1]))
+                exceptionText = '{}'.format(sys.exc_info()[1])
+                self.assertLess(0, testData[1].count(exceptionText))
 
     def test_getItemsFromDB(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
+
+        self.mDbClient.insertToDB(self.mDataBase, self.mTable, self.mItemsForTest)
+
         for testData in testsData:
 
             sort = []
@@ -55,17 +58,24 @@ class TestSequenceFunctions(unittest.TestCase):
                 self.assertEqual(testData['expectedItems'], '{0}'.format(sys.exc_info()[1]))
 
     def test_insertToDB(self):
+        testsData = self.mJsonHelper.GetTestInputOutputData(sys._getframe().f_code.co_name)
+        for testData in testsData:
+            self.mDbClient.dropCollectionsInDB(self.mDataBase, self.mTable)
+            items = self.mDbClient.getItemsFromDB(self.mDataBase, self.mTable)
+            if [] != testData[1]:
+                self.assertNotEqual(testData[1], items)
 
-        itemToInsert = {'_id': MongoDBClient.generateObjectId('{}{}'.format('test', 'insertToDB')),
-                        'test': 'insertToDB'}
-        items = self.mDbClient.getItemsFromDB('win32', 'updates', itemToInsert)
-        self.assertEquals(0, len(items))
+            try:
+                self.mDbClient.insertToDB(self.mDataBase, self.mTable, testData[1])
+            except:
+                self.assertEqual(testData[0], '{}'.format(sys.exc_info()[1]))
 
-        self.mDbClient.insertToDB('win32', 'updates', [itemToInsert])
-
-        items = self.mDbClient.getItemsFromDB('win32', 'updates', itemToInsert)
-        self.assertEquals(1, len(items))
-        self.mDbClient.deleteFromDB('win32', 'updates', [itemToInsert])
+            items = self.mDbClient.getItemsFromDB(self.mDataBase, self.mTable)
+            if not isinstance(testData[1], list):
+                self.assertEqual(1, len(items))
+                self.assertEqual(testData[1], items[0])
+            else:
+                self.assertEqual(testData[1], items)
 
     def test_updateInDB(self):
 
