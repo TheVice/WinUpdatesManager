@@ -31,8 +31,6 @@ class MongoDBClient:
             db = self.mClient[aDB]
             table = db[aTable]
 
-            items = {}
-
             if aProjection is not None:
                 items = table.find(aQuery, aProjection)
             else:
@@ -47,7 +45,7 @@ class MongoDBClient:
             if aSort is not None:
                 items = items.sort(aSort)
 
-            return items
+            return list(items)
 
         except:
             raise Exception(sys.exc_info()[1])
@@ -160,7 +158,7 @@ class MongoDBClient:
         if 0 < len(inputObjectIds):
 
             query = {'_id': {'$in': inputObjectIds}}
-            items = list(self.getItemsFromDB(aDB, aTable, query))
+            items = self.getItemsFromDB(aDB, aTable, query)
 
             dataBaseObjectIds = []
             for item in items:
@@ -179,12 +177,7 @@ class MongoDBClient:
 
     def deleteUpdateDubsFromTable(self, aDB, aTableName):
 
-        items = self.getItemsFromDB(aDB, aTableName)
-
-        updates = []
-        for it in items:
-            updates.append(it)
-
+        updates = self.getItemsFromDB(aDB, aTableName)
         for update in updates:
             query = {}
             query['Path'] = update['Path']
@@ -194,14 +187,9 @@ class MongoDBClient:
             query['Language'] = update['Language']
             #query['Date'] = update['Date']
 
-            items = self.getItemsFromDB(aDB, aTableName, query)
+            dubUpdates = self.getItemsFromDB(aDB, aTableName, query)
 
-            if items.count() > 1:
-
-                dubUpdates = []
-                for it in items:
-                    dubUpdates.append(it)
-
+            if len(dubUpdates) > 1:
                 dubUpdates.remove(dubUpdates[0])
                 self.deleteFromDB(aDB, aTableName, dubUpdates)
 

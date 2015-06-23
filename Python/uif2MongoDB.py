@@ -16,7 +16,7 @@ def uif2MongoDB(aUpdates, aDataBaseName, aTableName, aHostAndPort):
     if 0 < len(updates):
         dataBase.insertToDB(dataBaseName, tableName, updates)
 
-    return dataBase.getItemsFromDB(dataBaseName, tableName).count()
+    return len(dataBase.getItemsFromDB(dataBaseName, tableName))
 
 
 if __name__ == '__main__':
