@@ -73,15 +73,24 @@ class MongoDBClient:
             db = self.mClient[aDB]
             table = db[aTable]
 
-            if version_tuple >= (3, ):  # if table.insert_one or table.replace_one
-                for item in aItems:
+            if version_tuple >= (3, ):
+                if isinstance(aItems, list):
+                    for item in aItems:
+                        try:
+                            table.insert_one(item)
+                        except DuplicateKeyError:
+                            table.replace_one({'_id': item['_id']}, item)
+                else:
                     try:
-                        table.insert_one(item)
+                        table.insert_one(aItems)
                     except DuplicateKeyError:
-                        table.replace_one({'_id': item['_id']}, item)
+                        table.replace_one({'_id': aItems['_id']}, aItems)
             else:
-                for item in aItems:
-                    table.save(item)
+                if isinstance(aItems, list):
+                    for item in aItems:
+                        table.save(item)
+                else:
+                    table.save(aItems)
 
         except:
             raise Exception(exc_info()[1])

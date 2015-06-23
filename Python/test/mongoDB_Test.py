@@ -2,6 +2,7 @@ import sys
 import datetime
 import unittest
 from bson import ObjectId
+from unittest.mock import patch, MagicMock
 from db.mongoDB import MongoDBClient
 from test.jsonHelper import JsonHelper
 
@@ -55,10 +56,11 @@ class TestSequenceFunctions(unittest.TestCase):
 
                 self.assertEqual(expectedItems, items)
             except:
-                self.assertEqual(testData['expectedItems'], '{0}'.format(sys.exc_info()[1]))
+                self.assertEqual(testData['expectedItems'], '{}'.format(sys.exc_info()[1]))
 
     def test_insertToDB(self):
         testsData = self.mJsonHelper.GetTestInputOutputData(sys._getframe().f_code.co_name)
+        usePymongo3rdVersion = True
         for testData in testsData:
             self.mDbClient.dropCollectionsInDB(self.mDataBase, self.mTable)
             items = self.mDbClient.getItemsFromDB(self.mDataBase, self.mTable)
@@ -66,7 +68,12 @@ class TestSequenceFunctions(unittest.TestCase):
                 self.assertNotEqual(testData[1], items)
 
             try:
-                self.mDbClient.insertToDB(self.mDataBase, self.mTable, testData[1])
+                if usePymongo3rdVersion:
+                    self.mDbClient.insertToDB(self.mDataBase, self.mTable, testData[1])
+                else:
+                    with patch('db.mongoDB.version_tuple') as mock_obj:
+                        mock_obj.__ge__ = MagicMock(return_value=False)
+                        self.mDbClient.insertToDB(self.mDataBase, self.mTable, testData[1])
             except:
                 self.assertEqual(testData[0], '{}'.format(sys.exc_info()[1]))
 
@@ -77,27 +84,70 @@ class TestSequenceFunctions(unittest.TestCase):
             else:
                 self.assertEqual(testData[1], items)
 
+            usePymongo3rdVersion = not usePymongo3rdVersion
+
     def test_updateInDB(self):
+        testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
+        usePymongo3rdVersion = True
+        for testData in testsData:
+            self.mDbClient.dropCollectionsInDB(self.mDataBase, self.mTable)
+            self.mDbClient.insertToDB(self.mDataBase, self.mTable, testData['itemsToInsert'])
+            itemsToUpdate = testData['itemsToUpdate']
 
-        itemToInsert = {'_id': MongoDBClient.generateObjectId('{}{}'.format('test', 'insertToDB')),
-                        'test': 'insertToDB'}
-        items = self.mDbClient.getItemsFromDB('win32', 'updates', itemToInsert)
-        self.assertEquals(0, len(items))
-        self.mDbClient.insertToDB('win32', 'updates', [itemToInsert])
-        items = self.mDbClient.getItemsFromDB('win32', 'updates', itemToInsert)
-        self.assertEquals(1, len(items))
-        itemToUpdate = items[0]
-        itemToUpdate['test'] = 'updateInDB'
-        items = self.mDbClient.getItemsFromDB('win32', 'updates', itemToUpdate)
-        self.assertEquals(0, len(items))
+            query = {}
+            for itu in itemsToUpdate:
+                for key in itu[0].keys():
+                    if 0 == list(query.keys()).count(key):
+                        query[key] = []
+                    query[key].append(itu[0][key])
 
-        self.mDbClient.updateInDB('win32', 'updates', [itemToUpdate])
+            for key in query.keys():
+                if 1 < len(query[key]):
+                    query[key] = {key: {'$in': query[key]}}
+                else:
+                    query[key] = query[key][0]
 
-        items = self.mDbClient.getItemsFromDB('win32', 'updates', itemToInsert)
-        self.assertEquals(0, len(items))
-        items = self.mDbClient.getItemsFromDB('win32', 'updates', itemToUpdate)
-        self.assertEquals(1, len(items))
-        self.mDbClient.deleteFromDB('win32', 'updates', [itemToUpdate])
+            if len(query.keys()) > 1:
+                newQuery = {}
+                newQuery['$or'] = []
+                for key in query.keys():
+                    newQuery['$or'].append({key: query[key]})
+
+                query = newQuery
+
+            existItems = self.mDbClient.getItemsFromDB(self.mDataBase, self.mTable, query)
+            self.assertEqual(len(itemsToUpdate), len(existItems))
+
+            for i in range(0, len(itemsToUpdate)):
+                for j in range(0, len(existItems)):
+                    itemsToUpdate[i][0]['_id'] = existItems[j]['_id']
+                    if itemsToUpdate[i][0] == existItems[j]:
+                        modifiedItems = itemsToUpdate[i][1]
+                        if not isinstance(modifiedItems, list):
+                            for key in modifiedItems.keys():
+                                existItems[j][key] = modifiedItems[key]
+                        else:
+                            existItems[j]['_id'] = modifiedItems
+
+            if 1 == len(existItems):
+                existItems = existItems[0]
+
+            expectedItems = testData['expectedItems']
+
+            try:
+                if usePymongo3rdVersion:
+                    self.mDbClient.updateInDB(self.mDataBase, self.mTable, existItems)
+                else:
+                    with patch('db.mongoDB.version_tuple') as mock_obj:
+                        mock_obj.__ge__ = MagicMock(return_value=False)
+                        self.mDbClient.updateInDB(self.mDataBase, self.mTable, existItems)
+
+                items = self.mDbClient.getItemsFromDB(self.mDataBase, self.mTable, aProjection={'_id': 0})
+                self.assertEqual(expectedItems, items)
+            except Exception:
+                self.assertEqual(expectedItems, '{}'.format(sys.exc_info()[1]))
+
+            usePymongo3rdVersion = not usePymongo3rdVersion
 
     def test_deleteFromDB(self):
 

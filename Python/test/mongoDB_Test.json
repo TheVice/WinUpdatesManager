@@ -328,9 +328,65 @@
   ],
   "test_insertToDB": [
     {"items": {"firstItem": 1}},
+    {"items": {"firstItem": 1}},
+    {"items": [{"firstItem": 1}, {"secondItem": 2}, {"thirdItem": 3}]},
     {"items": [{"firstItem": 1}, {"secondItem": 2}, {"thirdItem": 3}]},
     {"documents must be a non-empty list": []},
+    {"cannot do an empty bulk write": []},
+    {"items": {}},
     {"items": {}}
+  ],
+  "test_updateInDB": [
+    {
+      "itemsToInsert": {"firstItem": 1},
+      "itemsToUpdate": [[{"firstItem": 1}, {"firstItem": "1st"}]],
+      "expectedItems": [{"firstItem": "1st"}]
+    },
+    {
+      "itemsToInsert": {"firstItem": 1},
+      "itemsToUpdate": [[{"firstItem": 1}, {"firstItem": "1st"}]],
+      "expectedItems": [{"firstItem": "1st"}]
+    },
+    {
+      "itemsToInsert": {"firstItem": 1},
+      "itemsToUpdate": [[{"firstItem": 1}, {"firstItem": 1}]],
+      "expectedItems": [{"firstItem": 1}]
+    },
+    {
+      "itemsToInsert": {"firstItem": 1},
+      "itemsToUpdate": [[{"firstItem": 1}, {"firstItem": 1}]],
+      "expectedItems": [{"firstItem": 1}]
+    },
+    {
+      "itemsToInsert": [{"firstItem": 1}, {"secondItem": 2}, {"thirdItem": 3}],
+      "itemsToUpdate": [[{"firstItem": 1}, {"firstItem": "1st"}], [{"secondItem": 2}, {"secondItem": "2nd"}], [{"thirdItem": 3}, {"thirdItem": "3rd"}]],
+      "expectedItems": [{"firstItem": "1st"}, {"secondItem": "2nd"}, {"thirdItem": "3rd"}]
+    },
+    {
+      "itemsToInsert": [{"firstItem": 1}, {"secondItem": 2}, {"thirdItem": 3}],
+      "itemsToUpdate": [[{"firstItem": 1}, {"firstItem": "1st"}], [{"secondItem": 2}, {"secondItem": "2nd"}], [{"thirdItem": 3}, {"thirdItem": "3rd"}]],
+      "expectedItems": [{"firstItem": "1st"}, {"secondItem": "2nd"}, {"thirdItem": "3rd"}]
+    },
+    {
+      "itemsToInsert": [{"firstItem": 1}, {"secondItem": 2}, {"thirdItem": 3}],
+      "itemsToUpdate": [[{"firstItem": 1}, {"firstItem": "1st"}], [{"secondItem": 2}, {"secondItem": "2nd"}], [{"thirdItem": 3}, {"thirdItem": 3}]],
+      "expectedItems": [{"firstItem": "1st"}, {"secondItem": "2nd"}, {"thirdItem": 3}]
+    },
+    {
+      "itemsToInsert": [{"firstItem": 1}, {"secondItem": 2}, {"thirdItem": 3}],
+      "itemsToUpdate": [[{"firstItem": 1}, {"firstItem": "1st"}], [{"secondItem": 2}, {"secondItem": "2nd"}], [{"thirdItem": 3}, {"thirdItem": 3}]],
+      "expectedItems": [{"firstItem": "1st"}, {"secondItem": "2nd"}, {"thirdItem": 3}]
+    },
+    {
+      "itemsToInsert": {"firstItem": 1},
+      "itemsToUpdate": [[{"firstItem": 1}, []]],
+      "expectedItems": "can't use an array for _id"
+    },
+    {
+      "itemsToInsert": {"firstItem": 1},
+      "itemsToUpdate": [[{"firstItem": 1}, []]],
+      "expectedItems": "The '_id' value cannot be of type Array"
+    }
   ],
   "test_addObjectIdFieldAtCollection": {
     "updates": [
