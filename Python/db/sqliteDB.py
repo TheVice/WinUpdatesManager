@@ -4,25 +4,23 @@ from core.unknownSubstance import UnknownSubstance
 
 def connect(aDbName):
 
-    db = sqlite3.connect(aDbName)
-    return db
+    return sqlite3.connect(aDbName)
 
 
-def disconnect(aDb):
+def disconnect(aConnection):
 
-    aDb.close()
-
-
-def writeToDataBase(aDb, aStatement):
-
-    cursor = aDb.cursor()
-    cursor.execute(aStatement)
-    aDb.commit()
+    aConnection.close()
 
 
-def readFromDataBase(aDb, aStatement):
+def writeToDataBase(aConnection, aStatement):
 
-    cursor = aDb.cursor()
+    aConnection.executescript(aStatement)
+    aConnection.commit()
+
+
+def readFromDataBase(aConnection, aStatement):
+
+    cursor = aConnection.cursor()
     cursor.execute(aStatement)
     return cursor
 
