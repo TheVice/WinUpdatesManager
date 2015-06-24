@@ -101,13 +101,18 @@ class MongoDBClient:
             db = self.mClient[aDB]
             table = db[aTable]
 
-
-            if version_tuple >= (3, ):  # if table.delete_many:
-                for item in aItems:
-                    table.delete_one(item)  # delete_many
+            if version_tuple >= (3, ):
+                if isinstance(aItems, list):
+                    for item in aItems:
+                        table.delete_one(item)
+                else:
+                    table.delete_one(aItems)
             else:
-                for item in aItems:
-                    table.remove(item)
+                if isinstance(aItems, list):
+                    for item in aItems:
+                        table.remove(item)
+                else:
+                    table.remove(aItems)
 
         except:
             raise Exception(exc_info()[1])
@@ -133,11 +138,7 @@ class MongoDBClient:
 
     def getDBs(self):
 
-        try:
-            return self.mClient.database_names()
-
-        except:
-            raise Exception(exc_info()[1])
+        return self.mClient.database_names()
 
     def getCollectionsFromDB(self, aDB):
 

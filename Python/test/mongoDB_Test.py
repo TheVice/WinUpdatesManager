@@ -1,13 +1,13 @@
 import sys
 import datetime
-import unittest
 from bson import ObjectId
-from unittest.mock import patch, MagicMock
+from unittest import main, TestCase
 from db.mongoDB import MongoDBClient
 from test.jsonHelper import JsonHelper
+from unittest.mock import patch, MagicMock
 
 
-class TestSequenceFunctions(unittest.TestCase):
+class TestSequenceFunctions(TestCase):
 
     def setUp(self):
         self.mJsonHelper = JsonHelper(__file__.replace('.py', '.json'))
@@ -28,15 +28,12 @@ class TestSequenceFunctions(unittest.TestCase):
                 self.assertEqual(testData[1], self.mDbClient.changeServer(testData[0], self.mServerSelectionTimeoutMS))
             except Exception:
                 exceptionText = '{}'.format(sys.exc_info()[1])
-                self.assertLess(0, testData[1].count(exceptionText))
+                self.assertTrue(exceptionText in testData[1])
 
     def test_getItemsFromDB(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
-
         self.mDbClient.insertToDB(self.mDataBase, self.mTable, self.mItemsForTest)
-
         for testData in testsData:
-
             sort = []
             if testData['sort'] is None:
                 sort = None
@@ -51,7 +48,7 @@ class TestSequenceFunctions(unittest.TestCase):
                                                       testData['limit'], sort)
                 expectedItems = testData['expectedItems']
                 for i in range(0, len(expectedItems)):
-                    if list(expectedItems[i].keys()).count('_id'):
+                    if expectedItems[i].get('_id'):
                         expectedItems[i]['_id'] = ObjectId(expectedItems[i]['_id'])
 
                 self.assertEqual(expectedItems, items)
@@ -97,7 +94,7 @@ class TestSequenceFunctions(unittest.TestCase):
             query = {}
             for itu in itemsToUpdate:
                 for key in itu[0].keys():
-                    if 0 == list(query.keys()).count(key):
+                    if not query.get(key):
                         query[key] = []
                     query[key].append(itu[0][key])
 
@@ -150,42 +147,107 @@ class TestSequenceFunctions(unittest.TestCase):
             usePymongo3rdVersion = not usePymongo3rdVersion
 
     def test_deleteFromDB(self):
+        testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
+        usePymongo3rdVersion = True
+        for testData in testsData:
+            self.mDbClient.dropCollectionsInDB(self.mDataBase, self.mTable)
+            self.mDbClient.insertToDB(self.mDataBase, self.mTable, self.mItemsForTest)
+            itemsToDelete = testData['itemsToDelete']
 
-        self.test_insertToDB()
+            expectedItems = testData['expectedItems']
+            try:
+                if usePymongo3rdVersion:
+                    self.mDbClient.deleteFromDB(self.mDataBase, self.mTable, itemsToDelete)
+                else:
+                    with patch('db.mongoDB.version_tuple') as mock_obj:
+                        mock_obj.__ge__ = MagicMock(return_value=False)
+                        self.mDbClient.deleteFromDB(self.mDataBase, self.mTable, itemsToDelete)
+
+                items = self.mDbClient.getItemsFromDB(self.mDataBase, self.mTable, aProjection={'_id': 0})
+                self.assertEqual(expectedItems, items)
+            except:
+                self.assertEqual(expectedItems, '{}'.format(sys.exc_info()[1]))
+
+            usePymongo3rdVersion = not usePymongo3rdVersion
 
     def test_dropDB(self):
+        dbs = self.mDbClient.getDBs()
+        self.assertTrue(self.mDataBase not in dbs)
+
+        self.mDbClient.insertToDB(self.mDataBase, self.mTable, self.mItemsForTest)
 
         dbs = self.mDbClient.getDBs()
-        self.assertEqual(0, dbs.count('win16'))
-        self.mDbClient.insertToDB('win16', 'updates2', [{}])
-        dbs = self.mDbClient.getDBs()
-        self.assertEqual(1, dbs.count('win16'))
+        self.assertTrue(self.mDataBase in dbs)
 
-        self.mDbClient.dropDB('win16')
+        self.mDbClient.dropDB(self.mDataBase)
 
         dbs = self.mDbClient.getDBs()
-        self.assertEqual(0, dbs.count('win16'))
+        self.assertTrue(self.mDataBase not in dbs)
 
-    def test_droCollectionsInDB(self):
+        with self.assertRaises(Exception):
+            self.mDbClient.dropDB([])
 
-        tables = self.mDbClient.getCollectionsFromDB('win32')
-        self.assertEqual(0, list(tables).count('updates2'))
-        self.mDbClient.insertToDB('win32', 'updates2', [{}])
-        tables = self.mDbClient.getCollectionsFromDB('win32')
-        self.assertEqual(1, list(tables).count('updates2'))
+    def test_dropCollectionsInDB(self):
+        tables = self.mDbClient.getCollectionsFromDB(self.mDataBase)
+        self.assertTrue(self.mTable not in tables)
+        self.mDbClient.insertToDB(self.mDataBase, self.mTable, self.mItemsForTest)
+        tables = self.mDbClient.getCollectionsFromDB(self.mDataBase)
+        self.assertTrue(self.mTable in tables)
 
-        self.mDbClient.dropCollectionsInDB('win32', 'updates2')
+        self.mDbClient.dropCollectionsInDB(self.mDataBase, self.mTable)
 
-        tables = self.mDbClient.getCollectionsFromDB('win32')
-        self.assertEqual(0, list(tables).count('updates2'))
+        tables = self.mDbClient.getCollectionsFromDB(self.mDataBase)
+        self.assertTrue(self.mTable not in tables)
+
+        with self.assertRaises(Exception):
+            self.mDbClient.dropCollectionsInDB(self.mDataBase, [])
 
     def test_getDBs(self):
+        testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
+        for testData in testsData:
+            dbs = self.mDbClient.getDBs()
+            dbsToCreate = testData['dbsToCreate']
+            for db in dbsToCreate:
+                self.assertTrue(db not in dbs)
+                self.mDbClient.insertToDB(db, self.mTable, self.mItemsForTest)
 
-        self.test_dropDB()
+            dbs = self.mDbClient.getDBs()
+            for db in dbsToCreate:
+                self.assertTrue(db in dbs)
+
+            dbsToDrop = testData['dbsToDrop']
+            for db in dbsToDrop:
+                self.mDbClient.dropDB(db)
+
+            dbs = self.mDbClient.getDBs()
+            expectedDbs = testData['expectedDbs']
+            for db in expectedDbs:
+                self.assertTrue(db in dbs)
 
     def test_getCollectionsFromDB(self):
+        testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
+        for testData in testsData:
+            try:
+                tables = self.mDbClient.getCollectionsFromDB(testData['dataBase'])
+                tablesToCreate = testData['tablesToCreate']
+                for table in tablesToCreate:
+                    self.assertTrue(table not in tables)
+                    self.mDbClient.insertToDB(testData['dataBase'], table, self.mItemsForTest)
 
-        self.test_droCollectionsInDB()
+                tables = self.mDbClient.getCollectionsFromDB(testData['dataBase'])
+                for table in tablesToCreate:
+                    self.assertTrue(table in tables)
+
+                tablesToDrop = testData['tablesToDrop']
+                for table in tablesToDrop:
+                    self.mDbClient.dropCollectionsInDB(testData['dataBase'], table)
+
+                expectedTables = testData['expectedTables']
+                for table in expectedTables:
+                    self.assertTrue(table in tables)
+
+            except:
+                self.assertEqual(testData['expectedTables'], '{}'.format(sys.exc_info()[1]))
 
     # def test_aggregate(self):
 
@@ -239,4 +301,4 @@ class TestSequenceFunctions(unittest.TestCase):
 
 if __name__ == '__main__':
 
-    unittest.main()
+    main()
