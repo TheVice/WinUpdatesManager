@@ -155,109 +155,66 @@ class MongoDBClient:
             db = self.mClient[aDB]
             table = db[aTable]
 
-            return table.aggregate(aAggregateExpression)
+            return list(table.aggregate(aAggregateExpression))
 
         except:
             raise Exception(exc_info()[1])
 
-    def removeDubsFromCollectionByObjectId(self, aDB, aTable, aCollection):
+    def getUniqueItemsFromCollection(self, aDB, aTable, aCollection):
 
         collection = []
 
-        inputObjectIds = []
+        inputIds = []
         for item in aCollection:
-            inputObjectIds.append(item['_id'])
+            inputIds.append(item['_id'])
 
-        if 0 < len(inputObjectIds):
+        if 0 < len(inputIds):
 
-            query = {'_id': {'$in': inputObjectIds}}
+            query = {'_id': {'$in': inputIds}}
             items = self.getItemsFromDB(aDB, aTable, query)
 
-            dataBaseObjectIds = []
+            dbIds = []
             for item in items:
-                dataBaseObjectIds.append(item['_id'])
+                dbIds.append(item['_id'])
 
-            uniqueObjectIds = list(set(inputObjectIds) -
-                                   set(dataBaseObjectIds))
-            if 0 < len(uniqueObjectIds):
-                for objectId in uniqueObjectIds:
-                    for inputItem in aCollection:
-                        if objectId == inputItem['_id']:
-                            collection.append(inputItem)
-                            break
+            uniqueIds = list(set(inputIds) - set(dbIds))
+
+            for uniqueId in uniqueIds:
+                for inputItem in aCollection:
+                    if uniqueId == inputItem['_id']:
+                        collection.append(inputItem)
+                        break
 
         return collection
-
-    def deleteUpdateDubsFromTable(self, aDB, aTableName):
-
-        updates = self.getItemsFromDB(aDB, aTableName)
-        for update in updates:
-            query = {}
-            query['Path'] = update['Path']
-            query['KB'] = update['KB']
-            query['Version'] = update['Version']
-            query['Type'] = update['Type']
-            query['Language'] = update['Language']
-            #query['Date'] = update['Date']
-
-            dubUpdates = self.getItemsFromDB(aDB, aTableName, query)
-
-            if len(dubUpdates) > 1:
-                dubUpdates.remove(dubUpdates[0])
-                self.deleteFromDB(aDB, aTableName, dubUpdates)
-
-    def getUpdateDubsFromTable(self, aDB, aTableName, aSkip=0, aLimit=5):
-
-        expression = [
-                      {'$group':
-                          {'_id': {
-                                  'Path': '$Path',
-                                  'KB': '$KB',
-                                  'Version': '$Version',
-                                  'Type': '$Type',
-                                  'Language': '$Language',
-                                  'Date': '$Date'
-                                  },
-                             'count': {'$sum': 1}
-                          }
-                      },
-                      {'$sort': {'count': -1}},
-                      {'$skip': aSkip},
-                      {'$limit': aLimit}]
-
-        result = self.aggregate(aDB=aDB,
-                                  aTable=aTableName,
-                                  aAggregateExpression=expression)
-
-        try:
-            if result['result'][0]['count'] < 2:
-                return None
-        except:
-            raise Exception(exc_info()[1])
-
-        return result
 
     @staticmethod
     def generateObjectId(aString):
 
         h = new('sha256', aString.encode('utf-8'))
-        aString = h.hexdigest()[:12]
-        if ObjectId.is_valid(aString.encode('utf-8')):
-            return ObjectId(aString.encode('utf-8'))
-        else:
-            raise Exception('Unable to generate ObjectId for:', aString)
+        s = h.hexdigest()[:12]
+        return ObjectId(s.encode('utf-8'))
 
     @staticmethod
     def addObjectIdFieldAtCollection(aCollection):
 
         for item in aCollection:
-            s = '{}{}{}{}{}{}'.format(item['Path'],
-                                      item['KB'],
-                                      item['Version'],
-                                      item['Type'],
-                                      item['Language'],
-                                      item['Date']
-                                      )
-            item['_id'] = MongoDBClient.generateObjectId(s)
+            if (item.get('Path') and item.get('KB') and
+                item.get('Version') and item.get('Type') and
+                item.get('Language') and item.get('Date')):
+                s = '{}{}{}{}{}{}'.format(item['Path'],
+                                          item['KB'],
+                                          item['Version'],
+                                          item['Type'],
+                                          item['Language'],
+                                          item['Date']
+                                          )
+                item['_id'] = MongoDBClient.generateObjectId(s)
+            else:
+                s = []
+                keys = sorted(item.keys())
+                for key in keys:
+                    if '_id' != key:
+                        s.append('{}'.format(item[key]))
+                item['_id'] = MongoDBClient.generateObjectId(''.join(s))
 
         return aCollection

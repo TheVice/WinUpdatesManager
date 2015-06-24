@@ -801,126 +801,264 @@
       "expectedTables": "name must be an instance of str"
     }
   ],
-  "test_addObjectIdFieldAtCollection": {
-    "updates": [
-      {
-        "KB": 3002657,
-        "Path": "\\3002657\\WindowsServer2003\\X64\\DEU\\WindowsServer2003-KB3002657-x64-DEU.exe",
-        "Version": "Windows Server 2003",
-        "Language": "German",
-        "Date": "2015, 3, 10",
-        "Type": "x64"
-      },
-      {
-        "KB": 3002657,
-        "Path": "\\3002657\\WindowsServer2003\\X64\\CHT\\WindowsServer2003-KB3002657-x64-CHT.exe",
-        "Version": "Windows Server 2003",
-        "Language": "Chinese (Traditional)",
-        "Date": "2015, 3, 10",
-        "Type": "x64"
-      },
-      {
-        "KB": 3002657,
-        "Path": "\\3002657\\WindowsServer2003\\X64\\CHS\\WindowsServer2003-KB3002657-x64-CHS.exe",
-        "Version": "Windows Server 2003",
-        "Language": "Chinese (Simplified)",
-        "Date": "2015, 3, 10",
-        "Type": "x64"
-      },
-      {
-        "KB": 3002657,
-        "Path": "\\3002657\\WindowsServer2003\\IA64\\JPN\\WindowsServer2003-KB3002657-ia64-JPN.exe",
-        "Version": "Windows Server 2003",
-        "Language": "Japanese",
-        "Date": "2015, 3, 10",
-        "Type": "IA64"
-      },
-      {
-        "KB": 3002657,
-        "Path": "\\3002657\\WindowsServer2003\\IA64\\FRA\\WindowsServer2003-KB3002657-ia64-FRA.exe",
-        "Version": "Windows Server 2003",
-        "Language": "French",
-        "Date": "2015, 3, 10",
-        "Type": "IA64"
-      },
-      {
-        "KB": 3002657,
-        "Path": "\\3002657\\WindowsServer2003\\IA64\\ENU\\WindowsServer2003-KB3002657-ia64-ENU.exe",
-        "Version": "Windows Server 2003",
-        "Language": "English",
-        "Date": "2015, 3, 10",
-        "Type": "IA64"
-      }
-    ],
-    "hashes": [
-      623665316337356236356334,
-      656266353438323161643162,
-      656561343036396434346363,
-      626261313530313261323330,
-      643866313033323139346339,
-      343266323963376236303965
-    ]
-  },
-  "test_removeDubsByObjectId": {
-    "updates": [
-      {
-        "KB": 3030377,
-        "Path": "\\3030377\\Windows8.1\\X86\\NEU\\Windows8.1-KB3030377-x86.msu",
-        "Version": "Windows 8.1",
-        "Language": "Neutral",
-        "Date": "2015, 3, 10",
-        "Type": "x86"
-      },
-      {
-        "KB": 3030377,
-        "Path": "\\3030377\\Windows8.1\\X64\\NEU\\Windows8.1-KB3030377-x64.msu",
-        "Version": "Windows 8.1",
-        "Language": "Neutral",
-        "Date": "2015, 3, 10",
-        "Type": "x64"
-      },
-      {
-        "KB": 3030377,
-        "Path": "\\3030377\\Windows8.1\\ARM\\NEU\\Windows8.1-KB3030377-arm.msu",
-        "Version": "Windows 8.1",
-        "Language": "Neutral",
-        "Date": "2015, 3, 10",
-        "Type": "ARM"
-      },
-      {
-        "KB": 3030377,
-        "Path": "\\3030377\\Windows8\\X86\\NEU\\Windows8-RT-KB3030377-x86.msu",
-        "Version": "Windows 8",
-        "Language": "Neutral",
-        "Date": "2015, 3, 10",
-        "Type": "x86"
-      },
-      {
-        "KB": 3030377,
-        "Path": "\\3030377\\Windows8\\X64\\NEU\\Windows8-RT-KB3030377-x64.msu",
-        "Version": "Windows 8",
-        "Language": "Neutral",
-        "Date": "2015, 3, 10",
-        "Type": "x64"
-      },
-      {
-        "KB": 3030377,
-        "Path": "\\3030377\\Windows8\\ARM\\NEU\\Windows8-RT-KB3030377-arm.msu",
-        "Version": "Windows 8",
-        "Language": "Neutral",
-        "Date": "2015, 3, 10",
-        "Type": "ARM"
-      }
-    ],
-    "uniqueUpdates": [
-      {
-        "KB": 3030398,
-        "Path": "\\3030398\\WindowsVista\\X86\\NEU\\Windows6.0-KB3030398-x86.msu",
-        "Version": "Windows Vista",
-        "Language": "Neutral",
-        "Date": "2015, 3, 10",
-        "Type": "x86"
-      }
-    ]
-  }
+  "test_aggregate": [
+    {
+      "aggregateExpression": [
+        {"$group": {"_id": {"Version": "$Version"}, "count": {"$sum": 1}}},
+        {"$sort": {"_id": 1}},
+        {"$project": {"_id":"$_id.Version", "count": "$_id.count"}}
+      ],
+      "expectedResult": [
+        {"_id": "Windows 2000"},
+        {"_id": "Windows Vista"},
+        {"_id": "Windows XP"},
+        {"_id": {"UNKNOWN VERSION": "\\2909210\\X64\\ENU\\IE8-WindowsServer2003.WindowsXP-KB2909210-x64-ENU.exe"}},
+        {"_id": {"UNKNOWN VERSION": "\\2909212\\X86\\ENU\\WindowsXP-KB2909212-x86-ENU.exe"}},
+        {"_id": {"UNKNOWN VERSION": "\\2909921\\X64\\ENU\\IE7-WindowsServer2003.WindowsXP-KB2909921-x64-ENU.exe"}},
+        {"_id": {"UNKNOWN VERSION": "\\2909921\\X64\\ENU\\IE8-WindowsServer2003.WindowsXP-KB2909921-x64-ENU.exe"}},
+        {"_id": {"UNKNOWN VERSION": "\\2909921\\X86\\ENU\\IE8-WindowsXP-KB2909921-x86-ENU.exe"}},
+        {"_id": {"UNKNOWN VERSION": "\\2909921\\X86\\ENU\\WindowsXP-KB2909921-x86-ENU.exe"}},
+        {"_id": {"UNKNOWN VERSION": "\\2916036\\X64\\ENU\\WindowsServer2003.WindowsXP-KB2916036-x64-ENU.exe"}},
+        {"_id": {"UNKNOWN VERSION": "\\2916036\\X86\\ENU\\WindowsXP-KB2916036-x86-ENU.exe"}}
+      ]
+    },
+    {
+      "aggregateExpression": {},
+      "expectedResult": "pipeline must be a list"
+    }
+  ],
+  "test_getUniqueItemsFromCollection": [
+    {
+      "itemsToAdd": [
+        {
+          "KB": 3030377,
+          "Path": "\\3030377\\Windows8.1\\X86\\NEU\\Windows8.1-KB3030377-x86.msu",
+          "Version": "Windows 8.1",
+          "Language": "Neutral",
+          "Date": "2015, 3, 10",
+          "Type": "x86"
+        },
+        {
+          "KB": 3030377,
+          "Path": "\\3030377\\Windows8.1\\X64\\NEU\\Windows8.1-KB3030377-x64.msu",
+          "Version": "Windows 8.1",
+          "Language": "Neutral",
+          "Date": "2015, 3, 10",
+          "Type": "x64"
+        },
+        {
+          "KB": 3030377,
+          "Path": "\\3030377\\Windows8.1\\ARM\\NEU\\Windows8.1-KB3030377-arm.msu",
+          "Version": "Windows 8.1",
+          "Language": "Neutral",
+          "Date": "2015, 3, 10",
+          "Type": "ARM"
+        },
+        {
+          "KB": 3030377,
+          "Path": "\\3030377\\Windows8\\X86\\NEU\\Windows8-RT-KB3030377-x86.msu",
+          "Version": "Windows 8",
+          "Language": "Neutral",
+          "Date": "2015, 3, 10",
+          "Type": "x86"
+        },
+        {
+          "KB": 3030377,
+          "Path": "\\3030377\\Windows8\\X64\\NEU\\Windows8-RT-KB3030377-x64.msu",
+          "Version": "Windows 8",
+          "Language": "Neutral",
+          "Date": "2015, 3, 10",
+          "Type": "x64"
+        },
+        {
+          "KB": 3030377,
+          "Path": "\\3030377\\Windows8\\ARM\\NEU\\Windows8-RT-KB3030377-arm.msu",
+          "Version": "Windows 8",
+          "Language": "Neutral",
+          "Date": "2015, 3, 10",
+          "Type": "ARM"
+        },
+        {
+          "KB": 3030398,
+          "Path": "\\3030398\\WindowsVista\\X86\\NEU\\Windows6.0-KB3030398-x86.msu",
+          "Version": "Windows Vista",
+          "Language": "Neutral",
+          "Date": "2015, 3, 10",
+          "Type": "x86"
+        },
+        {
+          "KB": 3030398,
+          "Path": "\\3030398\\WindowsVista\\X86\\NEU\\Windows6.0-KB3030398-x86.msu",
+          "Version": "Windows Vista",
+          "Language": "Neutral",
+          "Date": "2015, 3, 10",
+          "Type": "x86"
+        },
+        {
+          "KB": 3030377,
+          "Path": "\\3030377\\Windows8\\X86\\NEU\\Windows8-RT-KB3030377-x86.msu",
+          "Version": "Windows 8",
+          "Language": "Neutral",
+          "Date": "2015, 3, 10",
+          "Type": "x86"
+        }
+      ],
+      "expectedItems": [
+        {
+          "KB": 3030377,
+          "Path": "\\3030377\\Windows8.1\\X86\\NEU\\Windows8.1-KB3030377-x86.msu",
+          "Version": "Windows 8.1",
+          "Language": "Neutral",
+          "Date": "2015, 3, 10",
+          "Type": "x86"
+        },
+        {
+          "KB": 3030377,
+          "Path": "\\3030377\\Windows8.1\\X64\\NEU\\Windows8.1-KB3030377-x64.msu",
+          "Version": "Windows 8.1",
+          "Language": "Neutral",
+          "Date": "2015, 3, 10",
+          "Type": "x64"
+        },
+        {
+          "KB": 3030377,
+          "Path": "\\3030377\\Windows8.1\\ARM\\NEU\\Windows8.1-KB3030377-arm.msu",
+          "Version": "Windows 8.1",
+          "Language": "Neutral",
+          "Date": "2015, 3, 10",
+          "Type": "ARM"
+        },
+        {
+          "KB": 3030377,
+          "Path": "\\3030377\\Windows8\\X86\\NEU\\Windows8-RT-KB3030377-x86.msu",
+          "Version": "Windows 8",
+          "Language": "Neutral",
+          "Date": "2015, 3, 10",
+          "Type": "x86"
+        },
+        {
+          "KB": 3030377,
+          "Path": "\\3030377\\Windows8\\X64\\NEU\\Windows8-RT-KB3030377-x64.msu",
+          "Version": "Windows 8",
+          "Language": "Neutral",
+          "Date": "2015, 3, 10",
+          "Type": "x64"
+        },
+        {
+          "KB": 3030377,
+          "Path": "\\3030377\\Windows8\\ARM\\NEU\\Windows8-RT-KB3030377-arm.msu",
+          "Version": "Windows 8",
+          "Language": "Neutral",
+          "Date": "2015, 3, 10",
+          "Type": "ARM"
+        },
+        {
+          "KB": 3030398,
+          "Path": "\\3030398\\WindowsVista\\X86\\NEU\\Windows6.0-KB3030398-x86.msu",
+          "Version": "Windows Vista",
+          "Language": "Neutral",
+          "Date": "2015, 3, 10",
+          "Type": "x86"
+        }
+      ]
+    }
+  ],
+  "test_generateObjectId": [
+    {
+      "": 653362306334343239386663,
+      "The quick brown fox jumps over the lazy dog": 643761386662623330376437,
+      "123": 613636356134353932303432
+    }
+  ],
+  "test_addObjectIdFieldAtCollection": [
+    {
+      "items": [
+        {
+          "KB": 3002657,
+          "Path": "\\3002657\\WindowsServer2003\\X64\\DEU\\WindowsServer2003-KB3002657-x64-DEU.exe",
+          "Version": "Windows Server 2003",
+          "Language": "German",
+          "Date": "2015, 3, 10",
+          "Type": "x64"
+        },
+        {
+          "KB": 3002657,
+          "Path": "\\3002657\\WindowsServer2003\\X64\\CHT\\WindowsServer2003-KB3002657-x64-CHT.exe",
+          "Version": "Windows Server 2003",
+          "Language": "Chinese (Traditional)",
+          "Date": "2015, 3, 10",
+          "Type": "x64"
+        },
+        {
+          "KB": 3002657,
+          "Path": "\\3002657\\WindowsServer2003\\X64\\CHS\\WindowsServer2003-KB3002657-x64-CHS.exe",
+          "Version": "Windows Server 2003",
+          "Language": "Chinese (Simplified)",
+          "Date": "2015, 3, 10",
+          "Type": "x64"
+        },
+        {
+          "KB": 3002657,
+          "Path": "\\3002657\\WindowsServer2003\\IA64\\JPN\\WindowsServer2003-KB3002657-ia64-JPN.exe",
+          "Version": "Windows Server 2003",
+          "Language": "Japanese",
+          "Date": "2015, 3, 10",
+          "Type": "IA64"
+        },
+        {
+          "KB": 3002657,
+          "Path": "\\3002657\\WindowsServer2003\\IA64\\FRA\\WindowsServer2003-KB3002657-ia64-FRA.exe",
+          "Version": "Windows Server 2003",
+          "Language": "French",
+          "Date": "2015, 3, 10",
+          "Type": "IA64"
+        },
+        {
+          "KB": 3002657,
+          "Path": "\\3002657\\WindowsServer2003\\IA64\\ENU\\WindowsServer2003-KB3002657-ia64-ENU.exe",
+          "Version": "Windows Server 2003",
+          "Language": "English",
+          "Date": "2015, 3, 10",
+          "Type": "IA64"
+        }
+      ],
+      "hashes": [
+        623665316337356236356334,
+        656266353438323161643162,
+        656561343036396434346363,
+        626261313530313261323330,
+        643866313033323139346339,
+        343266323963376236303965
+      ]
+    },
+    {
+      "items": [
+        {
+          "A": 1,
+          "B": 2,
+          "C": 3
+        },
+        {
+          "B": 2,
+          "A": 1,
+          "_id": 321,
+          "C": 3
+        },
+        {
+          "C": 3,
+          "B": 2,
+          "A": 1,
+          "_id": 123
+        },
+        {
+        }
+      ],
+      "hashes": [
+        613636356134353932303432,
+        613636356134353932303432,
+        613636356134353932303432,
+        653362306334343239386663
+      ]
+    }
+  ]
 }

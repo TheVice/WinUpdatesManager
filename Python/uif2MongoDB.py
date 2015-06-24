@@ -11,7 +11,7 @@ def uif2MongoDB(aUpdates, aDataBaseName, aTableName, aHostAndPort):
 
     updates = MongoDBClient.addObjectIdFieldAtCollection(aUpdates)
     dataBase = MongoDBClient(aHostAndPort)
-    updates = dataBase.removeDubsFromCollectionByObjectId(aDataBaseName, aTableName, updates)
+    updates = dataBase.getUniqueItemsFromCollection(aDataBaseName, aTableName, updates)
 
     if 0 < len(updates):
         dataBase.insertToDB(dataBaseName, tableName, updates)

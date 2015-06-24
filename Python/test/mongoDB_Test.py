@@ -1,6 +1,6 @@
 import sys
-import datetime
 from bson import ObjectId
+from datetime import datetime
 from unittest import main, TestCase
 from db.mongoDB import MongoDBClient
 from test.jsonHelper import JsonHelper
@@ -249,54 +249,58 @@ class TestSequenceFunctions(TestCase):
             except:
                 self.assertEqual(testData['expectedTables'], '{}'.format(sys.exc_info()[1]))
 
-    # def test_aggregate(self):
+    def test_aggregate(self):
+        testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
+        self.mDbClient.insertToDB(self.mDataBase, self.mTable, self.mItemsForTest)
+        for testData in testsData:
+            aggregateExpression = testData['aggregateExpression']
+            expectedResult = testData['expectedResult']
 
-    def test_removeDubsFromCollectionByObjectId(self):
+            try:
+                result = self.mDbClient.aggregate(self.mDataBase, self.mTable, aggregateExpression)
+                self.assertEqual(expectedResult, result)
+            except:
+                self.assertEqual(expectedResult, '{}'.format(sys.exc_info()[1]))
 
-        updates = self.mJsonHelper.GetArray('test_removeDubsByObjectId', 'updates')
-        for update in updates:
-            update['Date'] = datetime.datetime.strptime(update['Date'], '%Y, %m, %d')
+    def test_getUniqueItemsFromCollection(self):
+        testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
+        for testData in testsData:
+            self.mDbClient.dropCollectionsInDB(self.mDataBase, self.mTable)
+            self.mDbClient.insertToDB(self.mDataBase, self.mTable, self.mItemsForTest)
+            itemsToAdd = testData['itemsToAdd']
+            itemsToAdd = MongoDBClient.addObjectIdFieldAtCollection(itemsToAdd)
+            self.mItemsForTest.extend(itemsToAdd)
+            self.mItemsForTest.sort(key=lambda item: item['_id'])
 
-        updates = MongoDBClient.addObjectIdFieldAtCollection(updates)
+            with self.assertRaises(Exception):
+                self.mDbClient.insertToDB(self.mDataBase, self.mTable, self.mItemsForTest)
 
-        self.mDbClient.dropDB('win16')
-        self.mDbClient.insertToDB('win16', 'updates2', updates)
+            itemsToAdd = self.mDbClient.getUniqueItemsFromCollection(self.mDataBase, self.mTable, self.mItemsForTest)
+            self.mDbClient.insertToDB(self.mDataBase, self.mTable, itemsToAdd)
 
-        updatesCount = len(updates)
-        items = self.mDbClient.getItemsFromDB('win16', 'updates2')
-        self.assertEquals(updatesCount, len(items))
+            expectedItems = testData['expectedItems']
+            expectedItems = MongoDBClient.addObjectIdFieldAtCollection(expectedItems)
+            self.assertEqual(len(expectedItems), len(itemsToAdd))
+            for item in expectedItems:
+                self.assertTrue(item in itemsToAdd)
 
-        uniqueUpdates = self.mJsonHelper.GetArray('test_removeDubsByObjectId', 'uniqueUpdates')
-        for update in uniqueUpdates:
-            update['Date'] = datetime.datetime.strptime(update['Date'], '%Y, %m, %d')
-
-        uniqueUpdates = MongoDBClient.addObjectIdFieldAtCollection(uniqueUpdates)
-        updatesCount += len(uniqueUpdates)
-
-        updates.extend(uniqueUpdates)
-        updates = self.mDbClient.removeDubsFromCollectionByObjectId('win16', 'updates2', updates)
-        self.assertEqual(uniqueUpdates, updates)
-        self.mDbClient.insertToDB('win16', 'updates2', updates)
-        items = self.mDbClient.getItemsFromDB('win16', 'updates2')
-        self.assertEquals(updatesCount, len(items))
-
-        self.mDbClient.dropDB('win16')
-
-    # def test_deleteUpdateDubsFromTable(self):
-
-    # def test_getUpdateDubsFromTable(self):
+    def test_generateObjectId(self):
+        testsData = self.mJsonHelper.GetTestInputOutputData(sys._getframe().f_code.co_name)
+        for testData in testsData:
+            self.assertEqual(testData[1], int('{}'.format(MongoDBClient.generateObjectId(testData[0]))))
 
     def test_addObjectIdFieldAtCollection(self):
-
-        updates = self.mJsonHelper.GetArray('test_addObjectIdFieldAtCollection', 'updates')
-        for update in updates:
-            update['Date'] = datetime.datetime.strptime(update['Date'], '%Y, %m, %d').date()
-
-        updates = MongoDBClient.addObjectIdFieldAtCollection(updates)
-        hashes = self.mJsonHelper.GetArray('test_addObjectIdFieldAtCollection', 'hashes')
-
-        for i in zip(updates, hashes):
-            self.assertEquals(str(i[1]), str(i[0]['_id']))
+        testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
+        for testData in testsData:
+            items = testData['items']
+            for i in items:
+                if i.get('Date'):
+                    i['Date'] = datetime.strptime(i['Date'], '%Y, %m, %d').date()
+            items = MongoDBClient.addObjectIdFieldAtCollection(items)
+            expectedHashes = testData['hashes']
+            for i in items:
+                objectHash = int('{}'.format(i['_id']))
+                self.assertTrue(objectHash in expectedHashes)
 
 
 if __name__ == '__main__':
