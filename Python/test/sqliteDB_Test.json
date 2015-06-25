@@ -10,7 +10,7 @@
       "expectedReadResult": ["Items"]
     },
     {
-      "writeStatement": "CREATE TABLE Items (Id INTEGER PRIMARY KEY UNIQUE NOT NULL);INSERT INTO Items (Id) VALUES(1);INSERT INTO Items (Id) VALUES(2);INSERT INTO Items (Id) VALUES(3);",
+      "writeStatement": "CREATE TABLE Items (Id INTEGER PRIMARY KEY UNIQUE NOT NULL); INSERT INTO Items (Id) VALUES(1); INSERT INTO Items (Id) VALUES(2); INSERT INTO Items (Id) VALUES(3)",
       "readStatement": "SELECT Id FROM Items",
       "expectedReadResult": [1, 2, 3]
     }
@@ -20,6 +20,33 @@
       "readStatement": "SELECT name FROM (SELECT * FROM sqlite_master UNION ALL SELECT * FROM sqlite_temp_master) WHERE type LIKE 'table' ORDER BY name",
       "writeStatement": "CREATE TABLE Items (Id INTEGER PRIMARY KEY UNIQUE NOT NULL)",
       "expectedReadResult": ["Items"]
+    }
+  ],
+  "test_listTables": [
+    {
+      "writeStatement": "CREATE TABLE Items (Id INTEGER PRIMARY KEY UNIQUE NOT NULL); CREATE TABLE Items2 (Id INTEGER PRIMARY KEY UNIQUE NOT NULL, Id2 INTEGER UNIQUE NOT NULL)",
+      "expectedReadResult": ["Items", "Items2"]
+    }
+  ],
+  "test_isTableExist": [
+    {
+      "writeStatement": "CREATE TABLE Items (Id INTEGER PRIMARY KEY UNIQUE NOT NULL); CREATE TABLE Items2 (Id INTEGER PRIMARY KEY UNIQUE NOT NULL, Id2 INTEGER UNIQUE NOT NULL)",
+      "tables": ["Items0", "Items", "Items1", "Items2", "Items3"],
+      "expectedResults": [false, true, false, true, false]
+    }
+  ],
+  "test_listRows": [
+    {
+      "writeStatement": "CREATE TABLE Items (Id INTEGER PRIMARY KEY UNIQUE NOT NULL); CREATE TABLE Items2 (Id INTEGER PRIMARY KEY UNIQUE NOT NULL, Id2 INTEGER UNIQUE NOT NULL)",
+      "tables": ["Items", "Items2"],
+      "expectedResults": [["Id"], ["Id", "Id2"]]
+    }
+  ],
+  "test_isRowExist": [
+    {
+      "writeStatement": "CREATE TABLE Items (Id INTEGER PRIMARY KEY UNIQUE NOT NULL); CREATE TABLE Items2 (Id INTEGER PRIMARY KEY UNIQUE NOT NULL, Id2 INTEGER UNIQUE NOT NULL)",
+      "inputData": [{"Items": ["Id", "Id2"]}, {"Items2": ["Id0", "Id", "Id2", "Id1"]}, {"Items3": ["Id", "Id2", "Id0", "Id", "Id2", "Id1"]}],
+      "expectedResults": [[true, false], [false, true, true, false], [false, false, false, false, false, false]]
     }
   ],
 "test_addUpdate": {

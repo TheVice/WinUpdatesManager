@@ -1,3 +1,4 @@
+import re
 import sqlite3
 from core.unknownSubstance import UnknownSubstance
 
@@ -25,6 +26,65 @@ def readFromDataBase(aConnection, aStatement):
     return cursor
 
 
+def listTables(aConnection):
+
+    statement = ('SELECT name FROM sqlite_master'
+                 ' WHERE type LIKE \'table\''
+                 ' ORDER BY name')
+    tables = readFromDataBase(aConnection, statement).fetchall()
+    for i in range(0, len(tables)):
+        tables[i] = tables[i][0]
+    return tables
+
+
+def isTableExist(aConnection, aTable):
+
+    statement = ('SELECT name FROM sqlite_master'
+                 ' WHERE type LIKE \'table\''
+                 ' AND name LIKE \'{}\''.format(aTable))
+    return readFromDataBase(aConnection, statement).fetchone() is not None
+
+
+def listRows(aConnection, aTable):
+
+    statement = ('SELECT sql FROM sqlite_master'
+        ' WHERE tbl_name = \'{}\' AND type = \'table\''.format(aTable))
+    tableInfo = readFromDataBase(aConnection, statement).fetchone()
+
+    if tableInfo is not None:
+        tableInfo = tableInfo[0]
+
+        rows = []
+        rows.append(re.search('\([A-Za-z]\w+', tableInfo).group(0)[1:])
+
+        while -1 != tableInfo.find(','):
+            row = re.search(',[A-Za-z ]\w+', tableInfo).group(0)
+            row = re.search('[A-Za-z]\w+', row).group(0)
+            tableInfo = tableInfo[tableInfo.find(row) + len(row):]
+            rows.append(row)
+
+        tableInfo = rows
+
+    return tableInfo
+
+
+def isRowExist(aConnection, aTable, aRow):
+
+    statement = ('SELECT sql FROM sqlite_master'
+        ' WHERE tbl_name = \'{}\' AND type = \'table\''.format(aTable))
+    tableInfo = readFromDataBase(aConnection, statement).fetchone()
+
+    if tableInfo is not None:
+        tableInfo = tableInfo[0]
+
+        if (-1 != tableInfo.find('({} '.format(aRow)) or
+                -1 != tableInfo.find(',{} '.format(aRow)) or
+                -1 != tableInfo.find(', {} '.format(aRow))):
+            return True
+
+    return False
+
+
 def insertInto(aDb, aTable, aRowName, aItem):
 
     writeToDataBase(aDb,
@@ -46,30 +106,6 @@ def getSomethingByIDFrom(aDb, aTable, aRowName, aId):
         '''SELECT {} FROM {} WHERE id LIKE {}'''.format
         (aRowName, aTable, aId)).fetchone()
     return fields[0] if fields is not None else None
-
-
-def findTable(aDb, aTable):
-
-    return readFromDataBase(aDb, '''SELECT name FROM
-        (SELECT * FROM sqlite_master UNION ALL
-         SELECT * FROM sqlite_temp_master)
-         WHERE type LIKE 'table' AND name LIKE '{}'
-         ORDER BY name
-         '''.format(aTable)).fetchone()
-
-
-def listTables(aDb):
-
-    rawTables = readFromDataBase(aDb, '''SELECT name FROM
-       (SELECT * FROM sqlite_master UNION ALL
-        SELECT * FROM sqlite_temp_master)
-        WHERE type LIKE 'table'
-        ORDER BY name''')
-
-    tables = []
-    for table in rawTables:
-        tables.append(table[0])
-    return tables
 
 
 def listCollections(aDb, aTable):
