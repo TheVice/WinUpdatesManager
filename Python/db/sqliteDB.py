@@ -85,11 +85,56 @@ def isRowExist(aConnection, aTable, aRow):
     return False
 
 
-def insertInto(aDb, aTable, aRowName, aItem):
+def dropTable(aConnection, aTable):
 
-    writeToDataBase(aDb,
-        '''INSERT INTO {} ({}) VALUES({})'''.format
-        (aTable, aRowName, aItem))
+    statement = ('DROP TABLE {}'.format(aTable))
+    writeToDataBase(aConnection, statement)
+
+
+def clearTable(aConnection, aTable):
+
+    statement = ('DELETE FROM {}'.format(aTable))
+    writeToDataBase(aConnection, statement)
+
+
+def getFrom(aConnection, aTable, aRows=None):
+
+    if aRows:
+        aRows = '{}'.format(aRows)
+        aRows = aRows.replace('[', '').replace(']', '')
+        aRows = aRows.replace('\'', '')
+        template = 'SELECT {} FROM {}'.format(aRows, aTable)
+    else:
+        template = 'SELECT * FROM {}'.format(aTable)
+
+    items = readFromDataBase(aConnection, template).fetchall()
+    for i in range(0, len(items)):
+        if 1 == len(items[i]):
+            items[i] = items[i][0]
+        else:
+            items[i] = list(items[i])
+    return items
+
+
+def insertInto(aConnection, aTable, aItems, aRows=None):
+
+    if not isinstance(aItems, list):
+         aItems = [aItems]
+
+    if aRows:
+        aRows = '{}'.format(aRows)
+        aRows = aRows.replace('[', '').replace(']', '')
+        template = 'INSERT INTO {} (' + aRows + ') VALUES({});'
+    else:
+        template = 'INSERT INTO {} VALUES({});'
+
+    statement = []
+    for item in aItems:
+        item = '{}'.format(item)
+        item = item.replace('[', '').replace(']', '')
+        statement.append(template.format(aTable, item))
+
+    writeToDataBase(aConnection, ''.join(statement))
 
 
 def getIDFrom(aDb, aTable, aRowName, aItem):
@@ -236,7 +281,7 @@ def getSetSubstanceID(aDb, aTable, aRowName, aItem):
     if substanceID is not None:
         return substanceID
 
-    insertInto(aDb, aTable, aRowName, aItem)
+    insertInto(aDb, aTable, aItem, aRowName)
     return getIDFrom(aDb, aTable, aRowName, aItem)
 
 

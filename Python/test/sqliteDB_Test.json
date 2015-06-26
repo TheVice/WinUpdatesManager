@@ -49,6 +49,44 @@
       "expectedResults": [[true, false], [false, true, true, false], [false, false, false, false, false, false]]
     }
   ],
+  "test_dropTable": [
+    {
+      "writeStatement": "CREATE TABLE Items (Id INTEGER PRIMARY KEY UNIQUE NOT NULL); CREATE TABLE Items2 (Id INTEGER PRIMARY KEY UNIQUE NOT NULL)",
+      "table": "Items"
+    },
+    {
+      "writeStatement": "CREATE TABLE Items (Id INTEGER PRIMARY KEY UNIQUE NOT NULL); CREATE TABLE Items2 (Id INTEGER PRIMARY KEY UNIQUE NOT NULL)",
+      "table": "Items2"
+    }
+  ],
+  "test_getFrom": [
+    {
+      "writeStatement": "CREATE TABLE Items (Id INTEGER PRIMARY KEY UNIQUE NOT NULL); INSERT INTO Items (Id) VALUES(1); INSERT INTO Items (Id) VALUES(2); INSERT INTO Items (Id) VALUES(3); INSERT INTO Items (Id) VALUES(4)",
+      "table": "Items",
+      "rows": ["Id"],
+      "expectedResult": [1, 2, 3, 4]
+    },
+    {
+      "writeStatement": "CREATE TABLE Items2 (Id INTEGER PRIMARY KEY UNIQUE NOT NULL, Id2 INTEGER UNIQUE NOT NULL); INSERT INTO Items2 (Id, Id2) VALUES(1, 2); INSERT INTO Items2 (Id, Id2) VALUES(3, 4)",
+      "table": "Items2",
+      "rows": ["Id", "Id2"],
+      "expectedResult": [[1, 2], [3, 4]]
+    }
+  ],
+  "test_insertInto": [
+    {
+      "writeStatement": "CREATE TABLE Items (Id INTEGER PRIMARY KEY UNIQUE NOT NULL)",
+      "table": "Items",
+      "rows": ["Id"],
+      "items": [1, 2, 3, 4]
+    },
+    {
+      "writeStatement": "CREATE TABLE Items2 (Id INTEGER PRIMARY KEY UNIQUE NOT NULL, Id2 INTEGER UNIQUE NOT NULL)",
+      "table": "Items2",
+      "rows": ["Id", "Id2"],
+      "items": [[1, 2], [3, 4]]
+    }
+  ],
 "test_addUpdate": {
   "update": {
     "Date": "2011, 5, 10",

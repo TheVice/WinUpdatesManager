@@ -143,10 +143,82 @@ class TestSequenceFunctions(TestCase):
 
             db.sqliteDB.disconnect(self.mConnection)
 
+    def test_dropTable(self):
+        db.sqliteDB.disconnect(self.mConnection)
+        testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
+        for testData in testsData:
+            self.mConnection = db.sqliteDB.connect(self.mDataBase)
+
+            writeStatement = testData['writeStatement']
+            db.sqliteDB.writeToDataBase(self.mConnection, writeStatement)
+
+            table = testData['table']
+
+            self.assertTrue(db.sqliteDB.isTableExist(self.mConnection, table))
+            db.sqliteDB.dropTable(self.mConnection, table)
+            self.assertFalse(db.sqliteDB.isTableExist(self.mConnection, table))
+
+            db.sqliteDB.disconnect(self.mConnection)
+
+    def test_getFrom(self):
+        db.sqliteDB.disconnect(self.mConnection)
+        testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
+        for testData in testsData:
+            self.mConnection = db.sqliteDB.connect(self.mDataBase)
+
+            writeStatement = testData['writeStatement']
+            db.sqliteDB.writeToDataBase(self.mConnection, writeStatement)
+
+            table = testData['table']
+
+            result = db.sqliteDB.getFrom(self.mConnection, table)
+            expectedResult = testData['expectedResult']
+            self.assertEqual(expectedResult, result)
+
+            rows = testData['rows']
+            result = db.sqliteDB.getFrom(self.mConnection, table, rows)
+            expectedResult = testData['expectedResult']
+            self.assertEqual(expectedResult, result)
+
+            db.sqliteDB.disconnect(self.mConnection)
+
     def test_insertInto(self):
+        db.sqliteDB.disconnect(self.mConnection)
+        testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
+        for testData in testsData:
+            self.mConnection = db.sqliteDB.connect(self.mDataBase)
+
+            writeStatement = testData['writeStatement']
+            db.sqliteDB.writeToDataBase(self.mConnection, writeStatement)
+
+            table = testData['table']
+            rows = testData['rows']
+            items = testData['items']
+
+            self.assertNotEqual(items, db.sqliteDB.getFrom(self.mConnection, table))
+            self.assertNotEqual(items, db.sqliteDB.getFrom(self.mConnection, table, rows))
+
+            db.sqliteDB.insertInto(self.mConnection, table, items)
+
+            self.assertEqual(items, db.sqliteDB.getFrom(self.mConnection, table))
+            self.assertEqual(items, db.sqliteDB.getFrom(self.mConnection, table, rows))
+
+            db.sqliteDB.clearTable(self.mConnection, table)
+
+            self.assertNotEqual(items, db.sqliteDB.getFrom(self.mConnection, table))
+            self.assertNotEqual(items, db.sqliteDB.getFrom(self.mConnection, table, rows))
+
+            db.sqliteDB.insertInto(self.mConnection, table, items, rows)
+
+            self.assertEqual(items, db.sqliteDB.getFrom(self.mConnection, table))
+            self.assertEqual(items, db.sqliteDB.getFrom(self.mConnection, table, rows))
+
+            db.sqliteDB.disconnect(self.mConnection)
+
+    def test_insertInto2(self):
 
         self.assertEqual(None, db.sqliteDB.getIDFrom(self.mConnection, 'KBs', 'id', 1))
-        db.sqliteDB.insertInto(self.mConnection, 'KBs', 'id', 1)
+        db.sqliteDB.insertInto(self.mConnection, 'KBs', 1, 'id')
         self.assertNotEqual(None, db.sqliteDB.getIDFrom(self.mConnection, 'KBs', 'id', 1))
 
     def test_getIDFrom(self):
