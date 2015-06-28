@@ -96,7 +96,7 @@ def isTableExist(aDataBase, aTable):
 def listRows(aDataBase, aTable):
 
     statement = ('SELECT sql FROM sqlite_master'
-        ' WHERE tbl_name = \'{}\' AND type = \'table\''.format(aTable))
+        ' WHERE tbl_name LIKE \'{}\' AND type LIKE \'table\''.format(aTable))
     tableInfo = read(aDataBase, statement, lambda l: l.fetchone())
 
     if tableInfo is not None:
@@ -119,7 +119,7 @@ def listRows(aDataBase, aTable):
 def isRowExist(aDataBase, aTable, aRow):
 
     statement = ('SELECT sql FROM sqlite_master'
-        ' WHERE tbl_name = \'{}\' AND type = \'table\''.format(aTable))
+        ' WHERE tbl_name LIKE \'{}\' AND type LIKE \'table\''.format(aTable))
     tableInfo = read(aDataBase, statement, lambda l: l.fetchone())
 
     if tableInfo is not None:
@@ -146,7 +146,7 @@ def deleteFromTable(aDataBase, aTable, aRows=None, aItem=None):
     if aRows and aItem:
         l = []
         for row, item in zip(aRows, aItem):
-            l.append('{} = \'{}\''.format(row, item))
+            l.append('{} LIKE \'{}\''.format(row, item))
         l = '{}'.format(l)
         l = l.replace('[', '').replace(']', '')
         l = l.replace(',', ' AND')
@@ -169,7 +169,7 @@ def updateAtTable(aDataBase, aTable, aRows, aItem, aCurrentItem):
 
     l = []
     for row, currentItem in zip(aRows, aCurrentItem):
-        l.append('{} = \'{}\''.format(row, currentItem))
+        l.append('{} LIKE \'{}\''.format(row, currentItem))
     l = '{}'.format(l)
     l = l.replace('[', '').replace(']', '')
     l = l.replace(',', ' AND')
@@ -179,18 +179,35 @@ def updateAtTable(aDataBase, aTable, aRows, aItem, aCurrentItem):
     write(aDataBase, statement)
 
 
-def getFrom(aDataBase, aTable, aRows=None):
+def getFrom(aDataBase, aTable, aRows=None, aFilter=None):
 
     if aRows:
         aRows = '{}'.format(aRows)
         aRows = aRows.replace('[', '').replace(']', '')
         aRows = aRows.replace('\'', '')
         aRows = aRows.replace('"', '')
-        template = 'SELECT {} FROM {}'.format(aRows, aTable)
+        statement = 'SELECT {} FROM {}'.format(aRows, aTable)
     else:
-        template = 'SELECT * FROM {}'.format(aTable)
+        statement = 'SELECT * FROM {}'.format(aTable)
 
-    items = read(aDataBase, template, lambda l: l.fetchall())
+    if aFilter:
+        template = []
+
+        for key in aFilter.keys():
+            if isinstance(aFilter[key], int):
+                template.append('{} LIKE {}'.format(key, aFilter[key]))
+            elif isinstance(aFilter[key], str):
+                template.append('{} LIKE \'{}\''.format(key, aFilter[key]))
+
+        for i in range(0, len(template) - 1):
+            template[i] = '{} AND '.format(template[i])
+
+        template = ''.join(template)
+        template = template.replace('\'\'', '\'')
+
+        statement = '{} WHERE {}'.format(statement, template)
+
+    items = read(aDataBase, statement, lambda l: l.fetchall())
     for i in range(0, len(items)):
         if 1 == len(items[i]):
             items[i] = items[i][0]

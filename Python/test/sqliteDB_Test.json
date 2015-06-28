@@ -116,14 +116,86 @@
     {
       "writeStatement": "CREATE TABLE Items (Id INTEGER PRIMARY KEY UNIQUE NOT NULL); INSERT INTO Items (Id) VALUES(1); INSERT INTO Items (Id) VALUES(2); INSERT INTO Items (Id) VALUES(3); INSERT INTO Items (Id) VALUES(4)",
       "table": "Items",
-      "rows": ["Id"],
+      "rows": null,
+      "filter": null,
       "expectedResult": [1, 2, 3, 4]
+    },
+    {
+      "writeStatement": "CREATE TABLE Items (Id INTEGER PRIMARY KEY UNIQUE NOT NULL); INSERT INTO Items (Id) VALUES(1); INSERT INTO Items (Id) VALUES(2); INSERT INTO Items (Id) VALUES(3); INSERT INTO Items (Id) VALUES(4)",
+      "table": "Items",
+      "rows": ["Id"],
+      "filter": null,
+      "expectedResult": [1, 2, 3, 4]
+    },
+    {
+      "writeStatement": "CREATE TABLE Items (Id INTEGER PRIMARY KEY UNIQUE NOT NULL); INSERT INTO Items (Id) VALUES(1); INSERT INTO Items (Id) VALUES(2); INSERT INTO Items (Id) VALUES(3); INSERT INTO Items (Id) VALUES(4)",
+      "table": "Items",
+      "rows": ["Id"],
+      "filter": {"Id": 1},
+      "expectedResult": [1]
+    },
+    {
+      "writeStatement": "CREATE TABLE Items (Id INTEGER PRIMARY KEY UNIQUE NOT NULL); INSERT INTO Items (Id) VALUES(1); INSERT INTO Items (Id) VALUES(2); INSERT INTO Items (Id) VALUES(3); INSERT INTO Items (Id) VALUES(4)",
+      "table": "Items",
+      "rows": ["Id"],
+      "filter": {"Id": 5},
+      "expectedResult": []
+    },
+    {
+      "writeStatement": "CREATE TABLE Items2 (Id INTEGER PRIMARY KEY UNIQUE NOT NULL, Id2 INTEGER UNIQUE NOT NULL); INSERT INTO Items2 (Id, Id2) VALUES(1, 2); INSERT INTO Items2 (Id, Id2) VALUES(3, 4)",
+      "table": "Items2",
+      "rows": null,
+      "filter": null,
+      "expectedResult": [[1, 2], [3, 4]]
     },
     {
       "writeStatement": "CREATE TABLE Items2 (Id INTEGER PRIMARY KEY UNIQUE NOT NULL, Id2 INTEGER UNIQUE NOT NULL); INSERT INTO Items2 (Id, Id2) VALUES(1, 2); INSERT INTO Items2 (Id, Id2) VALUES(3, 4)",
       "table": "Items2",
       "rows": ["Id", "Id2"],
+      "filter": null,
       "expectedResult": [[1, 2], [3, 4]]
+    },
+    {
+      "writeStatement": "CREATE TABLE Items2 (Id INTEGER PRIMARY KEY UNIQUE NOT NULL, Id2 INTEGER UNIQUE NOT NULL); INSERT INTO Items2 (Id, Id2) VALUES(1, 2); INSERT INTO Items2 (Id, Id2) VALUES(3, 4)",
+      "table": "Items2",
+      "rows": ["Id", "Id2"],
+      "filter": {"Id": 1, "Id2": 2},
+      "expectedResult": [[1, 2]]
+    },
+    {
+      "writeStatement": "CREATE TABLE Items2 (Id INTEGER PRIMARY KEY UNIQUE NOT NULL, Id2 INTEGER UNIQUE NOT NULL); INSERT INTO Items2 (Id, Id2) VALUES(1, 2); INSERT INTO Items2 (Id, Id2) VALUES(3, 4)",
+      "table": "Items2",
+      "rows": ["Id", "Id2"],
+      "filter": {"Id": 1, "Id2": 3},
+      "expectedResult": []
+    },
+    {
+      "writeStatement": "CREATE TABLE Dates (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, Date DATE UNIQUE NOT NULL); INSERT INTO Dates (Date) VALUES(date('2010-01-13')); INSERT INTO Dates (Date) VALUES(date('2011-02-09')); INSERT INTO Dates (Date) VALUES(date('2012-03-10')); INSERT INTO Dates (Date) VALUES(date('2013-04-14')); INSERT INTO Dates (Date) VALUES(date('2014-05-12')); INSERT INTO Dates (Date) VALUES(date('2015-06-09'))",
+      "table": "Dates",
+      "rows": null,
+      "filter": null,
+      "expectedResult": [[1, "2010-01-13"], [2, "2011-02-09"], [3, "2012-03-10"], [4, "2013-04-14"], [5, "2014-05-12"], [6, "2015-06-09"]]
+    },
+    {
+      "writeStatement": "CREATE TABLE Dates (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, Date DATE UNIQUE NOT NULL); INSERT INTO Dates (Date) VALUES(date('2010-01-13')); INSERT INTO Dates (Date) VALUES(date('2011-02-09')); INSERT INTO Dates (Date) VALUES(date('2012-03-10')); INSERT INTO Dates (Date) VALUES(date('2013-04-14')); INSERT INTO Dates (Date) VALUES(date('2014-05-12')); INSERT INTO Dates (Date) VALUES(date('2015-06-09'))",
+      "table": "Dates",
+      "rows": ["Date"],
+      "filter": null,
+      "expectedResult": ["2010-01-13", "2011-02-09", "2012-03-10", "2013-04-14", "2014-05-12", "2015-06-09"]
+    },
+    {
+      "writeStatement": "CREATE TABLE Dates (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, Date DATE UNIQUE NOT NULL); INSERT INTO Dates (Date) VALUES(date('2010-01-13')); INSERT INTO Dates (Date) VALUES(date('2011-02-09')); INSERT INTO Dates (Date) VALUES(date('2012-03-10')); INSERT INTO Dates (Date) VALUES(date('2013-04-14')); INSERT INTO Dates (Date) VALUES(date('2014-05-12')); INSERT INTO Dates (Date) VALUES(date('2015-06-09'))",
+      "table": "Dates",
+      "rows": ["Date"],
+      "filter": {"Date": "2012-03-10"},
+      "expectedResult": ["2012-03-10"]
+    },
+    {
+      "writeStatement": "CREATE TABLE Dates (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, Date DATE UNIQUE NOT NULL); INSERT INTO Dates (Date) VALUES(date('2010-01-13')); INSERT INTO Dates (Date) VALUES(date('2011-02-09')); INSERT INTO Dates (Date) VALUES(date('2012-03-10')); INSERT INTO Dates (Date) VALUES(date('2013-04-14')); INSERT INTO Dates (Date) VALUES(date('2014-05-12')); INSERT INTO Dates (Date) VALUES(date('2015-06-09'))",
+      "table": "Dates",
+      "rows": ["Date"],
+      "filter": {"Date": "2009-01-01"},
+      "expectedResult": []
     }
   ],
   "test_insertInto": [

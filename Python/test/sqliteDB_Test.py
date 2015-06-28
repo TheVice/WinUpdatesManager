@@ -240,14 +240,12 @@ class TestSequenceFunctions(TestCase):
             db.sqliteDB.write(connection, writeStatement)
 
             table = testData['table']
-
-            result = db.sqliteDB.getFrom(connection, table)
-            expectedResult = testData['expectedResult']
-            self.assertEqual(expectedResult, result)
-
             rows = testData['rows']
-            result = db.sqliteDB.getFrom(connection, table, rows)
+            filter = testData['filter']
+
             expectedResult = testData['expectedResult']
+            result = db.sqliteDB.getFrom(connection, table, rows, filter)
+
             self.assertEqual(expectedResult, result)
 
             db.sqliteDB.disconnect(connection)
