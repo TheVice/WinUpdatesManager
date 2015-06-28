@@ -4,7 +4,10 @@ import unittest
 import core.dirs
 import updates2Package
 from db.storage import Uif
-from unittest.mock import MagicMock
+if 2 == sys.version_info[0]:
+    from mock import MagicMock
+else:
+    from unittest.mock import MagicMock
 from test.jsonHelper import JsonHelper
 
 
@@ -27,7 +30,10 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def test_moveUp(self):
 
-        side_effect=[None, FileExistsError]
+        if 2 == sys.version_info[0]:
+            side_effect=[None, OSError]
+        else:
+            side_effect=[None, FileExistsError]
 
         osRenames = os.renames
         os.renames = MagicMock(side_effect=side_effect)

@@ -7,7 +7,10 @@ from test.jsonHelper import JsonHelper
 class TestSequenceFunctions(unittest.TestCase):
 
     def setUp(self):
-        self.mJsonHelper = JsonHelper(__file__.replace('.py', '.json'))
+        if 2 == sys.version_info[0]:
+            self.mJsonHelper = JsonHelper(__file__.replace('.pyc', '.json'))
+        else:
+            self.mJsonHelper = JsonHelper(__file__.replace('.py', '.json'))
         self.mLanguages = Languages()
 
     def test_getLanguage(self):

@@ -4,15 +4,20 @@ import json
 import unittest
 import datetime
 import getUif
-from unittest.mock import MagicMock
+if 2 == sys.version_info[0]:
+    from mock import MagicMock
+else:
+    from unittest.mock import MagicMock
 from test.jsonHelper import JsonHelper
 
 
 class TestSequenceFunctions(unittest.TestCase):
 
     def setUp(self):
-
-        self.mJsonHelper = JsonHelper(__file__.replace('.py', '.json'))
+        if 2 == sys.version_info[0]:
+            self.mJsonHelper = JsonHelper(__file__.replace('.pyc', '.json'))
+        else:
+            self.mJsonHelper = JsonHelper(__file__.replace('.py', '.json'))
 
     def test_getUpdatesFromPackage(self):
 

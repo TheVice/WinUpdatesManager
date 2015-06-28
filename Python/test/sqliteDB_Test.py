@@ -1,5 +1,4 @@
 import sys
-import datetime
 import db.sqliteDB
 from unittest import main, TestCase
 from test.jsonHelper import JsonHelper
@@ -8,24 +7,14 @@ from test.jsonHelper import JsonHelper
 class TestSequenceFunctions(TestCase):
 
     def setUp(self):
-        self.mJsonHelper = JsonHelper(__file__.replace('.py', '.json'))
+        if 2 == sys.version_info[0]:
+            self.mJsonHelper = JsonHelper(__file__.replace('.pyc', '.json'))
+        else:
+            self.mJsonHelper = JsonHelper(__file__.replace('.py', '.json'))
         self.mDataBase = self.mJsonHelper.GetSting('Connection', 'dataBase')
-        self.mConnection = db.sqliteDB.connect(self.mDataBase)
-        self.assertNotEqual(None, self.mConnection)
-
-        db.sqliteDB.createTableKBs(self.mConnection)
-        db.sqliteDB.createTableDates(self.mConnection)
-        db.sqliteDB.createTableVersions(self.mConnection)
-        db.sqliteDB.createTableTypes(self.mConnection)
-        db.sqliteDB.createTableLanguages(self.mConnection)
-        db.sqliteDB.createTablePaths(self.mConnection)
-        db.sqliteDB.createTableUpdates(self.mConnection)
-
-    def tearDown(self):
-        db.sqliteDB.disconnect(self.mConnection)
 
     def test_connect(self):
-        self.assertNotEqual(None, db.sqliteDB.connect(self.mDataBase))
+        self.assertIsNotNone(db.sqliteDB.connect(self.mDataBase))
 
     def test_disconnect(self):
         connection = db.sqliteDB.connect(self.mDataBase)
@@ -33,102 +22,96 @@ class TestSequenceFunctions(TestCase):
         db.sqliteDB.disconnect(connection)
 
     def test_writeToDataBase(self):
-        db.sqliteDB.disconnect(self.mConnection)
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
-            self.mConnection = db.sqliteDB.connect(self.mDataBase)
+            connection = db.sqliteDB.connect(self.mDataBase)
 
             writeStatement = testData['writeStatement']
 
-            db.sqliteDB.writeToDataBase(self.mConnection, writeStatement)
+            db.sqliteDB.writeToDataBase(connection, writeStatement)
 
             readStatement = testData['readStatement']
-            readResult = db.sqliteDB.readFromDataBase(self.mConnection, readStatement).fetchall()
+            readResult = db.sqliteDB.readFromDataBase(connection, readStatement, lambda l: l.fetchall())
             expectedReadResult = testData['expectedReadResult']
             for i in range(0, len(expectedReadResult)):
                 expectedReadResult[i] = (expectedReadResult[i],)
             self.assertEqual(expectedReadResult, readResult)
 
-            db.sqliteDB.disconnect(self.mConnection)
+            db.sqliteDB.disconnect(connection)
 
     def test_readFromDataBase(self):
-        db.sqliteDB.disconnect(self.mConnection)
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
-            self.mConnection = db.sqliteDB.connect(self.mDataBase)
+            connection = db.sqliteDB.connect(self.mDataBase)
 
             expectedReadResult = testData['expectedReadResult']
             for i in range(0, len(expectedReadResult)):
                 expectedReadResult[i] = (expectedReadResult[i],)
 
             readStatement = testData['readStatement']
-            readResult = db.sqliteDB.readFromDataBase(self.mConnection, readStatement).fetchall()
+            readResult = db.sqliteDB.readFromDataBase(connection, readStatement, lambda l: l.fetchall())
             self.assertNotEqual(expectedReadResult, readResult)
 
             writeStatement = testData['writeStatement']
-            db.sqliteDB.writeToDataBase(self.mConnection, writeStatement)
-            readResult = db.sqliteDB.readFromDataBase(self.mConnection, readStatement).fetchall()
+            db.sqliteDB.writeToDataBase(connection, writeStatement)
+            readResult = db.sqliteDB.readFromDataBase(connection, readStatement, lambda l: l.fetchall())
             self.assertEqual(expectedReadResult, readResult)
 
-            db.sqliteDB.disconnect(self.mConnection)
+            db.sqliteDB.disconnect(connection)
 
     def test_listTables(self):
-        db.sqliteDB.disconnect(self.mConnection)
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
-            self.mConnection = db.sqliteDB.connect(self.mDataBase)
+            connection = db.sqliteDB.connect(self.mDataBase)
 
             writeStatement = testData['writeStatement']
-            db.sqliteDB.writeToDataBase(self.mConnection, writeStatement)
+            db.sqliteDB.writeToDataBase(connection, writeStatement)
 
             expectedReadResult = testData['expectedReadResult']
-            readResult = db.sqliteDB.listTables(self.mConnection)
+            readResult = db.sqliteDB.listTables(connection)
             self.assertEqual(expectedReadResult, readResult)
 
-            db.sqliteDB.disconnect(self.mConnection)
+            db.sqliteDB.disconnect(connection)
 
     def test_isTableExist(self):
-        db.sqliteDB.disconnect(self.mConnection)
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
-            self.mConnection = db.sqliteDB.connect(self.mDataBase)
+            connection = db.sqliteDB.connect(self.mDataBase)
 
             writeStatement = testData['writeStatement']
-            db.sqliteDB.writeToDataBase(self.mConnection, writeStatement)
+            db.sqliteDB.writeToDataBase(connection, writeStatement)
 
             tables = testData['tables']
             expectedResults = testData['expectedResults']
 
             for table, expectedResult in zip(tables, expectedResults):
-                self.assertEqual(expectedResult, db.sqliteDB.isTableExist(self.mConnection, table))
+                self.assertEqual(expectedResult, db.sqliteDB.isTableExist(connection, table))
 
-            db.sqliteDB.disconnect(self.mConnection)
+            db.sqliteDB.disconnect(connection)
 
     def test_listRows(self):
-        db.sqliteDB.disconnect(self.mConnection)
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
-            self.mConnection = db.sqliteDB.connect(self.mDataBase)
+            connection = db.sqliteDB.connect(self.mDataBase)
 
             writeStatement = testData['writeStatement']
-            db.sqliteDB.writeToDataBase(self.mConnection, writeStatement)
+            db.sqliteDB.writeToDataBase(connection, writeStatement)
 
             tables = testData['tables']
             expectedResults = testData['expectedResults']
 
             for table, expectedResult in zip(tables, expectedResults):
-                self.assertEqual(expectedResult, db.sqliteDB.listRows(self.mConnection, table))
+                self.assertEqual(expectedResult, db.sqliteDB.listRows(connection, table))
 
-            db.sqliteDB.disconnect(self.mConnection)
+            db.sqliteDB.disconnect(connection)
 
     def test_isRowExist(self):
-        db.sqliteDB.disconnect(self.mConnection)
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
-            self.mConnection = db.sqliteDB.connect(self.mDataBase)
+            connection = db.sqliteDB.connect(self.mDataBase)
 
             writeStatement = testData['writeStatement']
-            db.sqliteDB.writeToDataBase(self.mConnection, writeStatement)
+            db.sqliteDB.writeToDataBase(connection, writeStatement)
 
             inputData = testData['inputData']
             expectedResults = testData['expectedResults']
@@ -137,161 +120,129 @@ class TestSequenceFunctions(TestCase):
                 rows = i[table]
                 results = []
                 for r in rows:
-                    results.append(db.sqliteDB.isRowExist(self.mConnection, table, r))
+                    results.append(db.sqliteDB.isRowExist(connection, table, r))
 
                 self.assertEqual(expectedResult, results)
 
-            db.sqliteDB.disconnect(self.mConnection)
+            db.sqliteDB.disconnect(connection)
 
     def test_dropTable(self):
-        db.sqliteDB.disconnect(self.mConnection)
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
-            self.mConnection = db.sqliteDB.connect(self.mDataBase)
+            connection = db.sqliteDB.connect(self.mDataBase)
 
             writeStatement = testData['writeStatement']
-            db.sqliteDB.writeToDataBase(self.mConnection, writeStatement)
+            db.sqliteDB.writeToDataBase(connection, writeStatement)
 
             table = testData['table']
 
-            self.assertTrue(db.sqliteDB.isTableExist(self.mConnection, table))
-            db.sqliteDB.dropTable(self.mConnection, table)
-            self.assertFalse(db.sqliteDB.isTableExist(self.mConnection, table))
+            self.assertTrue(db.sqliteDB.isTableExist(connection, table))
+            db.sqliteDB.dropTable(connection, table)
+            self.assertFalse(db.sqliteDB.isTableExist(connection, table))
 
-            db.sqliteDB.disconnect(self.mConnection)
+            db.sqliteDB.disconnect(connection)
+
+    def test_deleteFromTable(self):
+        testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
+        for testData in testsData:
+            connection = db.sqliteDB.connect(self.mDataBase)
+
+            writeStatement = testData['writeStatement']
+            db.sqliteDB.writeToDataBase(connection, writeStatement)
+
+            table = testData['table']
+            rows = testData['rows']
+            items = testData['items']
+            expectedResults = testData['expectedResults']
+
+            result = db.sqliteDB.getFrom(connection, table, rows)
+            self.assertEqual(expectedResults, result)
+
+            for item in items:
+                db.sqliteDB.deleteFromTable(connection, table, rows, item)
+
+            result = db.sqliteDB.getFrom(connection, table, rows)
+            self.assertNotEqual(expectedResults, result)
+
+            db.sqliteDB.disconnect(connection)
+
+    def test_updateAtTable(self):
+        testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
+        for testData in testsData:
+            connection = db.sqliteDB.connect(self.mDataBase)
+
+            writeStatement = testData['writeStatement']
+            db.sqliteDB.writeToDataBase(connection, writeStatement)
+
+            table = testData['table']
+            rows = testData['rows']
+            currentItems = testData['currentItems']
+            items = testData['items']
+
+            result = db.sqliteDB.getFrom(connection, table, rows)
+            self.assertNotEqual(items, result)
+
+            for item, currentItem in zip(items, currentItems):
+                db.sqliteDB.updateAtTable(connection, table, rows, item, currentItem)
+
+            expectedResults = testData['expectedResults']
+            result = db.sqliteDB.getFrom(connection, table, rows)
+            self.assertEqual(expectedResults, result)
+
+            db.sqliteDB.disconnect(connection)
 
     def test_getFrom(self):
-        db.sqliteDB.disconnect(self.mConnection)
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
-            self.mConnection = db.sqliteDB.connect(self.mDataBase)
+            connection = db.sqliteDB.connect(self.mDataBase)
 
             writeStatement = testData['writeStatement']
-            db.sqliteDB.writeToDataBase(self.mConnection, writeStatement)
+            db.sqliteDB.writeToDataBase(connection, writeStatement)
 
             table = testData['table']
 
-            result = db.sqliteDB.getFrom(self.mConnection, table)
+            result = db.sqliteDB.getFrom(connection, table)
             expectedResult = testData['expectedResult']
             self.assertEqual(expectedResult, result)
 
             rows = testData['rows']
-            result = db.sqliteDB.getFrom(self.mConnection, table, rows)
+            result = db.sqliteDB.getFrom(connection, table, rows)
             expectedResult = testData['expectedResult']
             self.assertEqual(expectedResult, result)
 
-            db.sqliteDB.disconnect(self.mConnection)
+            db.sqliteDB.disconnect(connection)
 
     def test_insertInto(self):
-        db.sqliteDB.disconnect(self.mConnection)
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
-            self.mConnection = db.sqliteDB.connect(self.mDataBase)
+            connection = db.sqliteDB.connect(self.mDataBase)
 
             writeStatement = testData['writeStatement']
-            db.sqliteDB.writeToDataBase(self.mConnection, writeStatement)
+            db.sqliteDB.writeToDataBase(connection, writeStatement)
 
             table = testData['table']
             rows = testData['rows']
             items = testData['items']
 
-            self.assertNotEqual(items, db.sqliteDB.getFrom(self.mConnection, table))
-            self.assertNotEqual(items, db.sqliteDB.getFrom(self.mConnection, table, rows))
+            self.assertNotEqual(items, db.sqliteDB.getFrom(connection, table))
+            self.assertNotEqual(items, db.sqliteDB.getFrom(connection, table, rows))
 
-            db.sqliteDB.insertInto(self.mConnection, table, items)
+            db.sqliteDB.insertInto(connection, table, items)
 
-            self.assertEqual(items, db.sqliteDB.getFrom(self.mConnection, table))
-            self.assertEqual(items, db.sqliteDB.getFrom(self.mConnection, table, rows))
+            self.assertEqual(items, db.sqliteDB.getFrom(connection, table))
+            self.assertEqual(items, db.sqliteDB.getFrom(connection, table, rows))
 
-            db.sqliteDB.clearTable(self.mConnection, table)
+            db.sqliteDB.deleteFromTable(connection, table)
 
-            self.assertNotEqual(items, db.sqliteDB.getFrom(self.mConnection, table))
-            self.assertNotEqual(items, db.sqliteDB.getFrom(self.mConnection, table, rows))
+            self.assertNotEqual(items, db.sqliteDB.getFrom(connection, table))
+            self.assertNotEqual(items, db.sqliteDB.getFrom(connection, table, rows))
 
-            db.sqliteDB.insertInto(self.mConnection, table, items, rows)
+            db.sqliteDB.insertInto(connection, table, items, rows)
 
-            self.assertEqual(items, db.sqliteDB.getFrom(self.mConnection, table))
-            self.assertEqual(items, db.sqliteDB.getFrom(self.mConnection, table, rows))
+            self.assertEqual(items, db.sqliteDB.getFrom(connection, table))
+            self.assertEqual(items, db.sqliteDB.getFrom(connection, table, rows))
 
-            db.sqliteDB.disconnect(self.mConnection)
-
-    def test_insertInto2(self):
-
-        self.assertEqual(None, db.sqliteDB.getIDFrom(self.mConnection, 'KBs', 'id', 1))
-        db.sqliteDB.insertInto(self.mConnection, 'KBs', 1, 'id')
-        self.assertNotEqual(None, db.sqliteDB.getIDFrom(self.mConnection, 'KBs', 'id', 1))
-
-    def test_getIDFrom(self):
-
-        self.test_insertInto()
-
-    # def test_getSomethingByIDFrom(self):
-
-    def test_getDateByID(self):
-
-        self.assertEqual(None, db.sqliteDB.getDateByID(self.mConnection, 1))
-        self.test_addUpdate()
-        self.assertNotEqual(None, db.sqliteDB.getDateByID(self.mConnection, 1))
-
-    def test_getPathByID(self):
-
-        self.assertEqual(None, db.sqliteDB.getPathByID(self.mConnection, 1))
-        self.test_addUpdate()
-        self.assertNotEqual(None, db.sqliteDB.getPathByID(self.mConnection, 1))
-
-    def test_getVersionByID(self):
-
-        self.assertEqual(None, db.sqliteDB.getVersionByID(self.mConnection, 1))
-        self.test_addUpdate()
-        self.assertNotEqual(None, db.sqliteDB.getVersionByID(self.mConnection, 1))
-
-    def test_getTypeByID(self):
-
-        self.assertEqual(None, db.sqliteDB.getTypeByID(self.mConnection, 1))
-        self.test_addUpdate()
-        self.assertNotEqual(None, db.sqliteDB.getTypeByID(self.mConnection, 1))
-
-    def test_getLanguageByID(self):
-
-        self.assertEqual(None, db.sqliteDB.getLanguageByID(self.mConnection, 1))
-        self.test_addUpdate()
-        self.assertNotEqual(None, db.sqliteDB.getLanguageByID(self.mConnection, 1))
-
-    # def test_getSetSubstanceID(self):
-
-    def test_addUpdate(self):
-
-        update = self.mJsonHelper.GetDictionary('test_addUpdate', 'update')
-        self.assertEqual([], db.sqliteDB.getUpdates(self.mConnection, update))
-        db.sqliteDB.addUpdate(self.mConnection, update)
-        updates = db.sqliteDB.getUpdates(self.mConnection, update)
-        self.assertEqual([update], updates)
-
-    # def test_rawUpdatesToUpdates(self):
-
-    def test_getUpdates(self):
-
-        self.assertEqual(0, len(db.sqliteDB.getUpdates(self.mConnection, {})))
-        updates = self.mJsonHelper.GetArray('test_getUpdates', 'updates')
-
-        db.sqliteDB.addUpdates(self.mConnection, updates)
-
-        self.assertEqual(len(updates), len(db.sqliteDB.getUpdates(self.mConnection, {})))
-
-        queryAndAnswer = self.mJsonHelper.GetArray('test_getUpdates', 'queryAndAnswer')
-        for qa in queryAndAnswer:
-            self.assertEqual(qa['answer'], len(db.sqliteDB.getUpdates(self.mConnection, qa['query'])))
-
-    def test_getUpdatesByKBInPath(self):
-
-        updates = self.mJsonHelper.GetArray('test_getUpdatesByKBInPath', 'updates')
-
-        db.sqliteDB.addUpdates(self.mConnection, updates)
-
-        queryAndAnswer = self.mJsonHelper.GetArray('test_getUpdatesByKBInPath', 'queryAndAnswer')
-        for qa in queryAndAnswer:
-            inputValue = list(qa.keys())[0]
-            self.assertEqual(qa[inputValue], len(db.sqliteDB.getUpdatesByKBInPath(self.mConnection, inputValue)))
+            db.sqliteDB.disconnect(connection)
 
 
 if __name__ == '__main__':

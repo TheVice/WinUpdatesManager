@@ -4,13 +4,19 @@ from datetime import datetime
 from unittest import main, TestCase
 from db.mongoDB import MongoDBClient
 from test.jsonHelper import JsonHelper
-from unittest.mock import patch, MagicMock
+if 2 == sys.version_info[0]:
+    from mock import patch, MagicMock
+else:
+    from unittest.mock import patch, MagicMock
 
 
 class TestSequenceFunctions(TestCase):
 
     def setUp(self):
-        self.mJsonHelper = JsonHelper(__file__.replace('.py', '.json'))
+        if 2 == sys.version_info[0]:
+            self.mJsonHelper = JsonHelper(__file__.replace('.pyc', '.json'))
+        else:
+            self.mJsonHelper = JsonHelper(__file__.replace('.py', '.json'))
         self.mHostAndPort = self.mJsonHelper.GetSting('MongoClient', 'HostAndPort')
         self.mServerSelectionTimeoutMS = self.mJsonHelper.GetInteger('MongoClient', 'ServerSelectionTimeoutMS')
         self.mDataBase = self.mJsonHelper.GetSting('MongoClient', 'dataBase')

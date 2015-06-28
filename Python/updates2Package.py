@@ -84,7 +84,7 @@ def moveUp(aSrc, aDest):
     try:
         os.renames(aSrc, aDest)
         print('{} -> {}'.format(aSrc, aDest))
-    except FileExistsError:
+    except FileExistsError if 2 < sys.version_info[0] else OSError:
         print('Cannot move {} to {} because file already exists'.format(aSrc,
                                                                         aDest))
 

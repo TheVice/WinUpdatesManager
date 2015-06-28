@@ -8,6 +8,7 @@ import os.path
 import core.dirs
 import db.mongoDB
 import db.sqliteDB
+from core.unknownSubstance import UnknownSubstance
 
 
 class Storage:
@@ -137,7 +138,7 @@ class SQLite(Storage):
     def _getAvalibleVersions(aMutex, aPath, aItems):
 
         sqlite = db.sqliteDB.connect(aPath)
-        aItems.extend(db.sqliteDB.listCollections(sqlite, 'Versions'))
+        aItems.extend(SQLite.listCollections(sqlite, 'Versions'))
         db.sqliteDB.disconnect(sqlite)
         aMutex.acquire()
 
@@ -145,7 +146,7 @@ class SQLite(Storage):
     def _getAvalibleTypes(aMutex, aPath, aItems):
 
         sqlite = db.sqliteDB.connect(aPath)
-        aItems.extend(db.sqliteDB.listCollections(sqlite, 'Types'))
+        aItems.extend(SQLite.listCollections(sqlite, 'Types'))
         db.sqliteDB.disconnect(sqlite)
         aMutex.acquire()
 
@@ -153,7 +154,7 @@ class SQLite(Storage):
     def _getAvalibleLanguages(aMutex, aPath, aItems):
 
         sqlite = db.sqliteDB.connect(aPath)
-        aItems.extend(db.sqliteDB.listCollections(sqlite, 'Languages'))
+        aItems.extend(SQLite.listCollections(sqlite, 'Languages'))
         db.sqliteDB.disconnect(sqlite)
         aMutex.acquire()
 
@@ -161,9 +162,318 @@ class SQLite(Storage):
     def _get(aMutex, aPath, aQuery, aUpdates):
 
         sqlite = db.sqliteDB.connect(aPath)
-        aUpdates.extend(db.sqliteDB.getUpdates(sqlite, aQuery))
+        aUpdates.extend(SQLite.getUpdates(sqlite, aQuery))
         db.sqliteDB.disconnect(sqlite)
         aMutex.acquire()
+
+    @staticmethod
+    def getIDFrom(aDb, aTable, aRowName, aItem):
+
+        fields = db.sqliteDB.readFromDataBase(aDb,
+            '''SELECT id FROM {} WHERE {} LIKE {}'''.format
+            (aTable, aRowName, aItem), lambda l: l.fetchone())
+        return fields[0] if fields is not None else None
+
+    @staticmethod
+    def getSomethingByIDFrom(aDb, aTable, aRowName, aId):
+
+        fields = db.sqliteDB.readFromDataBase(aDb,
+            '''SELECT {} FROM {} WHERE id LIKE {}'''.format
+            (aRowName, aTable, aId), lambda l: l.fetchone())
+        return fields[0] if fields is not None else None
+
+    @staticmethod
+    def getUpdates(aDb, aQuery):
+
+        if aQuery == {}:
+            query = '''SELECT kb_id, date_id, path_id, version_id,
+                       type_id, language_id FROM Updates'''
+        else:
+            query = '''SELECT kb_id, date_id, path_id, version_id,
+                       type_id, language_id FROM Updates WHERE'''
+
+            andNead = False
+            for key in aQuery.keys():
+
+                if(andNead):
+                    query += ''' AND'''
+
+                if('KB' == key):
+                    kb_id = SQLite.getIDFrom(aDb, 'KBs', 'id', aQuery[key])
+                    if kb_id is None:
+                        return []
+
+                    query += ''' kb_id LIKE {}'''.format(kb_id)
+                    andNead = True
+
+                elif('Date' == key):
+                    date_id = SQLite.getIDFrom(aDb, 'Dates',
+                                        'Date', '\'{}\''.format(aQuery[key]))
+                    if date_id is None:
+                        return []
+
+                    query += ''' date_id LIKE {}'''.format(date_id)
+                    andNead = True
+
+                elif('Version' == key):
+                    version_id = SQLite.getIDFrom(aDb, 'Versions', 'Version',
+                                           '\'{}\''.format(aQuery[key]))
+                    if version_id is None:
+                        return []
+
+                    query += ''' version_id LIKE {}'''.format(version_id)
+                    andNead = True
+
+                elif('Type' == key):
+                    type_id = SQLite.getIDFrom(aDb, 'Types',
+                                        'Type', '\'{}\''.format(aQuery[key]))
+                    if type_id is None:
+                        return []
+
+                    query += ''' type_id LIKE {}'''.format(type_id)
+                    andNead = True
+
+                elif('Language' == key):
+                    language_id = SQLite.getIDFrom(aDb, 'Languages', 'Language',
+                                            '\'{}\''.format(aQuery[key]))
+                    if language_id is None:
+                        return []
+
+                    query += ''' language_id LIKE {}'''.format(language_id)
+                    andNead = True
+
+                elif('Path' == key):
+                    path_id = SQLite.getIDFrom(aDb, 'Paths',
+                                        'Path', '\'{}\''.format(aQuery[key]))
+                    if path_id is None:
+                        return []
+
+                    query += ''' path_id LIKE {}'''.format(path_id)
+                    andNead = True
+
+        rawUpdates = db.sqliteDB.readFromDataBase(aDb, query)
+        return SQLite.rawUpdatesToUpdates(aDb, rawUpdates)
+
+    @staticmethod
+    def rawUpdatesToUpdates(aDb, aRawUpdates):
+
+        updates = []
+
+        for rawUpdate in aRawUpdates:
+
+            update = {}
+
+            update['Path'] = SQLite.getPathByID(aDb, rawUpdate[2])
+
+            kb = rawUpdate[0]
+            if -1 != kb:
+                update['KB'] = kb
+            else:
+                update['KB'] = UnknownSubstance.unknown('UNKNOWN KB',
+                                                        update['Path'])
+
+            version = SQLite.getVersionByID(aDb, rawUpdate[3])
+            if 'UNKNOWN VERSION' != version:
+                update['Version'] = version
+            else:
+                update['Version'] = UnknownSubstance.unknown('UNKNOWN VERSION',
+                                                             update['Path'])
+
+            osType = SQLite.getTypeByID(aDb, rawUpdate[4])
+            if 'UNKNOWN TYPE' != osType:
+                update['Type'] = osType
+            else:
+                update['Type'] = UnknownSubstance.unknown('UNKNOWN TYPE',
+                                                          update['Path'])
+
+            osLanguage = SQLite.getLanguageByID(aDb, rawUpdate[5])
+            if 'UNKNOWN LANGUAGE' != osLanguage:
+                update['Language'] = osLanguage
+            else:
+                update['Language'] = UnknownSubstance.unknown('UNKNOWN LANGUAGE',
+                                                              update['Path'])
+
+            update['Date'] = SQLite.getDateByID(aDb, rawUpdate[1])
+
+            updates.append(update)
+
+        return updates
+
+    @staticmethod
+    def getDateByID(aDb, aId):
+
+        return SQLite.getSomethingByIDFrom(aDb, 'Dates', 'Date', aId)
+
+    @staticmethod
+    def getPathByID(aDb, aId):
+
+        return SQLite.getSomethingByIDFrom(aDb, 'Paths', 'Path', aId)
+
+    @staticmethod
+    def getVersionByID(aDb, aId):
+
+        return SQLite.getSomethingByIDFrom(aDb, 'Versions', 'Version', aId)
+
+    @staticmethod
+    def getTypeByID(aDb, aId):
+
+        return SQLite.getSomethingByIDFrom(aDb, 'Types', 'Type', aId)
+
+    @staticmethod
+    def getLanguageByID(aDb, aId):
+
+        return SQLite.getSomethingByIDFrom(aDb, 'Languages', 'Language', aId)
+
+    @staticmethod
+    def getSetSubstanceID(aDb, aTable, aRowName, aItem):
+
+        substanceID = SQLite.getIDFrom(aDb, aTable, aRowName, aItem)
+
+        if substanceID is not None:
+            return substanceID
+
+        db.sqliteDB.insertInto(aDb, aTable, [aItem], aRowName)
+        return SQLite.getIDFrom(aDb, aTable, aRowName, aItem)
+
+    @staticmethod
+    def listCollections(aDb, aTable):
+
+        query = '''SELECT * FROM {}'''.format(aTable)
+        rawData = db.sqliteDB.readFromDataBase(aDb, query, lambda l: l.fetchall())
+        items = []
+
+        if 'KBs' == aTable:
+            for d in rawData:
+                if -1 != d[1]:
+                    items.append(d[1])
+                else:
+                    items.append(UnknownSubstance.unknown('UNKNOWN KB', -1))
+        elif 'Versions' == aTable:
+            for d in rawData:
+                if 'UNKNOWN VERSION' != d[1]:
+                    items.append(d[1])
+                else:
+                    items.append(UnknownSubstance.unknown('UNKNOWN VERSION', ''))
+        elif 'Types' == aTable:
+            for d in rawData:
+                if 'UNKNOWN TYPE' != d[1]:
+                    items.append(d[1])
+                else:
+                    items.append(UnknownSubstance.unknown('UNKNOWN TYPE', ''))
+        elif 'Languages' == aTable:
+            for d in rawData:
+                if 'UNKNOWN LANGUAGE' != d[1]:
+                    items.append(d[1])
+                else:
+                    items.append(UnknownSubstance.unknown('UNKNOWN LANGUAGE', ''))
+        else:
+            for d in rawData:
+                items.append(d[1])
+
+        return items
+
+    @staticmethod
+    def addUpdates(aDb, aUpdates):
+
+        i = 1
+        count = len(aUpdates)
+        cursor = aDb.cursor()
+
+        for update in aUpdates:
+            kb = update['KB'] if not isinstance(update['KB'], dict) else -1
+            kb_id = SQLite.getSetSubstanceID(aDb, 'KBs', 'id', kb)
+
+            osVersion = (update['Version']
+                if not isinstance(update['Version'], dict) else 'UNKNOWN VERSION')
+            version_id = SQLite.getSetSubstanceID(aDb, 'Versions', 'Version',
+                                           '\'{}\''.format(osVersion))
+
+            osType = (
+                update['Type'] if not isinstance(update['Type'], dict) else
+                    'UNKNOWN TYPE')
+            type_id = SQLite.getSetSubstanceID(aDb, 'Types', 'Type',
+                '\'{}\''.format(osType))
+
+            language = (
+                update['Language'] if not isinstance(update['Language'], dict) else
+                    'UNKNOWN LANGUAGE')
+            language_id = SQLite.getSetSubstanceID(aDb, 'Languages', 'Language',
+                                            '\'{}\''.format(language))
+
+            date_id = SQLite.getSetSubstanceID(aDb, 'Dates', 'Date',
+                                        '\'{}\''.format(update['Date']))
+            path_id = SQLite.getSetSubstanceID(aDb, 'Paths', 'Path',
+                                        '\'{}\''.format(update['Path']))
+
+            cursor.execute('''INSERT INTO Updates
+                           (kb_id, date_id, path_id, version_id,
+                           type_id, language_id)
+                           VALUES ({}, {}, {}, {}, {}, {})'''.format
+                   (kb_id, date_id, path_id, version_id, type_id, language_id))
+
+            print('{} / {}'.format(i, count))
+            i += 1
+
+        aDb.commit()
+
+    @staticmethod
+    def createTableKBs(aDb):
+
+        db.sqliteDB.writeToDataBase(aDb, '''CREATE TABLE KBs (
+            id INTEGER PRIMARY KEY NOT NULL)''')
+
+    @staticmethod
+    def createTableDates(aDb):
+
+        db.sqliteDB.writeToDataBase(aDb, '''CREATE TABLE Dates (
+            id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
+            Date TEXT UNIQUE NOT NULL)''')
+
+    @staticmethod
+    def createTablePaths(aDb):
+
+        db.sqliteDB.writeToDataBase(aDb, '''CREATE TABLE Paths (
+            id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
+            Path TEXT UNIQUE NOT NULL)''')
+
+    @staticmethod
+    def createTableVersions(aDb):
+
+        db.sqliteDB.writeToDataBase(aDb, '''CREATE TABLE Versions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
+            Version TEXT UNIQUE NOT NULL)''')
+
+    @staticmethod
+    def createTableTypes(aDb):
+
+        db.sqliteDB.writeToDataBase(aDb, '''CREATE TABLE Types (
+            id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
+            Type TEXT UNIQUE NOT NULL)''')
+
+    @staticmethod
+    def createTableLanguages(aDb):
+
+        db.sqliteDB.writeToDataBase(aDb, '''CREATE TABLE Languages (
+            id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
+            Language TEXT UNIQUE NOT NULL)''')
+
+    @staticmethod
+    def createTableUpdates(aDb):
+
+        db.sqliteDB.writeToDataBase(aDb, '''CREATE TABLE Updates (
+            id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
+            kb_id INTEGER NOT NULL,
+            date_id INTEGER NOT NULL,
+            path_id INTEGER NOT NULL,
+            version_id INTEGER NOT NULL,
+            type_id INTEGER NOT NULL,
+            language_id INTEGER NOT NULL,
+            FOREIGN KEY(kb_id) REFERENCES KBs(id),
+            FOREIGN KEY(date_id) REFERENCES Dates(id),
+            FOREIGN KEY(path_id) REFERENCES Paths(id),
+            FOREIGN KEY(version_id) REFERENCES Versions(id),
+            FOREIGN KEY(type_id) REFERENCES Types(id),
+            FOREIGN KEY(language_id) REFERENCES Languages(id))''')
 
     def getAvalibleVersions(self):
 

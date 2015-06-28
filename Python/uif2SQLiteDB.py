@@ -1,35 +1,34 @@
 import sys
-from db.storage import Uif
+from db.storage import Uif, SQLite
 import db.sqliteDB
 
 
 def uif2SQLiteDB(aPath2DataBase):
 
     dataBase = db.sqliteDB.connect(aPath2DataBase)
-    tables = db.sqliteDB.listTables(dataBase)
 
-    if 0 == tables.count('KBs'):
-        db.sqliteDB.createTableKBs(dataBase)
+    if not db.sqliteDB.isTableExist(dataBase, 'KBs'):
+        SQLite.createTableKBs(dataBase)
 
-    if 0 == tables.count('Dates'):
-        db.sqliteDB.createTableDates(dataBase)
+    if not db.sqliteDB.isTableExist(dataBase, 'Dates'):
+        SQLite.createTableDates(dataBase)
 
-    if 0 == tables.count('Paths'):
-        db.sqliteDB.createTablePaths(dataBase)
+    if not db.sqliteDB.isTableExist(dataBase, 'Paths'):
+        SQLite.createTablePaths(dataBase)
 
-    if 0 == tables.count('Versions'):
-        db.sqliteDB.createTableVersions(dataBase)
+    if not db.sqliteDB.isTableExist(dataBase, 'Versions'):
+        SQLite.createTableVersions(dataBase)
 
-    if 0 == tables.count('Types'):
-        db.sqliteDB.createTableTypes(dataBase)
+    if not db.sqliteDB.isTableExist(dataBase, 'Types'):
+        SQLite.createTableTypes(dataBase)
 
-    if 0 == tables.count('Languages'):
-        db.sqliteDB.createTableLanguages(dataBase)
+    if not db.sqliteDB.isTableExist(dataBase, 'Languages'):
+        SQLite.createTableLanguages(dataBase)
 
-    if 0 == tables.count('Updates'):
-        db.sqliteDB.createTableUpdates(dataBase)
+    if not db.sqliteDB.isTableExist(dataBase, 'Updates'):
+        SQLite.createTableUpdates(dataBase)
 
-    db.sqliteDB.addUpdates(dataBase, updates)
+    SQLite.addUpdates(dataBase, updates)
     db.sqliteDB.disconnect(dataBase)
 
 
