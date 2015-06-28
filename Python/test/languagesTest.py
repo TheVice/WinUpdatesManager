@@ -1,16 +1,13 @@
 import sys
-import unittest
+from unittest import main, TestCase
 from core.languages import Languages
 from test.jsonHelper import JsonHelper
 
 
-class TestSequenceFunctions(unittest.TestCase):
+class TestSequenceFunctions(TestCase):
 
     def setUp(self):
-        if 2 == sys.version_info[0]:
-            self.mJsonHelper = JsonHelper(__file__.replace('.pyc', '.json'))
-        else:
-            self.mJsonHelper = JsonHelper(__file__.replace('.py', '.json'))
+        self.mJsonHelper = JsonHelper(__file__)
         self.mLanguages = Languages()
 
     def test_getLanguage(self):
@@ -26,4 +23,4 @@ class TestSequenceFunctions(unittest.TestCase):
 
 if __name__ == '__main__':
 
-    unittest.main()
+    main()

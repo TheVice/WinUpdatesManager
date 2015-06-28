@@ -1,16 +1,13 @@
 import sys
-import unittest
 import batchGenerator
+from unittest import main, TestCase
 from test.jsonHelper import JsonHelper
 
 
-class TestSequenceFunctions(unittest.TestCase):
+class TestSequenceFunctions(TestCase):
 
     def setUp(self):
-        if 2 == sys.version_info[0]:
-            self.mJsonHelper = JsonHelper(__file__.replace('.pyc', '.json'))
-        else:
-            self.mJsonHelper = JsonHelper(__file__.replace('.py', '.json'))
+        self.mJsonHelper = JsonHelper(__file__)
 
     def test_batchTemplate(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
@@ -35,4 +32,4 @@ class TestSequenceFunctions(unittest.TestCase):
 
 if __name__ == '__main__':
 
-    unittest.main()
+    main()

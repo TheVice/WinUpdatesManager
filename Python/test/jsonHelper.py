@@ -7,6 +7,10 @@ class JsonHelper:
 
     def __init__(self, aFileName):
 
+        pathAndExtention = os.path.splitext(aFileName)
+        if '.json' != pathAndExtention[1]:
+            aFileName = '{}.json'.format(pathAndExtention[0])
+
         inputFile = open(aFileName, 'r')
         fileContent = inputFile.read()
         if os.name != 'nt':
@@ -35,13 +39,6 @@ class JsonHelper:
             tInput.append(list(tData.keys())[0])
             tOutput.append(tData[tInput[len(tInput) - 1]])
         return zip(tInput, tOutput)
-
-    def GetDictionary(self, aTestName, aVariableName):
-
-        data = self.GetTestVariable(aTestName, aVariableName)
-        if not isinstance(data, dict):
-            raise TypeError('\'{}\' at \'{}\' is not an Dictionary'.format(aVariableName, aTestName))
-        return data
 
     def GetArray(self, aTestName, aVariableName):
 

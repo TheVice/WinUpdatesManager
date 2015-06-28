@@ -1,10 +1,15 @@
 import re
+import sys
 import sqlite3
+if 2 == sys.version_info[0]:
+    import thread
+else:
+    import _thread as thread
 
 
-def connect(aDbName):
+def connect(aDataBase):
 
-    return sqlite3.connect(aDbName)
+    return sqlite3.connect(aDataBase)
 
 
 def disconnect(aConnection):
@@ -12,47 +17,87 @@ def disconnect(aConnection):
     aConnection.close()
 
 
-def writeToDataBase(aConnection, aStatement):
+def write(aDataBase, aStatement, aMutex=None):
 
-    aConnection.executescript(aStatement)
-    aConnection.commit()
+    if isinstance(aDataBase, sqlite3.Connection):
+        connection = aDataBase
+    else:
+        connection = connect(aDataBase)
+
+    connection.executescript(aStatement)
+    connection.commit()
+
+    if not isinstance(aDataBase, sqlite3.Connection):
+        disconnect(connection)
+
+    if aMutex:
+        aMutex.acquire()
 
 
-def readFromDataBase(aConnection, aStatement, aFetch):
+def read(aDataBase, aStatement, aFetch, aMutex=None, aReturnData=None):
 
-    cursor = aConnection.cursor()
+    if isinstance(aDataBase, sqlite3.Connection):
+        connection = aDataBase
+    else:
+        connection = connect(aDataBase)
+
+    cursor = connection.cursor()
     cursor.execute(aStatement)
-    return aFetch(cursor)
+    data = aFetch(cursor)
+
+    if not isinstance(aDataBase, sqlite3.Connection):
+        disconnect(connection)
+
+    if aMutex:
+        aReturnData.append(data)
+        aMutex.acquire()
+    else:
+        return data
 
 
-def listTables(aConnection):
+def writeAsync(aDataBase, aStatement):
+
+    mutex = thread.allocate_lock()
+    thread.start_new_thread(write, (aDataBase, aStatement, mutex))
+    while not mutex.locked():
+        pass
+
+
+def readAsync(aDataBase, aStatement, aFetch):
+
+    l = []
+    mutex = thread.allocate_lock()
+    thread.start_new_thread(read, (aDataBase, aStatement, aFetch, mutex, l))
+    while not mutex.locked():
+        pass
+    return l[0]
+
+
+def listTables(aDataBase):
 
     statement = ('SELECT name FROM sqlite_master'
                  ' WHERE type LIKE \'table\''
                  ' ORDER BY name')
-    tables = readFromDataBase(aConnection,
-                              statement, lambda l: l.fetchall())
+    tables = read(aDataBase, statement, lambda l: l.fetchall())
 
     for i in range(0, len(tables)):
         tables[i] = tables[i][0]
     return tables
 
 
-def isTableExist(aConnection, aTable):
+def isTableExist(aDataBase, aTable):
 
     statement = ('SELECT name FROM sqlite_master'
                  ' WHERE type LIKE \'table\''
                  ' AND name LIKE \'{}\''.format(aTable))
-    return readFromDataBase(aConnection,
-                            statement, lambda l: l.fetchone()) is not None
+    return read(aDataBase, statement, lambda l: l.fetchone()) is not None
 
 
-def listRows(aConnection, aTable):
+def listRows(aDataBase, aTable):
 
     statement = ('SELECT sql FROM sqlite_master'
         ' WHERE tbl_name = \'{}\' AND type = \'table\''.format(aTable))
-    tableInfo = readFromDataBase(aConnection,
-                                 statement, lambda l: l.fetchone())
+    tableInfo = read(aDataBase, statement, lambda l: l.fetchone())
 
     if tableInfo is not None:
         tableInfo = tableInfo[0]
@@ -71,12 +116,11 @@ def listRows(aConnection, aTable):
     return tableInfo
 
 
-def isRowExist(aConnection, aTable, aRow):
+def isRowExist(aDataBase, aTable, aRow):
 
     statement = ('SELECT sql FROM sqlite_master'
         ' WHERE tbl_name = \'{}\' AND type = \'table\''.format(aTable))
-    tableInfo = readFromDataBase(aConnection,
-                                 statement, lambda l: l.fetchone())
+    tableInfo = read(aDataBase, statement, lambda l: l.fetchone())
 
     if tableInfo is not None:
         tableInfo = tableInfo[0]
@@ -89,13 +133,13 @@ def isRowExist(aConnection, aTable, aRow):
     return False
 
 
-def dropTable(aConnection, aTable):
+def dropTable(aDataBase, aTable):
 
     statement = ('DROP TABLE {}'.format(aTable))
-    writeToDataBase(aConnection, statement)
+    write(aDataBase, statement)
 
 
-def deleteFromTable(aConnection, aTable, aRows=None, aItem=None):
+def deleteFromTable(aDataBase, aTable, aRows=None, aItem=None):
 
     statement = ('DELETE FROM {}'.format(aTable))
 
@@ -109,10 +153,10 @@ def deleteFromTable(aConnection, aTable, aRows=None, aItem=None):
         l = l.replace('"', '')
         statement = '{} WHERE {}'.format(statement, l)
 
-    writeToDataBase(aConnection, statement)
+    write(aDataBase, statement)
 
 
-def updateAtTable(aConnection, aTable, aRows, aItem, aCurrentItem):
+def updateAtTable(aDataBase, aTable, aRows, aItem, aCurrentItem):
 
     statement = ('UPDATE {}'.format(aTable))
     l = []
@@ -132,20 +176,21 @@ def updateAtTable(aConnection, aTable, aRows, aItem, aCurrentItem):
     l = l.replace('"', '')
     statement = '{} WHERE {}'.format(statement, l)
 
-    writeToDataBase(aConnection, statement)
+    write(aDataBase, statement)
 
 
-def getFrom(aConnection, aTable, aRows=None):
+def getFrom(aDataBase, aTable, aRows=None):
 
     if aRows:
         aRows = '{}'.format(aRows)
         aRows = aRows.replace('[', '').replace(']', '')
         aRows = aRows.replace('\'', '')
+        aRows = aRows.replace('"', '')
         template = 'SELECT {} FROM {}'.format(aRows, aTable)
     else:
         template = 'SELECT * FROM {}'.format(aTable)
 
-    items = readFromDataBase(aConnection, template, lambda l: l.fetchall())
+    items = read(aDataBase, template, lambda l: l.fetchall())
     for i in range(0, len(items)):
         if 1 == len(items[i]):
             items[i] = items[i][0]
@@ -154,11 +199,12 @@ def getFrom(aConnection, aTable, aRows=None):
     return items
 
 
-def insertInto(aConnection, aTable, aItems, aRows=None):
+def insertInto(aDataBase, aTable, aItems, aRows=None):
 
     if aRows:
         aRows = '{}'.format(aRows)
         aRows = aRows.replace('[', '').replace(']', '')
+        aRows = aRows.replace('"', '')
         template = 'INSERT INTO {} (' + aRows + ') VALUES({});'
     else:
         template = 'INSERT INTO {} VALUES({});'
@@ -169,4 +215,4 @@ def insertInto(aConnection, aTable, aItems, aRows=None):
         item = item.replace('[', '').replace(']', '')
         statement.append(template.format(aTable, item))
 
-    writeToDataBase(aConnection, ''.join(statement))
+    write(aDataBase, ''.join(statement))

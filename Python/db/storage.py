@@ -169,7 +169,7 @@ class SQLite(Storage):
     @staticmethod
     def getIDFrom(aDb, aTable, aRowName, aItem):
 
-        fields = db.sqliteDB.readFromDataBase(aDb,
+        fields = db.sqliteDB.read(aDb,
             '''SELECT id FROM {} WHERE {} LIKE {}'''.format
             (aTable, aRowName, aItem), lambda l: l.fetchone())
         return fields[0] if fields is not None else None
@@ -177,7 +177,7 @@ class SQLite(Storage):
     @staticmethod
     def getSomethingByIDFrom(aDb, aTable, aRowName, aId):
 
-        fields = db.sqliteDB.readFromDataBase(aDb,
+        fields = db.sqliteDB.read(aDb,
             '''SELECT {} FROM {} WHERE id LIKE {}'''.format
             (aRowName, aTable, aId), lambda l: l.fetchone())
         return fields[0] if fields is not None else None
@@ -251,7 +251,7 @@ class SQLite(Storage):
                     query += ''' path_id LIKE {}'''.format(path_id)
                     andNead = True
 
-        rawUpdates = db.sqliteDB.readFromDataBase(aDb, query)
+        rawUpdates = db.sqliteDB.read(aDb, query, lambda l: l.fetchall())
         return SQLite.rawUpdatesToUpdates(aDb, rawUpdates)
 
     @staticmethod
@@ -339,7 +339,7 @@ class SQLite(Storage):
     def listCollections(aDb, aTable):
 
         query = '''SELECT * FROM {}'''.format(aTable)
-        rawData = db.sqliteDB.readFromDataBase(aDb, query, lambda l: l.fetchall())
+        rawData = db.sqliteDB.read(aDb, query, lambda l: l.fetchall())
         items = []
 
         if 'KBs' == aTable:
@@ -419,48 +419,48 @@ class SQLite(Storage):
     @staticmethod
     def createTableKBs(aDb):
 
-        db.sqliteDB.writeToDataBase(aDb, '''CREATE TABLE KBs (
+        db.sqliteDB.write(aDb, '''CREATE TABLE KBs (
             id INTEGER PRIMARY KEY NOT NULL)''')
 
     @staticmethod
     def createTableDates(aDb):
 
-        db.sqliteDB.writeToDataBase(aDb, '''CREATE TABLE Dates (
+        db.sqliteDB.write(aDb, '''CREATE TABLE Dates (
             id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
             Date TEXT UNIQUE NOT NULL)''')
 
     @staticmethod
     def createTablePaths(aDb):
 
-        db.sqliteDB.writeToDataBase(aDb, '''CREATE TABLE Paths (
+        db.sqliteDB.write(aDb, '''CREATE TABLE Paths (
             id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
             Path TEXT UNIQUE NOT NULL)''')
 
     @staticmethod
     def createTableVersions(aDb):
 
-        db.sqliteDB.writeToDataBase(aDb, '''CREATE TABLE Versions (
+        db.sqliteDB.write(aDb, '''CREATE TABLE Versions (
             id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
             Version TEXT UNIQUE NOT NULL)''')
 
     @staticmethod
     def createTableTypes(aDb):
 
-        db.sqliteDB.writeToDataBase(aDb, '''CREATE TABLE Types (
+        db.sqliteDB.write(aDb, '''CREATE TABLE Types (
             id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
             Type TEXT UNIQUE NOT NULL)''')
 
     @staticmethod
     def createTableLanguages(aDb):
 
-        db.sqliteDB.writeToDataBase(aDb, '''CREATE TABLE Languages (
+        db.sqliteDB.write(aDb, '''CREATE TABLE Languages (
             id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
             Language TEXT UNIQUE NOT NULL)''')
 
     @staticmethod
     def createTableUpdates(aDb):
 
-        db.sqliteDB.writeToDataBase(aDb, '''CREATE TABLE Updates (
+        db.sqliteDB.write(aDb, '''CREATE TABLE Updates (
             id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
             kb_id INTEGER NOT NULL,
             date_id INTEGER NOT NULL,

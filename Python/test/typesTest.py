@@ -1,30 +1,29 @@
-import os
-import unittest
+import sys
 from core.types import Types
+from unittest import main, TestCase
 from test.jsonHelper import JsonHelper
 
 
-class TestSequenceFunctions(unittest.TestCase):
+class TestSequenceFunctions(TestCase):
 
     def setUp(self):
 
-        path = '{}{}{}{}{}'.format(os.path.abspath(os.curdir), os.sep, 'test', os.sep, 'typesTest.json')
-        self.mJsonHelper = JsonHelper(path)
+        self.mJsonHelper = JsonHelper(__file__)
         self.mTypes = Types()
 
     def test_getType(self):
 
-        testData = self.mJsonHelper.GetTestInputOutputData('test_getType')
+        testData = self.mJsonHelper.GetTestInputOutputData(sys._getframe().f_code.co_name)
         for i in testData:
             self.assertEqual(i[1], self.mTypes.getType(i[0]))
 
     def test_getPathKey(self):
 
-        testData = self.mJsonHelper.GetTestInputOutputData('test_getPathKey')
+        testData = self.mJsonHelper.GetTestInputOutputData(sys._getframe().f_code.co_name)
         for i in testData:
             self.assertEqual(i[1], self.mTypes.getPathKey(i[0]))
 
 
 if __name__ == '__main__':
 
-    unittest.main()
+    main()

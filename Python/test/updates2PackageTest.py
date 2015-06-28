@@ -1,6 +1,5 @@
 import os
 import sys
-import unittest
 import core.dirs
 import updates2Package
 from db.storage import Uif
@@ -8,19 +7,19 @@ if 2 == sys.version_info[0]:
     from mock import MagicMock
 else:
     from unittest.mock import MagicMock
+from unittest import main, TestCase
 from test.jsonHelper import JsonHelper
 
 
-class TestSequenceFunctions(unittest.TestCase):
+class TestSequenceFunctions(TestCase):
 
     def setUp(self):
 
-        path = '{}{}{}{}{}'.format(os.path.abspath(os.curdir), os.sep, 'test', os.sep, 'updates2PackageTest.json')
-        self.mJsonHelper = JsonHelper(path)
+        self.mJsonHelper = JsonHelper(__file__)
 
     def test_getPath(self):
 
-        testsData = self.mJsonHelper.GetTestInputOutputData('test_getPath')
+        testsData = self.mJsonHelper.GetTestInputOutputData(sys._getframe().f_code.co_name)
         for testInputOutput in testsData:
             try:
                 upFile = updates2Package.UpFile(testInputOutput[0])
@@ -77,7 +76,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def test_relPaths2Full(self):
 
-        testsData = self.mJsonHelper.GetTestRoot('test_relPaths2Full')
+        testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
             coreDirsGetSubDirectoryFiles = core.dirs.getSubDirectoryFiles
             core.dirs.getSubDirectoryFiles = MagicMock(return_value=testData['getSubDirectoryFiles'])
@@ -89,7 +88,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def test_getFullPath2UnknownUpdatesAtList(self):
 
-        testsData = self.mJsonHelper.GetTestRoot('test_getFullPath2UnknownUpdatesAtList')
+        testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
             UifGetUpdatesFromStorage = Uif.getUpdatesFromStorage
             Uif.getUpdatesFromStorage = MagicMock(return_value=testData['updates'])
@@ -106,4 +105,4 @@ class TestSequenceFunctions(unittest.TestCase):
 
 if __name__ == '__main__':
 
-    unittest.main()
+    main()

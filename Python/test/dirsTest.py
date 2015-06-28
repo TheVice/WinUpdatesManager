@@ -1,21 +1,18 @@
 import os
 import sys
-import unittest
 import core.dirs
 if 2 == sys.version_info[0]:
     from mock import MagicMock
 else:
     from unittest.mock import MagicMock
+from unittest import main, TestCase
 from test.jsonHelper import JsonHelper
 
 
-class TestSequenceFunctions(unittest.TestCase):
+class TestSequenceFunctions(TestCase):
 
     def setUp(self):
-        if 2 == sys.version_info[0]:
-            self.mJsonHelper = JsonHelper(__file__.replace('.pyc', '.json'))
-        else:
-            self.mJsonHelper = JsonHelper(__file__.replace('.py', '.json'))
+        self.mJsonHelper = JsonHelper(__file__)
 
     def test_getSubDirectoryFiles(self):
 
@@ -40,4 +37,4 @@ class TestSequenceFunctions(unittest.TestCase):
 
 if __name__ == '__main__':
 
-    unittest.main()
+    main()

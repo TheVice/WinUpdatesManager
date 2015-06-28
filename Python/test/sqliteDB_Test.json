@@ -3,7 +3,7 @@
   "Connection": {
     "dataBase": ":memory:"
   },
-  "test_writeToDataBase": [
+  "test_write": [
     {
       "writeStatement": "CREATE TABLE Items (Id INTEGER PRIMARY KEY UNIQUE NOT NULL)",
       "readStatement": "SELECT name FROM (SELECT * FROM sqlite_master UNION ALL SELECT * FROM sqlite_temp_master) WHERE type LIKE 'table' ORDER BY name",
@@ -15,7 +15,26 @@
       "expectedReadResult": [1, 2, 3]
     }
   ],
-  "test_readFromDataBase": [
+  "test_writeAsync": [
+    {
+      "writeStatement": "CREATE TABLE Items (Id INTEGER PRIMARY KEY UNIQUE NOT NULL)",
+      "readStatement": "SELECT name FROM (SELECT * FROM sqlite_master UNION ALL SELECT * FROM sqlite_temp_master) WHERE type LIKE 'table' ORDER BY name",
+      "expectedReadResult": ["Items"]
+    },
+    {
+      "writeStatement": "CREATE TABLE Items (Id INTEGER PRIMARY KEY UNIQUE NOT NULL); INSERT INTO Items (Id) VALUES(1); INSERT INTO Items (Id) VALUES(2); INSERT INTO Items (Id) VALUES(3)",
+      "readStatement": "SELECT Id FROM Items",
+      "expectedReadResult": [1, 2, 3]
+    }
+  ],
+  "test_read": [
+    {
+      "readStatement": "SELECT name FROM (SELECT * FROM sqlite_master UNION ALL SELECT * FROM sqlite_temp_master) WHERE type LIKE 'table' ORDER BY name",
+      "writeStatement": "CREATE TABLE Items (Id INTEGER PRIMARY KEY UNIQUE NOT NULL)",
+      "expectedReadResult": ["Items"]
+    }
+  ],
+  "test_readAsync": [
     {
       "readStatement": "SELECT name FROM (SELECT * FROM sqlite_master UNION ALL SELECT * FROM sqlite_temp_master) WHERE type LIKE 'table' ORDER BY name",
       "writeStatement": "CREATE TABLE Items (Id INTEGER PRIMARY KEY UNIQUE NOT NULL)",

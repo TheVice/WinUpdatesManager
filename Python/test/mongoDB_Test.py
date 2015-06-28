@@ -13,10 +13,7 @@ else:
 class TestSequenceFunctions(TestCase):
 
     def setUp(self):
-        if 2 == sys.version_info[0]:
-            self.mJsonHelper = JsonHelper(__file__.replace('.pyc', '.json'))
-        else:
-            self.mJsonHelper = JsonHelper(__file__.replace('.py', '.json'))
+        self.mJsonHelper = JsonHelper(__file__)
         self.mHostAndPort = self.mJsonHelper.GetSting('MongoClient', 'HostAndPort')
         self.mServerSelectionTimeoutMS = self.mJsonHelper.GetInteger('MongoClient', 'ServerSelectionTimeoutMS')
         self.mDataBase = self.mJsonHelper.GetSting('MongoClient', 'dataBase')

@@ -1,12 +1,12 @@
 import sys
 import core.kb
-import unittest
 if 2 == sys.version_info[0]:
     import __builtin__ as builtins
     from mock import MagicMock
 else:
     import builtins
     from unittest.mock import MagicMock
+from unittest import main, TestCase
 from test.jsonHelper import JsonHelper
 
 
@@ -32,13 +32,10 @@ class MockReport():
         pass
 
 
-class TestSequenceFunctions(unittest.TestCase):
+class TestSequenceFunctions(TestCase):
 
     def setUp(self):
-        if 2 == sys.version_info[0]:
-            self.mJsonHelper = JsonHelper(__file__.replace('.pyc', '.json'))
-        else:
-            self.mJsonHelper = JsonHelper(__file__.replace('.py', '.json'))
+        self.mJsonHelper = JsonHelper(__file__)
 
     def test_getKB(self):
         testsData = self.mJsonHelper.GetTestInputOutputData(sys._getframe().f_code.co_name)
@@ -67,4 +64,4 @@ class TestSequenceFunctions(unittest.TestCase):
 
 if __name__ == '__main__':
 
-    unittest.main()
+    main()
