@@ -46,7 +46,7 @@ class TestSequenceFunctions(TestCase):
     def test_writeAsync(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
-            connection = sqlite3.connect(self.mDataBase, check_same_thread=False)
+            connection = db.sqliteDB.connect(self.mDataBase, False)
 
             writeStatement = testData['writeStatement']
 
@@ -59,7 +59,7 @@ class TestSequenceFunctions(TestCase):
                 expectedReadResult[i] = (expectedReadResult[i],)
             self.assertEqual(expectedReadResult, readResult)
 
-            connection.close()
+            db.sqliteDB.disconnect(connection)
 
     def test_read(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
@@ -90,7 +90,7 @@ class TestSequenceFunctions(TestCase):
     def test_readAsync(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
-            connection = sqlite3.connect(self.mDataBase, check_same_thread=False)
+            connection = db.sqliteDB.connect(self.mDataBase, False)
 
             expectedReadResult = testData['expectedReadResult']
             for i in range(0, len(expectedReadResult)):
@@ -105,12 +105,12 @@ class TestSequenceFunctions(TestCase):
             readResult = db.sqliteDB.readAsync(connection, readStatement, lambda l: l.fetchall())
             self.assertEqual(expectedReadResult, readResult)
 
-            connection.close()
+            db.sqliteDB.disconnect(connection)
 
     def test_listTables(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
-            connection = db.sqliteDB.connect(self.mDataBase)
+            connection = db.sqliteDB.connect(self.mDataBase, False)
 
             writeStatement = testData['writeStatement']
             db.sqliteDB.write(connection, writeStatement)
@@ -124,7 +124,7 @@ class TestSequenceFunctions(TestCase):
     def test_isTableExist(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
-            connection = db.sqliteDB.connect(self.mDataBase)
+            connection = db.sqliteDB.connect(self.mDataBase, False)
 
             writeStatement = testData['writeStatement']
             db.sqliteDB.write(connection, writeStatement)
@@ -140,7 +140,7 @@ class TestSequenceFunctions(TestCase):
     def test_listRows(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
-            connection = db.sqliteDB.connect(self.mDataBase)
+            connection = db.sqliteDB.connect(self.mDataBase, False)
 
             writeStatement = testData['writeStatement']
             db.sqliteDB.write(connection, writeStatement)
@@ -156,7 +156,7 @@ class TestSequenceFunctions(TestCase):
     def test_isRowExist(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
-            connection = db.sqliteDB.connect(self.mDataBase)
+            connection = db.sqliteDB.connect(self.mDataBase, False)
 
             writeStatement = testData['writeStatement']
             db.sqliteDB.write(connection, writeStatement)
@@ -177,7 +177,7 @@ class TestSequenceFunctions(TestCase):
     def test_dropTable(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
-            connection = db.sqliteDB.connect(self.mDataBase)
+            connection = db.sqliteDB.connect(self.mDataBase, False)
 
             writeStatement = testData['writeStatement']
             db.sqliteDB.write(connection, writeStatement)
@@ -193,7 +193,7 @@ class TestSequenceFunctions(TestCase):
     def test_deleteFromTable(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
-            connection = db.sqliteDB.connect(self.mDataBase)
+            connection = db.sqliteDB.connect(self.mDataBase, False)
 
             writeStatement = testData['writeStatement']
             db.sqliteDB.write(connection, writeStatement)
@@ -217,7 +217,7 @@ class TestSequenceFunctions(TestCase):
     def test_updateAtTable(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
-            connection = db.sqliteDB.connect(self.mDataBase)
+            connection = db.sqliteDB.connect(self.mDataBase, False)
 
             writeStatement = testData['writeStatement']
             db.sqliteDB.write(connection, writeStatement)
@@ -242,7 +242,7 @@ class TestSequenceFunctions(TestCase):
     def test_getFrom(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
-            connection = db.sqliteDB.connect(self.mDataBase)
+            connection = db.sqliteDB.connect(self.mDataBase, False)
 
             writeStatement = testData['writeStatement']
             db.sqliteDB.write(connection, writeStatement)
@@ -261,7 +261,7 @@ class TestSequenceFunctions(TestCase):
     def test_insertInto(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
-            connection = db.sqliteDB.connect(self.mDataBase)
+            connection = db.sqliteDB.connect(self.mDataBase, False)
 
             writeStatement = testData['writeStatement']
             db.sqliteDB.write(connection, writeStatement)

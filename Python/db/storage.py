@@ -1,9 +1,5 @@
 import sys
 import json
-if 2 == sys.version_info[0]:
-    import thread
-else:
-    import _thread as thread
 import os.path
 import core.dirs
 import db.mongoDB
@@ -134,97 +130,19 @@ class SQLite(Storage):
             super(SQLite, self).__init__('SQLite')
         self.mInit = aInit
 
-    @staticmethod
-    def uif2SQLiteDB(aDataBase, aUpdates):
+    def getAvalibleVersions(self):
 
-        connection = db.sqliteDB.connect(aDataBase)
-        statement = []
+        return SQLite.makeAvalibleList(db.sqliteDB.getFrom(self.mInit, 'Versions', 'Version'))
 
-        if not db.sqliteDB.isTableExist(connection, 'KBs'):
-            statement.append('CREATE TABLE KBs ('
-                             'id INTEGER PRIMARY KEY UNIQUE NOT NULL);')
+    def getAvalibleTypes(self):
 
-        if not db.sqliteDB.isTableExist(connection, 'Dates'):
-            statement.append('CREATE TABLE Dates ('
-                             'id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,'
-                             'Date DATE UNIQUE NOT NULL);')
+        return SQLite.makeAvalibleList(db.sqliteDB.getFrom(self.mInit, 'Types', 'Type'))
 
-        if not db.sqliteDB.isTableExist(connection, 'Paths'):
-            statement.append('CREATE TABLE Paths ('
-                             'id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,'
-                             'Path TEXT UNIQUE NOT NULL);')
+    def getAvalibleLanguages(self):
 
-        if not db.sqliteDB.isTableExist(connection, 'Versions'):
-            statement.append('CREATE TABLE Versions ('
-                             'id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,'
-                             'Version TEXT UNIQUE NOT NULL);')
+        return SQLite.makeAvalibleList(db.sqliteDB.getFrom(self.mInit, 'Languages', 'Language'))
 
-        if not db.sqliteDB.isTableExist(connection, 'Types'):
-            statement.append('CREATE TABLE Types ('
-                             'id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,'
-                             'Type TEXT UNIQUE NOT NULL);')
-
-        if not db.sqliteDB.isTableExist(connection, 'Languages'):
-            statement.append('CREATE TABLE Languages('
-                             'id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,'
-                             'Language TEXT UNIQUE NOT NULL);')
-
-        if not db.sqliteDB.isTableExist(connection, 'Updates'):
-            statement.append('CREATE TABLE Updates ('
-                             'id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,'
-                             'kb_id INTEGER NOT NULL,'
-                             'date_id INTEGER NOT NULL,'
-                             'path_id INTEGER NOT NULL,'
-                             'version_id INTEGER NOT NULL,'
-                             'type_id INTEGER NOT NULL,'
-                             'language_id INTEGER NOT NULL,'
-                             'FOREIGN KEY(kb_id) REFERENCES KBs(id),'
-                             'FOREIGN KEY(date_id) REFERENCES Dates(id),'
-                             'FOREIGN KEY(path_id) REFERENCES Paths(id),'
-                             'FOREIGN KEY(version_id) REFERENCES Versions(id),'
-                             'FOREIGN KEY(type_id) REFERENCES Types(id),'
-                             'FOREIGN KEY(language_id) REFERENCES Languages(id));')
-
-        db.sqliteDB.write(connection, ''.join(statement))
-
-        SQLite.addUpdates(connection, aUpdates)
-        db.sqliteDB.disconnect(connection)
-
-
-    @staticmethod
-    def _getAvalibleVersions(aMutex, aPath, aItems):
-
-        sqlite = db.sqliteDB.connect(aPath)
-        aItems.extend(SQLite.makeAvalibleList(db.sqliteDB.getFrom(sqlite, 'Versions', 'Version')))
-        db.sqliteDB.disconnect(sqlite)
-        aMutex.acquire()
-
-    @staticmethod
-    def _getAvalibleTypes(aMutex, aPath, aItems):
-
-        sqlite = db.sqliteDB.connect(aPath)
-        aItems.extend(SQLite.makeAvalibleList(db.sqliteDB.getFrom(sqlite, 'Types', 'Type')))
-        db.sqliteDB.disconnect(sqlite)
-        aMutex.acquire()
-
-    @staticmethod
-    def _getAvalibleLanguages(aMutex, aPath, aItems):
-
-        sqlite = db.sqliteDB.connect(aPath)
-        aItems.extend(SQLite.makeAvalibleList(db.sqliteDB.getFrom(sqlite, 'Languages', 'Language')))
-        db.sqliteDB.disconnect(sqlite)
-        aMutex.acquire()
-
-    @staticmethod
-    def _get(aMutex, aPath, aQuery, aUpdates):
-
-        sqlite = db.sqliteDB.connect(aPath)
-        aUpdates.extend(SQLite.getUpdates(sqlite, aQuery))
-        db.sqliteDB.disconnect(sqlite)
-        aMutex.acquire()
-
-    @staticmethod
-    def getUpdates(aDb, aQuery):
+    def get(self, aQuery):
 
         statement = ('SELECT kb_id, date_id, path_id, version_id,'
                      ' type_id, language_id FROM Updates')
@@ -232,32 +150,32 @@ class SQLite(Storage):
         template = []
         for key in aQuery.keys():
             if 'KB' == key:
-                kb_id = db.sqliteDB.getFrom(aDb, 'KBs', ['id'], {'id': aQuery[key]})
+                kb_id = db.sqliteDB.getFrom(self.mInit, 'KBs', ['id'], {'id': aQuery[key]})
                 if kb_id == []:
                     return []
                 template.append('kb_id LIKE {}'.format(kb_id[0]))
             elif 'Date' == key:
-                date_id = db.sqliteDB.getFrom(aDb, 'Dates', ['id'], {'Date': '{}'.format(aQuery[key])})
+                date_id = db.sqliteDB.getFrom(self.mInit, 'Dates', ['id'], {'Date': '{}'.format(aQuery[key])})
                 if date_id == []:
                     return []
                 template.append('date_id LIKE {}'.format(date_id[0]))
             elif 'Version' == key:
-                version_id = db.sqliteDB.getFrom(aDb, 'Versions', ['id'], {'Version': '{}'.format(aQuery[key])})
+                version_id = db.sqliteDB.getFrom(self.mInit, 'Versions', ['id'], {'Version': '{}'.format(aQuery[key])})
                 if version_id == []:
                     return []
                 template.append('version_id LIKE {}'''.format(version_id[0]))
             elif 'Type' == key:
-                    type_id = db.sqliteDB.getFrom(aDb, 'Types', ['id'], {'Type': '{}'.format(aQuery[key])})
+                    type_id = db.sqliteDB.getFrom(self.mInit, 'Types', ['id'], {'Type': '{}'.format(aQuery[key])})
                     if type_id == []:
                         return []
                     template.append('type_id LIKE {}'.format(type_id[0]))
             elif 'Language' == key:
-                    language_id = db.sqliteDB.getFrom(aDb, 'Languages', ['id'], {'Language': '{}'.format(aQuery[key])})
+                    language_id = db.sqliteDB.getFrom(self.mInit, 'Languages', ['id'], {'Language': '{}'.format(aQuery[key])})
                     if language_id == []:
                         return []
                     template.append('language_id LIKE {}'.format(language_id[0]))
             elif 'Path' == key:
-                    path_id = db.sqliteDB.getFrom(aDb, 'Paths', ['id'], {'Path': '{}'.format(aQuery[key])})
+                    path_id = db.sqliteDB.getFrom(self.mInit, 'Paths', ['id'], {'Path': '{}'.format(aQuery[key])})
                     if path_id is None:
                         return []
                     template.append('path_id LIKE {}'''.format(path_id[0]))
@@ -269,8 +187,17 @@ class SQLite(Storage):
             template = template.replace(',', ' AND')
             statement = '{} WHERE {}'.format(statement, template)
 
-        rawUpdates = db.sqliteDB.read(aDb, statement, lambda l: l.fetchall())
-        return SQLite.rawUpdatesToUpdates(aDb, rawUpdates)
+        rawUpdates = db.sqliteDB.readAsync(self.mInit, statement, lambda l: l.fetchall())
+        return SQLite.rawUpdatesToUpdates(self.mInit, rawUpdates)
+
+    @staticmethod
+    def makeAvalibleList(aList):
+
+        items = []
+        for i in aList:
+            if -1 == '{}'.format(i).find('UNKNOWN'):
+                items.append(i)
+        return items
 
     @staticmethod
     def rawUpdatesToUpdates(aDb, aRawUpdates):
@@ -355,10 +282,67 @@ class SQLite(Storage):
         return db.sqliteDB.getFrom(aDb, aTable, ['id'], {aRowName: aItem})[0]
 
     @staticmethod
+    def uif2SQLiteDB(aDataBase, aUpdates):
+
+        connection = db.sqliteDB.connect(aDataBase, False)
+        cursor = connection.cursor()
+        statement = []
+
+        if not db.sqliteDB.isTableExist(cursor, 'KBs'):
+            statement.append('CREATE TABLE KBs ('
+                             'id INTEGER PRIMARY KEY UNIQUE NOT NULL);')
+
+        if not db.sqliteDB.isTableExist(cursor, 'Dates'):
+            statement.append('CREATE TABLE Dates ('
+                             'id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,'
+                             'Date DATE UNIQUE NOT NULL);')
+
+        if not db.sqliteDB.isTableExist(cursor, 'Paths'):
+            statement.append('CREATE TABLE Paths ('
+                             'id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,'
+                             'Path TEXT UNIQUE NOT NULL);')
+
+        if not db.sqliteDB.isTableExist(cursor, 'Versions'):
+            statement.append('CREATE TABLE Versions ('
+                             'id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,'
+                             'Version TEXT UNIQUE NOT NULL);')
+
+        if not db.sqliteDB.isTableExist(cursor, 'Types'):
+            statement.append('CREATE TABLE Types ('
+                             'id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,'
+                             'Type TEXT UNIQUE NOT NULL);')
+
+        if not db.sqliteDB.isTableExist(cursor, 'Languages'):
+            statement.append('CREATE TABLE Languages('
+                             'id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,'
+                             'Language TEXT UNIQUE NOT NULL);')
+
+        if not db.sqliteDB.isTableExist(cursor, 'Updates'):
+            statement.append('CREATE TABLE Updates ('
+                             'id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,'
+                             'kb_id INTEGER NOT NULL,'
+                             'date_id INTEGER NOT NULL,'
+                             'path_id INTEGER NOT NULL,'
+                             'version_id INTEGER NOT NULL,'
+                             'type_id INTEGER NOT NULL,'
+                             'language_id INTEGER NOT NULL,'
+                             'FOREIGN KEY(kb_id) REFERENCES KBs(id),'
+                             'FOREIGN KEY(date_id) REFERENCES Dates(id),'
+                             'FOREIGN KEY(path_id) REFERENCES Paths(id),'
+                             'FOREIGN KEY(version_id) REFERENCES Versions(id),'
+                             'FOREIGN KEY(type_id) REFERENCES Types(id),'
+                             'FOREIGN KEY(language_id) REFERENCES Languages(id));')
+
+        db.sqliteDB.writeAsync(cursor, ''.join(statement))
+
+        SQLite.addUpdates(cursor, aUpdates)
+        connection.commit()
+        db.sqliteDB.disconnect(connection)
+
+    @staticmethod
     def addUpdates(aDb, aUpdates):
 
         count = len(aUpdates)
-        cursor = aDb.cursor()
 
         for update, i in zip(aUpdates, range(count)):
             kb = update['KB'] if not isinstance(update['KB'], dict) else -1
@@ -368,66 +352,19 @@ class SQLite(Storage):
             osType = '\'{}\''.format(update['Type'] if not isinstance(update['Type'], dict) else 'UNKNOWN TYPE')
             language = '\'{}\''.format(update['Language'] if not isinstance(update['Language'], dict) else 'UNKNOWN LANGUAGE')
 
-            kb_id = SQLite.getSetSubstanceID(cursor, 'KBs', 'id', kb)
-            date_id = SQLite.getSetSubstanceID(cursor, 'Dates', 'Date', date)
-            path_id = SQLite.getSetSubstanceID(cursor, 'Paths', 'Path', path)
-            version_id = SQLite.getSetSubstanceID(cursor, 'Versions', 'Version', osVersion)
-            type_id = SQLite.getSetSubstanceID(cursor, 'Types', 'Type', osType)
-            language_id = SQLite.getSetSubstanceID(cursor, 'Languages', 'Language', language)
+            kb_id = SQLite.getSetSubstanceID(aDb, 'KBs', 'id', kb)
+            date_id = SQLite.getSetSubstanceID(aDb, 'Dates', 'Date', date)
+            path_id = SQLite.getSetSubstanceID(aDb, 'Paths', 'Path', path)
+            version_id = SQLite.getSetSubstanceID(aDb, 'Versions', 'Version', osVersion)
+            type_id = SQLite.getSetSubstanceID(aDb, 'Types', 'Type', osType)
+            language_id = SQLite.getSetSubstanceID(aDb, 'Languages', 'Language', language)
 
             statement = 'INSERT INTO Updates (kb_id, date_id, path_id, version_id, type_id, language_id) VALUES ({}, {}, {}, {}, {}, {})'
             statement = statement.format(kb_id, date_id, path_id, version_id, type_id, language_id)
 
-            cursor.execute(statement)
+            db.sqliteDB.writeAsync(aDb, statement)
 
             print('{} / {}'.format(i, count))
-
-        aDb.commit()
-
-    def getAvalibleVersions(self):
-
-        mutex = thread.allocate_lock()
-        items = []
-        thread.start_new_thread(SQLite._getAvalibleVersions, (mutex, self.mInit, items))
-        while not mutex.locked():
-            pass
-        return items
-
-    def getAvalibleTypes(self):
-
-        mutex = thread.allocate_lock()
-        items = []
-        thread.start_new_thread(SQLite._getAvalibleTypes, (mutex, self.mInit, items))
-        while not mutex.locked():
-            pass
-        return items
-
-    def getAvalibleLanguages(self):
-
-        mutex = thread.allocate_lock()
-        items = []
-        thread.start_new_thread(SQLite._getAvalibleLanguages, (mutex, self.mInit, items))
-        while not mutex.locked():
-            pass
-        return items
-
-    def get(self, aQuery):
-
-        mutex = thread.allocate_lock()
-        updates = []
-        thread.start_new_thread(SQLite._get, (mutex, self.mInit, aQuery, updates))
-        while not mutex.locked():
-            pass
-        return updates
-
-    @staticmethod
-    def makeAvalibleList(aList):
-
-        items = []
-        for i in aList:
-            if -1 == '{}'.format(i).find('UNKNOWN'):
-                items.append(i)
-        return items
 
 
 class MongoDB(Storage):

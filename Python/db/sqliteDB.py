@@ -7,9 +7,9 @@ else:
     import _thread as thread
 
 
-def connect(aDataBase):
+def connect(aDataBase, aCheckSameThread=True):
 
-    return sqlite3.connect(aDataBase)
+    return sqlite3.connect(aDataBase, check_same_thread=aCheckSameThread)
 
 
 def disconnect(aConnection):
@@ -80,7 +80,7 @@ def listTables(aDataBase):
     statement = ('SELECT name FROM sqlite_master'
                  ' WHERE type LIKE \'table\''
                  ' ORDER BY name')
-    tables = read(aDataBase, statement, lambda l: l.fetchall())
+    tables = readAsync(aDataBase, statement, lambda l: l.fetchall())
 
     for i in range(0, len(tables)):
         tables[i] = tables[i][0]
@@ -92,14 +92,14 @@ def isTableExist(aDataBase, aTable):
     statement = ('SELECT name FROM sqlite_master'
                  ' WHERE type LIKE \'table\''
                  ' AND name LIKE \'{}\''.format(aTable))
-    return read(aDataBase, statement, lambda l: l.fetchone()) is not None
+    return readAsync(aDataBase, statement, lambda l: l.fetchone()) is not None
 
 
 def listRows(aDataBase, aTable):
 
     statement = ('SELECT sql FROM sqlite_master'
         ' WHERE tbl_name LIKE \'{}\' AND type LIKE \'table\''.format(aTable))
-    tableInfo = read(aDataBase, statement, lambda l: l.fetchone())
+    tableInfo = readAsync(aDataBase, statement, lambda l: l.fetchone())
 
     if tableInfo is not None:
         tableInfo = tableInfo[0]
@@ -122,7 +122,7 @@ def isRowExist(aDataBase, aTable, aRow):
 
     statement = ('SELECT sql FROM sqlite_master'
         ' WHERE tbl_name LIKE \'{}\' AND type LIKE \'table\''.format(aTable))
-    tableInfo = read(aDataBase, statement, lambda l: l.fetchone())
+    tableInfo = readAsync(aDataBase, statement, lambda l: l.fetchone())
 
     if tableInfo is not None:
         tableInfo = tableInfo[0]
@@ -138,7 +138,7 @@ def isRowExist(aDataBase, aTable, aRow):
 def dropTable(aDataBase, aTable):
 
     statement = ('DROP TABLE {}'.format(aTable))
-    write(aDataBase, statement)
+    writeAsync(aDataBase, statement)
 
 
 def deleteFromTable(aDataBase, aTable, aRows=None, aItem=None):
@@ -155,7 +155,7 @@ def deleteFromTable(aDataBase, aTable, aRows=None, aItem=None):
         l = l.replace('"', '')
         statement = '{} WHERE {}'.format(statement, l)
 
-    write(aDataBase, statement)
+    writeAsync(aDataBase, statement)
 
 
 def updateAtTable(aDataBase, aTable, aRows, aItem, aCurrentItem):
@@ -178,7 +178,7 @@ def updateAtTable(aDataBase, aTable, aRows, aItem, aCurrentItem):
     l = l.replace('"', '')
     statement = '{} WHERE {}'.format(statement, l)
 
-    write(aDataBase, statement)
+    writeAsync(aDataBase, statement)
 
 
 def getFrom(aDataBase, aTable, aRows=None, aFilter=None):
@@ -209,7 +209,7 @@ def getFrom(aDataBase, aTable, aRows=None, aFilter=None):
 
         statement = '{} WHERE {}'.format(statement, template)
 
-    items = read(aDataBase, statement, lambda l: l.fetchall())
+    items = readAsync(aDataBase, statement, lambda l: l.fetchall())
     for i in range(0, len(items)):
         if 1 == len(items[i]):
             items[i] = items[i][0]
@@ -234,4 +234,4 @@ def insertInto(aDataBase, aTable, aItems, aRows=None):
         item = item.replace('[', '').replace(']', '')
         statement.append(template.format(aTable, item))
 
-    write(aDataBase, ''.join(statement))
+    writeAsync(aDataBase, ''.join(statement))
