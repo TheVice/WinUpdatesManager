@@ -39,6 +39,10 @@ class TestSequenceFunctions(TestCase):
 
             db.sqliteDB.write(self.mDataBase, writeStatement)
 
+            connection = db.sqliteDB.connect(self.mDataBase)
+            db.sqliteDB.write(connection.cursor(), writeStatement)
+            db.sqliteDB.disconnect(connection)
+
     def test_writeAsync(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
@@ -78,6 +82,10 @@ class TestSequenceFunctions(TestCase):
             db.sqliteDB.disconnect(connection)
 
             db.sqliteDB.read(self.mDataBase, readStatement, lambda l: l.fetchall())
+
+            connection = db.sqliteDB.connect(self.mDataBase)
+            db.sqliteDB.read(connection.cursor(), readStatement, lambda l: l.fetchall())
+            db.sqliteDB.disconnect(connection)
 
     def test_readAsync(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
@@ -241,10 +249,10 @@ class TestSequenceFunctions(TestCase):
 
             table = testData['table']
             rows = testData['rows']
-            filter = testData['filter']
+            getFilter = testData['filter']
 
             expectedResult = testData['expectedResult']
-            result = db.sqliteDB.getFrom(connection, table, rows, filter)
+            result = db.sqliteDB.getFrom(connection, table, rows, getFilter)
 
             self.assertEqual(expectedResult, result)
 

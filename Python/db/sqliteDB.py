@@ -20,14 +20,14 @@ def disconnect(aConnection):
 def write(aDataBase, aStatement, aMutex=None):
 
     if isinstance(aDataBase, sqlite3.Connection):
-        connection = aDataBase
+        aDataBase.executescript(aStatement)
+        aDataBase.commit()
+    elif isinstance(aDataBase, sqlite3.Cursor):
+        aDataBase.executescript(aStatement)
     else:
         connection = connect(aDataBase)
-
-    connection.executescript(aStatement)
-    connection.commit()
-
-    if not isinstance(aDataBase, sqlite3.Connection):
+        connection.executescript(aStatement)
+        connection.commit()
         disconnect(connection)
 
     if aMutex:
@@ -37,15 +37,17 @@ def write(aDataBase, aStatement, aMutex=None):
 def read(aDataBase, aStatement, aFetch, aMutex=None, aReturnData=None):
 
     if isinstance(aDataBase, sqlite3.Connection):
-        connection = aDataBase
+        cursor = aDataBase.cursor()
+        cursor.execute(aStatement)
+        data = aFetch(cursor)
+    elif isinstance(aDataBase, sqlite3.Cursor):
+        aDataBase.execute(aStatement)
+        data = aFetch(aDataBase)
     else:
         connection = connect(aDataBase)
-
-    cursor = connection.cursor()
-    cursor.execute(aStatement)
-    data = aFetch(cursor)
-
-    if not isinstance(aDataBase, sqlite3.Connection):
+        cursor = connection.cursor()
+        cursor.execute(aStatement)
+        data = aFetch(cursor)
         disconnect(connection)
 
     if aMutex:
