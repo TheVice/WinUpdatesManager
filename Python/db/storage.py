@@ -2,8 +2,9 @@ import sys
 import json
 import os.path
 import core.dirs
-import db.mongoDB
 import db.sqliteDB
+from datetime import datetime
+from db.mongoDB import MongoDBClient
 from core.unknownSubstance import UnknownSubstance
 
 
@@ -86,11 +87,13 @@ class Uif(Storage):
             inputFile = open(aFile, 'r')
 
             for line in inputFile:
-                updates.append(json.loads(line))
+                update = json.loads(line)
+                update['Date'] = datetime.strptime(update['Date'], '%Y, %m, %d')
+                updates.append(update)
 
             inputFile.close()
         except:
-            raise Exception('Unexpected error while work with file {} {}'.format(aFile, sys.exc_info[1]))
+            raise Exception('Unexpected error while work with file {} {}'.format(aFile, sys.exc_info()[1]))
 
         return updates
 
@@ -247,7 +250,8 @@ class SQLite(Storage):
     @staticmethod
     def getDateByID(aDb, aId):
 
-        return db.sqliteDB.getFrom(aDb, 'Dates', ['Date'], {'id': aId})[0]
+        date = db.sqliteDB.getFrom(aDb, 'Dates', ['Date'], {'id': aId})[0]
+        return datetime.strptime(date, '%Y, %m, %d')
 
     @staticmethod
     def getPathByID(aDb, aId):
@@ -419,6 +423,21 @@ class MongoDB(Storage):
                 items.append(i[key])
         return items
 
+    @staticmethod
+    def uif2MongoDB(aUpdates, aDataBaseName, aTableName, aHostAndPort):
+
+        for update in aUpdates:
+            update['Date'] = datetime.datetime.strptime(update['Date'], '%Y, %m, %d')
+
+        updates = MongoDBClient.addObjectIdFieldAtCollection(aUpdates)
+        dataBase = MongoDB(aHostAndPort)
+        updates = MongoDBClient.getUniqueItemsFromCollection(aDataBaseName, aTableName, updates)
+
+        if 0 < len(updates):
+            dataBase.insertToDB(aDataBaseName, aTableName, updates)
+
+        return len(dataBase.getItemsFromDB(aDataBaseName, aTableName))
+
 
 def getStorage(aInit):
 
@@ -427,14 +446,13 @@ def getStorage(aInit):
             if os.path.isdir(aInit):
                 return Uif(aInit)
             else:
-                name, extension = os.path.splitext(aInit)
-                extension = os.path.normcase(os.path.normpath(extension))
+                extension = os.path.splitext(aInit)[1]
                 if '.uif' == extension:
                     return Uif(aInit)
                 else:
                     return SQLite(aInit)
         else:
-            raise IOError('Path {} does not exist'.format(aInit))
+            raise OSError('Path {} does not exist'.format(aInit))
     elif ':memory:' == aInit:
         return SQLite(aInit)
     else:

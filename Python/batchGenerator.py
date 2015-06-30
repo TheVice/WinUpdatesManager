@@ -50,25 +50,21 @@ def batchTemplate(aPath, aStrNumber, aSwitch, aCopyRequired):
     return strList
 
 
-def generate(aLines, aRoot=None, aSwitch='/quiet /norestart', aCopyRequired=True):
+def generate(aLines,
+             aRoot=None,
+             aSwitch='/quiet /norestart',
+             aCopyRequired=True):
 
     strList = headTemplate
     strList = strList.replace('{3}', os.linesep)
 
-    i = 1
-    if aRoot is not None:
-        for line in aLines:
-            line = line.replace('\n', '')
-            line = line.replace('\r', '')
+    for line, i in zip(aLines, range(1, len(aLines) + 1)):
+
+        if aRoot:
             line = os.path.join(aRoot, line)
-            strList = '{}{}'.format(strList, batchTemplate(line, i, aSwitch, aCopyRequired))
-            i += 1
-    else:
-        for line in aLines:
-            line = line.replace('\n', '')
-            line = line.replace('\r', '')
-            strList = '{}{}'.format(strList, batchTemplate(line, i, aSwitch, aCopyRequired))
-            i += 1
+
+        line = batchTemplate(line, i, aSwitch, aCopyRequired)
+        strList = '{}{}'.format(strList, line)
 
     return strList
 
@@ -87,7 +83,7 @@ if __name__ == '__main__':
                 print(generate(lines.split('\n')))
         except:
             print('Unexpected error while work with file {} {}'.format(
-                                                sys.argv[1], sys.exc_info[1]))
+                                            sys.argv[1], sys.exc_info()[1]))
     else:
         print('Using', sys.argv[0],
               '<path to report file> <root path>[optional]')

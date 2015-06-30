@@ -1,5 +1,4 @@
 import sys
-import sqlite3
 import db.sqliteDB
 from unittest import main, TestCase
 from test.jsonHelper import JsonHelper
@@ -249,7 +248,7 @@ class TestSequenceFunctions(TestCase):
 
             table = testData['table']
             rows = testData['rows']
-            getFilter = testData['filter']
+            getFilter = testData['getFilter']
 
             expectedResult = testData['expectedResult']
             result = db.sqliteDB.getFrom(connection, table, rows, getFilter)

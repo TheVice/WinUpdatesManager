@@ -1,0 +1,43 @@
+{
+  "test_getAvalibleVersions": [
+    {}
+  ],
+  "test_getAvalibleTypes": [
+    {}
+  ],
+  "test_getAvalibleLanguages": [
+    {}
+  ],
+  "test_get": [
+    {}
+  ],
+  "test_uif2SQLiteDB": [
+    {}
+  ],
+  "test_uif2MongoDB": [
+    {}
+  ],
+  "test_getStorage": [
+    {
+      "1.uif": "Uif"
+    },
+    {
+      "UIFs": "Uif"
+    },
+    {
+      "base.sqlite": "SQLite"
+    },
+    {
+      ":memory:": "SQLite"
+    },
+    {
+      "mongodb://localhost:27017/": "MongoDB"
+    },
+    {
+      "wrong.File": null
+    },
+    {
+      "wrongFolder": null
+    }
+  ]
+}
