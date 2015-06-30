@@ -88,7 +88,7 @@ class Uif(Storage):
 
             for line in inputFile:
                 update = json.loads(line)
-                update['Date'] = datetime.strptime(update['Date'], '%Y, %m, %d')
+                update['Date'] = datetime.strptime(update['Date'], '%Y, %m, %d').date()
                 updates.append(update)
 
             inputFile.close()
@@ -251,7 +251,7 @@ class SQLite(Storage):
     def getDateByID(aDb, aId):
 
         date = db.sqliteDB.getFrom(aDb, 'Dates', ['Date'], {'id': aId})[0]
-        return datetime.strptime(date, '%Y, %m, %d')
+        return datetime.strptime(date, '%Y, %m, %d').date()
 
     @staticmethod
     def getPathByID(aDb, aId):
@@ -364,13 +364,15 @@ class SQLite(Storage):
 
 class MongoDB(Storage):
 
-    def __init__(self, aInit):
+    def __init__(self, aInit, aDataBase, aTable):
 
         if 2 == sys.version_info[0]:
             Storage.__init__(self, 'MongoDB')
         else:
             super(MongoDB, self).__init__('MongoDB')
         self.mDbClient = db.mongoDB.MongoDBClient(aInit)
+        self.mDataBase = aDataBase
+        self.mTable = aTable
 
     def getAvalibleVersions(self):
 
@@ -378,7 +380,7 @@ class MongoDB(Storage):
         expression.append({'$group': {'_id': {'Version': '$Version'}, 'count': {'$sum': 1}}})
         expression.append({'$sort': {'count': -1}})
         expression.append({'$project': {'_id':'$_id.Version', 'count': '$_id.count'}})
-        return MongoDB.makeAvalibleList(self.mDbClient.aggregate('win32', 'updates', expression))
+        return MongoDB.makeAvalibleList(self.mDbClient.aggregate(self.mDataBase, self.mTable, expression))
 
     def getAvalibleTypes(self):
 
@@ -386,7 +388,7 @@ class MongoDB(Storage):
         expression.append({'$group': {'_id': {'Type': '$Type'}, 'count': {'$sum': 1}}})
         expression.append({'$sort': {'count': -1}})
         expression.append({'$project': {'_id': '$_id.Type', 'count': '$_id.count'}})
-        return MongoDB.makeAvalibleList(self.mDbClient.aggregate('win32', 'updates', expression))
+        return MongoDB.makeAvalibleList(self.mDbClient.aggregate(self.mDataBase, self.mTable, expression))
 
     def getAvalibleLanguages(self):
 
@@ -394,15 +396,15 @@ class MongoDB(Storage):
         expression.append({'$group': {'_id': {'Language': '$Language'}, 'count': {'$sum': 1}}})
         expression.append({'$sort': {'count': -1}})
         expression.append({'$project': {'_id':'$_id.Language', 'count': '$_id.count'}})
-        return MongoDB.makeAvalibleList(self.mDbClient.aggregate('win32', 'updates', expression))
+        return MongoDB.makeAvalibleList(self.mDbClient.aggregate(self.mDataBase, self.mTable, expression))
 
     def getWithSkipLimitAndSort(self, aQuery, aSkip, aLimit, aSort):
 
-        return self.mDbClient.getItemsFromDB('win32', 'updates', aQuery, {'_id': 0}, aSkip, aLimit, aSort)
+        return self.mDbClient.getItemsFromDB(self.mDataBase, self.mTable, aQuery, {'_id': 0}, aSkip, aLimit, aSort)
 
     def get(self, aQuery):
 
-        return self.mDbClient.getItemsFromDB('win32', 'updates', aQuery)
+        return self.mDbClient.getItemsFromDB(self.mDataBase, self.mTable, aQuery)
 
     @staticmethod
     def makeAvalibleList(aList):
@@ -438,7 +440,7 @@ def getStorage(aInit):
                 return Uif(aInit)
             else:
                 extension = os.path.splitext(aInit)[1]
-                if '.uif' == extension:
+                if '.uif' == str.lower(extension):
                     return Uif(aInit)
                 else:
                     return SQLite(aInit)
@@ -447,4 +449,4 @@ def getStorage(aInit):
     elif ':memory:' == aInit:
         return SQLite(aInit)
     else:
-        return MongoDB(aInit)
+        return MongoDB(aInit, 'win32', 'updates')
