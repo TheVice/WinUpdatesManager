@@ -1,5 +1,7 @@
 import sys
+import db.sqliteDB
 from unittest import main, TestCase
+from db.mongoDB import MongoDBClient
 from test.jsonHelper import JsonHelper
 from db.storage import Uif, SQLite, MongoDB, getStorage
 if 2 == sys.version_info[0]:
@@ -38,12 +40,30 @@ class TestSequenceFunctions(TestCase):
     def test_uif2SQLiteDB(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
-            pass
+            updates = testData['updates']
+
+            dataBase = db.sqliteDB.connect(testData['sqliteDB'], False)
+            SQLite.uif2SQLiteDB(dataBase.cursor(), updates)
+            dataBase.commit()
+            db.sqliteDB.disconnect(dataBase)
 
     def test_uif2MongoDB(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
-            pass
+            updates = testData['updates']
+            MongoClient = testData['MongoClient']
+            dataBase = MongoClient['dataBase']
+            table = MongoClient['table']
+            HostAndPort = MongoClient['HostAndPort']
+            ServerSelectionTimeoutMS = MongoClient['ServerSelectionTimeoutMS']
+
+            client = MongoDBClient(HostAndPort, ServerSelectionTimeoutMS)
+            client.dropCollectionsInDB(dataBase, table)
+            MongoDB.uif2MongoDB(updates, dataBase, table, HostAndPort)
+            mongoDB_updates = client.getItemsFromDB(dataBase, table)
+            self.assertEqual(len(updates), len(mongoDB_updates))
+            for up in updates:
+                self.assertTrue(up in mongoDB_updates)
 
     def test_getStorage(self):
         testsData = self.mJsonHelper.GetTestInputOutputData(sys._getframe().f_code.co_name)

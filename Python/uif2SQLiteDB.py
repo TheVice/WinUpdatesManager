@@ -1,4 +1,5 @@
 import sys
+import db.sqliteDB
 from db.storage import Uif, SQLite
 
 
@@ -14,8 +15,10 @@ if __name__ == '__main__':
         if 0 < itemsCount:
             print('At \'{}\' found {} update objects'.format(storagePath,
                                                              itemsCount))
-
-            SQLite.uif2SQLiteDB(dataBasePath, updates)
+            dataBase = db.sqliteDB.connect(dataBasePath, False)
+            SQLite.uif2SQLiteDB(dataBase.cursor(), updates)
+            dataBase.commit()
+            db.sqliteDB.disconnect(dataBase)
         else:
             print('Not found update objects at {}'.format(storagePath))
 

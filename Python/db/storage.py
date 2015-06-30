@@ -288,40 +288,38 @@ class SQLite(Storage):
     @staticmethod
     def uif2SQLiteDB(aDataBase, aUpdates):
 
-        connection = db.sqliteDB.connect(aDataBase, False)
-        cursor = connection.cursor()
         statement = []
 
-        if not db.sqliteDB.isTableExist(cursor, 'KBs'):
+        if not db.sqliteDB.isTableExist(aDataBase, 'KBs'):
             statement.append('CREATE TABLE KBs ('
                              'id INTEGER PRIMARY KEY UNIQUE NOT NULL);')
 
-        if not db.sqliteDB.isTableExist(cursor, 'Dates'):
+        if not db.sqliteDB.isTableExist(aDataBase, 'Dates'):
             statement.append('CREATE TABLE Dates ('
                              'id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,'
                              'Date DATE UNIQUE NOT NULL);')
 
-        if not db.sqliteDB.isTableExist(cursor, 'Paths'):
+        if not db.sqliteDB.isTableExist(aDataBase, 'Paths'):
             statement.append('CREATE TABLE Paths ('
                              'id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,'
                              'Path TEXT UNIQUE NOT NULL);')
 
-        if not db.sqliteDB.isTableExist(cursor, 'Versions'):
+        if not db.sqliteDB.isTableExist(aDataBase, 'Versions'):
             statement.append('CREATE TABLE Versions ('
                              'id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,'
                              'Version TEXT UNIQUE NOT NULL);')
 
-        if not db.sqliteDB.isTableExist(cursor, 'Types'):
+        if not db.sqliteDB.isTableExist(aDataBase, 'Types'):
             statement.append('CREATE TABLE Types ('
                              'id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,'
                              'Type TEXT UNIQUE NOT NULL);')
 
-        if not db.sqliteDB.isTableExist(cursor, 'Languages'):
+        if not db.sqliteDB.isTableExist(aDataBase, 'Languages'):
             statement.append('CREATE TABLE Languages('
                              'id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,'
                              'Language TEXT UNIQUE NOT NULL);')
 
-        if not db.sqliteDB.isTableExist(cursor, 'Updates'):
+        if not db.sqliteDB.isTableExist(aDataBase, 'Updates'):
             statement.append('CREATE TABLE Updates ('
                              'id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,'
                              'kb_id INTEGER NOT NULL,'
@@ -337,18 +335,11 @@ class SQLite(Storage):
                              'FOREIGN KEY(type_id) REFERENCES Types(id),'
                              'FOREIGN KEY(language_id) REFERENCES Languages(id));')
 
-        db.sqliteDB.writeAsync(cursor, ''.join(statement))
-
-        SQLite.addUpdates(cursor, aUpdates)
-        connection.commit()
-        db.sqliteDB.disconnect(connection)
-
-    @staticmethod
-    def addUpdates(aDb, aUpdates):
+        db.sqliteDB.writeAsync(aDataBase, ''.join(statement))
 
         count = len(aUpdates)
 
-        for update, i in zip(aUpdates, range(count)):
+        for update, i in zip(aUpdates, range(1, count + 1)):
             kb = update['KB'] if not isinstance(update['KB'], dict) else -1
             date = '\'{}\''.format(update['Date'])
             path = '\'{}\''.format(update['Path'])
@@ -356,17 +347,17 @@ class SQLite(Storage):
             osType = '\'{}\''.format(update['Type'] if not isinstance(update['Type'], dict) else 'UNKNOWN TYPE')
             language = '\'{}\''.format(update['Language'] if not isinstance(update['Language'], dict) else 'UNKNOWN LANGUAGE')
 
-            kb_id = SQLite.getSetSubstanceID(aDb, 'KBs', 'id', kb)
-            date_id = SQLite.getSetSubstanceID(aDb, 'Dates', 'Date', date)
-            path_id = SQLite.getSetSubstanceID(aDb, 'Paths', 'Path', path)
-            version_id = SQLite.getSetSubstanceID(aDb, 'Versions', 'Version', osVersion)
-            type_id = SQLite.getSetSubstanceID(aDb, 'Types', 'Type', osType)
-            language_id = SQLite.getSetSubstanceID(aDb, 'Languages', 'Language', language)
+            kb_id = SQLite.getSetSubstanceID(aDataBase, 'KBs', 'id', kb)
+            date_id = SQLite.getSetSubstanceID(aDataBase, 'Dates', 'Date', date)
+            path_id = SQLite.getSetSubstanceID(aDataBase, 'Paths', 'Path', path)
+            version_id = SQLite.getSetSubstanceID(aDataBase, 'Versions', 'Version', osVersion)
+            type_id = SQLite.getSetSubstanceID(aDataBase, 'Types', 'Type', osType)
+            language_id = SQLite.getSetSubstanceID(aDataBase, 'Languages', 'Language', language)
 
             statement = 'INSERT INTO Updates (kb_id, date_id, path_id, version_id, type_id, language_id) VALUES ({}, {}, {}, {}, {}, {})'
             statement = statement.format(kb_id, date_id, path_id, version_id, type_id, language_id)
 
-            db.sqliteDB.writeAsync(aDb, statement)
+            db.sqliteDB.writeAsync(aDataBase, statement)
 
             print('{} / {}'.format(i, count))
 
@@ -427,11 +418,11 @@ class MongoDB(Storage):
     def uif2MongoDB(aUpdates, aDataBaseName, aTableName, aHostAndPort):
 
         for update in aUpdates:
-            update['Date'] = datetime.datetime.strptime(update['Date'], '%Y, %m, %d')
+            update['Date'] = datetime.strptime(update['Date'], '%Y, %m, %d')
 
         updates = MongoDBClient.addObjectIdFieldAtCollection(aUpdates)
-        dataBase = MongoDB(aHostAndPort)
-        updates = MongoDBClient.getUniqueItemsFromCollection(aDataBaseName, aTableName, updates)
+        dataBase = MongoDBClient(aHostAndPort)
+        updates = dataBase.getUniqueItemsFromCollection(aDataBaseName, aTableName, updates)
 
         if 0 < len(updates):
             dataBase.insertToDB(aDataBaseName, aTableName, updates)
