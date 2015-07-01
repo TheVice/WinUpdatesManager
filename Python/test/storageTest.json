@@ -46,7 +46,7 @@
         {"Date": "2015, 4, 14", "Path": "\\3047234\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows Server 2012 R2", "Language": "Neutral"},
         {"Date": "2015, 4, 14", "Path": "\\3047234\\Windows8.1\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows 8.1", "Language": "Neutral"}
       ],
-      "storages": ["Storage", "Uif", "MongoDB"],
+      "storages": ["Storage", "Uif", "SQLite", "MongoDB"],
       "sqliteDB": ":memory:",
       "tables": ["KBs", "Dates", "Paths", "Versions", "Types", "Language", "Updates"],
       "MongoClient": {
@@ -74,7 +74,7 @@
         {"Date": "2015, 4, 14", "Path": "\\3047234\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows Server 2012 R2", "Language": "Neutral"},
         {"Date": "2015, 4, 14", "Path": "\\3047234\\Windows8.1\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows 8.1", "Language": "Neutral"}
       ],
-      "storages": ["Storage", "Uif", "MongoDB"],
+      "storages": ["Storage", "Uif", "SQLite", "MongoDB"],
       "sqliteDB": ":memory:",
       "tables": ["KBs", "Dates", "Paths", "Versions", "Types", "Language", "Updates"],
       "MongoClient": {
@@ -95,7 +95,7 @@
         {"Date": "2015, 4, 14", "Path": "\\3047234\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows Server 2012 R2", "Language": "Neutral"},
         {"Date": "2015, 4, 14", "Path": "\\3047234\\Windows8.1\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows 8.1", "Language": "Neutral"}
       ],
-      "storages": ["Storage", "Uif", "MongoDB"],
+      "storages": ["Storage", "Uif", "SQLite", "MongoDB"],
       "sqliteDB": ":memory:",
       "tables": ["KBs", "Dates", "Paths", "Versions", "Types", "Language", "Updates"],
       "MongoClient": {

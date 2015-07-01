@@ -171,37 +171,65 @@ class SQLite(Storage):
 
         template = []
         for key in aQuery.keys():
+            RowName = key
             if 'KB' == key:
-                kb_id = db.sqliteDB.getFrom(self.mInit, 'KBs', ['id'], {'id': aQuery[key]})
-                if kb_id == []:
-                    return []
-                template.append('kb_id LIKE {}'.format(kb_id[0]))
+                TableName = 'KBs'
+                RowName = 'id'
+                id_name = 'kb_id'
             elif 'Date' == key:
+                TableName = 'Dates'
+                id_name = 'date_id'
                 aQuery[key] = SQLite.correctDate(aQuery[key])
-                date_id = db.sqliteDB.getFrom(self.mInit, 'Dates', ['id'], {'Date': aQuery[key]})
-                if date_id == []:
-                    return []
-                template.append('date_id LIKE {}'.format(date_id[0]))
             elif 'Version' == key:
-                version_id = db.sqliteDB.getFrom(self.mInit, 'Versions', ['id'], {'Version': '{}'.format(aQuery[key])})
-                if version_id == []:
-                    return []
-                template.append('version_id LIKE {}'''.format(version_id[0]))
+                TableName = 'Versions'
+                id_name = 'version_id'
             elif 'Type' == key:
-                    type_id = db.sqliteDB.getFrom(self.mInit, 'Types', ['id'], {'Type': '{}'.format(aQuery[key])})
-                    if type_id == []:
-                        return []
-                    template.append('type_id LIKE {}'.format(type_id[0]))
+                TableName = 'Types'
+                id_name = 'type_id'
             elif 'Language' == key:
-                    language_id = db.sqliteDB.getFrom(self.mInit, 'Languages', ['id'], {'Language': '{}'.format(aQuery[key])})
-                    if language_id == []:
-                        return []
-                    template.append('language_id LIKE {}'.format(language_id[0]))
+                TableName = 'Languages'
+                id_name = 'language_id'
             elif 'Path' == key:
-                    path_id = db.sqliteDB.getFrom(self.mInit, 'Paths', ['id'], {'Path': '{}'.format(aQuery[key])})
-                    if path_id == []:
-                        return []
-                    template.append('path_id LIKE {}'''.format(path_id[0]))
+                TableName = 'Paths'
+                id_name = 'path_id'
+
+            if isinstance(aQuery[key], list):
+                subTemplate = []
+                for value in aQuery[key]:
+                    if isinstance(value, int):
+                        subTemplate.append('{} LIKE {}'.format(RowName, value))
+                    else:
+                        subTemplate.append('{} LIKE \'{}\''.format(RowName, value))
+
+                subTemplateText = '{}'.format(subTemplate[0])
+                if 1 < len(subTemplate):
+                    for i in range(0, len(subTemplate)):
+                        subTemplateText = '{} OR {}'.format(subTemplateText, subTemplate[i])
+
+                subTemplateText = 'SELECT id FROM {} WHERE {}'.format(TableName, subTemplateText)
+
+                ids = db.sqliteDB.readAsync(self.mInit, subTemplateText, lambda l: l.fetchall())
+
+                if ids == []:
+                    return []
+
+                subTemplate = []
+                for i in ids:
+                    subTemplate.append('{} LIKE {}'.format(id_name, i[0]))
+                subTemplate = '{}'.format(subTemplate)
+                subTemplate = subTemplate.replace('[', '')
+                subTemplate = subTemplate.replace(']', '')
+                subTemplate = subTemplate.replace('\'', '')
+                subTemplate = subTemplate.replace(',', ' OR')
+                template.append(subTemplate)
+            else:
+                subTemplate = 'SELECT id FROM {} WHERE {} LIKE \'{}\''.format(TableName, RowName, aQuery[key])
+                i = db.sqliteDB.readAsync(self.mInit, subTemplate, lambda l: l.fetchone())
+
+                if i is None:
+                    return []
+
+                template.append('{} LIKE {}'.format(id_name, i[0]))
 
         if len(template):
             template = '{}'.format(template)
@@ -218,7 +246,7 @@ class SQLite(Storage):
 
         if isinstance(aDate, list):
             for i in range(0, len(aDate)):
-                aDate[i] = MongoDB.correctDate(aDate[i])
+                aDate[i] = SQLite.correctDate(aDate[i])
         elif isinstance(aDate, date) or isinstance(aDate, datetime):
             return '{}, {}, {}'.format(aDate.year, aDate.month, aDate.day)
         return aDate
