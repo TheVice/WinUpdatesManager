@@ -30,6 +30,11 @@ class Storage:
 
         pass
 
+    @staticmethod
+    def correctDate(aDate):
+
+        pass
+
     def __str__(self):
 
         return str(self.mType)
@@ -60,15 +65,13 @@ class Uif(Storage):
     def get(self, aQuery):
 
         updates = []
-        if 'Date' in aQuery.keys():
-            if isinstance(aQuery['Date'], str):
-                aQuery['Date'] = datetime.strptime(aQuery['Date'], '%Y, %m, %d').date()
-            elif isinstance(aQuery['Date'], datetime):
-                aQuery['Date'] = aQuery['Date'].date()
+
         for update in self.mUpdates:
             match = True
 
             for key in aQuery.keys():
+                if 'Date' == key:
+                    aQuery[key] = Uif.correctDate(aQuery[key])
                 if isinstance(aQuery.get(key), list):
                     if 0 == aQuery.get(key).count(update[key]):
                         match = False
@@ -81,6 +84,18 @@ class Uif(Storage):
                 updates.append(update)
 
         return updates
+
+    @staticmethod
+    def correctDate(aDate):
+
+        if isinstance(aDate, list):
+            for i in range(0, len(aDate)):
+                aDate[i] = Uif.correctDate(aDate[i])
+        elif isinstance(aDate, str):
+            return datetime.strptime(aDate, '%Y, %m, %d').date()
+        elif isinstance(aDate, datetime):
+            return aDate.date()
+        return aDate
 
     @staticmethod
     def getUpdatesFromFile(aFile):
@@ -162,10 +177,8 @@ class SQLite(Storage):
                     return []
                 template.append('kb_id LIKE {}'.format(kb_id[0]))
             elif 'Date' == key:
-                d = aQuery[key]
-                if isinstance(d, date) or isinstance(d, datetime):
-                    d = '{}, {}, {}'.format(d.year, d.month, d.day)
-                date_id = db.sqliteDB.getFrom(self.mInit, 'Dates', ['id'], {'Date': d})
+                aQuery[key] = SQLite.correctDate(aQuery[key])
+                date_id = db.sqliteDB.getFrom(self.mInit, 'Dates', ['id'], {'Date': aQuery[key]})
                 if date_id == []:
                     return []
                 template.append('date_id LIKE {}'.format(date_id[0]))
@@ -199,6 +212,16 @@ class SQLite(Storage):
 
         rawUpdates = db.sqliteDB.readAsync(self.mInit, statement, lambda l: l.fetchall())
         return SQLite.rawUpdatesToUpdates(self.mInit, rawUpdates)
+
+    @staticmethod
+    def correctDate(aDate):
+
+        if isinstance(aDate, list):
+            for i in range(0, len(aDate)):
+                aDate[i] = MongoDB.correctDate(aDate[i])
+        elif isinstance(aDate, date) or isinstance(aDate, datetime):
+            return '{}, {}, {}'.format(aDate.year, aDate.month, aDate.day)
+        return aDate
 
     @staticmethod
     def makeAvalibleList(aList):
@@ -257,8 +280,8 @@ class SQLite(Storage):
     @staticmethod
     def getDateByID(aDb, aId):
 
-        date = db.sqliteDB.getFrom(aDb, 'Dates', ['Date'], {'id': aId})[0]
-        return datetime.strptime(date, '%Y, %m, %d').date()
+        d = db.sqliteDB.getFrom(aDb, 'Dates', ['Date'], {'id': aId})[0]
+        return datetime.strptime(d, '%Y, %m, %d').date()
 
     @staticmethod
     def getPathByID(aDb, aId):
@@ -411,12 +434,24 @@ class MongoDB(Storage):
 
     def get(self, aQuery):
 
-        if 'Date' in aQuery.keys():
-            if isinstance(aQuery['Date'], str):
-                aQuery['Date'] = datetime.strptime(aQuery['Date'], '%Y, %m, %d')
-            elif isinstance(aQuery['Date'], date):
-                aQuery['Date'] = datetime(aQuery['Date'].year, aQuery['Date'].month, aQuery['Date'].day)
+        for key in aQuery.keys():
+            if 'Date' == key:
+                aQuery[key] = MongoDB.correctDate(aQuery[key])
+            if isinstance(aQuery[key], list):
+                aQuery[key] = {'$in': aQuery[key]}
         return self.mDbClient.getItemsFromDB(self.mDataBase, self.mTable, aQuery)
+
+    @staticmethod
+    def correctDate(aDate):
+
+        if isinstance(aDate, list):
+            for i in range(0, len(aDate)):
+                aDate[i] = MongoDB.correctDate(aDate[i])
+        elif isinstance(aDate, str):
+            return datetime.strptime(aDate, '%Y, %m, %d')
+        elif isinstance(aDate, date):
+            return datetime(aDate.year, aDate.month, aDate.day)
+        return aDate
 
     @staticmethod
     def makeAvalibleList(aList):

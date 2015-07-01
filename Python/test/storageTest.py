@@ -120,6 +120,7 @@ class TestSequenceFunctions(TestCase):
                 else:
                     storage = Storage(storageType)
                     storage.get({})
+                    storage.correctDate(None)
 
     def test_uif2SQLiteDB(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
