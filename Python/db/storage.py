@@ -3,7 +3,7 @@ import json
 import os.path
 import core.dirs
 import db.sqliteDB
-from datetime import datetime
+from datetime import date, datetime
 from db.mongoDB import MongoDBClient
 from core.unknownSubstance import UnknownSubstance
 
@@ -60,7 +60,11 @@ class Uif(Storage):
     def get(self, aQuery):
 
         updates = []
-
+        if 'Date' in aQuery.keys():
+            if isinstance(aQuery['Date'], str):
+                aQuery['Date'] = datetime.strptime(aQuery['Date'], '%Y, %m, %d').date()
+            elif isinstance(aQuery['Date'], datetime):
+                aQuery['Date'] = aQuery['Date'].date()
         for update in self.mUpdates:
             match = True
 
@@ -158,7 +162,10 @@ class SQLite(Storage):
                     return []
                 template.append('kb_id LIKE {}'.format(kb_id[0]))
             elif 'Date' == key:
-                date_id = db.sqliteDB.getFrom(self.mInit, 'Dates', ['id'], {'Date': '{}'.format(aQuery[key])})
+                d = aQuery[key]
+                if isinstance(d, date) or isinstance(d, datetime):
+                    d = '{}, {}, {}'.format(d.year, d.month, d.day)
+                date_id = db.sqliteDB.getFrom(self.mInit, 'Dates', ['id'], {'Date': d})
                 if date_id == []:
                     return []
                 template.append('date_id LIKE {}'.format(date_id[0]))
@@ -179,7 +186,7 @@ class SQLite(Storage):
                     template.append('language_id LIKE {}'.format(language_id[0]))
             elif 'Path' == key:
                     path_id = db.sqliteDB.getFrom(self.mInit, 'Paths', ['id'], {'Path': '{}'.format(aQuery[key])})
-                    if path_id is None:
+                    if path_id == []:
                         return []
                     template.append('path_id LIKE {}'''.format(path_id[0]))
 
@@ -404,6 +411,11 @@ class MongoDB(Storage):
 
     def get(self, aQuery):
 
+        if 'Date' in aQuery.keys():
+            if isinstance(aQuery['Date'], str):
+                aQuery['Date'] = datetime.strptime(aQuery['Date'], '%Y, %m, %d')
+            elif isinstance(aQuery['Date'], date):
+                aQuery['Date'] = datetime(aQuery['Date'].year, aQuery['Date'].month, aQuery['Date'].day)
         return self.mDbClient.getItemsFromDB(self.mDataBase, self.mTable, aQuery)
 
     @staticmethod

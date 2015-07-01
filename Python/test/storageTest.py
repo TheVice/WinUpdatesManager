@@ -115,6 +115,8 @@ class TestSequenceFunctions(TestCase):
                     for up in expectedUpdates:
                         self.assertTrue(up in updates)
 
+                    testData['updates'] = updates
+
                 else:
                     storage = Storage(storageType)
                     storage.get({})
