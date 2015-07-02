@@ -184,30 +184,45 @@ def updateAtTable(aDataBase, aTable, aRows, aItem, aCurrentItem):
 def getFrom(aDataBase, aTable, aRows=None, aFilter=None):
 
     if aRows:
-        aRows = '{}'.format(aRows)
-        aRows = aRows.replace('[', '').replace(']', '')
-        aRows = aRows.replace('\'', '')
-        aRows = aRows.replace('"', '')
-        statement = 'SELECT {} FROM {}'.format(aRows, aTable)
+        if isinstance(aRows, list):
+            statement = '{}'.format(aRows[0])
+            for i in range(1, len(aRows)):
+                statement = '{}, {}'.format(statement, aRows[i])
+            statement = 'SELECT {} FROM {}'.format(statement, aTable)
+        else:
+            statement = 'SELECT {} FROM {}'.format(aRows, aTable)
     else:
         statement = 'SELECT * FROM {}'.format(aTable)
 
-    if aFilter:
-        template = []
+    if aFilter and isinstance(aFilter, dict):
+        filterStatement = ''
 
         for key in aFilter.keys():
-            if isinstance(aFilter[key], int):
-                template.append('{} LIKE {}'.format(key, aFilter[key]))
-            elif isinstance(aFilter[key], str):
-                template.append('{} LIKE \'{}\''.format(key, aFilter[key]))
+            value = aFilter[key]
 
-        for i in range(0, len(template) - 1):
-            template[i] = '{} AND '.format(template[i])
+            if isinstance(value, list) and len(value):
+                if isinstance(value[0], int):
+                    subFilterStatement = '{} LIKE {}'.format(key, value[0])
+                elif isinstance(value[0], str):
+                    subFilterStatement = '{} LIKE \'{}\''.format(key, value[0])
+                for i in range(1, len(value)):
+                    if isinstance(value[i], int):
+                        subFilterStatement = '{} OR {} LIKE {}'.format(subFilterStatement, key, value[i])
+                    elif isinstance(value[i], str):
+                        subFilterStatement = '{} OR {} LIKE \'{}\''.format(subFilterStatement, key, value[i])
 
-        template = ''.join(template)
-        template = template.replace('\'\'', '\'')
+            elif isinstance(value, int):
+                subFilterStatement = '{} LIKE {}'.format(key, value)
 
-        statement = '{} WHERE {}'.format(statement, template)
+            elif isinstance(value, str):
+                subFilterStatement = '{} LIKE \'{}\''.format(key, value)
+
+            if filterStatement == '':
+                filterStatement = '{}'.format(subFilterStatement)
+            else:
+                filterStatement = '{} AND {}'.format(filterStatement, subFilterStatement)
+
+        statement = '{} WHERE {}'.format(statement, filterStatement)
 
     items = readAsync(aDataBase, statement, lambda l: l.fetchall())
     for i in range(0, len(items)):
@@ -218,20 +233,29 @@ def getFrom(aDataBase, aTable, aRows=None, aFilter=None):
     return items
 
 
-def insertInto(aDataBase, aTable, aItems, aRows=None):
+def insertInto(aDataBase, aTable, aItems, aRows):
 
     if aRows:
-        aRows = '{}'.format(aRows)
-        aRows = aRows.replace('[', '').replace(']', '')
-        aRows = aRows.replace('"', '')
-        template = 'INSERT INTO {} (' + aRows + ') VALUES({});'
+        if isinstance(aRows, list):
+            rowsStatement = '{}'.format(aRows[0])
+            for i in range(1, len(aRows)):
+                rowsStatement = '{}, {}'.format(rowsStatement, aRows[i])
+            rowsStatement = 'INSERT INTO {} ({})'.format(aTable, rowsStatement)
+        else:
+            rowsStatement = 'INSERT INTO {} ({})'.format(aTable, aRows)
     else:
-        template = 'INSERT INTO {} VALUES({});'
+        rowsStatement = 'INSERT INTO {}'.format(aTable)
 
-    statement = []
-    for item in aItems:
-        item = '{}'.format(item)
-        item = item.replace('[', '').replace(']', '')
-        statement.append(template.format(aTable, item))
+    if aItems:
+        statement = []
+        if not isinstance(aItems, list):
+            aItems = [aItems]
+        for item in aItems:
+            if isinstance(item, list) or isinstance(item, int):
+                item = '{}'.format(item)
+                item = item.replace('[', '').replace(']', '')
+            elif isinstance(item, str):
+                item = '\'{}\''.format(item)
+            statement.append('{} VALUES({});'.format(rowsStatement, item))
 
-    writeAsync(aDataBase, ''.join(statement))
+        writeAsync(aDataBase, ''.join(statement))

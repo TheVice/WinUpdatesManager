@@ -269,22 +269,10 @@ class TestSequenceFunctions(TestCase):
             rows = testData['rows']
             items = testData['items']
 
-            self.assertNotEqual(items, db.sqliteDB.getFrom(connection, table))
             self.assertNotEqual(items, db.sqliteDB.getFrom(connection, table, rows))
-
-            db.sqliteDB.insertInto(connection, table, items)
-
-            self.assertEqual(items, db.sqliteDB.getFrom(connection, table))
-            self.assertEqual(items, db.sqliteDB.getFrom(connection, table, rows))
-
-            db.sqliteDB.deleteFromTable(connection, table)
-
-            self.assertNotEqual(items, db.sqliteDB.getFrom(connection, table))
-            self.assertNotEqual(items, db.sqliteDB.getFrom(connection, table, rows))
-
             db.sqliteDB.insertInto(connection, table, items, rows)
-
-            self.assertEqual(items, db.sqliteDB.getFrom(connection, table))
+            if not isinstance(items, list):
+                items = [items]
             self.assertEqual(items, db.sqliteDB.getFrom(connection, table, rows))
 
             db.sqliteDB.disconnect(connection)

@@ -166,79 +166,40 @@ class SQLite(Storage):
 
     def get(self, aQuery):
 
-        statement = ('SELECT kb_id, date_id, path_id, version_id,'
-                     ' type_id, language_id FROM Updates')
-
-        template = []
+        statement = {}
         for key in aQuery.keys():
-            RowName = key
+            row = key
             if 'KB' == key:
-                TableName = 'KBs'
-                RowName = 'id'
+                table = 'KBs'
+                row = 'id'
                 id_name = 'kb_id'
             elif 'Date' == key:
-                TableName = 'Dates'
+                table = 'Dates'
                 id_name = 'date_id'
                 aQuery[key] = SQLite.correctDate(aQuery[key])
             elif 'Version' == key:
-                TableName = 'Versions'
+                table = 'Versions'
                 id_name = 'version_id'
             elif 'Type' == key:
-                TableName = 'Types'
+                table = 'Types'
                 id_name = 'type_id'
             elif 'Language' == key:
-                TableName = 'Languages'
+                table = 'Languages'
                 id_name = 'language_id'
             elif 'Path' == key:
-                TableName = 'Paths'
+                table = 'Paths'
                 id_name = 'path_id'
 
-            if isinstance(aQuery[key], list):
-                subTemplate = []
-                for value in aQuery[key]:
-                    if isinstance(value, int):
-                        subTemplate.append('{} LIKE {}'.format(RowName, value))
-                    else:
-                        subTemplate.append('{} LIKE \'{}\''.format(RowName, value))
+            ids = db.sqliteDB.getFrom(self.mInit, table, 'id', {row: aQuery[key]})
 
-                subTemplateText = '{}'.format(subTemplate[0])
-                if 1 < len(subTemplate):
-                    for i in range(0, len(subTemplate)):
-                        subTemplateText = '{} OR {}'.format(subTemplateText, subTemplate[i])
-
-                subTemplateText = 'SELECT id FROM {} WHERE {}'.format(TableName, subTemplateText)
-
-                ids = db.sqliteDB.readAsync(self.mInit, subTemplateText, lambda l: l.fetchall())
-
-                if ids == []:
-                    return []
-
-                subTemplate = []
-                for i in ids:
-                    subTemplate.append('{} LIKE {}'.format(id_name, i[0]))
-                subTemplate = '{}'.format(subTemplate)
-                subTemplate = subTemplate.replace('[', '')
-                subTemplate = subTemplate.replace(']', '')
-                subTemplate = subTemplate.replace('\'', '')
-                subTemplate = subTemplate.replace(',', ' OR')
-                template.append(subTemplate)
+            if ids:
+                statement[id_name] = ids
             else:
-                subTemplate = 'SELECT id FROM {} WHERE {} LIKE \'{}\''.format(TableName, RowName, aQuery[key])
-                i = db.sqliteDB.readAsync(self.mInit, subTemplate, lambda l: l.fetchone())
+                return []
 
-                if i is None:
-                    return []
-
-                template.append('{} LIKE {}'.format(id_name, i[0]))
-
-        if len(template):
-            template = '{}'.format(template)
-            template = template.replace('[', '').replace(']', '')
-            template = template.replace('\'', '')
-            template = template.replace(',', ' AND')
-            statement = '{} WHERE {}'.format(statement, template)
-
-        rawUpdates = db.sqliteDB.readAsync(self.mInit, statement, lambda l: l.fetchall())
+        table = 'Updates'
+        rows = 'kb_id, date_id, path_id, version_id, type_id, language_id'
+        rawUpdates = db.sqliteDB.getFrom(self.mInit, table, rows, statement)
         return SQLite.rawUpdatesToUpdates(self.mInit, rawUpdates)
 
     @staticmethod
@@ -308,40 +269,40 @@ class SQLite(Storage):
     @staticmethod
     def getDateByID(aDb, aId):
 
-        d = db.sqliteDB.getFrom(aDb, 'Dates', ['Date'], {'id': aId})[0]
+        d = db.sqliteDB.getFrom(aDb, 'Dates', 'Date', {'id': aId})[0]
         return datetime.strptime(d, '%Y, %m, %d').date()
 
     @staticmethod
     def getPathByID(aDb, aId):
 
-        return db.sqliteDB.getFrom(aDb, 'Paths', ['Path'], {'id': aId})[0]
+        return db.sqliteDB.getFrom(aDb, 'Paths', 'Path', {'id': aId})[0]
 
     @staticmethod
     def getVersionByID(aDb, aId):
 
-        return db.sqliteDB.getFrom(aDb, 'Versions', ['Version'], {'id': aId})[0]
+        return db.sqliteDB.getFrom(aDb, 'Versions', 'Version', {'id': aId})[0]
 
     @staticmethod
     def getTypeByID(aDb, aId):
 
-        return db.sqliteDB.getFrom(aDb, 'Types', ['Type'], {'id': aId})[0]
+        return db.sqliteDB.getFrom(aDb, 'Types', 'Type', {'id': aId})[0]
 
     @staticmethod
     def getLanguageByID(aDb, aId):
 
-        return db.sqliteDB.getFrom(aDb, 'Languages', ['Language'], {'id': aId})[0]
+        return db.sqliteDB.getFrom(aDb, 'Languages', 'Language', {'id': aId})[0]
 
     @staticmethod
     def getSetSubstanceID(aDb, aTable, aRowName, aItem):
 
-        substanceID = db.sqliteDB.getFrom(aDb, aTable, ['id'], {aRowName: aItem})
+        substanceID = db.sqliteDB.getFrom(aDb, aTable, 'id', {aRowName: aItem})
 
         if len(substanceID):
             return substanceID[0]
 
-        db.sqliteDB.insertInto(aDb, aTable, [aItem], aRowName)
+        db.sqliteDB.insertInto(aDb, aTable, aItem, aRowName)
 
-        return db.sqliteDB.getFrom(aDb, aTable, ['id'], {aRowName: aItem})[0]
+        return db.sqliteDB.getFrom(aDb, aTable, 'id', {aRowName: aItem})[0]
 
     @staticmethod
     def uif2SQLiteDB(aDataBase, aUpdates):
@@ -399,11 +360,11 @@ class SQLite(Storage):
 
         for update, i in zip(aUpdates, range(1, count + 1)):
             kb = update['KB'] if not isinstance(update['KB'], dict) else -1
-            date = '\'{}\''.format(update['Date'])
-            path = '\'{}\''.format(update['Path'])
-            osVersion = '\'{}\''.format(update['Version'] if not isinstance(update['Version'], dict) else 'UNKNOWN VERSION')
-            osType = '\'{}\''.format(update['Type'] if not isinstance(update['Type'], dict) else 'UNKNOWN TYPE')
-            language = '\'{}\''.format(update['Language'] if not isinstance(update['Language'], dict) else 'UNKNOWN LANGUAGE')
+            date = '{}'.format(update['Date'])
+            path = '{}'.format(update['Path'])
+            osVersion = '{}'.format(update['Version'] if not isinstance(update['Version'], dict) else 'UNKNOWN VERSION')
+            osType = '{}'.format(update['Type'] if not isinstance(update['Type'], dict) else 'UNKNOWN TYPE')
+            language = '{}'.format(update['Language'] if not isinstance(update['Language'], dict) else 'UNKNOWN LANGUAGE')
 
             kb_id = SQLite.getSetSubstanceID(aDataBase, 'KBs', 'id', kb)
             date_id = SQLite.getSetSubstanceID(aDataBase, 'Dates', 'Date', date)
