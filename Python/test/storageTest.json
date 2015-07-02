@@ -1,12 +1,182 @@
 {
   "test_getAvalibleVersions": [
-    {}
+    {
+      "updates": [],
+      "storages": ["Storage", "Uif", "SQLite", "MongoDB", "Storage", "Uif", "SQLite", "MongoDB"],
+      "sqliteDB": ":memory:",
+      "tables": ["KBs", "Dates", "Paths", "Versions", "Types", "Language", "Updates"],
+      "MongoClient": {
+        "HostAndPort": "mongodb://localhost:27017/",
+        "ServerSelectionTimeoutMS": 500,
+        "dataBase": "testDB",
+        "table": "table4test"
+      },
+      "expectedVersions": []
+    },
+    {
+      "updates": [
+        {"Language": "English", "Type": "x86", "Date": "2013, 4, 9", "KB": 2817183, "Version": "Windows 2000", "Path": "\\2817183\\Windows2000\\IE6.0SP1\\ENU\\IE6.0SP1-KB2817183-WINDOWS2000-X86-ENU.EXE"},
+        {"Date": "2013, 3, 12", "Type": "x86", "Language": "English", "Path": "\\2809289\\Windows2000\\IE6.0SP1\\ENU\\IE6.0SP1-KB2809289-WINDOWS2000-X86-ENU.EXE", "Version": "Windows 2000", "KB": 2809289},
+        {"Path": "\\3057839\\WindowsXPEmbedded\\X86\\ENU\\WindowsXP-KB3057839-x86-Embedded-ENU.exe", "Date": "2015, 6, 9", "Version": "Windows XP Embedded", "Language": "English", "Type": "x86", "KB": 3057839},
+        {"Path": "\\3058515\\WindowsXPEmbedded\\X86\\ENU\\IE7-WindowsXP-KB3058515-x86-Embedded-ENU.exe", "Date": "2015, 6, 9", "Version": "Windows XP Embedded", "Language": "English", "Type": "x86", "KB": 3058515},
+        {"Path": "\\3058515\\WindowsXPEmbedded\\X86\\ENU\\IE8-WindowsXP-KB3058515-x86-Embedded-ENU.exe", "Date": "2015, 6, 9", "Version": "Windows XP Embedded", "Language": "English", "Type": "x86", "KB": 3058515},
+        {"Path": "\\3058515\\WindowsXPEmbedded\\X86\\ENU\\WindowsXP-KB3058515-x86-Embedded-ENU.exe", "Date": "2015, 6, 9", "Version": "Windows XP Embedded", "Language": "English", "Type": "x86", "KB": 3058515},
+        {"Type": "x64", "KB": 2847311, "Date": "2013, 10, 8", "Version": "Windows XP", "Path": "\\2847311\\WindowsXP\\X64\\ENU\\WindowsServer2003.WindowsXP-KB2847311-x64-ENU.exe", "Language": "English"},
+        {"Type": "x86", "KB": 2847311, "Date": "2013, 10, 8", "Version": "Windows XP", "Path": "\\2847311\\WindowsXP\\X86\\ENU\\WindowsXP-KB2847311-x86-ENU.exe", "Language": "English"},
+        {"Path": "\\3058515\\WindowsServer2003\\X86\\ENU\\IE7-WindowsServer2003-KB3058515-x86-ENU.exe", "Date": "2015, 6, 9", "Version": "Windows Server 2003", "Language": "English", "Type": "x86", "KB": 3058515},
+        {"Path": "\\3058515\\WindowsServer2003\\X86\\ENU\\IE8-WindowsServer2003-KB3058515-x86-ENU.exe", "Date": "2015, 6, 9", "Version": "Windows Server 2003", "Language": "English", "Type": "x86", "KB": 3058515},
+        {"Path": "\\3058515\\WindowsServer2003\\X86\\ENU\\WindowsServer2003-KB3058515-x86-ENU.exe", "Date": "2015, 6, 9", "Version": "Windows Server 2003", "Language": "English", "Type": "x86", "KB": 3058515},
+        {"Path": "\\3057839\\WindowsServer2008\\X64\\NEU\\Windows6.0-KB3057839-x64.msu", "Date": "2015, 6, 9", "Version": "Windows Server 2008", "Language": "Neutral", "Type": "x64", "KB": 3057839},
+        {"Path": "\\3057839\\WindowsServer2008\\X86\\NEU\\Windows6.0-KB3057839-x86.msu", "Date": "2015, 6, 9", "Version": "Windows Server 2008", "Language": "Neutral", "Type": "x86", "KB": 3057839},
+        {"Path": "\\3057839\\WindowsServer2008R2\\IA64\\NEU\\Windows6.1-KB3057839-ia64.msu", "Date": "2015, 6, 9", "Version": "Windows Server 2008 R2", "Language": "Neutral", "Type": "IA64", "KB": 3057839},
+        {"Path": "\\3057839\\WindowsServer2008R2\\X64\\NEU\\Windows6.1-KB3057839-x64.msu", "Date": "2015, 6, 9", "Version": "Windows Server 2008 R2", "Language": "Neutral", "Type": "x64", "KB": 3057839},
+        {"Path": "\\3057839\\WindowsServer2012\\X64\\NEU\\Windows8-RT-KB3057839-x64.msu", "Date": "2015, 6, 9", "Version": "Windows Server 2012", "Language": "Neutral", "Type": "x64", "KB": 3057839},
+        {"Path": "\\3057839\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3057839-x64.msu", "Date": "2015, 6, 9", "Version": "Windows Server 2012 R2", "Language": "Neutral", "Type": "x64", "KB": 3057839},
+        {"Path": "\\3058515\\WindowsServer2012\\X64\\NEU\\Windows8-RT-KB3058515-x64.msu", "Date": "2015, 6, 9", "Version": "Windows Server 2012", "Language": "Neutral", "Type": "x64", "KB": 3058515},
+        {"Path": "\\3058515\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3058515-x64.msu", "Date": "2015, 6, 9", "Version": "Windows Server 2012 R2", "Language": "Neutral", "Type": "x64", "KB": 3058515},
+        {"Path": "\\3033890\\WindowsVista\\X64\\NEU\\Windows6.0-KB3033890-x64.msu", "Date": "2015, 6, 9", "Version": "Windows Vista", "Language": "Neutral", "Type": "x64", "KB": 3033890},
+        {"Path": "\\3033890\\WindowsVista\\X86\\NEU\\Windows6.0-KB3033890-x86.msu", "Date": "2015, 6, 9", "Version": "Windows Vista", "Language": "Neutral", "Type": "x86", "KB": 3033890},
+        {"Path": "\\3057839\\Windows7\\X64\\NEU\\Windows6.1-KB3057839-x64.msu", "Date": "2015, 6, 9", "Version": "Windows 7", "Language": "Neutral", "Type": "x64", "KB": 3057839},
+        {"Path": "\\3057839\\Windows7\\X86\\NEU\\Windows6.1-KB3057839-x86.msu", "Date": "2015, 6, 9", "Version": "Windows 7", "Language": "Neutral", "Type": "x86", "KB": 3057839},
+        {"Path": "\\3057839\\Windows8\\ARM\\NEU\\Windows8-RT-KB3057839-arm.msu", "Date": "2015, 6, 9", "Version": "Windows 8", "Language": "Neutral", "Type": "ARM", "KB": 3057839},
+        {"Path": "\\3057839\\Windows8\\X64\\NEU\\Windows8-RT-KB3057839-x64.msu", "Date": "2015, 6, 9", "Version": "Windows 8", "Language": "Neutral", "Type": "x64", "KB": 3057839},
+        {"Path": "\\3057839\\Windows8\\X86\\NEU\\Windows8-RT-KB3057839-x86.msu", "Date": "2015, 6, 9", "Version": "Windows 8", "Language": "Neutral", "Type": "x86", "KB": 3057839},
+        {"Path": "\\3057839\\Windows8.1\\ARM\\NEU\\Windows8.1-KB3057839-arm.msu", "Date": "2015, 6, 9", "Version": "Windows 8.1", "Language": "Neutral", "Type": "ARM", "KB": 3057839},
+        {"Path": "\\3057839\\Windows8.1\\X64\\NEU\\Windows8.1-KB3057839-x64.msu", "Date": "2015, 6, 9", "Version": "Windows 8.1", "Language": "Neutral", "Type": "x64", "KB": 3057839},
+        {"Path": "\\3057839\\Windows8.1\\X86\\NEU\\Windows8.1-KB3057839-x86.msu", "Date": "2015, 6, 9", "Version": "Windows 8.1", "Language": "Neutral", "Type": "x86", "KB": 3057839},
+        {"Path": "\\3033890\\WindowsMediaPlayer\\X86\\ENU\\WindowsMedia10-KB3033890-x86-ENU.exe", "Date": "2015, 6, 9", "Version": {"UNKNOWN VERSION": "\\3033890\\WindowsMediaPlayer\\X86\\ENU\\WindowsMedia10-KB3033890-x86-ENU.exe"}, "Language": "English", "Type": "x86", "KB": 3033890},
+        {"Path": "\\3033890\\WindowsMediaPlayer\\X86\\ENU\\WindowsMedia11-KB3033890-x86-ENU.exe", "Date": "2015, 6, 9", "Version": {"UNKNOWN VERSION": "\\3033890\\WindowsMediaPlayer\\X86\\ENU\\WindowsMedia11-KB3033890-x86-ENU.exe"}, "Language": "English", "Type": "x86", "KB": 3033890}
+      ],
+      "storages": ["Storage", "Uif", "SQLite", "MongoDB", "Storage", "Uif", "SQLite", "MongoDB"],
+      "sqliteDB": ":memory:",
+      "tables": ["KBs", "Dates", "Paths", "Versions", "Types", "Language", "Updates"],
+      "MongoClient": {
+        "HostAndPort": "mongodb://localhost:27017/",
+        "ServerSelectionTimeoutMS": 500,
+        "dataBase": "testDB",
+        "table": "table4test"
+      },
+      "expectedVersions": ["Windows 2000", "Windows 7", "Windows 8", "Windows 8.1", "Windows Server 2003", "Windows Server 2008", "Windows Server 2008 R2", "Windows Server 2012", "Windows Server 2012 R2", "Windows Vista", "Windows XP", "Windows XP Embedded"]
+    }
   ],
   "test_getAvalibleTypes": [
-    {}
+    {
+      "updates": [],
+      "storages": ["Storage", "Uif", "SQLite", "MongoDB", "Storage", "Uif", "SQLite", "MongoDB"],
+      "sqliteDB": ":memory:",
+      "tables": ["KBs", "Dates", "Paths", "Versions", "Types", "Language", "Updates"],
+      "MongoClient": {
+        "HostAndPort": "mongodb://localhost:27017/",
+        "ServerSelectionTimeoutMS": 500,
+        "dataBase": "testDB",
+        "table": "table4test"
+      },
+      "expectedTypes": []
+    },
+    {
+      "updates": [
+        {"Path": "\\3057839\\WindowsServer2008\\IA64\\NEU\\Windows6.0-KB3057839-ia64.msu", "Date": "2015, 6, 9", "Version": "Windows Server 2008", "Language": "Neutral", "Type": "IA64", "KB": 3057839},
+        {"Path": "\\3057839\\WindowsServer2008\\X64\\NEU\\Windows6.0-KB3057839-x64.msu", "Date": "2015, 6, 9", "Version": "Windows Server 2008", "Language": "Neutral", "Type": "x64", "KB": 3057839},
+        {"Path": "\\3057839\\WindowsServer2008\\X86\\NEU\\Windows6.0-KB3057839-x86.msu", "Date": "2015, 6, 9", "Version": "Windows Server 2008", "Language": "Neutral", "Type": "x86", "KB": 3057839},
+        {"Path": "\\3058515\\Windows8\\ARM\\NEU\\Windows8-RT-KB3058515-arm.msu", "Date": "2015, 6, 9", "Version": "Windows 8", "Language": "Neutral", "Type": "ARM", "KB": 3058515},
+        {"Path": "\\3058515\\Windows8\\X64\\NEU\\Windows8-RT-KB3058515-x64.msu", "Date": "2015, 6, 9", "Version": "Windows 8", "Language": "Neutral", "Type": "x64", "KB": 3058515},
+        {"Path": "\\3058515\\Windows8\\X86\\NEU\\Windows8-RT-KB3058515-x86.msu", "Date": "2015, 6, 9", "Version": "Windows 8", "Language": "Neutral", "Type": "x86", "KB": 3058515},
+        {"Path": "\\3058515\\Windows8.1\\ARM\\NEU\\Windows8.1-KB3058515-arm.msu", "Date": "2015, 6, 9", "Version": "Windows 8.1", "Language": "Neutral", "Type": "ARM", "KB": 3058515},
+        {"Path": "\\3058515\\Windows8.1\\X64\\NEU\\Windows8.1-KB3058515-x64.msu", "Date": "2015, 6, 9", "Version": "Windows 8.1", "Language": "Neutral", "Type": "x64", "KB": 3058515},
+        {"Path": "\\3058515\\Windows8.1\\X86\\NEU\\Windows8.1-KB3058515-x86.msu", "Date": "2015, 6, 9", "Version": "Windows 8.1", "Language": "Neutral", "Type": "x86", "KB": 3058515},
+        {"Path": "\\2647516\\Windows2000\\IE8\\ENU\\IE8-WINDOWS6.0-KB2647516-X86.MSU", "KB": 2647516, "Language": "English", "Version": "Windows 2000", "Type": {"UNKNOWN TYPE": "\\2647516\\Windows2000\\IE8\\ENU\\IE8-WINDOWS6.0-KB2647516-X86.MSU"}, "Date": "2012, 2, 14"}
+      ],
+      "storages": ["Storage", "Uif", "SQLite", "MongoDB", "Storage", "Uif", "SQLite", "MongoDB"],
+      "sqliteDB": ":memory:",
+      "tables": ["KBs", "Dates", "Paths", "Versions", "Types", "Language", "Updates"],
+      "MongoClient": {
+        "HostAndPort": "mongodb://localhost:27017/",
+        "ServerSelectionTimeoutMS": 500,
+        "dataBase": "testDB",
+        "table": "table4test"
+      },
+      "expectedTypes": ["ARM", "IA64", "x64", "x86"]
+    }
   ],
   "test_getAvalibleLanguages": [
-    {}
+    {
+      "updates": [],
+      "storages": ["Storage", "Uif", "SQLite", "MongoDB", "Storage", "Uif", "SQLite", "MongoDB"],
+      "sqliteDB": ":memory:",
+      "tables": ["KBs", "Dates", "Paths", "Versions", "Types", "Language", "Updates"],
+      "MongoClient": {
+        "HostAndPort": "mongodb://localhost:27017/",
+        "ServerSelectionTimeoutMS": 500,
+        "dataBase": "testDB",
+        "table": "table4test"
+      },
+      "expectedLanguages": []
+    },
+    {
+      "updates": [
+        {"Path": "\\3057839\\WindowsXPEmbedded\\X86\\ARA\\WindowsXP-KB3057839-x86-Embedded-ARA.exe", "Date": "2015, 6, 9", "Version": "Windows XP Embedded", "Language": "Arabic", "Type": "x86", "KB": 3057839},
+        {"Path": "\\3057839\\WindowsXPEmbedded\\X86\\CHS\\WindowsXP-KB3057839-x86-Embedded-CHS.exe", "Date": "2015, 6, 9", "Version": "Windows XP Embedded", "Language": "Chinese (Simplified)", "Type": "x86", "KB": 3057839},
+        {"Path": "\\3057839\\WindowsXPEmbedded\\X86\\CHT\\WindowsXP-KB3057839-x86-Embedded-CHT.exe", "Date": "2015, 6, 9", "Version": "Windows XP Embedded", "Language": "Chinese (Traditional)", "Type": "x86", "KB": 3057839},
+        {"Path": "\\3057839\\WindowsXPEmbedded\\X86\\CSY\\WindowsXP-KB3057839-x86-Embedded-CSY.exe", "Date": "2015, 6, 9", "Version": "Windows XP Embedded", "Language": "Czech", "Type": "x86", "KB": 3057839},
+        {"Path": "\\3057839\\WindowsXPEmbedded\\X86\\DAN\\WindowsXP-KB3057839-x86-Embedded-DAN.exe", "Date": "2015, 6, 9", "Version": "Windows XP Embedded", "Language": "Danish", "Type": "x86", "KB": 3057839},
+        {"Path": "\\3057839\\WindowsXPEmbedded\\X86\\DEU\\WindowsXP-KB3057839-x86-Embedded-DEU.exe", "Date": "2015, 6, 9", "Version": "Windows XP Embedded", "Language": "German", "Type": "x86", "KB": 3057839},
+        {"Path": "\\3057839\\WindowsXPEmbedded\\X86\\ELL\\WindowsXP-KB3057839-x86-Embedded-ELL.exe", "Date": "2015, 6, 9", "Version": "Windows XP Embedded", "Language": "Greek", "Type": "x86", "KB": 3057839},
+        {"Path": "\\3057839\\WindowsXPEmbedded\\X86\\ENU\\WindowsXP-KB3057839-x86-Embedded-ENU.exe", "Date": "2015, 6, 9", "Version": "Windows XP Embedded", "Language": "English", "Type": "x86", "KB": 3057839},
+        {"Path": "\\3057839\\WindowsXPEmbedded\\X86\\ESN\\WindowsXP-KB3057839-x86-Embedded-ESN.exe", "Date": "2015, 6, 9", "Version": "Windows XP Embedded", "Language": "Spanish", "Type": "x86", "KB": 3057839},
+        {"Path": "\\3057839\\WindowsXPEmbedded\\X86\\FIN\\WindowsXP-KB3057839-x86-Embedded-FIN.exe", "Date": "2015, 6, 9", "Version": "Windows XP Embedded", "Language": "Finnish", "Type": "x86", "KB": 3057839},
+        {"Path": "\\3057839\\WindowsXPEmbedded\\X86\\FRA\\WindowsXP-KB3057839-x86-Embedded-FRA.exe", "Date": "2015, 6, 9", "Version": "Windows XP Embedded", "Language": "French", "Type": "x86", "KB": 3057839},
+        {"Path": "\\3057839\\WindowsXPEmbedded\\X86\\HEB\\WindowsXP-KB3057839-x86-Embedded-HEB.exe", "Date": "2015, 6, 9", "Version": "Windows XP Embedded", "Language": "Hebrew", "Type": "x86", "KB": 3057839},
+        {"Path": "\\3057839\\WindowsXPEmbedded\\X86\\HUN\\WindowsXP-KB3057839-x86-Embedded-HUN.exe", "Date": "2015, 6, 9", "Version": "Windows XP Embedded", "Language": "Hungarian", "Type": "x86", "KB": 3057839},
+        {"Path": "\\3057839\\WindowsXPEmbedded\\X86\\ITA\\WindowsXP-KB3057839-x86-Embedded-ITA.exe", "Date": "2015, 6, 9", "Version": "Windows XP Embedded", "Language": "Italian", "Type": "x86", "KB": 3057839},
+        {"Path": "\\3057839\\WindowsXPEmbedded\\X86\\JPN\\WindowsXP-KB3057839-x86-Embedded-JPN.exe", "Date": "2015, 6, 9", "Version": "Windows XP Embedded", "Language": "Japanese", "Type": "x86", "KB": 3057839},
+        {"Path": "\\3057839\\WindowsXPEmbedded\\X86\\KOR\\WindowsXP-KB3057839-x86-Embedded-KOR.exe", "Date": "2015, 6, 9", "Version": "Windows XP Embedded", "Language": "Korean", "Type": "x86", "KB": 3057839},
+        {"Path": "\\3057839\\WindowsXPEmbedded\\X86\\NLD\\WindowsXP-KB3057839-x86-Embedded-NLD.exe", "Date": "2015, 6, 9", "Version": "Windows XP Embedded", "Language": "Dutch", "Type": "x86", "KB": 3057839},
+        {"Path": "\\3057839\\WindowsXPEmbedded\\X86\\NOR\\WindowsXP-KB3057839-x86-Embedded-NOR.exe", "Date": "2015, 6, 9", "Version": "Windows XP Embedded", "Language": "Norwegian", "Type": "x86", "KB": 3057839},
+        {"Path": "\\3057839\\WindowsXPEmbedded\\X86\\PLK\\WindowsXP-KB3057839-x86-Embedded-PLK.exe", "Date": "2015, 6, 9", "Version": "Windows XP Embedded", "Language": "Polish", "Type": "x86", "KB": 3057839},
+        {"Path": "\\3057839\\WindowsXPEmbedded\\X86\\PTB\\WindowsXP-KB3057839-x86-Embedded-PTB.exe", "Date": "2015, 6, 9", "Version": "Windows XP Embedded", "Language": "Portuguese (Brazil)", "Type": "x86", "KB": 3057839},
+        {"Path": "\\3057839\\WindowsXPEmbedded\\X86\\PTG\\WindowsXP-KB3057839-x86-Embedded-PTG.exe", "Date": "2015, 6, 9", "Version": "Windows XP Embedded", "Language": "Portuguese (Portugal)", "Type": "x86", "KB": 3057839},
+        {"Path": "\\3057839\\WindowsXPEmbedded\\X86\\RUS\\WindowsXP-KB3057839-x86-Embedded-RUS.exe", "Date": "2015, 6, 9", "Version": "Windows XP Embedded", "Language": "Russian", "Type": "x86", "KB": 3057839},
+        {"Path": "\\3057839\\WindowsXPEmbedded\\X86\\SVE\\WindowsXP-KB3057839-x86-Embedded-SVE.exe", "Date": "2015, 6, 9", "Version": "Windows XP Embedded", "Language": "Swedish", "Type": "x86", "KB": 3057839},
+        {"Path": "\\3057839\\WindowsXPEmbedded\\X86\\TRK\\WindowsXP-KB3057839-x86-Embedded-TRK.exe", "Date": "2015, 6, 9", "Version": "Windows XP Embedded", "Language": "Turkish", "Type": "x86", "KB": 3057839},
+        {"Path": "\\3058515\\Windows7\\X64\\NEU\\IE10-Windows6.1-KB3058515-x64.msu", "Date": "2015, 6, 9", "Version": "Windows 7", "Language": "Neutral", "Type": "x64", "KB": 3058515},
+        {"Path": "\\3058515\\Windows7\\X64\\NEU\\IE11-Windows6.1-KB3058515-x64.msu", "Date": "2015, 6, 9", "Version": "Windows 7", "Language": "Neutral", "Type": "x64", "KB": 3058515},
+        {"Path": "\\3058515\\Windows7\\X64\\NEU\\IE9-Windows6.1-KB3058515-x64.msu", "Date": "2015, 6, 9", "Version": "Windows 7", "Language": "Neutral", "Type": "x64", "KB": 3058515},
+        {"Path": "\\WINDOWS-KB913086-200601-1.HTML", "KB": 913086, "Date": "2006, 1, 10", "Language": {"UNKNOWN LANGUAGE": "\\WINDOWS-KB913086-200601-1.HTML"}, "Version": {"UNKNOWN VERSION": "\\WINDOWS-KB913086-200601-1.HTML"}, "Type": {"UNKNOWN TYPE": "\\WINDOWS-KB913086-200601-1.HTML"}},
+        {"Path": "\\DOCUMENTATION\\WINDOWSPACKAGEINSTALLER_V1.DOC", "KB": {"UNKNOWN KB": "\\DOCUMENTATION\\WINDOWSPACKAGEINSTALLER_V1.DOC"}, "Date": "2006, 1, 10", "Language": {"UNKNOWN LANGUAGE": "\\DOCUMENTATION\\WINDOWSPACKAGEINSTALLER_V1.DOC"}, "Version": {"UNKNOWN VERSION": "\\DOCUMENTATION\\WINDOWSPACKAGEINSTALLER_V1.DOC"}, "Type": {"UNKNOWN TYPE": "\\DOCUMENTATION\\WINDOWSPACKAGEINSTALLER_V1.DOC"}},
+        {"Date": "2007, 10, 9", "Type": "x64", "KB": 933729, "Version": "Windows Server 2003", "Path": "\\933729\\WINDOWSSERVER2003\\X64\\ENGLISH\\WINDOWSSERVER2003.WINDOWSXP-KB933729-X64-ENU.EXE", "Language": "English"},
+        {"Date": "2007, 10, 9", "Type": "x64", "KB": 933729, "Version": "Windows Server 2003", "Path": "\\933729\\WINDOWSSERVER2003\\X64\\RUSSIAN\\WINDOWSSERVER2003.WINDOWSXP-KB933729-X64-RUS.EXE", "Language": "Russian"},
+        {"Date": "2007, 10, 9", "Type": "x86", "KB": 933729, "Version": "Windows Server 2003", "Path": "\\933729\\WINDOWSSERVER2003\\X86\\CHINESE (SIMPLIFIED)\\WINDOWSSERVER2003-KB933729-X86-CHS.EXE", "Language": "Chinese (Simplified)"},
+        {"Date": "2007, 10, 9", "Type": "x86", "KB": 933729, "Version": "Windows Server 2003", "Path": "\\933729\\WINDOWSSERVER2003\\X86\\CHINESE (TRADITIONAL)\\WINDOWSSERVER2003-KB933729-X86-CHT.EXE", "Language": "Chinese (Traditional)"},
+        {"Date": "2007, 10, 9", "Type": "x86", "KB": 933729, "Version": "Windows Server 2003", "Path": "\\933729\\WINDOWSSERVER2003\\X86\\CZECH\\WINDOWSSERVER2003-KB933729-X86-CSY.EXE", "Language": "Czech"},
+        {"Date": "2007, 10, 9", "Type": "x86", "KB": 933729, "Version": "Windows Server 2003", "Path": "\\933729\\WINDOWSSERVER2003\\X86\\DUTCH\\WINDOWSSERVER2003-KB933729-X86-NLD.EXE", "Language": "Dutch"},
+        {"Date": "2007, 10, 9", "Type": "x86", "KB": 933729, "Version": "Windows Server 2003", "Path": "\\933729\\WINDOWSSERVER2003\\X86\\ENGLISH\\WINDOWSSERVER2003-KB933729-X86-ENU.EXE", "Language": "English"},
+        {"Date": "2007, 10, 9", "Type": "x86", "KB": 933729, "Version": "Windows Server 2003", "Path": "\\933729\\WINDOWSSERVER2003\\X86\\FRENCH\\WINDOWSSERVER2003-KB933729-X86-FRA.EXE", "Language": "French"},
+        {"Date": "2007, 10, 9", "Type": "x86", "KB": 933729, "Version": "Windows Server 2003", "Path": "\\933729\\WINDOWSSERVER2003\\X86\\GERMAN\\WINDOWSSERVER2003-KB933729-X86-DEU.EXE", "Language": "German"},
+        {"Date": "2007, 10, 9", "Type": "x86", "KB": 933729, "Version": "Windows Server 2003", "Path": "\\933729\\WINDOWSSERVER2003\\X86\\HUNGARIAN\\WINDOWSSERVER2003-KB933729-X86-HUN.EXE", "Language": "Hungarian"},
+        {"Date": "2007, 10, 9", "Type": "x86", "KB": 933729, "Version": "Windows Server 2003", "Path": "\\933729\\WINDOWSSERVER2003\\X86\\ITALIAN\\WINDOWSSERVER2003-KB933729-X86-ITA.EXE", "Language": "Italian"},
+        {"Date": "2007, 10, 9", "Type": "x86", "KB": 933729, "Version": "Windows Server 2003", "Path": "\\933729\\WINDOWSSERVER2003\\X86\\JAPANESE (JAPAN)\\WINDOWSSERVER2003-KB933729-X86-JPN.EXE", "Language": "Japanese"},
+        {"Date": "2007, 10, 9", "Type": "x86", "KB": 933729, "Version": "Windows Server 2003", "Path": "\\933729\\WINDOWSSERVER2003\\X86\\KOREAN\\WINDOWSSERVER2003-KB933729-X86-KOR.EXE", "Language": "Korean"},
+        {"Date": "2007, 10, 9", "Type": "x86", "KB": 933729, "Version": "Windows Server 2003", "Path": "\\933729\\WINDOWSSERVER2003\\X86\\POLISH\\WINDOWSSERVER2003-KB933729-X86-PLK.EXE", "Language": "Polish"},
+        {"Date": "2007, 10, 9", "Type": "x86", "KB": 933729, "Version": "Windows Server 2003", "Path": "\\933729\\WINDOWSSERVER2003\\X86\\PORTUGUESE (BRAZIL)\\WINDOWSSERVER2003-KB933729-X86-PTB.EXE", "Language": "Portuguese (Brazil)"},
+        {"Date": "2007, 10, 9", "Type": "x86", "KB": 933729, "Version": "Windows Server 2003", "Path": "\\933729\\WINDOWSSERVER2003\\X86\\PORTUGUESE (PORTUGAL)\\WINDOWSSERVER2003-KB933729-X86-PTG.EXE", "Language": "Portuguese (Portugal)"},
+        {"Date": "2007, 10, 9", "Type": "x86", "KB": 933729, "Version": "Windows Server 2003", "Path": "\\933729\\WINDOWSSERVER2003\\X86\\RUSSIAN\\WINDOWSSERVER2003-KB933729-X86-RUS.EXE", "Language": "Russian"},
+        {"Date": "2007, 10, 9", "Type": "x86", "KB": 933729, "Version": "Windows Server 2003", "Path": "\\933729\\WINDOWSSERVER2003\\X86\\SPANISH (TRADITIONAL SORT)\\WINDOWSSERVER2003-KB933729-X86-ESN.EXE", "Language": "Spanish"},
+        {"Date": "2007, 10, 9", "Type": "x86", "KB": 933729, "Version": "Windows Server 2003", "Path": "\\933729\\WINDOWSSERVER2003\\X86\\SWEDISH\\WINDOWSSERVER2003-KB933729-X86-SVE.EXE", "Language": "Swedish"},
+        {"Date": "2007, 10, 9", "Type": "x86", "KB": 933729, "Version": "Windows Server 2003", "Path": "\\933729\\WINDOWSSERVER2003\\X86\\TURKISH\\WINDOWSSERVER2003-KB933729-X86-TRK.EXE", "Language": "Turkish"},
+        {"Date": "2007, 10, 9", "Type": "x64", "KB": 933729, "Version": "Windows Vista", "Path": "\\933729\\WINDOWSVISTA\\X64\\NEUTRAL\\WINDOWS6.0-KB933729-X64.MSU", "Language": "Neutral"},
+        {"Date": "2007, 10, 9", "Type": "x86", "KB": 933729, "Version": "Windows Vista", "Path": "\\933729\\WINDOWSVISTA\\X86\\NEUTRAL\\WINDOWS6.0-KB933729-X86.MSU", "Language": "Neutral"}
+      ],
+      "storages": ["Storage", "Uif", "SQLite", "MongoDB", "Storage", "Uif", "SQLite", "MongoDB"],
+      "sqliteDB": ":memory:",
+      "tables": ["KBs", "Dates", "Paths", "Versions", "Types", "Language", "Updates"],
+      "MongoClient": {
+        "HostAndPort": "mongodb://localhost:27017/",
+        "ServerSelectionTimeoutMS": 500,
+        "dataBase": "testDB",
+        "table": "table4test"
+      },
+      "expectedLanguages": ["Arabic", "Chinese (Simplified)", "Chinese (Traditional)", "Czech", "Danish", "Dutch", "English", "Finnish", "French", "German", "Greek", "Hebrew", "Hungarian", "Italian", "Japanese", "Korean", "Neutral", "Norwegian", "Polish", "Portuguese (Brazil)", "Portuguese (Portugal)", "Russian", "Spanish", "Swedish", "Turkish"]
+    }
   ],
   "test_get": [
     {

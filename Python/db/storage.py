@@ -139,7 +139,7 @@ class Uif(Storage):
             if isinstance(update, dict) and aKey in update:
                 if not isinstance(update[aKey], dict):
                     items.add(update[aKey])
-        return list(items)
+        return sorted(list(items))
 
 
 class SQLite(Storage):
@@ -154,15 +154,15 @@ class SQLite(Storage):
 
     def getAvalibleVersions(self):
 
-        return SQLite.makeAvalibleList(db.sqliteDB.getFrom(self.mInit, 'Versions', 'Version'))
+        return SQLite.makeAvalibleList(db.sqliteDB.getFrom(self.mInit, 'Versions', 'Version', [], {'Version': 1}))
 
     def getAvalibleTypes(self):
 
-        return SQLite.makeAvalibleList(db.sqliteDB.getFrom(self.mInit, 'Types', 'Type'))
+        return SQLite.makeAvalibleList(db.sqliteDB.getFrom(self.mInit, 'Types', 'Type', [], {'Type': 1}))
 
     def getAvalibleLanguages(self):
 
-        return SQLite.makeAvalibleList(db.sqliteDB.getFrom(self.mInit, 'Languages', 'Language'))
+        return SQLite.makeAvalibleList(db.sqliteDB.getFrom(self.mInit, 'Languages', 'Language', [], {'Language': 1}))
 
     def get(self, aQuery):
 
@@ -300,7 +300,7 @@ class SQLite(Storage):
         if len(substanceID):
             return substanceID[0]
 
-        db.sqliteDB.insertInto(aDb, aTable, aItem, aRowName)
+        db.sqliteDB.insertInto(aDb, aTable, aRowName, aItem)
 
         return db.sqliteDB.getFrom(aDb, aTable, 'id', {aRowName: aItem})[0]
 
@@ -397,7 +397,7 @@ class MongoDB(Storage):
 
         expression = []
         expression.append({'$group': {'_id': {'Version': '$Version'}, 'count': {'$sum': 1}}})
-        expression.append({'$sort': {'count': -1}})
+        expression.append({'$sort': {'_id': 1}})
         expression.append({'$project': {'_id':'$_id.Version', 'count': '$_id.count'}})
         return MongoDB.makeAvalibleList(self.mDbClient.aggregate(self.mDataBase, self.mTable, expression))
 
@@ -405,7 +405,7 @@ class MongoDB(Storage):
 
         expression = []
         expression.append({'$group': {'_id': {'Type': '$Type'}, 'count': {'$sum': 1}}})
-        expression.append({'$sort': {'count': -1}})
+        expression.append({'$sort': {'_id': 1}})
         expression.append({'$project': {'_id': '$_id.Type', 'count': '$_id.count'}})
         return MongoDB.makeAvalibleList(self.mDbClient.aggregate(self.mDataBase, self.mTable, expression))
 
@@ -413,7 +413,7 @@ class MongoDB(Storage):
 
         expression = []
         expression.append({'$group': {'_id': {'Language': '$Language'}, 'count': {'$sum': 1}}})
-        expression.append({'$sort': {'count': -1}})
+        expression.append({'$sort': {'_id': 1}})
         expression.append({'$project': {'_id':'$_id.Language', 'count': '$_id.count'}})
         return MongoDB.makeAvalibleList(self.mDbClient.aggregate(self.mDataBase, self.mTable, expression))
 

@@ -249,9 +249,10 @@ class TestSequenceFunctions(TestCase):
             table = testData['table']
             rows = testData['rows']
             getFilter = testData['getFilter']
+            orderBy = testData['orderBy']
 
             expectedResult = testData['expectedResult']
-            result = db.sqliteDB.getFrom(connection, table, rows, getFilter)
+            result = db.sqliteDB.getFrom(connection, table, rows, getFilter, orderBy)
 
             self.assertEqual(expectedResult, result)
 
@@ -270,7 +271,7 @@ class TestSequenceFunctions(TestCase):
             items = testData['items']
 
             self.assertNotEqual(items, db.sqliteDB.getFrom(connection, table, rows))
-            db.sqliteDB.insertInto(connection, table, items, rows)
+            db.sqliteDB.insertInto(connection, table, rows, items)
             if not isinstance(items, list):
                 items = [items]
             self.assertEqual(items, db.sqliteDB.getFrom(connection, table, rows))

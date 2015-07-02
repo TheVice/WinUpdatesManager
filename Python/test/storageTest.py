@@ -34,17 +34,185 @@ class TestSequenceFunctions(TestCase):
     def test_getAvalibleVersions(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
-            pass
+            for storageType in testData['storages']:
+                if 'Uif' == storageType:
+                    with patch('db.storage.os.path.isfile'):
+                        with patch('db.storage.os.path.exists'):
+                            with patch('builtins.open') as mock_open:
+                                mock_open.return_value = MockFile(testData['updates'])
+
+                                storage = getStorage('file.uif')
+                                versions = storage.getAvalibleVersions()
+                                expectedVersions = testData['expectedVersions']
+                                self.assertEqual(expectedVersions, versions)
+
+                elif 'SQLite' == storageType:
+                    updates = testData['updates']
+                    dataBase = testData['sqliteDB']
+                    tables = testData['tables']
+                    dataBase = db.sqliteDB.connect(dataBase, False)
+                    for table in tables:
+                        if db.sqliteDB.isTableExist(dataBase, table):
+                            db.sqliteDB.dropTable(dataBase, table)
+                    SQLite.uif2SQLiteDB(dataBase.cursor(), updates)
+                    dataBase.commit()
+
+                    storage = SQLite(dataBase)
+                    versions = storage.getAvalibleVersions()
+                    expectedVersions = testData['expectedVersions']
+                    self.assertEqual(expectedVersions, versions)
+
+                    db.sqliteDB.disconnect(dataBase)
+
+                elif 'MongoDB' == storageType:
+                    updates = testData['updates']
+                    MongoClient = testData['MongoClient']
+                    dataBase = MongoClient['dataBase']
+                    table = MongoClient['table']
+                    HostAndPort = MongoClient['HostAndPort']
+                    ServerSelectionTimeoutMS = MongoClient['ServerSelectionTimeoutMS']
+
+                    client = MongoDBClient(HostAndPort, ServerSelectionTimeoutMS)
+                    client.dropCollectionsInDB(dataBase, table)
+                    MongoDB.uif2MongoDB(updates, dataBase, table, HostAndPort)
+
+                    storage = MongoDB(HostAndPort, dataBase, table)
+                    versions = storage.getAvalibleVersions()
+                    expectedVersions = testData['expectedVersions']
+                    self.assertEqual(expectedVersions, versions)
+
+                    for i in range(0, len(updates)):
+                        del updates[i]['_id']
+                        d = updates[i]['Date']
+                        updates[i]['Date'] = '{}, {}, {}'.format(d.year, d.month, d.day)
+
+                    testData['updates'] = updates
+
+                else:
+                    storage = Storage(storageType)
+                    storage.getAvalibleVersions()
 
     def test_getAvalibleTypes(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
-            pass
+            for storageType in testData['storages']:
+                if 'Uif' == storageType:
+                    with patch('db.storage.os.path.isfile'):
+                        with patch('db.storage.os.path.exists'):
+                            with patch('builtins.open') as mock_open:
+                                mock_open.return_value = MockFile(testData['updates'])
+
+                                storage = getStorage('file.uif')
+                                types = storage.getAvalibleTypes()
+                                expectedTypes = testData['expectedTypes']
+                                self.assertEqual(expectedTypes, types)
+
+                elif 'SQLite' == storageType:
+                    updates = testData['updates']
+                    dataBase = testData['sqliteDB']
+                    tables = testData['tables']
+                    dataBase = db.sqliteDB.connect(dataBase, False)
+                    for table in tables:
+                        if db.sqliteDB.isTableExist(dataBase, table):
+                            db.sqliteDB.dropTable(dataBase, table)
+                    SQLite.uif2SQLiteDB(dataBase.cursor(), updates)
+                    dataBase.commit()
+
+                    storage = SQLite(dataBase)
+                    types = storage.getAvalibleTypes()
+                    expectedTypes = testData['expectedTypes']
+                    self.assertEqual(expectedTypes, types)
+
+                    db.sqliteDB.disconnect(dataBase)
+
+                elif 'MongoDB' == storageType:
+                    updates = testData['updates']
+                    MongoClient = testData['MongoClient']
+                    dataBase = MongoClient['dataBase']
+                    table = MongoClient['table']
+                    HostAndPort = MongoClient['HostAndPort']
+                    ServerSelectionTimeoutMS = MongoClient['ServerSelectionTimeoutMS']
+
+                    client = MongoDBClient(HostAndPort, ServerSelectionTimeoutMS)
+                    client.dropCollectionsInDB(dataBase, table)
+                    MongoDB.uif2MongoDB(updates, dataBase, table, HostAndPort)
+
+                    storage = MongoDB(HostAndPort, dataBase, table)
+                    types = storage.getAvalibleTypes()
+                    expectedTypes = testData['expectedTypes']
+                    self.assertEqual(expectedTypes, types)
+
+                    for i in range(0, len(updates)):
+                        del updates[i]['_id']
+                        d = updates[i]['Date']
+                        updates[i]['Date'] = '{}, {}, {}'.format(d.year, d.month, d.day)
+
+                    testData['updates'] = updates
+
+                else:
+                    storage = Storage(storageType)
+                    storage.getAvalibleTypes()
 
     def test_getAvalibleLanguages(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
-            pass
+            for storageType in testData['storages']:
+                if 'Uif' == storageType:
+                    with patch('db.storage.os.path.isfile'):
+                        with patch('db.storage.os.path.exists'):
+                            with patch('builtins.open') as mock_open:
+                                mock_open.return_value = MockFile(testData['updates'])
+
+                                storage = getStorage('file.uif')
+                                languages = storage.getAvalibleLanguages()
+                                expectedLanguages = testData['expectedLanguages']
+                                self.assertEqual(expectedLanguages, languages)
+
+                elif 'SQLite' == storageType:
+                    updates = testData['updates']
+                    dataBase = testData['sqliteDB']
+                    tables = testData['tables']
+                    dataBase = db.sqliteDB.connect(dataBase, False)
+                    for table in tables:
+                        if db.sqliteDB.isTableExist(dataBase, table):
+                            db.sqliteDB.dropTable(dataBase, table)
+                    SQLite.uif2SQLiteDB(dataBase.cursor(), updates)
+                    dataBase.commit()
+
+                    storage = SQLite(dataBase)
+                    languages = storage.getAvalibleLanguages()
+                    expectedLanguages = testData['expectedLanguages']
+                    self.assertEqual(expectedLanguages, languages)
+
+                    db.sqliteDB.disconnect(dataBase)
+
+                elif 'MongoDB' == storageType:
+                    updates = testData['updates']
+                    MongoClient = testData['MongoClient']
+                    dataBase = MongoClient['dataBase']
+                    table = MongoClient['table']
+                    HostAndPort = MongoClient['HostAndPort']
+                    ServerSelectionTimeoutMS = MongoClient['ServerSelectionTimeoutMS']
+
+                    client = MongoDBClient(HostAndPort, ServerSelectionTimeoutMS)
+                    client.dropCollectionsInDB(dataBase, table)
+                    MongoDB.uif2MongoDB(updates, dataBase, table, HostAndPort)
+
+                    storage = MongoDB(HostAndPort, dataBase, table)
+                    languages = storage.getAvalibleLanguages()
+                    expectedLanguages = testData['expectedLanguages']
+                    self.assertEqual(expectedLanguages, languages)
+
+                    for i in range(0, len(updates)):
+                        del updates[i]['_id']
+                        d = updates[i]['Date']
+                        updates[i]['Date'] = '{}, {}, {}'.format(d.year, d.month, d.day)
+
+                    testData['updates'] = updates
+
+                else:
+                    storage = Storage(storageType)
+                    storage.getAvalibleLanguages()
 
     def test_get(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)

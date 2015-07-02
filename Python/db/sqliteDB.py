@@ -181,7 +181,7 @@ def updateAtTable(aDataBase, aTable, aRows, aItem, aCurrentItem):
     writeAsync(aDataBase, statement)
 
 
-def getFrom(aDataBase, aTable, aRows=None, aFilter=None):
+def getFrom(aDataBase, aTable, aRows=None, aFilter=None, aOrderBy=None):
 
     if aRows:
         if isinstance(aRows, list):
@@ -224,6 +224,26 @@ def getFrom(aDataBase, aTable, aRows=None, aFilter=None):
 
         statement = '{} WHERE {}'.format(statement, filterStatement)
 
+    if aOrderBy and isinstance(aOrderBy, dict):
+        orderStatement = []
+        for key in aOrderBy.keys():
+            value = aOrderBy[key]
+            if isinstance(value, int):
+                if value < 0:
+                    value = 'DESC'
+                else:
+                    value = 'ASC'
+            else:
+                value = 'ASC'
+            orderStatement.append('{} {}'.format(key, value))
+
+        orderStatement = ''.join(orderStatement)
+        orderStatement = orderStatement.replace('ASC', 'ASC,')
+        orderStatement = orderStatement.replace('DESC', 'DESC,')
+        orderStatement = orderStatement[:len(orderStatement)-1]
+
+        statement = '{} ORDER BY {}'.format(statement, orderStatement)
+
     items = readAsync(aDataBase, statement, lambda l: l.fetchall())
     for i in range(0, len(items)):
         if 1 == len(items[i]):
@@ -233,7 +253,7 @@ def getFrom(aDataBase, aTable, aRows=None, aFilter=None):
     return items
 
 
-def insertInto(aDataBase, aTable, aItems, aRows):
+def insertInto(aDataBase, aTable, aRows, aItems):
 
     if aRows:
         if isinstance(aRows, list):
