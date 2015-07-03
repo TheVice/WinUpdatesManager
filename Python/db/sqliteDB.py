@@ -181,7 +181,7 @@ def updateAtTable(aDataBase, aTable, aRows, aItem, aCurrentItem):
     writeAsync(aDataBase, statement)
 
 
-def getFrom(aDataBase, aTable, aRows=None, aFilter=None, aOrderBy=None):
+def getFrom(aDataBase, aTable, aRows=None, aFilter=None, aOrderBy=None, aLimit=-1, aOffset=0):
 
     if aRows:
         if isinstance(aRows, list):
@@ -243,6 +243,8 @@ def getFrom(aDataBase, aTable, aRows=None, aFilter=None, aOrderBy=None):
         orderStatement = orderStatement[:len(orderStatement)-1]
 
         statement = '{} ORDER BY {}'.format(statement, orderStatement)
+
+    statement = '{} LIMIT {} OFFSET {}'.format(statement, aLimit, aOffset)
 
     items = readAsync(aDataBase, statement, lambda l: l.fetchall())
     for i in range(0, len(items)):

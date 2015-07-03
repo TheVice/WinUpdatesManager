@@ -2,6 +2,10 @@ import sys
 import db.sqliteDB
 from unittest import main, TestCase
 from test.jsonHelper import JsonHelper
+if 2 == sys.version_info[0]:
+    import thread
+else:
+    import _thread as thread
 
 
 class TestSequenceFunctions(TestCase):
@@ -40,6 +44,11 @@ class TestSequenceFunctions(TestCase):
 
             connection = db.sqliteDB.connect(self.mDataBase)
             db.sqliteDB.write(connection.cursor(), writeStatement)
+            db.sqliteDB.disconnect(connection)
+
+            connection = db.sqliteDB.connect(self.mDataBase)
+            mutex = thread.allocate_lock()
+            db.sqliteDB.write(connection.cursor(), writeStatement, mutex)
             db.sqliteDB.disconnect(connection)
 
     def test_writeAsync(self):
@@ -84,6 +93,13 @@ class TestSequenceFunctions(TestCase):
 
             connection = db.sqliteDB.connect(self.mDataBase)
             db.sqliteDB.read(connection.cursor(), readStatement, lambda l: l.fetchall())
+            db.sqliteDB.disconnect(connection)
+
+            connection = db.sqliteDB.connect(self.mDataBase)
+            mutex = thread.allocate_lock()
+            l = []
+            db.sqliteDB.read(connection.cursor(), readStatement, lambda l: l.fetchall(), mutex, l)
+            self.assertEqual([[]], l)
             db.sqliteDB.disconnect(connection)
 
     def test_readAsync(self):
@@ -250,9 +266,11 @@ class TestSequenceFunctions(TestCase):
             rows = testData['rows']
             getFilter = testData['getFilter']
             orderBy = testData['orderBy']
+            limit = testData['limit']
+            offset = testData['offset']
 
             expectedResult = testData['expectedResult']
-            result = db.sqliteDB.getFrom(connection, table, rows, getFilter, orderBy)
+            result = db.sqliteDB.getFrom(connection, table, rows, getFilter, orderBy, limit, offset)
 
             self.assertEqual(expectedResult, result)
 
