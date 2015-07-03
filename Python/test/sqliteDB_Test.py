@@ -258,6 +258,23 @@ class TestSequenceFunctions(TestCase):
 
             db.sqliteDB.disconnect(connection)
 
+    def test_getItemsCount(self):
+        testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
+        for testData in testsData:
+            connection = db.sqliteDB.connect(self.mDataBase, False)
+
+            writeStatement = testData['writeStatement']
+            db.sqliteDB.write(connection, writeStatement)
+
+            table = testData['table']
+
+            expectedResult = testData['expectedResult']
+            result = db.sqliteDB.getItemsCount(connection, table)
+
+            self.assertEqual(expectedResult, result)
+
+            db.sqliteDB.disconnect(connection)
+
     def test_insertInto(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:

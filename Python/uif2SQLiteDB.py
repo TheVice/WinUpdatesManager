@@ -18,7 +18,11 @@ if __name__ == '__main__':
             dataBase = db.sqliteDB.connect(dataBasePath, False)
             SQLite.uif2SQLiteDB(dataBase.cursor(), updates)
             dataBase.commit()
+
+            itemsCount = db.sqliteDB.getItemsCount(dataBase, 'Updates')
             db.sqliteDB.disconnect(dataBase)
+
+            print('At database \'{}\' now {} items'.format(dataBasePath, itemsCount))
         else:
             print('Not found update objects at {}'.format(storagePath))
 

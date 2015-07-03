@@ -253,6 +253,12 @@ def getFrom(aDataBase, aTable, aRows=None, aFilter=None, aOrderBy=None):
     return items
 
 
+def getItemsCount(aDataBase, aTable):
+
+    statement = 'SELECT COUNT (*) FROM {}'.format(aTable)
+    return readAsync(aDataBase, statement, lambda l: l.fetchone())[0]
+
+
 def insertInto(aDataBase, aTable, aRows, aItems):
 
     if aRows:
