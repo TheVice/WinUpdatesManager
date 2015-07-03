@@ -1,6 +1,7 @@
 import sys
 import json
 import db.sqliteDB
+from datetime import datetime
 from core.updates import Updates
 from unittest import main, TestCase
 from db.mongoDB import MongoDBClient
@@ -230,8 +231,8 @@ class TestSequenceFunctions(TestCase):
                                 expectedUpdates = testData['expectedUpdates']
                                 self.assertEqual(len(expectedUpdates), len(updates))
                                 for i in range(0, len(updates)):
-                                    date = updates[i]['Date']
-                                    updates[i]['Date'] = '{}, {}, {}'.format(date.year, date.month, date.day)
+                                    d = updates[i]['Date']
+                                    updates[i]['Date'] = '{}, {}, {}'.format(d.year, d.month, d.day)
                                 for up in expectedUpdates:
                                     self.assertTrue(up in updates)
 
@@ -252,8 +253,8 @@ class TestSequenceFunctions(TestCase):
                     expectedUpdates = testData['expectedUpdates']
                     self.assertEqual(len(expectedUpdates), len(updates))
                     for i in range(0, len(updates)):
-                        date = updates[i]['Date']
-                        updates[i]['Date'] = '{}, {}, {}'.format(date.year, date.month, date.day)
+                        d = updates[i]['Date']
+                        updates[i]['Date'] = '{}, {}, {}'.format(d.year, d.month, d.day)
                     for up in expectedUpdates:
                         self.assertTrue(up in updates)
 
@@ -277,8 +278,8 @@ class TestSequenceFunctions(TestCase):
                     expectedUpdates = testData['expectedUpdates']
                     self.assertEqual(len(expectedUpdates), len(updates))
                     for i in range(0, len(updates)):
-                        date = updates[i]['Date']
-                        updates[i]['Date'] = '{}, {}, {}'.format(date.year, date.month, date.day)
+                        d = updates[i]['Date']
+                        updates[i]['Date'] = '{}, {}, {}'.format(d.year, d.month, d.day)
                         del updates[i]['_id']
                     for up in expectedUpdates:
                         self.assertTrue(up in updates)
@@ -289,6 +290,17 @@ class TestSequenceFunctions(TestCase):
                     storage = Storage(storageType)
                     storage.get({})
                     storage.correctDate(None)
+
+    def test_correctDate(self):
+        testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
+        for testData in testsData:
+            storageType = eval(testData['storage'])
+            inputDate = eval(testData['inputDate'])
+            expectedDate = eval(testData['expectedDate'])
+            correctedDate = storageType.correctDate(inputDate)
+            self.assertEqual(expectedDate, correctedDate)
+            correctedDate = storageType.correctDate([inputDate])
+            self.assertEqual([expectedDate], correctedDate)
 
     def test_uif2SQLiteDB(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
@@ -334,16 +346,34 @@ class TestSequenceFunctions(TestCase):
                         with patch('builtins.open'):
                             storageType = type(getStorage(testData[0]))
                             self.assertEqual(eval(testData[1]), storageType)
+                            self.assertEqual(testData[1], '{}'.format(getStorage(testData[0])))
+                            if 2 != sys.version_info[0]:
+                                with patch('db.storage.sys.version_info') as mock_pyVer:
+                                    mock_pyVer.__getitem__ = MagicMock(return_value=2)
+                                    storageType = type(getStorage(testData[0]))
+                                    self.assertEqual(eval(testData[1]), storageType)
             elif testData[0] == 'UIFs':
                 with patch('db.storage.os.path.isdir'):
                     with patch('db.storage.os.path.exists'):
                         storageType = type(getStorage(testData[0]))
                         self.assertEqual(eval(testData[1]), storageType)
+                        self.assertEqual(testData[1], '{}'.format(getStorage(testData[0])))
+                        if 2 != sys.version_info[0]:
+                            with patch('db.storage.sys.version_info') as mock_pyVer:
+                                mock_pyVer.__getitem__ = MagicMock(return_value=2)
+                                storageType = type(getStorage(testData[0]))
+                                self.assertEqual(eval(testData[1]), storageType)
             elif testData[0] == 'base.sqlite':
                 with patch('db.storage.os.path.isfile'):
                     with patch('db.storage.os.path.exists'):
                         storageType = type(getStorage(testData[0]))
                         self.assertEqual(eval(testData[1]), storageType)
+                        self.assertEqual(testData[1], '{}'.format(getStorage(testData[0])))
+                        if 2 != sys.version_info[0]:
+                            with patch('db.storage.sys.version_info') as mock_pyVer:
+                                mock_pyVer.__getitem__ = MagicMock(return_value=2)
+                                storageType = type(getStorage(testData[0]))
+                                self.assertEqual(eval(testData[1]), storageType)
             elif testData[0] == 'wrong.File':
                 with patch('db.storage.os.path.isfile'):
                     with self.assertRaises(OSError):
@@ -355,6 +385,50 @@ class TestSequenceFunctions(TestCase):
             else:
                 storageType = type(getStorage(testData[0]))
                 self.assertEqual(eval(testData[1]), storageType)
+                self.assertEqual(testData[1], '{}'.format(getStorage(testData[0])))
+                if 2 != sys.version_info[0]:
+                    with patch('db.storage.sys.version_info') as mock_pyVer:
+                        mock_pyVer.__getitem__ = MagicMock(return_value=2)
+                        storageType = type(getStorage(testData[0]))
+                        self.assertEqual(eval(testData[1]), storageType)
+
+    def test_getUpdatesFromFile(self):
+        testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
+        for testData in testsData:
+            with patch('db.storage.os.path.isfile'):
+                with patch('db.storage.os.path.exists'):
+                    with patch('builtins.open') as mock_open:
+                        mock_open.return_value = MockFile(testData['updates'])
+                        try:
+                            updates = Uif.getUpdatesFromFile(testData['fileName'])
+                            for i in range(0, len(updates)):
+                                d = updates[i]['Date']
+                                updates[i]['Date'] = '{}, {}, {}'.format(d.year, d.month, d.day)
+                            expectedUpdates = testData['updates']
+                            self.assertEqual(len(expectedUpdates), len(updates))
+                            for update in expectedUpdates:
+                                self.assertTrue(update in updates)
+                        except:
+                            self.assertEqual(testData['exception'], '{}'.format(sys.exc_info()[1]))
+
+    def test_getUpdatesFromStorage(self):
+        testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
+        for testData in testsData:
+            with patch('db.storage.os.path.isdir'):
+                with patch('db.storage.os.path.exists'):
+                    with patch('core.dirs.getSubDirectoryFiles') as mock_dir_files:
+                        mock_dir_files.return_value = testData['files']
+                        with patch('builtins.open') as mock_open:
+                            mock_open.return_value = MockFile(testData['updates'])
+
+                            updates = Uif.getUpdatesFromStorage(testData['path'])
+                            for i in range(0, len(updates)):
+                                d = updates[i]['Date']
+                                updates[i]['Date'] = '{}, {}, {}'.format(d.year, d.month, d.day)
+                            expectedUpdates = testData['updates']
+                            self.assertEqual(len(expectedUpdates), len(updates))
+                            for update in expectedUpdates:
+                                self.assertTrue(update in updates)
 
 
 if __name__ == '__main__':

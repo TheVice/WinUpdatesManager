@@ -373,10 +373,10 @@ class SQLite(Storage):
             type_id = SQLite.getSetSubstanceID(aDataBase, 'Types', 'Type', osType)
             language_id = SQLite.getSetSubstanceID(aDataBase, 'Languages', 'Language', language)
 
-            statement = 'INSERT INTO Updates (kb_id, date_id, path_id, version_id, type_id, language_id) VALUES ({}, {}, {}, {}, {}, {})'
-            statement = statement.format(kb_id, date_id, path_id, version_id, type_id, language_id)
-
-            db.sqliteDB.writeAsync(aDataBase, statement)
+            table = 'Updates'
+            rows = 'kb_id, date_id, path_id, version_id, type_id, language_id'
+            items = [[kb_id, date_id, path_id, version_id, type_id, language_id]]
+            db.sqliteDB.insertInto(aDataBase, table, rows, items)
 
             print('{} / {}'.format(i, count))
 

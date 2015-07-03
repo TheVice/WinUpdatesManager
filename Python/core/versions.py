@@ -13,6 +13,7 @@ class Versions(UnknownSubstance):
         self.Vista = 'Windows Vista'
         self.Win2k8 = 'Windows Server 2008'
         self.Seven = 'Windows 7'
+        self.SevenEmbedded = 'Windows Embedded Standard 7'
         self.Win2k8R2 = 'Windows Server 2008 R2'
         self.Eight = 'Windows 8'
         self.Win2k12 = 'Windows Server 2012'
@@ -30,6 +31,7 @@ class Versions(UnknownSubstance):
         versions[os.sep + 'WindowsVista' + os.sep] = self.Vista
         versions[os.sep + 'WindowsServer2008' + os.sep] = self.Win2k8
         versions[os.sep + 'Windows7' + os.sep] = self.Seven
+        versions[os.sep + 'WindowsEmbeddedStandard7' + os.sep] = self.SevenEmbedded
         versions[os.sep + 'WindowsServer2008R2' + os.sep] = self.Win2k8R2
         versions[os.sep + 'Windows8' + os.sep] = self.Eight
         versions[os.sep + 'WindowsServer2012' + os.sep] = self.Win2k12
@@ -42,10 +44,12 @@ class Versions(UnknownSubstance):
 
         versions[os.sep + 'windows2000' + os.sep] = self.Win2k
         versions[os.sep + 'windowsxp' + os.sep] = self.WinXP
+        versions[os.sep + 'windowsxpembedded' + os.sep] = self.WinXPEmbedded
         versions[os.sep + 'windowsserver2003' + os.sep] = self.Win2k3
         versions[os.sep + 'windowsvista' + os.sep] = self.Vista
         versions[os.sep + 'windowsserver2008' + os.sep] = self.Win2k8
         versions[os.sep + 'windows7' + os.sep] = self.Seven
+        versions[os.sep + 'windowsembeddedstandard7' + os.sep] = self.SevenEmbedded
         versions[os.sep + 'windowsserver2008r2' + os.sep] = self.Win2k8R2
         versions[os.sep + 'windows8' + os.sep] = self.Eight
         versions[os.sep + 'windowsserver2012' + os.sep] = self.Win2k12
@@ -56,10 +60,12 @@ class Versions(UnknownSubstance):
 
         versions[os.sep + 'WINDOWS2000' + os.sep] = self.Win2k
         versions[os.sep + 'WINDOWSXP' + os.sep] = self.WinXP
+        versions[os.sep + 'WINDOWSXPEMBEDDED' + os.sep] = self.WinXPEmbedded
         versions[os.sep + 'WINDOWSSERVER2003' + os.sep] = self.Win2k3
         versions[os.sep + 'WINDOWSVISTA' + os.sep] = self.Vista
         versions[os.sep + 'WINDOWSSERVER2008' + os.sep] = self.Win2k8
         versions[os.sep + 'WINDOWS7' + os.sep] = self.Seven
+        versions[os.sep + 'WINDOWSEMBEDDEDSTANDARD7' + os.sep] = self.SevenEmbedded
         versions[os.sep + 'WINDOWSSERVER2008R2' + os.sep] = self.Win2k8R2
         versions[os.sep + 'WINDOWS8' + os.sep] = self.Eight
         versions[os.sep + 'WINDOWSSERVER2012' + os.sep] = self.Win2k12
@@ -89,6 +95,7 @@ class Versions(UnknownSubstance):
         return (aVersion == self.Vista or
                 aVersion == self.Win2k8 or
                 aVersion == self.Seven or
+                aVersion == self.SevenEmbedded or
                 aVersion == self.Win2k8R2 or
                 aVersion == self.Eight or
                 aVersion == self.Win2k12 or
