@@ -107,7 +107,7 @@ def listRows(aDataBase, aTable):
         rows = []
         rows.append(re.search('\([A-Za-z]\w+', tableInfo).group(0)[1:])
 
-        while -1 != tableInfo.find(','):
+        while ',' in tableInfo:
             row = re.search(',[A-Za-z ]\w+', tableInfo).group(0)
             row = re.search('[A-Za-z]\w+', row).group(0)
             tableInfo = tableInfo[tableInfo.find(row) + len(row):]
@@ -127,9 +127,9 @@ def isRowExist(aDataBase, aTable, aRow):
     if tableInfo is not None:
         tableInfo = tableInfo[0]
 
-        if (-1 != tableInfo.find('({} '.format(aRow)) or
-                -1 != tableInfo.find(',{} '.format(aRow)) or
-                -1 != tableInfo.find(', {} '.format(aRow))):
+        if ('({} '.format(aRow) in tableInfo or
+                ',{} '.format(aRow) in tableInfo or
+                ', {} '.format(aRow) in tableInfo):
             return True
 
     return False

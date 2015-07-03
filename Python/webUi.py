@@ -368,7 +368,7 @@ class Main(Page):
                     pass
             else:
                 value = '{}'.format(aQuery[key])
-                if -1 == value.find('{'):
+                if '{' not in value:
                     str_list.append('{},{},'.format(key, value))
 
         if 0 < len(str_list):

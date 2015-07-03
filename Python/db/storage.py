@@ -217,7 +217,7 @@ class SQLite(Storage):
 
         items = []
         for i in aList:
-            if -1 == '{}'.format(i).find('UNKNOWN'):
+            if 'UNKNOWN' not in '{}'.format(i):
                 items.append(i)
         return items
 

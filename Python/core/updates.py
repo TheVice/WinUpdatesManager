@@ -136,7 +136,7 @@ class Updates:
         updates = {'known': [], 'unKnown': []}
 
         for up in aUpdates:
-            if -1 != str(up).find('UNKNOWN'):
+            if 'UNKNOWN' in '{}'.format(up):
                 updates['unKnown'].append(up)
             else:
                 updates['known'].append(up)

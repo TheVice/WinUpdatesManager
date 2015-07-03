@@ -124,7 +124,7 @@ def relPaths2Full(aRoot, aPaths):
     updatesFiles = core.dirs.getSubDirectoryFiles(aRoot)
     for p in aPaths:
         for uf in updatesFiles:
-            if -1 != uf.find(p):
+            if p in uf:
                 files.append(os.path.normpath('{}{}'.format(aRoot, uf)))
 
     return files
