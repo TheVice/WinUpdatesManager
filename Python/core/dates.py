@@ -1,22 +1,18 @@
-import datetime
+from datetime import datetime, date
 
 
 def getDayFromYearMonthAndWeek(aYear, aMonth, aWeekOfMonth, aDayOfWeek):
 
     day = 1
-    dayInMonth = 0
-
-    while day <= 31:
-        dayOfWeek = datetime.date.isoweekday(datetime.date(aYear, aMonth, day))
-
-        if dayOfWeek == aDayOfWeek:
-            dayInMonth += 1
-
-        if aWeekOfMonth == dayInMonth:
-            break
-
-        day += 1
-
+    dayOfWeek = date.isoweekday(date(aYear, aMonth, day))
+    if dayOfWeek == aDayOfWeek:
+        day = day + (aWeekOfMonth - 1) * 7
+    elif dayOfWeek > aDayOfWeek:
+        if aWeekOfMonth == 1:
+            raise Exception('Bad input: Week of month is incorrect')
+        day = day + 7 - (dayOfWeek - aDayOfWeek) + (aWeekOfMonth - 1) * 7
+    elif dayOfWeek < aDayOfWeek:
+        day = day + aDayOfWeek - dayOfWeek + (aWeekOfMonth - 1) * 7
     return day
 
 
@@ -32,4 +28,38 @@ def getDate(aFolderName):
         raise Exception('Year \'{}\' or month \'{}\' not digital or month is great than 12'.format(year, month))
 
     day = getDayFromYearMonthAndWeek(int(year), int(month), 2, 2)
-    return datetime.date(int(year), int(month), day)
+    return date(int(year), int(month), day)
+
+
+def toDate(aDate):
+
+    if isinstance(aDate, list):
+        for i in range(0, len(aDate)):
+            aDate[i] = toDate(aDate[i])
+    elif isinstance(aDate, str):
+        return datetime.strptime(aDate, '%Y, %m, %d').date()
+    elif isinstance(aDate, datetime):
+        return aDate.date()
+    return aDate
+
+
+def toString(aDate):
+
+    if isinstance(aDate, list):
+        for i in range(0, len(aDate)):
+            aDate[i] = toString(aDate[i])
+    elif isinstance(aDate, date) or isinstance(aDate, datetime):
+        return '{}, {}, {}'.format(aDate.year, aDate.month, aDate.day)
+    return aDate
+
+
+def toDateTime(aDate):
+
+    if isinstance(aDate, list):
+        for i in range(0, len(aDate)):
+            aDate[i] = toDateTime(aDate[i])
+    elif isinstance(aDate, str):
+        return datetime.strptime(aDate, '%Y, %m, %d')
+    elif isinstance(aDate, date):
+        return datetime(aDate.year, aDate.month, aDate.day)
+    return aDate

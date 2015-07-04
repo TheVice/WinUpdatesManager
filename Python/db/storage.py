@@ -2,8 +2,8 @@ import sys
 import json
 import os.path
 import core.dirs
+import core.dates
 import db.sqliteDB
-from datetime import date, datetime
 from db.mongoDB import MongoDBClient
 from core.unknownSubstance import UnknownSubstance
 
@@ -27,11 +27,6 @@ class Storage:
         pass
 
     def get(self, aQuery):
-
-        pass
-
-    @staticmethod
-    def correctDate(aDate):
 
         pass
 
@@ -71,7 +66,7 @@ class Uif(Storage):
 
             for key in aQuery.keys():
                 if 'Date' == key:
-                    aQuery[key] = Uif.correctDate(aQuery[key])
+                    aQuery[key] = core.dates.toDate(aQuery[key])
                 if isinstance(aQuery.get(key), list):
                     if 0 == aQuery.get(key).count(update[key]):
                         match = False
@@ -86,18 +81,6 @@ class Uif(Storage):
         return updates
 
     @staticmethod
-    def correctDate(aDate):
-
-        if isinstance(aDate, list):
-            for i in range(0, len(aDate)):
-                aDate[i] = Uif.correctDate(aDate[i])
-        elif isinstance(aDate, str):
-            return datetime.strptime(aDate, '%Y, %m, %d').date()
-        elif isinstance(aDate, datetime):
-            return aDate.date()
-        return aDate
-
-    @staticmethod
     def getUpdatesFromFile(aFile):
 
         updates = []
@@ -107,7 +90,7 @@ class Uif(Storage):
 
             for line in inputFile:
                 update = json.loads(line)
-                update['Date'] = datetime.strptime(update['Date'], '%Y, %m, %d').date()
+                update['Date'] = core.dates.toDate(update['Date'])
                 updates.append(update)
 
             inputFile.close()
@@ -176,7 +159,7 @@ class SQLite(Storage):
             elif 'Date' == key:
                 table = 'Dates'
                 id_name = 'date_id'
-                aQuery[key] = SQLite.correctDate(aQuery[key])
+                aQuery[key] = core.dates.toString(aQuery[key])
             elif 'Version' == key:
                 table = 'Versions'
                 id_name = 'version_id'
@@ -201,16 +184,6 @@ class SQLite(Storage):
         rows = 'kb_id, date_id, path_id, version_id, type_id, language_id'
         rawUpdates = db.sqliteDB.getFrom(self.mInit, table, rows, statement)
         return SQLite.rawUpdatesToUpdates(self.mInit, rawUpdates)
-
-    @staticmethod
-    def correctDate(aDate):
-
-        if isinstance(aDate, list):
-            for i in range(0, len(aDate)):
-                aDate[i] = SQLite.correctDate(aDate[i])
-        elif isinstance(aDate, date) or isinstance(aDate, datetime):
-            return '{}, {}, {}'.format(aDate.year, aDate.month, aDate.day)
-        return aDate
 
     @staticmethod
     def makeAvalibleList(aList):
@@ -270,7 +243,7 @@ class SQLite(Storage):
     def getDateByID(aDb, aId):
 
         d = db.sqliteDB.getFrom(aDb, 'Dates', 'Date', {'id': aId})[0]
-        return datetime.strptime(d, '%Y, %m, %d').date()
+        return core.dates.toDate(d)
 
     @staticmethod
     def getPathByID(aDb, aId):
@@ -425,22 +398,10 @@ class MongoDB(Storage):
 
         for key in aQuery.keys():
             if 'Date' == key:
-                aQuery[key] = MongoDB.correctDate(aQuery[key])
+                aQuery[key] = core.dates.toDateTime(aQuery[key])
             if isinstance(aQuery[key], list):
                 aQuery[key] = {'$in': aQuery[key]}
         return self.mDbClient.getItemsFromDB(self.mDataBase, self.mTable, aQuery)
-
-    @staticmethod
-    def correctDate(aDate):
-
-        if isinstance(aDate, list):
-            for i in range(0, len(aDate)):
-                aDate[i] = MongoDB.correctDate(aDate[i])
-        elif isinstance(aDate, str):
-            return datetime.strptime(aDate, '%Y, %m, %d')
-        elif isinstance(aDate, date):
-            return datetime(aDate.year, aDate.month, aDate.day)
-        return aDate
 
     @staticmethod
     def makeAvalibleList(aList):
@@ -456,7 +417,7 @@ class MongoDB(Storage):
     def uif2MongoDB(aUpdates, aDataBaseName, aTableName, aHostAndPort):
 
         for update in aUpdates:
-            update['Date'] = datetime.strptime(update['Date'], '%Y, %m, %d')
+            update['Date'] = core.dates.toDateTime(update['Date'])
 
         updates = MongoDBClient.addObjectIdFieldAtCollection(aUpdates)
         dataBase = MongoDBClient(aHostAndPort)

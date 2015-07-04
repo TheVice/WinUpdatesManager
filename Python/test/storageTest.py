@@ -289,18 +289,6 @@ class TestSequenceFunctions(TestCase):
                 else:
                     storage = Storage(storageType)
                     storage.get({})
-                    storage.correctDate(None)
-
-    def test_correctDate(self):
-        testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
-        for testData in testsData:
-            storageType = eval(testData['storage'])
-            inputDate = eval(testData['inputDate'])
-            expectedDate = eval(testData['expectedDate'])
-            correctedDate = storageType.correctDate(inputDate)
-            self.assertEqual(expectedDate, correctedDate)
-            correctedDate = storageType.correctDate([inputDate])
-            self.assertEqual([expectedDate], correctedDate)
 
     def test_uif2SQLiteDB(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)

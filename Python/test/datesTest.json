@@ -115,7 +115,8 @@
     {"2015, 3, 2, 2": 10},
     {"2015, 4, 2, 2": 14},
     {"2015, 5, 2, 2": 12},
-    {"2015, 6, 2, 2": 9}
+    {"2015, 6, 2, 2": 9},
+    {"2015, 7, 1, 2": "Bad input: Week of month is incorrect"}
   ],
   "test_getDatesForYearEdition": [
     {
@@ -153,6 +154,39 @@
     },
     {
       "1513": "Year '2013' or month '15' not digital or month is great than 12"
+    }
+  ],
+  "test_toDate": [
+    {
+      "str(\"2015, 4, 14\")": "datetime(2015, 4, 14).date()"
+    },
+    {
+      "datetime(2015, 4, 14)": "datetime(2015, 4, 14).date()"
+    },
+    {
+      "datetime(2015, 4, 14).date()": "datetime(2015, 4, 14).date()"
+    }
+  ],
+  "test_toString": [
+    {
+      "datetime(2015, 4, 14)": "str(\"2015, 4, 14\")"
+    },
+    {
+      "datetime(2015, 4, 14).date()": "str(\"2015, 4, 14\")"
+    },
+    {
+      "str(\"2015, 4, 14\")": "str(\"2015, 4, 14\")"
+    }
+  ],
+  "test_toDateTime": [
+    {
+      "str(\"2015, 4, 14\")": "datetime(2015, 4, 14)"
+    },
+    {
+      "datetime(2015, 4, 14).date()": "datetime(2015, 4, 14)"
+    },
+    {
+      "datetime(2015, 4, 14)": "datetime(2015, 4, 14)"
     }
   ]
 }

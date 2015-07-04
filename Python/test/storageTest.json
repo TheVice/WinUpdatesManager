@@ -520,53 +520,6 @@
       ]
     }
   ],
-  "test_correctDate": [
-    {
-      "storage": "Uif",
-      "inputDate": "str(\"2015, 4, 14\")",
-      "expectedDate": "datetime(2015, 4, 14).date()"
-    },
-    {
-      "storage": "Uif",
-      "inputDate": "datetime(2015, 4, 14)",
-      "expectedDate": "datetime(2015, 4, 14).date()"
-    },
-    {
-      "storage": "Uif",
-      "inputDate": "datetime(2015, 4, 14).date()",
-      "expectedDate": "datetime(2015, 4, 14).date()"
-    },
-    {
-      "storage": "SQLite",
-      "inputDate": "datetime(2015, 4, 14)",
-      "expectedDate": "str(\"2015, 4, 14\")"
-    },
-    {
-      "storage": "SQLite",
-      "inputDate": "datetime(2015, 4, 14).date()",
-      "expectedDate": "str(\"2015, 4, 14\")"
-    },
-    {
-      "storage": "SQLite",
-      "inputDate": "str(\"2015, 4, 14\")",
-      "expectedDate": "str(\"2015, 4, 14\")"
-    },
-    {
-      "storage": "MongoDB",
-      "inputDate": "str(\"2015, 4, 14\")",
-      "expectedDate": "datetime(2015, 4, 14)"
-    },
-    {
-      "storage": "MongoDB",
-      "inputDate": "datetime(2015, 4, 14).date()",
-      "expectedDate": "datetime(2015, 4, 14)"
-    },
-    {
-      "storage": "MongoDB",
-      "inputDate": "datetime(2015, 4, 14)",
-      "expectedDate": "datetime(2015, 4, 14)"
-    }
-  ],
   "test_uif2SQLiteDB": [
     {
       "updates": [
