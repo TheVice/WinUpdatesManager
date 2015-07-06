@@ -29,13 +29,32 @@ class MockFile(Updates):
 
 class TestSequenceFunctions(TestCase):
 
+    storages = ['Uif', 'SQLite', 'MongoDB', 'Storage']
+
     def setUp(self):
         self.mJsonHelper = JsonHelper(__file__)
+
+        dataBase = self.mJsonHelper.GetTestRoot('sqliteDB')['fileName']
+        tables = self.mJsonHelper.GetTestRoot('sqliteDB')['tables']
+        self.mSqliteDB = db.sqliteDB.connect(dataBase, False)
+        for table in tables:
+            if db.sqliteDB.isTableExist(self.mSqliteDB, table):
+                db.sqliteDB.dropTable(self.mSqliteDB, table)
+
+        self.mMongoDataBase = self.mJsonHelper.GetTestRoot('MongoClient')['dataBase']
+        self.mMongoTable = self.mJsonHelper.GetTestRoot('MongoClient')['table']
+        self.mMongoHostAndPort = self.mJsonHelper.GetTestRoot('MongoClient')['HostAndPort']
+        ServerSelectionTimeoutMS = self.mJsonHelper.GetTestRoot('MongoClient')['ServerSelectionTimeoutMS']
+        self.mMongoDB = MongoDBClient(self.mMongoHostAndPort, ServerSelectionTimeoutMS)
+        self.mMongoDB.dropCollectionsInDB(self.mMongoDataBase, self.mMongoTable)
+
+    def tearDown(self):
+        db.sqliteDB.disconnect(self.mSqliteDB)
 
     def test_getAvalibleVersions(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
-            for storageType in testData['storages']:
+            for storageType in TestSequenceFunctions.storages:
                 if 'Uif' == storageType:
                     with patch('core.storage.os.path.isfile'):
                         with patch('core.storage.os.path.exists'):
@@ -49,46 +68,22 @@ class TestSequenceFunctions(TestCase):
                                 self.assertEqual(expectedVersions, versions)
 
                 elif 'SQLite' == storageType:
-                    updates = testData['updates']
-                    dataBase = testData['sqliteDB']
-                    tables = testData['tables']
-                    dataBase = db.sqliteDB.connect(dataBase, False)
-                    for table in tables:
-                        if db.sqliteDB.isTableExist(dataBase, table):
-                            db.sqliteDB.dropTable(dataBase, table)
-                    SQLite.uif2SQLiteDB(dataBase.cursor(), updates)
-                    dataBase.commit()
+                    SQLite.uif2SQLiteDB(self.mSqliteDB.cursor(), testData['updates'])
+                    self.mSqliteDB.commit()
 
-                    storage = SQLite(dataBase)
+                    storage = SQLite(self.mSqliteDB)
                     versions = storage.getAvalibleVersions()
                     expectedVersions = testData['expectedVersions']
                     self.assertEqual(expectedVersions, versions)
-
-                    db.sqliteDB.disconnect(dataBase)
 
                 elif 'MongoDB' == storageType:
-                    updates = testData['updates']
-                    MongoClient = testData['MongoClient']
-                    dataBase = MongoClient['dataBase']
-                    table = MongoClient['table']
-                    HostAndPort = MongoClient['HostAndPort']
-                    ServerSelectionTimeoutMS = MongoClient['ServerSelectionTimeoutMS']
+                    MongoDB.uif2MongoDB(testData['updates'], self.mMongoDataBase,
+                                        self.mMongoTable, self.mMongoHostAndPort)
 
-                    client = MongoDBClient(HostAndPort, ServerSelectionTimeoutMS)
-                    client.dropCollectionsInDB(dataBase, table)
-                    MongoDB.uif2MongoDB(updates, dataBase, table, HostAndPort)
-
-                    storage = MongoDB(HostAndPort, dataBase, table)
+                    storage = MongoDB(self.mMongoHostAndPort, self.mMongoDataBase, self.mMongoTable)
                     versions = storage.getAvalibleVersions()
                     expectedVersions = testData['expectedVersions']
                     self.assertEqual(expectedVersions, versions)
-
-                    for i in range(0, len(updates)):
-                        del updates[i]['_id']
-                        d = updates[i]['Date']
-                        updates[i]['Date'] = core.dates.toString(d)
-
-                    testData['updates'] = updates
 
                 else:
                     storage = Storage(storageType)
@@ -97,7 +92,7 @@ class TestSequenceFunctions(TestCase):
     def test_getAvalibleTypes(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
-            for storageType in testData['storages']:
+            for storageType in TestSequenceFunctions.storages:
                 if 'Uif' == storageType:
                     with patch('core.storage.os.path.isfile'):
                         with patch('core.storage.os.path.exists'):
@@ -111,46 +106,22 @@ class TestSequenceFunctions(TestCase):
                                 self.assertEqual(expectedTypes, types)
 
                 elif 'SQLite' == storageType:
-                    updates = testData['updates']
-                    dataBase = testData['sqliteDB']
-                    tables = testData['tables']
-                    dataBase = db.sqliteDB.connect(dataBase, False)
-                    for table in tables:
-                        if db.sqliteDB.isTableExist(dataBase, table):
-                            db.sqliteDB.dropTable(dataBase, table)
-                    SQLite.uif2SQLiteDB(dataBase.cursor(), updates)
-                    dataBase.commit()
+                    SQLite.uif2SQLiteDB(self.mSqliteDB.cursor(), testData['updates'])
+                    self.mSqliteDB.commit()
 
-                    storage = SQLite(dataBase)
+                    storage = SQLite(self.mSqliteDB)
                     types = storage.getAvalibleTypes()
                     expectedTypes = testData['expectedTypes']
                     self.assertEqual(expectedTypes, types)
-
-                    db.sqliteDB.disconnect(dataBase)
 
                 elif 'MongoDB' == storageType:
-                    updates = testData['updates']
-                    MongoClient = testData['MongoClient']
-                    dataBase = MongoClient['dataBase']
-                    table = MongoClient['table']
-                    HostAndPort = MongoClient['HostAndPort']
-                    ServerSelectionTimeoutMS = MongoClient['ServerSelectionTimeoutMS']
+                    MongoDB.uif2MongoDB(testData['updates'], self.mMongoDataBase,
+                                        self.mMongoTable, self.mMongoHostAndPort)
 
-                    client = MongoDBClient(HostAndPort, ServerSelectionTimeoutMS)
-                    client.dropCollectionsInDB(dataBase, table)
-                    MongoDB.uif2MongoDB(updates, dataBase, table, HostAndPort)
-
-                    storage = MongoDB(HostAndPort, dataBase, table)
+                    storage = MongoDB(self.mMongoHostAndPort, self.mMongoDataBase, self.mMongoTable)
                     types = storage.getAvalibleTypes()
                     expectedTypes = testData['expectedTypes']
                     self.assertEqual(expectedTypes, types)
-
-                    for i in range(0, len(updates)):
-                        del updates[i]['_id']
-                        d = updates[i]['Date']
-                        updates[i]['Date'] = core.dates.toString(d)
-
-                    testData['updates'] = updates
 
                 else:
                     storage = Storage(storageType)
@@ -159,7 +130,7 @@ class TestSequenceFunctions(TestCase):
     def test_getAvalibleLanguages(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
-            for storageType in testData['storages']:
+            for storageType in TestSequenceFunctions.storages:
                 if 'Uif' == storageType:
                     with patch('core.storage.os.path.isfile'):
                         with patch('core.storage.os.path.exists'):
@@ -173,46 +144,22 @@ class TestSequenceFunctions(TestCase):
                                 self.assertEqual(expectedLanguages, languages)
 
                 elif 'SQLite' == storageType:
-                    updates = testData['updates']
-                    dataBase = testData['sqliteDB']
-                    tables = testData['tables']
-                    dataBase = db.sqliteDB.connect(dataBase, False)
-                    for table in tables:
-                        if db.sqliteDB.isTableExist(dataBase, table):
-                            db.sqliteDB.dropTable(dataBase, table)
-                    SQLite.uif2SQLiteDB(dataBase.cursor(), updates)
-                    dataBase.commit()
+                    SQLite.uif2SQLiteDB(self.mSqliteDB.cursor(), testData['updates'])
+                    self.mSqliteDB.commit()
 
-                    storage = SQLite(dataBase)
+                    storage = SQLite(self.mSqliteDB)
                     languages = storage.getAvalibleLanguages()
                     expectedLanguages = testData['expectedLanguages']
                     self.assertEqual(expectedLanguages, languages)
-
-                    db.sqliteDB.disconnect(dataBase)
 
                 elif 'MongoDB' == storageType:
-                    updates = testData['updates']
-                    MongoClient = testData['MongoClient']
-                    dataBase = MongoClient['dataBase']
-                    table = MongoClient['table']
-                    HostAndPort = MongoClient['HostAndPort']
-                    ServerSelectionTimeoutMS = MongoClient['ServerSelectionTimeoutMS']
+                    MongoDB.uif2MongoDB(testData['updates'], self.mMongoDataBase,
+                                        self.mMongoTable, self.mMongoHostAndPort)
 
-                    client = MongoDBClient(HostAndPort, ServerSelectionTimeoutMS)
-                    client.dropCollectionsInDB(dataBase, table)
-                    MongoDB.uif2MongoDB(updates, dataBase, table, HostAndPort)
-
-                    storage = MongoDB(HostAndPort, dataBase, table)
+                    storage = MongoDB(self.mMongoHostAndPort, self.mMongoDataBase, self.mMongoTable)
                     languages = storage.getAvalibleLanguages()
                     expectedLanguages = testData['expectedLanguages']
                     self.assertEqual(expectedLanguages, languages)
-
-                    for i in range(0, len(updates)):
-                        del updates[i]['_id']
-                        d = updates[i]['Date']
-                        updates[i]['Date'] = core.dates.toString(d)
-
-                    testData['updates'] = updates
 
                 else:
                     storage = Storage(storageType)
@@ -221,7 +168,9 @@ class TestSequenceFunctions(TestCase):
     def test_get(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
-            for storageType in testData['storages']:
+            for storageType in TestSequenceFunctions.storages:
+                self.tearDown()
+                self.setUp()
                 if 'Uif' == storageType:
                     with patch('core.storage.os.path.isfile'):
                         with patch('core.storage.os.path.exists'):
@@ -236,67 +185,45 @@ class TestSequenceFunctions(TestCase):
                                     expectedUpdates = testData['expectedUpdates']
                                     self.assertEqual(len(expectedUpdates), len(updates))
                                     for i in range(0, len(updates)):
-                                        d = updates[i]['Date']
-                                        updates[i]['Date'] = core.dates.toString(d)
+                                        updates[i]['Date'] = core.dates.toString(updates[i]['Date'])
                                     for up in expectedUpdates:
                                         self.assertTrue(up in updates)
                                 except:
                                     self.assertEqual(testData['expectedUpdates'], '{}'.format(sys.exc_info()[1]))
 
                 elif 'SQLite' == storageType:
-                    updates = testData['updates']
-                    dataBase = testData['sqliteDB']
-                    tables = testData['tables']
-                    dataBase = db.sqliteDB.connect(dataBase, False)
-                    for table in tables:
-                        if db.sqliteDB.isTableExist(dataBase, table):
-                            db.sqliteDB.dropTable(dataBase, table)
-                    SQLite.uif2SQLiteDB(dataBase.cursor(), updates)
-                    dataBase.commit()
+                    SQLite.uif2SQLiteDB(self.mSqliteDB.cursor(), testData['updates'])
+                    self.mSqliteDB.commit()
 
-                    storage = SQLite(dataBase)
+                    storage = SQLite(self.mSqliteDB)
                     getQuery = testData['getQuery']
                     try:
                         updates = storage.get(getQuery)
                         expectedUpdates = testData['expectedUpdates']
                         self.assertEqual(len(expectedUpdates), len(updates))
                         for i in range(0, len(updates)):
-                            d = updates[i]['Date']
-                            updates[i]['Date'] = core.dates.toString(d)
+                            updates[i]['Date'] = core.dates.toString(updates[i]['Date'])
                         for up in expectedUpdates:
                             self.assertTrue(up in updates)
                     except:
                         self.assertEqual(testData['expectedUpdates'], '{}'.format(sys.exc_info()[1]))
-
-                    db.sqliteDB.disconnect(dataBase)
 
                 elif 'MongoDB' == storageType:
-                    updates = testData['updates']
-                    MongoClient = testData['MongoClient']
-                    dataBase = MongoClient['dataBase']
-                    table = MongoClient['table']
-                    HostAndPort = MongoClient['HostAndPort']
-                    ServerSelectionTimeoutMS = MongoClient['ServerSelectionTimeoutMS']
+                    MongoDB.uif2MongoDB(testData['updates'], self.mMongoDataBase,
+                                        self.mMongoTable, self.mMongoHostAndPort)
 
-                    client = MongoDBClient(HostAndPort, ServerSelectionTimeoutMS)
-                    client.dropCollectionsInDB(dataBase, table)
-                    MongoDB.uif2MongoDB(updates, dataBase, table, HostAndPort)
-
-                    storage = MongoDB(HostAndPort, dataBase, table)
+                    storage = MongoDB(self.mMongoHostAndPort, self.mMongoDataBase, self.mMongoTable)
                     getQuery = testData['getQuery']
                     try:
                         updates = storage.get(getQuery)
                         expectedUpdates = testData['expectedUpdates']
                         self.assertEqual(len(expectedUpdates), len(updates))
                         for i in range(0, len(updates)):
-                            d = updates[i]['Date']
-                            updates[i]['Date'] = core.dates.toString(d)
+                            updates[i]['Date'] = core.dates.toString(updates[i]['Date'])
                         for up in expectedUpdates:
                             self.assertTrue(up in updates)
                     except:
                         self.assertEqual(testData['expectedUpdates'], '{}'.format(sys.exc_info()[1]))
-
-                    testData['updates'] = updates
 
                 else:
                     storage = Storage(storageType)
@@ -305,7 +232,9 @@ class TestSequenceFunctions(TestCase):
     def test_getCount(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
-            for storageType in testData['storages']:
+            for storageType in TestSequenceFunctions.storages:
+                self.tearDown()
+                self.setUp()
                 if 'Uif' == storageType:
                     with patch('core.storage.os.path.isfile'):
                         with patch('core.storage.os.path.exists'):
@@ -323,19 +252,10 @@ class TestSequenceFunctions(TestCase):
                                     self.assertEqual(testData['expectedCount'], '{}'.format(sys.exc_info()[1]))
 
                 elif 'SQLite' == storageType:
-                    dataBase = testData['sqliteDB']
-                    tables = testData['tables']
-                    dataBase = db.sqliteDB.connect(dataBase, False)
+                    SQLite.uif2SQLiteDB(self.mSqliteDB.cursor(), testData['updates'])
+                    self.mSqliteDB.commit()
 
-                    for table in tables:
-                        if db.sqliteDB.isTableExist(dataBase, table):
-                            db.sqliteDB.dropTable(dataBase, table)
-
-                    SQLite.uif2SQLiteDB(dataBase.cursor(), testData['updates'])
-
-                    dataBase.commit()
-
-                    storage = SQLite(dataBase)
+                    storage = SQLite(self.mSqliteDB)
                     getQuery = testData['getQuery']
                     try:
                         count = storage.getCount(getQuery)
@@ -343,21 +263,12 @@ class TestSequenceFunctions(TestCase):
                         self.assertEqual(expectedCount, count)
                     except:
                         self.assertEqual(testData['expectedCount'], '{}'.format(sys.exc_info()[1]))
-
-                    db.sqliteDB.disconnect(dataBase)
 
                 elif 'MongoDB' == storageType:
-                    MongoClient = testData['MongoClient']
-                    dataBase = MongoClient['dataBase']
-                    table = MongoClient['table']
-                    HostAndPort = MongoClient['HostAndPort']
-                    ServerSelectionTimeoutMS = MongoClient['ServerSelectionTimeoutMS']
+                    MongoDB.uif2MongoDB(testData['updates'], self.mMongoDataBase,
+                                        self.mMongoTable, self.mMongoHostAndPort)
 
-                    client = MongoDBClient(HostAndPort, ServerSelectionTimeoutMS)
-                    client.dropCollectionsInDB(dataBase, table)
-                    MongoDB.uif2MongoDB(testData['updates'], dataBase, table, HostAndPort)
-
-                    storage = MongoDB(HostAndPort, dataBase, table)
+                    storage = MongoDB(self.mMongoHostAndPort, self.mMongoDataBase, self.mMongoTable)
                     getQuery = testData['getQuery']
                     try:
                         count = storage.getCount(getQuery)
@@ -365,12 +276,6 @@ class TestSequenceFunctions(TestCase):
                         self.assertEqual(expectedCount, count)
                     except:
                         self.assertEqual(testData['expectedCount'], '{}'.format(sys.exc_info()[1]))
-
-                    updates = testData['updates']
-                    for i in range(0, len(updates)):
-                        del updates[i]['_id']
-                        d = updates[i]['Date']
-                        updates[i]['Date'] = core.dates.toString(d)
 
                 else:
                     storage = Storage(storageType)
@@ -379,37 +284,32 @@ class TestSequenceFunctions(TestCase):
     def test_uif2SQLiteDB(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
-            updates = testData['updates']
-            dataBase = testData['sqliteDB']
-            tables = testData['tables']
+            SQLite.uif2SQLiteDB(self.mSqliteDB.cursor(), testData['updates'])
+            self.mSqliteDB.commit()
 
-            dataBase = db.sqliteDB.connect(dataBase, False)
-
-            for table in tables:
-                if db.sqliteDB.isTableExist(dataBase, table):
-                    db.sqliteDB.dropTable(dataBase, table)
-
-            SQLite.uif2SQLiteDB(dataBase.cursor(), updates)
-            dataBase.commit()
-            db.sqliteDB.disconnect(dataBase)
+            storage = SQLite(self.mSqliteDB)
+            updates = storage.get({})
+            for i in range(0, len(updates)):
+                updates[i]['Date'] = core.dates.toString(updates[i]['Date'])
+            self.assertEqual(testData['updates'], updates)
 
     def test_uif2MongoDB(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
-            updates = testData['updates']
-            MongoClient = testData['MongoClient']
-            dataBase = MongoClient['dataBase']
-            table = MongoClient['table']
-            HostAndPort = MongoClient['HostAndPort']
-            ServerSelectionTimeoutMS = MongoClient['ServerSelectionTimeoutMS']
+            MongoDB.uif2MongoDB(testData['updates'], self.mMongoDataBase,
+                                self.mMongoTable, self.mMongoHostAndPort)
 
-            client = MongoDBClient(HostAndPort, ServerSelectionTimeoutMS)
-            client.dropCollectionsInDB(dataBase, table)
-            MongoDB.uif2MongoDB(updates, dataBase, table, HostAndPort)
-            mongoDB_updates = client.getItemsFromDB(dataBase, table)
-            self.assertEqual(len(updates), len(mongoDB_updates))
-            for up in updates:
-                self.assertTrue(up in mongoDB_updates)
+            storage = MongoDB(self.mMongoHostAndPort, self.mMongoDataBase, self.mMongoTable)
+            updates = storage.get({})
+            for i in range(0, len(updates)):
+                updates[i]['Date'] = core.dates.toString(updates[i]['Date'])
+            for i in range(0, len(testData['updates'])):
+                testData['updates'][i]['Date'] = core.dates.toString(testData['updates'][i]['Date'])
+                del testData['updates'][i]['_id']
+
+            self.assertEqual(len(testData['updates']), len(updates))
+            for up in testData['updates']:
+                self.assertTrue(up in updates)
 
     def test_getStorage(self):
         testsData = self.mJsonHelper.GetTestInputOutputData(sys._getframe().f_code.co_name)
@@ -478,8 +378,7 @@ class TestSequenceFunctions(TestCase):
                         try:
                             updates = Uif.getUpdatesFromFile(testData['fileName'])
                             for i in range(0, len(updates)):
-                                d = updates[i]['Date']
-                                updates[i]['Date'] = core.dates.toString(d)
+                                updates[i]['Date'] = core.dates.toString(updates[i]['Date'])
                             expectedUpdates = testData['updates']
                             self.assertEqual(len(expectedUpdates), len(updates))
                             for update in expectedUpdates:
@@ -500,8 +399,7 @@ class TestSequenceFunctions(TestCase):
 
                             updates = Uif.getUpdatesFromStorage(testData['path'])
                             for i in range(0, len(updates)):
-                                d = updates[i]['Date']
-                                updates[i]['Date'] = core.dates.toString(d)
+                                updates[i]['Date'] = core.dates.toString(updates[i]['Date'])
                             expectedUpdates = testData['updates']
                             self.assertEqual(len(expectedUpdates), len(updates))
                             for update in expectedUpdates:

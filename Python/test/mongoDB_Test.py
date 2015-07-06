@@ -1,6 +1,6 @@
 import sys
+import core.dates
 from bson import ObjectId
-from datetime import datetime
 from unittest import main, TestCase
 from db.mongoDB import MongoDBClient
 from test.jsonHelper import JsonHelper
@@ -309,7 +309,7 @@ class TestSequenceFunctions(TestCase):
             items = testData['items']
             for i in items:
                 if i.get('Date'):
-                    i['Date'] = datetime.strptime(i['Date'], '%Y, %m, %d').date()
+                    i['Date'] = core.dates.toDate(i['Date'])
             items = MongoDBClient.addObjectIdFieldAtCollection(items)
             expectedHashes = testData['hashes']
             for i in items:

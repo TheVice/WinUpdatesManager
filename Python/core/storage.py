@@ -4,7 +4,6 @@ import os.path
 import core.dirs
 import core.dates
 import db.sqliteDB
-from datetime import datetime
 from core.updates import Updates
 from db.mongoDB import MongoDBClient
 from core.unknownSubstance import UnknownSubstance

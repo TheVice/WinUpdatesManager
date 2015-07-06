@@ -1,6 +1,6 @@
 import os
 import sys
-import datetime
+import core.dates
 from core.updates import Updates
 from unittest import main, TestCase
 from test.jsonHelper import JsonHelper
@@ -98,9 +98,9 @@ class TestSequenceFunctions(TestCase):
 
             if 'Date' == sortField:
                 for update in updates:
-                    update['Date'] = datetime.datetime.strptime(update['Date'], '%Y, %m, %d')
+                    update['Date'] = core.dates.toDateTime(update['Date'])
                 for update in expectedUpdates:
-                    update['Date'] = datetime.datetime.strptime(update['Date'], '%Y, %m, %d')
+                    update['Date'] = core.dates.toDateTime(update['Date'])
 
             coreUpdates = Updates()
             coreUpdates.addUpdates(updates)
@@ -122,9 +122,9 @@ class TestSequenceFunctions(TestCase):
             sortField = testData['sortField']
             if 'Date' == sortField:
                 for update in updates:
-                    update['Date'] = datetime.datetime.strptime(update['Date'], '%Y, %m, %d')
+                    update['Date'] = core.dates.toDateTime(update['Date'])
                 for update in expectedUpdates:
-                    update['Date'] = datetime.datetime.strptime(update['Date'], '%Y, %m, %d')
+                    update['Date'] = core.dates.toDateTime(update['Date'])
 
             coreUpdates = Updates()
             coreUpdates.addUpdates(updates)

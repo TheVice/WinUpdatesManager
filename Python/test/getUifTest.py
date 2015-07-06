@@ -21,7 +21,7 @@ class TestSequenceFunctions(TestCase):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
             paths = testData['paths']
-            d = datetime.strptime(testData['date'], '%Y, %m, %d')
+            d = core.dates.toDateTime(testData['date'])
             expectedUpdates = testData['updates']
 
             updates = getUif.getUpdatesFromPackage(paths, d)

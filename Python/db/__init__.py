@@ -1,1 +1,1 @@
-__all__ = ['mongoDB', 'sqliteDB', 'storage']
+__all__ = ['mongoDB', 'sqliteDB']
