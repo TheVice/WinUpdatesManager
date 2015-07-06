@@ -4,7 +4,8 @@ import sys
 import core.kb
 import datetime
 import cherrypy
-import db.storage
+import core.dates
+import core.storage
 import batchGenerator
 
 
@@ -42,18 +43,16 @@ class Main(Page):
     def index(self):
 
         str_list = []
-        if isinstance(self.mStorage, db.storage.MongoDB):
-            str_list.append('<a href=\'/view_updates\'>Go to view updates</a><br>')
+        str_list.append('<a href=\'/view_updates\'>Go to view updates</a><br>')
         str_list.append('<a href=\'/report_submit\'>Go to report submit</a><br>')
         str_list.append('<a href=\'/batch_generator\'>Go to batch generator</a><br>')
         return '{}{}{}'.format(self.header(), ''.join(str_list), self.footer())
 
     @cherrypy.expose
-    def view_updates(self, aSkip=None, aLimit=None, aSort=None, aQuery=None):
+    def view_updates(self, aLimit=None, aSkip=None, aSort=None, aQuery=None):
 
         str_list = []
-        if (isinstance(self.mStorage, db.storage.MongoDB) and
-            0 < len(self.mVersions) and
+        if (0 < len(self.mVersions) and
             0 < len(self.mTypes) and
             0 < len(self.mLanguages) and
             None != self.mVersions[0] and
@@ -62,7 +61,7 @@ class Main(Page):
 
             aQuery = Main.normalizeQuery(aQuery, {})
             aLimit = Main.normalizeLimit(aLimit, 15)
-            count = self.mStorage.get(aQuery).count()
+            count = self.mStorage.getCount(aQuery)
 
             if count > aLimit:
                 count = count - aLimit
@@ -70,8 +69,7 @@ class Main(Page):
             if 0 < count:
                 aSkip = Main.normalizeSkip(aSkip, count)
                 aSort = Main.normalizeSort(aSort, 'Date,-1')
-                updates = self.mStorage.getWithSkipLimitAndSort(aQuery, aSkip,
-                                                                aLimit, aSort)
+                updates = self.mStorage.get(aQuery, aLimit, aSkip, aSort)
                 str_list.extend(Main.updates2HtmlTable(updates))
                 aSort = ''.join(Main.encodeSort(aSort))
                 aQuery = Main.encodeQuery(aQuery)
@@ -161,13 +159,13 @@ class Main(Page):
         str_list.append('<br><H1>Count - {}</H1>'.format(len(KBs)))
 
         updates = []
-        if isinstance(self.mStorage, db.storage.MongoDB):
+        if isinstance(self.mStorage, core.storage.MongoDB):
             query = {'KB': {'$in': KBs}, 'Version': aVersion, 'Type': aPlatform, 'Language': aLanguage}
             updates.extend(self.mStorage.get(query))
-        elif isinstance(self.mStorage, db.storage.Uif):
+        elif isinstance(self.mStorage, core.storage.Uif):
             query = {'KB': KBs, 'Version': aVersion, 'Type': aPlatform, 'Language': aLanguage}
             updates.extend(self.mStorage.get(query))
-        elif isinstance(self.mStorage, db.storage.SQLite):
+        elif isinstance(self.mStorage, core.storage.SQLite):
             for kb in KBs:
                 query = {'KB': kb, 'Version': aVersion, 'Type': aPlatform, 'Language': aLanguage}
                 updates.extend(self.mStorage.get(query))
@@ -246,7 +244,7 @@ class Main(Page):
 
         for up in aUpdates:
             str_list.append('<tr>')
-            up['Date'] = up['Date'].date()
+            up['Date'] = core.dates.toDate(up['Date'])
             for t in tableHead:
                 query = Main.encodeQuery({t: up[t]})
                 if [] == query:
@@ -428,10 +426,10 @@ if __name__ == '__main__':
 
     argc = len(sys.argv)
     if argc == 2:
-        cherrypy.quickstart(Main(db.storage.getStorage(sys.argv[1])),
+        cherrypy.quickstart(Main(core.storage.getStorage(sys.argv[1])),
                                                        config=conf)
     elif argc == 3:
-        cherrypy.quickstart(Main(db.storage.getStorage(sys.argv[1])),
+        cherrypy.quickstart(Main(core.storage.getStorage(sys.argv[1])),
                                                        config=sys.argv[2])
     else:
         print('Using {0}'

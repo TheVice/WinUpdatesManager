@@ -1,7 +1,7 @@
 import os
 import sys
 import core.kb
-import db.storage
+import core.storage
 from core.types import Types
 from core.updates import Updates
 from core.versions import Versions
@@ -36,7 +36,7 @@ if __name__ == '__main__':
     argc = len(sys.argv)
     if 5 == argc or 6 == argc:
         storagePath = sys.argv[1]
-        storage = db.storage.getStorage(storagePath)
+        storage = core.storage.getStorage(storagePath)
         itemsCount = len(storage.get({}))
 
         if 0 < itemsCount:

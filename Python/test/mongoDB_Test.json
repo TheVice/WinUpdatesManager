@@ -326,6 +326,20 @@
       "expectedItems": []
     }
   ],
+  "test_getItemsCount": [
+    {
+      "query": {},
+      "expectedCount": 15
+    },
+    {
+      "query": [],
+      "expectedCount": "filter must be an instance of dict, bson.son.SON, or other type that inherits from collections.Mapping"
+    },
+    {
+      "query": {"Version": "Windows 10"},
+      "expectedCount": 0
+    }
+  ],
   "test_insertToDB": [
     {"items": {"firstItem": 1}},
     {"items": {"firstItem": 1}},

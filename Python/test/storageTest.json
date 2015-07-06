@@ -314,70 +314,6 @@
         {"Date": "2015, 4, 14", "Path": "\\3047234\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows Server 2012 R2", "Language": "Neutral"},
         {"Date": "2015, 4, 14", "Path": "\\3047234\\Windows8.1\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows 8.1", "Language": "Neutral"}
       ],
-      "storages": ["Storage"]
-    },
-    {
-      "updates": [
-        {"Path": "\\3033890\\Windows7\\X64\\NEU\\Windows6.1-KB3033890-x64.msu", "Date": "2015, 6, 9", "Version": "Windows 7", "Language": "Neutral", "Type": "x64", "KB": 3033890},
-        {"Path": "\\3033890\\Windows7\\X86\\NEU\\Windows6.1-KB3033890-x86.msu", "Date": "2015, 6, 9", "Version": "Windows 7", "Language": "Neutral", "Type": "x86", "KB": 3033890},
-        {"Date": "2015, 5, 12", "KB": 3061904, "Version": "Windows Server 2012 R2", "Language": "Neutral", "Path": "\\3061904\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3061904-x64.msu", "Type": "x64"},
-        {"Date": "2015, 5, 12", "KB": 3061904, "Version": "Windows Server 2012", "Language": "Neutral", "Path": "\\3061904\\WindowsServer2012\\X64\\NEU\\Windows8-RT-KB3061904-x64.msu", "Type": "x64"},
-        {"Date": "2015, 4, 14", "Path": "\\3047234\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows Server 2012 R2", "Language": "Neutral"},
-        {"Date": "2015, 4, 14", "Path": "\\3047234\\Windows8.1\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows 8.1", "Language": "Neutral"}
-      ],
-      "storages": ["Uif"],
-      "getQuery": {"KB": 3033890, "Type": "x64", "Language": "Neutral", "Version": "Windows 7", "Date": "2015, 6, 9", "Path": "\\3033890\\Windows7\\X64\\NEU\\Windows6.1-KB3033890-x64.msu"},
-      "expectedUpdates": [
-        {"KB": 3033890, "Type": "x64", "Language": "Neutral", "Version": "Windows 7", "Date": "2015, 6, 9", "Path": "\\3033890\\Windows7\\X64\\NEU\\Windows6.1-KB3033890-x64.msu"}
-      ]
-    },
-    {
-      "updates": [
-        {"Path": "\\3033890\\Windows7\\X64\\NEU\\Windows6.1-KB3033890-x64.msu", "Date": "2015, 6, 9", "Version": "Windows 7", "Language": "Neutral", "Type": "x64", "KB": 3033890},
-        {"Path": "\\3033890\\Windows7\\X86\\NEU\\Windows6.1-KB3033890-x86.msu", "Date": "2015, 6, 9", "Version": "Windows 7", "Language": "Neutral", "Type": "x86", "KB": 3033890},
-        {"Date": "2015, 5, 12", "KB": 3061904, "Version": "Windows Server 2012 R2", "Language": "Neutral", "Path": "\\3061904\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3061904-x64.msu", "Type": "x64"},
-        {"Date": "2015, 5, 12", "KB": 3061904, "Version": "Windows Server 2012", "Language": "Neutral", "Path": "\\3061904\\WindowsServer2012\\X64\\NEU\\Windows8-RT-KB3061904-x64.msu", "Type": "x64"},
-        {"Date": "2015, 4, 14", "Path": "\\3047234\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows Server 2012 R2", "Language": "Neutral"},
-        {"Date": "2015, 4, 14", "Path": "\\3047234\\Windows8.1\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows 8.1", "Language": "Neutral"}
-      ],
-      "storages": ["SQLite"],
-      "sqliteDB": ":memory:",
-      "tables": ["KBs", "Dates", "Paths", "Versions", "Types", "Language", "Updates"],
-      "getQuery": {"KB": 3033890, "Type": "x64", "Language": "Neutral", "Version": "Windows 7", "Date": "2015, 6, 9", "Path": "\\3033890\\Windows7\\X64\\NEU\\Windows6.1-KB3033890-x64.msu"},
-      "expectedUpdates": [
-        {"KB": 3033890, "Type": "x64", "Language": "Neutral", "Version": "Windows 7", "Date": "2015, 6, 9", "Path": "\\3033890\\Windows7\\X64\\NEU\\Windows6.1-KB3033890-x64.msu"}
-      ]
-    },
-    {
-      "updates": [
-        {"Path": "\\3033890\\Windows7\\X64\\NEU\\Windows6.1-KB3033890-x64.msu", "Date": "2015, 6, 9", "Version": "Windows 7", "Language": "Neutral", "Type": "x64", "KB": 3033890},
-        {"Path": "\\3033890\\Windows7\\X86\\NEU\\Windows6.1-KB3033890-x86.msu", "Date": "2015, 6, 9", "Version": "Windows 7", "Language": "Neutral", "Type": "x86", "KB": 3033890},
-        {"Date": "2015, 5, 12", "KB": 3061904, "Version": "Windows Server 2012 R2", "Language": "Neutral", "Path": "\\3061904\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3061904-x64.msu", "Type": "x64"},
-        {"Date": "2015, 5, 12", "KB": 3061904, "Version": "Windows Server 2012", "Language": "Neutral", "Path": "\\3061904\\WindowsServer2012\\X64\\NEU\\Windows8-RT-KB3061904-x64.msu", "Type": "x64"},
-        {"Date": "2015, 4, 14", "Path": "\\3047234\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows Server 2012 R2", "Language": "Neutral"},
-        {"Date": "2015, 4, 14", "Path": "\\3047234\\Windows8.1\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows 8.1", "Language": "Neutral"}
-      ],
-      "storages": ["MongoDB"],
-      "MongoClient": {
-        "HostAndPort": "mongodb://localhost:27017/",
-        "ServerSelectionTimeoutMS": 500,
-        "dataBase": "testDB",
-        "table": "table4test"
-      },
-      "getQuery": {"KB": 3033890, "Type": "x64", "Language": "Neutral", "Version": "Windows 7", "Date": "2015, 6, 9", "Path": "\\3033890\\Windows7\\X64\\NEU\\Windows6.1-KB3033890-x64.msu"},
-      "expectedUpdates": [
-        {"KB": 3033890, "Type": "x64", "Language": "Neutral", "Version": "Windows 7", "Date": "2015, 6, 9", "Path": "\\3033890\\Windows7\\X64\\NEU\\Windows6.1-KB3033890-x64.msu"}
-      ]
-    },
-    {
-      "updates": [
-        {"Path": "\\3033890\\Windows7\\X64\\NEU\\Windows6.1-KB3033890-x64.msu", "Date": "2015, 6, 9", "Version": "Windows 7", "Language": "Neutral", "Type": "x64", "KB": 3033890},
-        {"Path": "\\3033890\\Windows7\\X86\\NEU\\Windows6.1-KB3033890-x86.msu", "Date": "2015, 6, 9", "Version": "Windows 7", "Language": "Neutral", "Type": "x86", "KB": 3033890},
-        {"Date": "2015, 5, 12", "KB": 3061904, "Version": "Windows Server 2012 R2", "Language": "Neutral", "Path": "\\3061904\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3061904-x64.msu", "Type": "x64"},
-        {"Date": "2015, 5, 12", "KB": 3061904, "Version": "Windows Server 2012", "Language": "Neutral", "Path": "\\3061904\\WindowsServer2012\\X64\\NEU\\Windows8-RT-KB3061904-x64.msu", "Type": "x64"},
-        {"Date": "2015, 4, 14", "Path": "\\3047234\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows Server 2012 R2", "Language": "Neutral"},
-        {"Date": "2015, 4, 14", "Path": "\\3047234\\Windows8.1\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows 8.1", "Language": "Neutral"}
-      ],
       "storages": ["Storage", "Uif", "SQLite", "MongoDB"],
       "sqliteDB": ":memory:",
       "tables": ["KBs", "Dates", "Paths", "Versions", "Types", "Language", "Updates"],
@@ -518,6 +454,237 @@
         {"Path": "\\2647516\\Windows2000\\IE8\\ENU\\IE8-WINDOWS6.0-KB2647516-X86.MSU", "KB": 2647516, "Language": "English", "Version": "Windows 2000", "Type": {"UNKNOWN TYPE": "\\2647516\\Windows2000\\IE8\\ENU\\IE8-WINDOWS6.0-KB2647516-X86.MSU"}, "Date": "2012, 2, 14"},
         {"Language": {"UNKNOWN LANGUAGE": "\\BingDesktop v1.1.zip"}, "Version": {"UNKNOWN VERSION": "\\BingDesktop v1.1.zip"}, "Type": {"UNKNOWN TYPE": "\\BingDesktop v1.1.zip"}, "Path": "\\BingDesktop v1.1.zip", "KB": {"UNKNOWN KB": "\\BingDesktop v1.1.zip"}, "Date": "2013, 2, 12"}
       ]
+    },
+    {
+      "updates": [
+        {"Date": "2015, 4, 14", "Path": "\\3048051\\WindowsServer2003\\X86\\NEU\\rvkroots.exe", "Type": "x86", "KB": {"UNKNOWN KB": "\\3048051\\WindowsServer2003\\X86\\NEU\\rvkroots.exe"}, "Version": "Windows Server 2003", "Language": "Neutral"},
+        {"Path": "\\3033890\\WindowsMediaPlayer\\X86\\ARA\\WindowsMedia10-KB3033890-x86-ARA.exe", "Date": "2015, 6, 9", "Version": {"UNKNOWN VERSION": "\\3033890\\WindowsMediaPlayer\\X86\\ARA\\WindowsMedia10-KB3033890-x86-ARA.exe"}, "Language": "Arabic", "Type": "x86", "KB": 3033890},
+        {"Path": "\\2647516\\Windows2000\\IE8\\ENU\\IE8-WINDOWS6.0-KB2647516-X86.MSU", "KB": 2647516, "Language": "English", "Version": "Windows 2000", "Type": {"UNKNOWN TYPE": "\\2647516\\Windows2000\\IE8\\ENU\\IE8-WINDOWS6.0-KB2647516-X86.MSU"}, "Date": "2012, 2, 14"},
+        {"Language": {"UNKNOWN LANGUAGE": "\\BingDesktop v1.1.zip"}, "Version": {"UNKNOWN VERSION": "\\BingDesktop v1.1.zip"}, "Type": {"UNKNOWN TYPE": "\\BingDesktop v1.1.zip"}, "Path": "\\BingDesktop v1.1.zip", "KB": {"UNKNOWN KB": "\\BingDesktop v1.1.zip"}, "Date": "2013, 2, 12"}
+      ],
+      "storages": ["Storage", "Uif", "SQLite", "MongoDB"],
+      "sqliteDB": ":memory:",
+      "tables": ["KBs", "Dates", "Paths", "Versions", "Types", "Language", "Updates"],
+      "MongoClient": {
+        "HostAndPort": "mongodb://localhost:27017/",
+        "ServerSelectionTimeoutMS": 500,
+        "dataBase": "testDB",
+        "table": "table4test"
+      },
+      "getQuery": {"DateTime": 0},
+      "expectedUpdates": "Unknown field DateTime"
+    }
+  ],
+  "test_getCount": [
+    {
+      "updates": [
+        {"Path": "\\3033890\\Windows7\\X64\\NEU\\Windows6.1-KB3033890-x64.msu", "Date": "2015, 6, 9", "Version": "Windows 7", "Language": "Neutral", "Type": "x64", "KB": 3033890},
+        {"Path": "\\3033890\\Windows7\\X86\\NEU\\Windows6.1-KB3033890-x86.msu", "Date": "2015, 6, 9", "Version": "Windows 7", "Language": "Neutral", "Type": "x86", "KB": 3033890},
+        {"Date": "2015, 5, 12", "KB": 3061904, "Version": "Windows Server 2012 R2", "Language": "Neutral", "Path": "\\3061904\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3061904-x64.msu", "Type": "x64"},
+        {"Date": "2015, 5, 12", "KB": 3061904, "Version": "Windows Server 2012", "Language": "Neutral", "Path": "\\3061904\\WindowsServer2012\\X64\\NEU\\Windows8-RT-KB3061904-x64.msu", "Type": "x64"},
+        {"Date": "2015, 4, 14", "Path": "\\3047234\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows Server 2012 R2", "Language": "Neutral"},
+        {"Date": "2015, 4, 14", "Path": "\\3047234\\Windows8.1\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows 8.1", "Language": "Neutral"}
+      ],
+      "storages": ["Storage", "Uif", "SQLite", "MongoDB"],
+      "sqliteDB": ":memory:",
+      "tables": ["KBs", "Dates", "Paths", "Versions", "Types", "Language", "Updates"],
+      "MongoClient": {
+        "HostAndPort": "mongodb://localhost:27017/",
+        "ServerSelectionTimeoutMS": 500,
+        "dataBase": "testDB",
+        "table": "table4test"
+      },
+      "getQuery": {},
+      "expectedCount": 6
+    },
+    {
+      "updates": [
+        {"Path": "\\3033890\\Windows7\\X64\\NEU\\Windows6.1-KB3033890-x64.msu", "Date": "2015, 6, 9", "Version": "Windows 7", "Language": "Neutral", "Type": "x64", "KB": 3033890},
+        {"Path": "\\3033890\\Windows7\\X86\\NEU\\Windows6.1-KB3033890-x86.msu", "Date": "2015, 6, 9", "Version": "Windows 7", "Language": "Neutral", "Type": "x86", "KB": 3033890},
+        {"Date": "2015, 5, 12", "KB": 3061904, "Version": "Windows Server 2012 R2", "Language": "Neutral", "Path": "\\3061904\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3061904-x64.msu", "Type": "x64"},
+        {"Date": "2015, 5, 12", "KB": 3061904, "Version": "Windows Server 2012", "Language": "Neutral", "Path": "\\3061904\\WindowsServer2012\\X64\\NEU\\Windows8-RT-KB3061904-x64.msu", "Type": "x64"},
+        {"Date": "2015, 4, 14", "Path": "\\3047234\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows Server 2012 R2", "Language": "Neutral"},
+        {"Date": "2015, 4, 14", "Path": "\\3047234\\Windows8.1\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows 8.1", "Language": "Neutral"}
+      ],
+      "storages": ["Storage", "Uif", "SQLite", "MongoDB"],
+      "sqliteDB": ":memory:",
+      "tables": ["KBs", "Dates", "Paths", "Versions", "Types", "Language", "Updates"],
+      "MongoClient": {
+        "HostAndPort": "mongodb://localhost:27017/",
+        "ServerSelectionTimeoutMS": 500,
+        "dataBase": "testDB",
+        "table": "table4test"
+      },
+      "getQuery": {"KB": 3033890},
+      "expectedCount": 2
+    },
+    {
+      "updates": [
+        {"Path": "\\3033890\\Windows7\\X64\\NEU\\Windows6.1-KB3033890-x64.msu", "Date": "2015, 6, 9", "Version": "Windows 7", "Language": "Neutral", "Type": "x64", "KB": 3033890},
+        {"Path": "\\3033890\\Windows7\\X86\\NEU\\Windows6.1-KB3033890-x86.msu", "Date": "2015, 6, 9", "Version": "Windows 7", "Language": "Neutral", "Type": "x86", "KB": 3033890},
+        {"Date": "2015, 5, 12", "KB": 3061904, "Version": "Windows Server 2012 R2", "Language": "Neutral", "Path": "\\3061904\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3061904-x64.msu", "Type": "x64"},
+        {"Date": "2015, 5, 12", "KB": 3061904, "Version": "Windows Server 2012", "Language": "Neutral", "Path": "\\3061904\\WindowsServer2012\\X64\\NEU\\Windows8-RT-KB3061904-x64.msu", "Type": "x64"},
+        {"Date": "2015, 4, 14", "Path": "\\3047234\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows Server 2012 R2", "Language": "Neutral"},
+        {"Date": "2015, 4, 14", "Path": "\\3047234\\Windows8.1\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows 8.1", "Language": "Neutral"}
+      ],
+      "storages": ["Storage", "Uif", "SQLite", "MongoDB"],
+      "sqliteDB": ":memory:",
+      "tables": ["KBs", "Dates", "Paths", "Versions", "Types", "Language", "Updates"],
+      "MongoClient": {
+        "HostAndPort": "mongodb://localhost:27017/",
+        "ServerSelectionTimeoutMS": 500,
+        "dataBase": "testDB",
+        "table": "table4test"
+      },
+      "getQuery": {"Date": "2015, 5, 12"},
+      "expectedCount": 2
+    },
+    {
+      "updates": [
+        {"Path": "\\3033890\\Windows7\\X64\\NEU\\Windows6.1-KB3033890-x64.msu", "Date": "2015, 6, 9", "Version": "Windows 7", "Language": "Neutral", "Type": "x64", "KB": 3033890},
+        {"Path": "\\3033890\\Windows7\\X86\\NEU\\Windows6.1-KB3033890-x86.msu", "Date": "2015, 6, 9", "Version": "Windows 7", "Language": "Neutral", "Type": "x86", "KB": 3033890},
+        {"Date": "2015, 5, 12", "KB": 3061904, "Version": "Windows Server 2012 R2", "Language": "Neutral", "Path": "\\3061904\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3061904-x64.msu", "Type": "x64"},
+        {"Date": "2015, 5, 12", "KB": 3061904, "Version": "Windows Server 2012", "Language": "Neutral", "Path": "\\3061904\\WindowsServer2012\\X64\\NEU\\Windows8-RT-KB3061904-x64.msu", "Type": "x64"},
+        {"Date": "2015, 4, 14", "Path": "\\3047234\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows Server 2012 R2", "Language": "Neutral"},
+        {"Date": "2015, 4, 14", "Path": "\\3047234\\Windows8.1\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows 8.1", "Language": "Neutral"}
+      ],
+      "storages": ["Storage", "Uif", "SQLite", "MongoDB"],
+      "sqliteDB": ":memory:",
+      "tables": ["KBs", "Dates", "Paths", "Versions", "Types", "Language", "Updates"],
+      "MongoClient": {
+        "HostAndPort": "mongodb://localhost:27017/",
+        "ServerSelectionTimeoutMS": 500,
+        "dataBase": "testDB",
+        "table": "table4test"
+      },
+      "getQuery": {"Version": "Windows 7"},
+      "expectedCount": 2
+    },
+    {
+      "updates": [
+        {"Path": "\\3033890\\Windows7\\X64\\NEU\\Windows6.1-KB3033890-x64.msu", "Date": "2015, 6, 9", "Version": "Windows 7", "Language": "Neutral", "Type": "x64", "KB": 3033890},
+        {"Path": "\\3033890\\Windows7\\X86\\NEU\\Windows6.1-KB3033890-x86.msu", "Date": "2015, 6, 9", "Version": "Windows 7", "Language": "Neutral", "Type": "x86", "KB": 3033890},
+        {"Date": "2015, 5, 12", "KB": 3061904, "Version": "Windows Server 2012 R2", "Language": "Neutral", "Path": "\\3061904\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3061904-x64.msu", "Type": "x64"},
+        {"Date": "2015, 5, 12", "KB": 3061904, "Version": "Windows Server 2012", "Language": "Neutral", "Path": "\\3061904\\WindowsServer2012\\X64\\NEU\\Windows8-RT-KB3061904-x64.msu", "Type": "x64"},
+        {"Date": "2015, 4, 14", "Path": "\\3047234\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows Server 2012 R2", "Language": "Neutral"},
+        {"Date": "2015, 4, 14", "Path": "\\3047234\\Windows8.1\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows 8.1", "Language": "Neutral"}
+      ],
+      "storages": ["Storage", "Uif", "SQLite", "MongoDB"],
+      "sqliteDB": ":memory:",
+      "tables": ["KBs", "Dates", "Paths", "Versions", "Types", "Language", "Updates"],
+      "MongoClient": {
+        "HostAndPort": "mongodb://localhost:27017/",
+        "ServerSelectionTimeoutMS": 500,
+        "dataBase": "testDB",
+        "table": "table4test"
+      },
+      "getQuery": {"Type": "x86"},
+      "expectedCount": 1
+    },
+    {
+      "updates": [
+        {"Path": "\\3033890\\Windows7\\X64\\NEU\\Windows6.1-KB3033890-x64.msu", "Date": "2015, 6, 9", "Version": "Windows 7", "Language": "Neutral", "Type": "x64", "KB": 3033890},
+        {"Path": "\\3033890\\Windows7\\X86\\NEU\\Windows6.1-KB3033890-x86.msu", "Date": "2015, 6, 9", "Version": "Windows 7", "Language": "Neutral", "Type": "x86", "KB": 3033890},
+        {"Date": "2015, 5, 12", "KB": 3061904, "Version": "Windows Server 2012 R2", "Language": "Neutral", "Path": "\\3061904\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3061904-x64.msu", "Type": "x64"},
+        {"Date": "2015, 5, 12", "KB": 3061904, "Version": "Windows Server 2012", "Language": "Neutral", "Path": "\\3061904\\WindowsServer2012\\X64\\NEU\\Windows8-RT-KB3061904-x64.msu", "Type": "x64"},
+        {"Date": "2015, 4, 14", "Path": "\\3047234\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows Server 2012 R2", "Language": "Neutral"},
+        {"Date": "2015, 4, 14", "Path": "\\3047234\\Windows8.1\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows 8.1", "Language": "Neutral"}
+      ],
+      "storages": ["Storage", "Uif", "SQLite", "MongoDB"],
+      "sqliteDB": ":memory:",
+      "tables": ["KBs", "Dates", "Paths", "Versions", "Types", "Language", "Updates"],
+      "MongoClient": {
+        "HostAndPort": "mongodb://localhost:27017/",
+        "ServerSelectionTimeoutMS": 500,
+        "dataBase": "testDB",
+        "table": "table4test"
+      },
+      "getQuery": {"Language": "Neutral"},
+      "expectedCount": 6
+    },
+    {
+      "updates": [
+        {"Path": "\\3033890\\Windows7\\X64\\NEU\\Windows6.1-KB3033890-x64.msu", "Date": "2015, 6, 9", "Version": "Windows 7", "Language": "Neutral", "Type": "x64", "KB": 3033890},
+        {"Path": "\\3033890\\Windows7\\X86\\NEU\\Windows6.1-KB3033890-x86.msu", "Date": "2015, 6, 9", "Version": "Windows 7", "Language": "Neutral", "Type": "x86", "KB": 3033890},
+        {"Date": "2015, 5, 12", "KB": 3061904, "Version": "Windows Server 2012 R2", "Language": "Neutral", "Path": "\\3061904\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3061904-x64.msu", "Type": "x64"},
+        {"Date": "2015, 5, 12", "KB": 3061904, "Version": "Windows Server 2012", "Language": "Neutral", "Path": "\\3061904\\WindowsServer2012\\X64\\NEU\\Windows8-RT-KB3061904-x64.msu", "Type": "x64"},
+        {"Date": "2015, 4, 14", "Path": "\\3047234\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows Server 2012 R2", "Language": "Neutral"},
+        {"Date": "2015, 4, 14", "Path": "\\3047234\\Windows8.1\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows 8.1", "Language": "Neutral"}
+      ],
+      "storages": ["Storage", "Uif", "SQLite", "MongoDB"],
+      "sqliteDB": ":memory:",
+      "tables": ["KBs", "Dates", "Paths", "Versions", "Types", "Language", "Updates"],
+      "MongoClient": {
+        "HostAndPort": "mongodb://localhost:27017/",
+        "ServerSelectionTimeoutMS": 500,
+        "dataBase": "testDB",
+        "table": "table4test"
+      },
+      "getQuery": {"Path": "\\3033890\\Windows7\\X64\\NEU\\Windows6.1-KB3033890-x64.msu"},
+      "expectedCount": 1
+    },
+    {
+      "updates": [
+        {"Path": "\\3033890\\Windows7\\X64\\NEU\\Windows6.1-KB3033890-x64.msu", "Date": "2015, 6, 9", "Version": "Windows 7", "Language": "Neutral", "Type": "x64", "KB": 3033890},
+        {"Path": "\\3033890\\Windows7\\X86\\NEU\\Windows6.1-KB3033890-x86.msu", "Date": "2015, 6, 9", "Version": "Windows 7", "Language": "Neutral", "Type": "x86", "KB": 3033890},
+        {"Date": "2015, 5, 12", "KB": 3061904, "Version": "Windows Server 2012 R2", "Language": "Neutral", "Path": "\\3061904\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3061904-x64.msu", "Type": "x64"},
+        {"Date": "2015, 5, 12", "KB": 3061904, "Version": "Windows Server 2012", "Language": "Neutral", "Path": "\\3061904\\WindowsServer2012\\X64\\NEU\\Windows8-RT-KB3061904-x64.msu", "Type": "x64"},
+        {"Date": "2015, 4, 14", "Path": "\\3047234\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows Server 2012 R2", "Language": "Neutral"},
+        {"Date": "2015, 4, 14", "Path": "\\3047234\\Windows8.1\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows 8.1", "Language": "Neutral"}
+      ],
+      "storages": ["Storage", "Uif", "SQLite", "MongoDB"],
+      "sqliteDB": ":memory:",
+      "tables": ["KBs", "Dates", "Paths", "Versions", "Types", "Language", "Updates"],
+      "MongoClient": {
+        "HostAndPort": "mongodb://localhost:27017/",
+        "ServerSelectionTimeoutMS": 500,
+        "dataBase": "testDB",
+        "table": "table4test"
+      },
+      "getQuery": {"Path": ["\\3033890\\Windows7\\X64\\NEU\\Windows6.1-KB3033890-x64.msu", "\\3033890\\Windows7\\X86\\NEU\\Windows6.1-KB3033890-x86.msu"]},
+      "expectedCount": 2
+    },
+    {
+      "updates": [
+        {"Path": "\\3033890\\Windows7\\X64\\NEU\\Windows6.1-KB3033890-x64.msu", "Date": "2015, 6, 9", "Version": "Windows 7", "Language": "Neutral", "Type": "x64", "KB": 3033890},
+        {"Path": "\\3033890\\Windows7\\X86\\NEU\\Windows6.1-KB3033890-x86.msu", "Date": "2015, 6, 9", "Version": "Windows 7", "Language": "Neutral", "Type": "x86", "KB": 3033890},
+        {"Date": "2015, 5, 12", "KB": 3061904, "Version": "Windows Server 2012 R2", "Language": "Neutral", "Path": "\\3061904\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3061904-x64.msu", "Type": "x64"},
+        {"Date": "2015, 5, 12", "KB": 3061904, "Version": "Windows Server 2012", "Language": "Neutral", "Path": "\\3061904\\WindowsServer2012\\X64\\NEU\\Windows8-RT-KB3061904-x64.msu", "Type": "x64"},
+        {"Date": "2015, 4, 14", "Path": "\\3047234\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows Server 2012 R2", "Language": "Neutral"},
+        {"Date": "2015, 4, 14", "Path": "\\3047234\\Windows8.1\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows 8.1", "Language": "Neutral"}
+      ],
+      "storages": ["Storage", "Uif", "SQLite", "MongoDB"],
+      "sqliteDB": ":memory:",
+      "tables": ["KBs", "Dates", "Paths", "Versions", "Types", "Language", "Updates"],
+      "MongoClient": {
+        "HostAndPort": "mongodb://localhost:27017/",
+        "ServerSelectionTimeoutMS": 500,
+        "dataBase": "testDB",
+        "table": "table4test"
+      },
+      "getQuery": {"Version": "Windows 10"},
+      "expectedCount": 0
+    },
+    {
+      "updates": [
+        {"Path": "\\3033890\\Windows7\\X64\\NEU\\Windows6.1-KB3033890-x64.msu", "Date": "2015, 6, 9", "Version": "Windows 7", "Language": "Neutral", "Type": "x64", "KB": 3033890},
+        {"Path": "\\3033890\\Windows7\\X86\\NEU\\Windows6.1-KB3033890-x86.msu", "Date": "2015, 6, 9", "Version": "Windows 7", "Language": "Neutral", "Type": "x86", "KB": 3033890},
+        {"Date": "2015, 5, 12", "KB": 3061904, "Version": "Windows Server 2012 R2", "Language": "Neutral", "Path": "\\3061904\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3061904-x64.msu", "Type": "x64"},
+        {"Date": "2015, 5, 12", "KB": 3061904, "Version": "Windows Server 2012", "Language": "Neutral", "Path": "\\3061904\\WindowsServer2012\\X64\\NEU\\Windows8-RT-KB3061904-x64.msu", "Type": "x64"},
+        {"Date": "2015, 4, 14", "Path": "\\3047234\\WindowsServer2012R2\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows Server 2012 R2", "Language": "Neutral"},
+        {"Date": "2015, 4, 14", "Path": "\\3047234\\Windows8.1\\X64\\NEU\\Windows8.1-KB3047234-x64.msu", "Type": "x64", "KB": 3047234, "Version": "Windows 8.1", "Language": "Neutral"}
+      ],
+      "storages": ["Storage", "Uif", "SQLite", "MongoDB"],
+      "sqliteDB": ":memory:",
+      "tables": ["KBs", "Dates", "Paths", "Versions", "Types", "Language", "Updates"],
+      "MongoClient": {
+        "HostAndPort": "mongodb://localhost:27017/",
+        "ServerSelectionTimeoutMS": 500,
+        "dataBase": "testDB",
+        "table": "table4test"
+      },
+      "getQuery": {"DateTime": 0},
+      "expectedCount": "Unknown field DateTime"
     }
   ],
   "test_uif2SQLiteDB": [

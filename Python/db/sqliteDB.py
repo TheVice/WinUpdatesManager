@@ -205,6 +205,8 @@ def getFrom(aDataBase, aTable, aRows=None, aFilter=None, aOrderBy=None, aLimit=-
                     subFilterStatement = '{} LIKE {}'.format(key, value[0])
                 elif isinstance(value[0], str):
                     subFilterStatement = '{} LIKE \'{}\''.format(key, value[0])
+                else:
+                    raise Exception('Value \'{}\' has unsupported type'.format(value[0]))
                 for i in range(1, len(value)):
                     if isinstance(value[i], int):
                         subFilterStatement = '{} OR {} LIKE {}'.format(subFilterStatement, key, value[i])
@@ -216,6 +218,9 @@ def getFrom(aDataBase, aTable, aRows=None, aFilter=None, aOrderBy=None, aLimit=-
 
             elif isinstance(value, str):
                 subFilterStatement = '{} LIKE \'{}\''.format(key, value)
+
+            else:
+                raise Exception('Value \'{}\' has unsupported type'.format(value))
 
             if filterStatement == '':
                 filterStatement = '{}'.format(subFilterStatement)
@@ -255,10 +260,49 @@ def getFrom(aDataBase, aTable, aRows=None, aFilter=None, aOrderBy=None, aLimit=-
     return items
 
 
-def getItemsCount(aDataBase, aTable):
+def getItemsCount(aDataBase, aTable, aFilter=None):
 
     statement = 'SELECT COUNT (*) FROM {}'.format(aTable)
-    return readAsync(aDataBase, statement, lambda l: l.fetchone())[0]
+
+    if aFilter and isinstance(aFilter, dict):
+        filterStatement = ''
+
+        for key in aFilter.keys():
+            value = aFilter[key]
+
+            if isinstance(value, list) and len(value):
+                if isinstance(value[0], int):
+                    subFilterStatement = '{} LIKE {}'.format(key, value[0])
+                elif isinstance(value[0], str):
+                    subFilterStatement = '{} LIKE \'{}\''.format(key, value[0])
+                else:
+                    raise Exception('Value \'{}\' has unsupported type'.format(value[0]))
+                for i in range(1, len(value)):
+                    if isinstance(value[i], int):
+                        subFilterStatement = '{} OR {} LIKE {}'.format(subFilterStatement, key, value[i])
+                    elif isinstance(value[i], str):
+                        subFilterStatement = '{} OR {} LIKE \'{}\''.format(subFilterStatement, key, value[i])
+
+            elif isinstance(value, int):
+                subFilterStatement = '{} LIKE {}'.format(key, value)
+
+            elif isinstance(value, str):
+                subFilterStatement = '{} LIKE \'{}\''.format(key, value)
+
+            else:
+                raise Exception('Value \'{}\' has unsupported type'.format(value))
+
+            if filterStatement == '':
+                filterStatement = '{}'.format(subFilterStatement)
+            else:
+                filterStatement = '{} AND {}'.format(filterStatement, subFilterStatement)
+
+        statement = '{} WHERE {}'.format(statement, filterStatement)
+
+    r = readAsync(aDataBase, statement, lambda l: l.fetchone())
+    if r:
+        return r[0]
+    return 0
 
 
 def insertInto(aDataBase, aTable, aRows, aItems):

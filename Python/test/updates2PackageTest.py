@@ -2,7 +2,7 @@ import os
 import sys
 import core.dirs
 import updates2Package
-from db.storage import Uif
+from core.storage import Uif
 if 2 == sys.version_info[0]:
     from mock import MagicMock
 else:

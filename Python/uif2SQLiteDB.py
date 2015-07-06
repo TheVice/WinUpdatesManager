@@ -1,6 +1,6 @@
 import sys
 import db.sqliteDB
-from db.storage import Uif, SQLite
+from core.storage import Uif, SQLite
 
 
 if __name__ == '__main__':

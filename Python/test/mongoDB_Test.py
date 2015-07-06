@@ -58,6 +58,17 @@ class TestSequenceFunctions(TestCase):
             except:
                 self.assertEqual(testData['expectedItems'], '{}'.format(sys.exc_info()[1]))
 
+    def test_getItemsCount(self):
+        testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
+        self.mDbClient.insertToDB(self.mDataBase, self.mTable, self.mItemsForTest)
+        for testData in testsData:
+            try:
+                count = self.mDbClient.getItemsCount(self.mDataBase, self.mTable, testData['query'])
+                expectedCount = testData['expectedCount']
+                self.assertEqual(expectedCount, count)
+            except:
+                self.assertEqual(testData['expectedCount'], '{}'.format(sys.exc_info()[1]))
+
     def test_insertToDB(self):
         testsData = self.mJsonHelper.GetTestInputOutputData(sys._getframe().f_code.co_name)
         usePymongo3rdVersion = True

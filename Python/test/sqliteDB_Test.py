@@ -1,5 +1,6 @@
 import sys
 import db.sqliteDB
+from datetime import datetime
 from unittest import main, TestCase
 from test.jsonHelper import JsonHelper
 if 2 == sys.version_info[0]:
@@ -269,10 +270,16 @@ class TestSequenceFunctions(TestCase):
             limit = testData['limit']
             offset = testData['offset']
 
-            expectedResult = testData['expectedResult']
-            result = db.sqliteDB.getFrom(connection, table, rows, getFilter, orderBy, limit, offset)
+            if getFilter and 'Date' in getFilter.keys():
+                if 'datetime' in getFilter['Date']:
+                    getFilter['Date'] = eval(getFilter['Date'])
 
-            self.assertEqual(expectedResult, result)
+            try:
+                result = db.sqliteDB.getFrom(connection, table, rows, getFilter, orderBy, limit, offset)
+                expectedResult = testData['expectedResult']
+                self.assertEqual(expectedResult, result)
+            except Exception:
+                self.assertEqual(testData['expectedResult'], '{}'.format(sys.exc_info()[1]))
 
             db.sqliteDB.disconnect(connection)
 
@@ -285,11 +292,18 @@ class TestSequenceFunctions(TestCase):
             db.sqliteDB.write(connection, writeStatement)
 
             table = testData['table']
+            getFilter = testData['getFilter']
 
-            expectedResult = testData['expectedResult']
-            result = db.sqliteDB.getItemsCount(connection, table)
+            if getFilter and 'Date' in getFilter.keys():
+                if 'datetime' in getFilter['Date']:
+                    getFilter['Date'] = eval(getFilter['Date'])
 
-            self.assertEqual(expectedResult, result)
+            try:
+                expectedResult = testData['expectedResult']
+                result = db.sqliteDB.getItemsCount(connection, table, getFilter)
+                self.assertEqual(expectedResult, result)
+            except Exception:
+                self.assertEqual(testData['expectedResult'], '{}'.format(sys.exc_info()[1]))
 
             db.sqliteDB.disconnect(connection)
 

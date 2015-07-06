@@ -4,6 +4,8 @@ import os.path
 import core.dirs
 import core.dates
 import db.sqliteDB
+from datetime import datetime
+from core.updates import Updates
 from db.mongoDB import MongoDBClient
 from core.unknownSubstance import UnknownSubstance
 
@@ -26,7 +28,11 @@ class Storage:
 
         pass
 
-    def get(self, aQuery):
+    def get(self, aQuery, aLimit=-1, aSkip=0, aSort=None):
+
+        pass
+
+    def getCount(self, aQuery):
 
         pass
 
@@ -57,7 +63,11 @@ class Uif(Storage):
 
         return Uif.makeAvalibleList(self.mUpdates, 'Language')
 
-    def get(self, aQuery):
+    def get(self, aQuery, aLimit=-1, aSkip=0, aSort=None):
+
+        for key in aQuery.keys():
+            if key not in Updates.validKeys:
+                raise Exception('Unknown field {}'.format(key))
 
         updates = []
 
@@ -68,10 +78,10 @@ class Uif(Storage):
                 if 'Date' == key:
                     aQuery[key] = core.dates.toDate(aQuery[key])
                 if isinstance(aQuery.get(key), list):
-                    if 0 == aQuery.get(key).count(update[key]):
+                    if update[key] not in aQuery[key]:
                         match = False
                         break
-                elif not update[key] == aQuery.get(key):
+                elif not update[key] == aQuery[key]:
                     match = False
                     break
 
@@ -79,6 +89,12 @@ class Uif(Storage):
                 updates.append(update)
 
         return updates
+
+    def getCount(self, aQuery):
+
+        if aQuery:
+            return len(self.get(aQuery))
+        return len(self.mUpdates)
 
     @staticmethod
     def getUpdatesFromFile(aFile):
@@ -147,7 +163,7 @@ class SQLite(Storage):
 
         return SQLite.makeAvalibleList(db.sqliteDB.getFrom(self.mInit, 'Languages', 'Language', [], {'Language': 1}))
 
-    def get(self, aQuery):
+    def get(self, aQuery, aLimit=-1, aSkip=0, aSort=None):
 
         statement = {}
         for key in aQuery.keys():
@@ -172,6 +188,8 @@ class SQLite(Storage):
             elif 'Path' == key:
                 table = 'Paths'
                 id_name = 'path_id'
+            else:
+                raise Exception('Unknown field {}'.format(key))
 
             ids = db.sqliteDB.getFrom(self.mInit, table, 'id', {row: aQuery[key]})
 
@@ -182,8 +200,46 @@ class SQLite(Storage):
 
         table = 'Updates'
         rows = 'kb_id, date_id, path_id, version_id, type_id, language_id'
-        rawUpdates = db.sqliteDB.getFrom(self.mInit, table, rows, statement)
+        rawUpdates = db.sqliteDB.getFrom(self.mInit, table, rows, statement, aSort, aLimit, aSkip)
         return SQLite.rawUpdatesToUpdates(self.mInit, rawUpdates)
+
+    def getCount(self, aQuery):
+
+        statement = {}
+        for key in aQuery.keys():
+            row = key
+            if 'KB' == key:
+                table = 'KBs'
+                row = 'id'
+                id_name = 'kb_id'
+            elif 'Date' == key:
+                table = 'Dates'
+                id_name = 'date_id'
+                aQuery[key] = core.dates.toString(aQuery[key])
+            elif 'Version' == key:
+                table = 'Versions'
+                id_name = 'version_id'
+            elif 'Type' == key:
+                table = 'Types'
+                id_name = 'type_id'
+            elif 'Language' == key:
+                table = 'Languages'
+                id_name = 'language_id'
+            elif 'Path' == key:
+                table = 'Paths'
+                id_name = 'path_id'
+            else:
+                raise Exception('Unknown field {}'.format(key))
+
+            ids = db.sqliteDB.getFrom(self.mInit, table, 'id', {row: aQuery[key]})
+
+            if ids:
+                statement[id_name] = ids
+            else:
+                return 0
+
+        table = 'Updates'
+        return db.sqliteDB.getItemsCount(self.mInit, table, statement)
 
     @staticmethod
     def makeAvalibleList(aList):
@@ -390,18 +446,33 @@ class MongoDB(Storage):
         expression.append({'$project': {'_id':'$_id.Language', 'count': '$_id.count'}})
         return MongoDB.makeAvalibleList(self.mDbClient.aggregate(self.mDataBase, self.mTable, expression))
 
-    def getWithSkipLimitAndSort(self, aQuery, aSkip, aLimit, aSort):
+    def get(self, aQuery, aLimit=-1, aSkip=0, aSort=None):
 
-        return self.mDbClient.getItemsFromDB(self.mDataBase, self.mTable, aQuery, {'_id': 0}, aSkip, aLimit, aSort)
-
-    def get(self, aQuery):
+        for key in aQuery.keys():
+            if key not in Updates.validKeys:
+                raise Exception('Unknown field {}'.format(key))
 
         for key in aQuery.keys():
             if 'Date' == key:
                 aQuery[key] = core.dates.toDateTime(aQuery[key])
             if isinstance(aQuery[key], list):
                 aQuery[key] = {'$in': aQuery[key]}
-        return self.mDbClient.getItemsFromDB(self.mDataBase, self.mTable, aQuery)
+        if aLimit < 0:
+            aLimit = None
+        return self.mDbClient.getItemsFromDB(self.mDataBase, self.mTable, aQuery, {'_id': 0}, aSkip, aLimit, aSort)
+
+    def getCount(self, aQuery):
+
+        for key in aQuery.keys():
+            if key not in Updates.validKeys:
+                raise Exception('Unknown field {}'.format(key))
+
+        for key in aQuery.keys():
+            if 'Date' == key:
+                aQuery[key] = core.dates.toDateTime(aQuery[key])
+            if isinstance(aQuery[key], list):
+                aQuery[key] = {'$in': aQuery[key]}
+        return self.mDbClient.getItemsCount(self.mDataBase, self.mTable, aQuery)
 
     @staticmethod
     def makeAvalibleList(aList):

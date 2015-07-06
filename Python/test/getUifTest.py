@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import getUif
+import core.dates
 from datetime import datetime
 if 2 == sys.version_info[0]:
     from mock import patch, MagicMock
@@ -58,7 +59,7 @@ class TestSequenceFunctions(TestCase):
                         d = expectedUpdates[i]['Date']
                         if 'datetime.now' in d:
                             d = eval(d)
-                            expectedUpdates[i]['Date'] = '{}, {}, {}'.format(d.year, d.month, d.day)
+                            expectedUpdates[i]['Date'] = core.dates.toString(d)
                     self.assertEqual(expectedUpdates, updates)
 
     def test_fromPathAndDate(self):

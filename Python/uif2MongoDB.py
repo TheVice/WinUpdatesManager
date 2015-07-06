@@ -1,5 +1,5 @@
 import sys
-from db.storage import Uif, MongoDB
+from core.storage import Uif, MongoDB
 
 
 if __name__ == '__main__':

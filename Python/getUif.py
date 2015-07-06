@@ -17,7 +17,7 @@ def getUpdatesFromPackage(aFiles, aDate):
     versions = Versions()
     types = Types()
     languages = Languages()
-    date = '{}, {}, {}'.format(aDate.year, aDate.month, aDate.day)
+    date = core.dates.toString(aDate)
 
     for updateFile in aFiles:
 
@@ -47,8 +47,8 @@ def fromPath(aPath):
         try:
             updates.extend(fromPathAndDate(path, folder))
         except:
-            date = datetime.datetime.now().date()
-            date = '{}, {}, {}'.format(date.year, date.month, date.day)
+            date = datetime.datetime.now()
+            date = core.dates.toString(date)
             updates.append(json.dumps({'Path': folder,
                                        'KB': core.kb.getKB(folder),
                                        'Version': Versions().getVersion(folder),

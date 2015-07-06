@@ -4,6 +4,8 @@ import json
 
 class Updates:
 
+    validKeys = ['KB', 'Date', 'Version', 'Type', 'Language', 'Path']
+
     def __init__(self):
 
         self.mData = []

@@ -50,6 +50,19 @@ class MongoDBClient:
         except:
             raise Exception(exc_info()[1])
 
+    def getItemsCount(self, aDB, aTable, aQuery={}):
+
+        try:
+            db = self.mClient[aDB]
+            table = db[aTable]
+
+            items = table.find(aQuery)
+
+            return items.count(True)
+
+        except:
+            raise Exception(exc_info()[1])
+
     def insertToDB(self, aDB, aTable, aItems):
 
         try:

@@ -362,17 +362,161 @@
       "limit": -1,
       "offset": 6,
       "expectedResult": []
+    },
+    {
+      "writeStatement": "CREATE TABLE Dates (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, Date DATE UNIQUE NOT NULL); INSERT INTO Dates (Date) VALUES(date('2015-06-09')); INSERT INTO Dates (Date) VALUES(date('2014-05-12')); INSERT INTO Dates (Date) VALUES(date('2013-04-14')); INSERT INTO Dates (Date) VALUES(date('2012-03-10')); INSERT INTO Dates (Date) VALUES(date('2011-02-09')); INSERT INTO Dates (Date) VALUES(date('2010-01-13'));",
+      "table": "Dates",
+      "rows": "Date",
+      "getFilter": {"Date": "datetime(2015, 7, 6)"},
+      "orderBy": {"Date": 1},
+      "limit": -1,
+      "offset": 6,
+      "expectedResult": "Value '2015-07-06 00:00:00' has unsupported type"
     }
   ],
   "test_getItemsCount": [
     {
+      "writeStatement": "CREATE TABLE Items (Id INTEGER PRIMARY KEY UNIQUE NOT NULL); INSERT INTO Items (Id) VALUES(1); INSERT INTO Items (Id) VALUES(2); INSERT INTO Items (Id) VALUES(3); INSERT INTO Items (Id) VALUES(4)",
+      "table": "Items",
+      "getFilter": null,
+      "expectedResult": 4
+    },
+    {
+      "writeStatement": "CREATE TABLE Items (Id INTEGER PRIMARY KEY UNIQUE NOT NULL); INSERT INTO Items (Id) VALUES(1); INSERT INTO Items (Id) VALUES(2); INSERT INTO Items (Id) VALUES(3); INSERT INTO Items (Id) VALUES(4)",
+      "table": "Items",
+      "getFilter": null,
+      "expectedResult": 4
+    },
+    {
+      "writeStatement": "CREATE TABLE Items (Id INTEGER PRIMARY KEY UNIQUE NOT NULL); INSERT INTO Items (Id) VALUES(1); INSERT INTO Items (Id) VALUES(2); INSERT INTO Items (Id) VALUES(3); INSERT INTO Items (Id) VALUES(4)",
+      "table": "Items",
+      "getFilter": null,
+      "expectedResult": 4
+    },
+    {
+      "writeStatement": "CREATE TABLE Items (Id INTEGER PRIMARY KEY UNIQUE NOT NULL); INSERT INTO Items (Id) VALUES(1); INSERT INTO Items (Id) VALUES(2); INSERT INTO Items (Id) VALUES(3); INSERT INTO Items (Id) VALUES(4)",
+      "table": "Items",
+      "getFilter": {"Id": 1},
+      "expectedResult": 1
+    },
+    {
+      "writeStatement": "CREATE TABLE Items (Id INTEGER PRIMARY KEY UNIQUE NOT NULL); INSERT INTO Items (Id) VALUES(1); INSERT INTO Items (Id) VALUES(2); INSERT INTO Items (Id) VALUES(3); INSERT INTO Items (Id) VALUES(4)",
+      "table": "Items",
+      "getFilter": {"Id": [1]},
+      "expectedResult": 1
+    },
+    {
+      "writeStatement": "CREATE TABLE Items (Id INTEGER PRIMARY KEY UNIQUE NOT NULL); INSERT INTO Items (Id) VALUES(1); INSERT INTO Items (Id) VALUES(2); INSERT INTO Items (Id) VALUES(3); INSERT INTO Items (Id) VALUES(4)",
+      "table": "Items",
+      "getFilter": {"Id": [1, 2, 3, 4]},
+      "expectedResult": 4
+    },
+    {
+      "writeStatement": "CREATE TABLE Items (Id INTEGER PRIMARY KEY UNIQUE NOT NULL); INSERT INTO Items (Id) VALUES(1); INSERT INTO Items (Id) VALUES(2); INSERT INTO Items (Id) VALUES(3); INSERT INTO Items (Id) VALUES(4)",
+      "table": "Items",
+      "getFilter": {"Id": 5},
+      "expectedResult": 0
+    },
+    {
+      "writeStatement": "CREATE TABLE Items2 (Id INTEGER PRIMARY KEY UNIQUE NOT NULL, Id2 INTEGER UNIQUE NOT NULL); INSERT INTO Items2 (Id, Id2) VALUES(1, 2); INSERT INTO Items2 (Id, Id2) VALUES(3, 4)",
+      "table": "Items2",
+      "getFilter": null,
+      "expectedResult": 2
+    },
+    {
+      "writeStatement": "CREATE TABLE Items2 (Id INTEGER PRIMARY KEY UNIQUE NOT NULL, Id2 INTEGER UNIQUE NOT NULL); INSERT INTO Items2 (Id, Id2) VALUES(1, 2); INSERT INTO Items2 (Id, Id2) VALUES(3, 4)",
+      "table": "Items2",
+      "getFilter": null,
+      "expectedResult": 2
+    },
+    {
+      "writeStatement": "CREATE TABLE Items2 (Id INTEGER PRIMARY KEY UNIQUE NOT NULL, Id2 INTEGER UNIQUE NOT NULL); INSERT INTO Items2 (Id, Id2) VALUES(1, 2); INSERT INTO Items2 (Id, Id2) VALUES(3, 4)",
+      "table": "Items2",
+      "getFilter": {"Id": 1, "Id2": 2},
+      "expectedResult": 1
+    },
+    {
+      "writeStatement": "CREATE TABLE Items2 (Id INTEGER PRIMARY KEY UNIQUE NOT NULL, Id2 INTEGER UNIQUE NOT NULL); INSERT INTO Items2 (Id, Id2) VALUES(1, 2); INSERT INTO Items2 (Id, Id2) VALUES(3, 4)",
+      "table": "Items2",
+      "getFilter": {"Id": 1, "Id2": 3},
+      "expectedResult": 0
+    },
+    {
+      "writeStatement": "CREATE TABLE Dates (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, Date DATE UNIQUE NOT NULL); INSERT INTO Dates (Date) VALUES(date('2010-01-13')); INSERT INTO Dates (Date) VALUES(date('2011-02-09')); INSERT INTO Dates (Date) VALUES(date('2012-03-10')); INSERT INTO Dates (Date) VALUES(date('2013-04-14')); INSERT INTO Dates (Date) VALUES(date('2014-05-12')); INSERT INTO Dates (Date) VALUES(date('2015-06-09'))",
+      "table": "Dates",
+      "getFilter": null,
+      "expectedResult": 6
+    },
+    {
+      "writeStatement": "CREATE TABLE Dates (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, Date DATE UNIQUE NOT NULL); INSERT INTO Dates (Date) VALUES(date('2010-01-13')); INSERT INTO Dates (Date) VALUES(date('2011-02-09')); INSERT INTO Dates (Date) VALUES(date('2012-03-10')); INSERT INTO Dates (Date) VALUES(date('2013-04-14')); INSERT INTO Dates (Date) VALUES(date('2014-05-12')); INSERT INTO Dates (Date) VALUES(date('2015-06-09'))",
+      "table": "Dates",
+      "getFilter": null,
+      "expectedResult": 6
+    },
+    {
+      "writeStatement": "CREATE TABLE Dates (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, Date DATE UNIQUE NOT NULL); INSERT INTO Dates (Date) VALUES(date('2010-01-13')); INSERT INTO Dates (Date) VALUES(date('2011-02-09')); INSERT INTO Dates (Date) VALUES(date('2012-03-10')); INSERT INTO Dates (Date) VALUES(date('2013-04-14')); INSERT INTO Dates (Date) VALUES(date('2014-05-12')); INSERT INTO Dates (Date) VALUES(date('2015-06-09'))",
+      "table": "Dates",
+      "getFilter": {"Date": ["2010-01-13", "2011-02-09", "2012-03-10", "2013-04-14", "2014-05-12", "2015-06-09"]},
+      "expectedResult": 6
+    },
+    {
+      "writeStatement": "CREATE TABLE Dates (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, Date DATE UNIQUE NOT NULL); INSERT INTO Dates (Date) VALUES(date('2010-01-13')); INSERT INTO Dates (Date) VALUES(date('2011-02-09')); INSERT INTO Dates (Date) VALUES(date('2012-03-10')); INSERT INTO Dates (Date) VALUES(date('2013-04-14')); INSERT INTO Dates (Date) VALUES(date('2014-05-12')); INSERT INTO Dates (Date) VALUES(date('2015-06-09'))",
+      "table": "Dates",
+      "getFilter": {"Date": "2012-03-10"},
+      "expectedResult": 1
+    },
+    {
+      "writeStatement": "CREATE TABLE Dates (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, Date DATE UNIQUE NOT NULL); INSERT INTO Dates (Date) VALUES(date('2010-01-13')); INSERT INTO Dates (Date) VALUES(date('2011-02-09')); INSERT INTO Dates (Date) VALUES(date('2012-03-10')); INSERT INTO Dates (Date) VALUES(date('2013-04-14')); INSERT INTO Dates (Date) VALUES(date('2014-05-12')); INSERT INTO Dates (Date) VALUES(date('2015-06-09'))",
+      "table": "Dates",
+      "getFilter": {"Date": "2009-01-01"},
+      "expectedResult": 0
+    },
+    {
+      "writeStatement": "CREATE TABLE Dates (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, Date DATE UNIQUE NOT NULL); INSERT INTO Dates (Date) VALUES(date('2010-01-13')); INSERT INTO Dates (Date) VALUES(date('2011-02-09')); INSERT INTO Dates (Date) VALUES(date('2012-03-10')); INSERT INTO Dates (Date) VALUES(date('2013-04-14')); INSERT INTO Dates (Date) VALUES(date('2014-05-12')); INSERT INTO Dates (Date) VALUES(date('2015-06-09'))",
+      "table": "Dates",
+      "getFilter": {"Date": ["2012-03-10"]},
+      "expectedResult": 1
+    },
+    {
+      "writeStatement": "CREATE TABLE Dates (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, Date DATE UNIQUE NOT NULL); INSERT INTO Dates (Date) VALUES(date('2010-01-13')); INSERT INTO Dates (Date) VALUES(date('2011-02-09')); INSERT INTO Dates (Date) VALUES(date('2012-03-10')); INSERT INTO Dates (Date) VALUES(date('2013-04-14')); INSERT INTO Dates (Date) VALUES(date('2014-05-12')); INSERT INTO Dates (Date) VALUES(date('2015-06-09'))",
+      "table": "Dates",
+      "getFilter": {"Date": ["2009-01-01"]},
+      "expectedResult": 0
+    },
+    {
+      "writeStatement": "CREATE TABLE Dates (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, Date DATE UNIQUE NOT NULL); INSERT INTO Dates (Date) VALUES(date('2010-01-13')); INSERT INTO Dates (Date) VALUES(date('2011-02-09')); INSERT INTO Dates (Date) VALUES(date('2012-03-10')); INSERT INTO Dates (Date) VALUES(date('2013-04-14')); INSERT INTO Dates (Date) VALUES(date('2014-05-12')); INSERT INTO Dates (Date) VALUES(date('2015-06-09'))",
+      "table": "Dates",
+      "getFilter": null,
+      "expectedResult": 6
+    },
+    {
+      "writeStatement": "CREATE TABLE Dates (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, Date DATE UNIQUE NOT NULL); INSERT INTO Dates (Date) VALUES(date('2015-06-09')); INSERT INTO Dates (Date) VALUES(date('2014-05-12')); INSERT INTO Dates (Date) VALUES(date('2013-04-14')); INSERT INTO Dates (Date) VALUES(date('2012-03-10')); INSERT INTO Dates (Date) VALUES(date('2011-02-09')); INSERT INTO Dates (Date) VALUES(date('2010-01-13'));",
+      "table": "Dates",
+      "getFilter": null,
+      "expectedResult": 6
+    },
+    {
+      "writeStatement": "CREATE TABLE Dates (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, Date DATE UNIQUE NOT NULL); INSERT INTO Dates (Date) VALUES(date('2015-06-09')); INSERT INTO Dates (Date) VALUES(date('2014-05-12')); INSERT INTO Dates (Date) VALUES(date('2013-04-14')); INSERT INTO Dates (Date) VALUES(date('2012-03-10')); INSERT INTO Dates (Date) VALUES(date('2011-02-09')); INSERT INTO Dates (Date) VALUES(date('2010-01-13'));",
+      "table": "Dates",
+      "getFilter": null,
+      "expectedResult": 6
+    },
+    {
+      "writeStatement": "CREATE TABLE Dates (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, Date DATE UNIQUE NOT NULL); INSERT INTO Dates (Date) VALUES(date('2015-06-09')); INSERT INTO Dates (Date) VALUES(date('2014-05-12')); INSERT INTO Dates (Date) VALUES(date('2013-04-14')); INSERT INTO Dates (Date) VALUES(date('2012-03-10')); INSERT INTO Dates (Date) VALUES(date('2011-02-09')); INSERT INTO Dates (Date) VALUES(date('2010-01-13'));",
+      "table": "Dates",
+      "getFilter": {"Date": "datetime(2015, 7, 6)"},
+      "expectedResult": "Value '2015-07-06 00:00:00' has unsupported type"
+    },
+    {
       "writeStatement": "CREATE TABLE Items (Id INTEGER PRIMARY KEY UNIQUE NOT NULL)",
       "table": "Items",
+      "getFilter": null,
       "expectedResult": 0
     },
     {
       "writeStatement": "CREATE TABLE Items (Id INTEGER PRIMARY KEY UNIQUE NOT NULL); INSERT INTO Items (Id) VALUES(1); INSERT INTO Items (Id) VALUES(2); INSERT INTO Items (Id) VALUES(3)",
       "table": "Items",
+      "getFilter": null,
       "expectedResult": 3
     }
   ],

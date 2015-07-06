@@ -1,7 +1,7 @@
 import os
 import sys
 import core.dirs
-from db.storage import Uif
+from core.storage import Uif
 from core.types import Types
 from core.updates import Updates
 from core.versions import Versions
