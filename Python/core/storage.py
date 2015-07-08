@@ -29,9 +29,7 @@ class Storage:
 
     def get(self, aQuery, aLimit=-1, aSkip=0, aSort=None):
 
-        for key in aQuery.keys():
-            if key not in Updates.validKeys:
-                raise Exception('Unknown field {}'.format(key))
+        pass
 
     def getCount(self, aQuery):
 
@@ -66,23 +64,28 @@ class Uif(Storage):
 
     def get(self, aQuery, aLimit=-1, aSkip=0, aSort=None):
 
-        Storage.get(self, aQuery, aLimit, aSkip, aSort)
-
         updates = []
+
+        if not aQuery:
+            return self.mUpdates
 
         for update in self.mUpdates:
             match = True
 
-            for key in aQuery.keys():
-                if 'Date' == key:
-                    aQuery[key] = core.dates.toDate(aQuery[key])
-                if isinstance(aQuery.get(key), list):
-                    if update[key] not in aQuery[key]:
+            for key in Updates.validKeys:
+                if key in aQuery.keys():
+                    if 'Date' == key:
+                        aQuery[key] = core.dates.toDate(aQuery[key])
+
+                    value = aQuery[key]
+
+                    if isinstance(value, list):
+                        if update[key] not in value:
+                            match = False
+                            break
+                    elif not update[key] == value:
                         match = False
                         break
-                elif not update[key] == aQuery[key]:
-                    match = False
-                    break
 
             if match:
                 updates.append(update)
@@ -164,8 +167,6 @@ class SQLite(Storage):
 
     def get(self, aQuery, aLimit=-1, aSkip=0, aSort=None):
 
-        Storage.get(self, aQuery, aLimit, aSkip, aSort)
-
         statement = ('SELECT * FROM Updates'
                      ' INNER JOIN KBs ON kb_id LIKE KBs.id'
                      ' INNER JOIN Dates ON date_id LIKE Dates.id'
@@ -200,6 +201,7 @@ class SQLite(Storage):
                 for i in range(1, len(subStatement)):
                     statement = '{} AND {}'.format(statement, subStatement[i])
 
+        statement = statement.replace('\\\\', '\\')
         readResult = db.sqliteDB.readAsync(self.mInit, statement, lambda l: l.fetchall())
 
         if not readResult:
@@ -248,41 +250,47 @@ class SQLite(Storage):
 
     def getCount(self, aQuery):
 
-        statement = {}
-        for key in aQuery.keys():
-            row = key
-            if 'KB' == key:
-                table = 'KBs'
-                row = 'id'
-                id_name = 'kb_id'
-            elif 'Date' == key:
-                table = 'Dates'
-                id_name = 'date_id'
-                aQuery[key] = core.dates.toString(aQuery[key])
-            elif 'Version' == key:
-                table = 'Versions'
-                id_name = 'version_id'
-            elif 'Type' == key:
-                table = 'Types'
-                id_name = 'type_id'
-            elif 'Language' == key:
-                table = 'Languages'
-                id_name = 'language_id'
-            elif 'Path' == key:
-                table = 'Paths'
-                id_name = 'path_id'
-            else:
-                raise Exception('Unknown field {}'.format(key))
+        statement = ('SELECT COUNT (*) FROM Updates'
+                     ' INNER JOIN KBs ON kb_id LIKE KBs.id'
+                     ' INNER JOIN Dates ON date_id LIKE Dates.id'
+                     ' INNER JOIN Paths ON path_id LIKE Paths.id'
+                     ' INNER JOIN Versions ON version_id LIKE Versions.id'
+                     ' INNER JOIN Types ON type_id LIKE Types.id'
+                     ' INNER JOIN Languages ON language_id LIKE Languages.id')
 
-            ids = db.sqliteDB.getFrom(self.mInit, table, 'id', {row: aQuery[key]})
+        if aQuery:
+            subStatement = []
+            for key in Updates.validKeys:
+                if key in aQuery.keys():
+                    if 'Date' == key:
+                        aQuery[key] = core.dates.toString(aQuery[key])
 
-            if ids:
-                statement[id_name] = ids
-            else:
-                return 0
+                    value = aQuery[key]
 
-        table = 'Updates'
-        return db.sqliteDB.getItemsCount(self.mInit, table, statement)
+                    if 'KB' == key:
+                        key = 'KBs.id'
+
+                    if isinstance(value, int):
+                        subStatement.append('{} LIKE {}'.format(key, value))
+                    elif isinstance(value, str):
+                        subStatement.append('{} LIKE \'{}\''.format(key, value))
+                    elif isinstance(value, list):
+                        value = '{}'.format(value)
+                        value = value.replace('[', '')
+                        value = value.replace(']', '')
+                        subStatement.append('{} IN ({})'.format(key, value))
+            if subStatement:
+                statement = '{} WHERE {}'.format(statement, subStatement[0])
+                for i in range(1, len(subStatement)):
+                    statement = '{} AND {}'.format(statement, subStatement[i])
+
+        statement = statement.replace('\\\\', '\\')
+        readResult = db.sqliteDB.readAsync(self.mInit, statement, lambda l: l.fetchone())
+
+        if not readResult:
+            return 0
+
+        return readResult[0]
 
     @staticmethod
     def makeAvalibleList(aList):
@@ -420,29 +428,41 @@ class MongoDB(Storage):
 
     def get(self, aQuery, aLimit=-1, aSkip=0, aSort=None):
 
-        Storage.get(self, aQuery, aLimit, aSkip, aSort)
+        query = {}
 
-        for key in aQuery.keys():
-            if 'Date' == key:
-                aQuery[key] = core.dates.toDateTime(aQuery[key])
-            if isinstance(aQuery[key], list):
-                aQuery[key] = {'$in': aQuery[key]}
+        for key in Updates.validKeys:
+            if key in aQuery.keys():
+                if 'Date' == key:
+                    aQuery[key] = core.dates.toDateTime(aQuery[key])
+
+                value = aQuery[key]
+
+                if isinstance(value, list):
+                    value = {'$in': value}
+                query[key] = value
+
         if aLimit < 0:
             aLimit = None
-        return self.mDbClient.getItemsFromDB(self.mDataBase, self.mTable, aQuery, {'_id': 0}, aSkip, aLimit, aSort)
+
+        projection = {'_id': 0}
+        return self.mDbClient.getItemsFromDB(self.mDataBase, self.mTable, query, projection, aSkip, aLimit, aSort)
 
     def getCount(self, aQuery):
 
-        for key in aQuery.keys():
-            if key not in Updates.validKeys:
-                raise Exception('Unknown field {}'.format(key))
+        query = {}
 
-        for key in aQuery.keys():
-            if 'Date' == key:
-                aQuery[key] = core.dates.toDateTime(aQuery[key])
-            if isinstance(aQuery[key], list):
-                aQuery[key] = {'$in': aQuery[key]}
-        return self.mDbClient.getItemsCount(self.mDataBase, self.mTable, aQuery)
+        for key in Updates.validKeys:
+            if key in aQuery.keys():
+                if 'Date' == key:
+                    aQuery[key] = core.dates.toDateTime(aQuery[key])
+
+                value = aQuery[key]
+
+                if isinstance(value, list):
+                    value = {'$in': value}
+                query[key] = value
+
+        return self.mDbClient.getItemsCount(self.mDataBase, self.mTable, query)
 
     @staticmethod
     def makeAvalibleList(aList):
