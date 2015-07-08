@@ -29,7 +29,9 @@ class Storage:
 
     def get(self, aQuery, aLimit=-1, aSkip=0, aSort=None):
 
-        pass
+        for key in aQuery.keys():
+            if key not in Updates.validKeys:
+                raise Exception('Unknown field {}'.format(key))
 
     def getCount(self, aQuery):
 
@@ -64,9 +66,7 @@ class Uif(Storage):
 
     def get(self, aQuery, aLimit=-1, aSkip=0, aSort=None):
 
-        for key in aQuery.keys():
-            if key not in Updates.validKeys:
-                raise Exception('Unknown field {}'.format(key))
+        Storage.get(self, aQuery, aLimit, aSkip, aSort)
 
         updates = []
 
@@ -164,43 +164,87 @@ class SQLite(Storage):
 
     def get(self, aQuery, aLimit=-1, aSkip=0, aSort=None):
 
-        statement = {}
-        for key in aQuery.keys():
-            row = key
-            if 'KB' == key:
-                table = 'KBs'
-                row = 'id'
-                id_name = 'kb_id'
-            elif 'Date' == key:
-                table = 'Dates'
-                id_name = 'date_id'
-                aQuery[key] = core.dates.toString(aQuery[key])
-            elif 'Version' == key:
-                table = 'Versions'
-                id_name = 'version_id'
-            elif 'Type' == key:
-                table = 'Types'
-                id_name = 'type_id'
-            elif 'Language' == key:
-                table = 'Languages'
-                id_name = 'language_id'
-            elif 'Path' == key:
-                table = 'Paths'
-                id_name = 'path_id'
+        Storage.get(self, aQuery, aLimit, aSkip, aSort)
+
+        statement = ('SELECT * FROM Updates'
+                     ' INNER JOIN KBs ON kb_id LIKE KBs.id'
+                     ' INNER JOIN Dates ON date_id LIKE Dates.id'
+                     ' INNER JOIN Paths ON path_id LIKE Paths.id'
+                     ' INNER JOIN Versions ON version_id LIKE Versions.id'
+                     ' INNER JOIN Types ON type_id LIKE Types.id'
+                     ' INNER JOIN Languages ON language_id LIKE Languages.id')
+
+        if aQuery:
+            subStatement = []
+            for key in Updates.validKeys:
+                if key in aQuery.keys():
+                    if 'Date' == key:
+                        aQuery[key] = core.dates.toString(aQuery[key])
+
+                    value = aQuery[key]
+
+                    if 'KB' == key:
+                        key = 'KBs.id'
+
+                    if isinstance(value, int):
+                        subStatement.append('{} LIKE {}'.format(key, value))
+                    elif isinstance(value, str):
+                        subStatement.append('{} LIKE \'{}\''.format(key, value))
+                    elif isinstance(value, list):
+                        value = '{}'.format(value)
+                        value = value.replace('[', '')
+                        value = value.replace(']', '')
+                        subStatement.append('{} IN ({})'.format(key, value))
+            if subStatement:
+                statement = '{} WHERE {}'.format(statement, subStatement[0])
+                for i in range(1, len(subStatement)):
+                    statement = '{} AND {}'.format(statement, subStatement[i])
+
+        readResult = db.sqliteDB.readAsync(self.mInit, statement, lambda l: l.fetchall())
+
+        if not readResult:
+            return []
+
+        kb_num = 7
+        date_num = 9
+        path_num = 11
+        version_num = 13
+        type_num = 15
+        language_num = 17
+
+        updates = []
+        for r in readResult:
+            update = {}
+            update['Date'] = core.dates.toDate(r[date_num])
+            update['Path'] = r[path_num]
+
+            if -1 != r[kb_num]:
+                update['KB'] = r[kb_num]
             else:
-                raise Exception('Unknown field {}'.format(key))
+                update['KB'] = UnknownSubstance.unknown('UNKNOWN KB',
+                                                        update['Path'])
 
-            ids = db.sqliteDB.getFrom(self.mInit, table, 'id', {row: aQuery[key]})
-
-            if ids:
-                statement[id_name] = ids
+            if 'UNKNOWN VERSION' != r[version_num]:
+                update['Version'] = r[version_num]
             else:
-                return []
+                update['Version'] = UnknownSubstance.unknown('UNKNOWN VERSION',
+                                                             update['Path'])
 
-        table = 'Updates'
-        rows = 'kb_id, date_id, path_id, version_id, type_id, language_id'
-        rawUpdates = db.sqliteDB.getFrom(self.mInit, table, rows, statement, aSort, aLimit, aSkip)
-        return SQLite.rawUpdatesToUpdates(self.mInit, rawUpdates)
+            if 'UNKNOWN TYPE' != r[type_num]:
+                update['Type'] = r[type_num]
+            else:
+                update['Type'] = UnknownSubstance.unknown('UNKNOWN TYPE',
+                                                          update['Path'])
+
+            if 'UNKNOWN LANGUAGE' != r[language_num]:
+                update['Language'] = r[language_num]
+            else:
+                update['Language'] = UnknownSubstance.unknown('UNKNOWN LANGUAGE',
+                                                              update['Path'])
+
+            updates.append(update)
+
+        return updates
 
     def getCount(self, aQuery):
 
@@ -250,82 +294,11 @@ class SQLite(Storage):
         return items
 
     @staticmethod
-    def rawUpdatesToUpdates(aDb, aRawUpdates):
-
-        updates = []
-
-        for rawUpdate in aRawUpdates:
-
-            update = {}
-
-            update['Path'] = SQLite.getPathByID(aDb, rawUpdate[2])
-
-            kb = rawUpdate[0]
-            if -1 != kb:
-                update['KB'] = kb
-            else:
-                update['KB'] = UnknownSubstance.unknown('UNKNOWN KB',
-                                                        update['Path'])
-
-            version = SQLite.getVersionByID(aDb, rawUpdate[3])
-            if 'UNKNOWN VERSION' != version:
-                update['Version'] = version
-            else:
-                update['Version'] = UnknownSubstance.unknown('UNKNOWN VERSION',
-                                                             update['Path'])
-
-            osType = SQLite.getTypeByID(aDb, rawUpdate[4])
-            if 'UNKNOWN TYPE' != osType:
-                update['Type'] = osType
-            else:
-                update['Type'] = UnknownSubstance.unknown('UNKNOWN TYPE',
-                                                          update['Path'])
-
-            osLanguage = SQLite.getLanguageByID(aDb, rawUpdate[5])
-            if 'UNKNOWN LANGUAGE' != osLanguage:
-                update['Language'] = osLanguage
-            else:
-                update['Language'] = UnknownSubstance.unknown('UNKNOWN LANGUAGE',
-                                                              update['Path'])
-
-            update['Date'] = SQLite.getDateByID(aDb, rawUpdate[1])
-
-            updates.append(update)
-
-        return updates
-
-    @staticmethod
-    def getDateByID(aDb, aId):
-
-        d = db.sqliteDB.getFrom(aDb, 'Dates', 'Date', {'id': aId})[0]
-        return core.dates.toDate(d)
-
-    @staticmethod
-    def getPathByID(aDb, aId):
-
-        return db.sqliteDB.getFrom(aDb, 'Paths', 'Path', {'id': aId})[0]
-
-    @staticmethod
-    def getVersionByID(aDb, aId):
-
-        return db.sqliteDB.getFrom(aDb, 'Versions', 'Version', {'id': aId})[0]
-
-    @staticmethod
-    def getTypeByID(aDb, aId):
-
-        return db.sqliteDB.getFrom(aDb, 'Types', 'Type', {'id': aId})[0]
-
-    @staticmethod
-    def getLanguageByID(aDb, aId):
-
-        return db.sqliteDB.getFrom(aDb, 'Languages', 'Language', {'id': aId})[0]
-
-    @staticmethod
     def getSetSubstanceID(aDb, aTable, aRowName, aItem):
 
         substanceID = db.sqliteDB.getFrom(aDb, aTable, 'id', {aRowName: aItem})
 
-        if len(substanceID):
+        if substanceID:
             return substanceID[0]
 
         db.sqliteDB.insertInto(aDb, aTable, aRowName, aItem)
@@ -447,9 +420,7 @@ class MongoDB(Storage):
 
     def get(self, aQuery, aLimit=-1, aSkip=0, aSort=None):
 
-        for key in aQuery.keys():
-            if key not in Updates.validKeys:
-                raise Exception('Unknown field {}'.format(key))
+        Storage.get(self, aQuery, aLimit, aSkip, aSort)
 
         for key in aQuery.keys():
             if 'Date' == key:

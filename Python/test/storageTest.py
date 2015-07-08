@@ -2,6 +2,7 @@ import sys
 import json
 import core.dates
 import db.sqliteDB
+from datetime import datetime, date
 from core.updates import Updates
 from unittest import main, TestCase
 from db.mongoDB import MongoDBClient
@@ -34,19 +35,21 @@ class TestSequenceFunctions(TestCase):
     def setUp(self):
         self.mJsonHelper = JsonHelper(__file__)
 
-        dataBase = self.mJsonHelper.GetTestRoot('sqliteDB')['fileName']
-        tables = self.mJsonHelper.GetTestRoot('sqliteDB')['tables']
-        self.mSqliteDB = db.sqliteDB.connect(dataBase, False)
-        for table in tables:
-            if db.sqliteDB.isTableExist(self.mSqliteDB, table):
-                db.sqliteDB.dropTable(self.mSqliteDB, table)
+        if 'SQLite' in TestSequenceFunctions.storages:
+            dataBase = self.mJsonHelper.GetTestRoot('sqliteDB')['fileName']
+            tables = self.mJsonHelper.GetTestRoot('sqliteDB')['tables']
+            self.mSqliteDB = db.sqliteDB.connect(dataBase, False)
+            for table in tables:
+                if db.sqliteDB.isTableExist(self.mSqliteDB, table):
+                    db.sqliteDB.dropTable(self.mSqliteDB, table)
 
-        self.mMongoDataBase = self.mJsonHelper.GetTestRoot('MongoClient')['dataBase']
-        self.mMongoTable = self.mJsonHelper.GetTestRoot('MongoClient')['table']
-        self.mMongoHostAndPort = self.mJsonHelper.GetTestRoot('MongoClient')['HostAndPort']
-        ServerSelectionTimeoutMS = self.mJsonHelper.GetTestRoot('MongoClient')['ServerSelectionTimeoutMS']
-        self.mMongoDB = MongoDBClient(self.mMongoHostAndPort, ServerSelectionTimeoutMS)
-        self.mMongoDB.dropCollectionsInDB(self.mMongoDataBase, self.mMongoTable)
+        if 'MongoDB' in TestSequenceFunctions.storages:
+            self.mMongoDataBase = self.mJsonHelper.GetTestRoot('MongoClient')['dataBase']
+            self.mMongoTable = self.mJsonHelper.GetTestRoot('MongoClient')['table']
+            self.mMongoHostAndPort = self.mJsonHelper.GetTestRoot('MongoClient')['HostAndPort']
+            ServerSelectionTimeoutMS = self.mJsonHelper.GetTestRoot('MongoClient')['ServerSelectionTimeoutMS']
+            self.mMongoDB = MongoDBClient(self.mMongoHostAndPort, ServerSelectionTimeoutMS)
+            self.mMongoDB.dropCollectionsInDB(self.mMongoDataBase, self.mMongoTable)
 
     def tearDown(self):
         db.sqliteDB.disconnect(self.mSqliteDB)
@@ -180,14 +183,22 @@ class TestSequenceFunctions(TestCase):
 
                                 storage = getStorage('file.uif')
                                 getQuery = testData['getQuery']
+                                limit = testData['limit']
+                                skip = testData['skip']
+                                sort = testData['sort']
                                 try:
-                                    updates = storage.get(getQuery)
-                                    expectedUpdates = testData['expectedUpdates']
-                                    self.assertEqual(len(expectedUpdates), len(updates))
+                                    updates = storage.get(getQuery, limit, skip, sort)
                                     for i in range(0, len(updates)):
+                                        self.assertTrue(isinstance(updates[i]['Date'], date))
                                         updates[i]['Date'] = core.dates.toString(updates[i]['Date'])
-                                    for up in expectedUpdates:
-                                        self.assertTrue(up in updates)
+                                    expectedUpdates = testData['expectedUpdates']
+
+                                    if sort:
+                                        self.assertEqual(expectedUpdates, updates)
+                                    else:
+                                        self.assertEqual(len(expectedUpdates), len(updates))
+                                        for up in expectedUpdates:
+                                            self.assertTrue(up in updates)
                                 except:
                                     self.assertEqual(testData['expectedUpdates'], '{}'.format(sys.exc_info()[1]))
 
@@ -197,14 +208,22 @@ class TestSequenceFunctions(TestCase):
 
                     storage = SQLite(self.mSqliteDB)
                     getQuery = testData['getQuery']
+                    limit = testData['limit']
+                    skip = testData['skip']
+                    sort = testData['sort']
                     try:
-                        updates = storage.get(getQuery)
-                        expectedUpdates = testData['expectedUpdates']
-                        self.assertEqual(len(expectedUpdates), len(updates))
+                        updates = storage.get(getQuery, limit, skip, sort)
                         for i in range(0, len(updates)):
+                            self.assertTrue(isinstance(updates[i]['Date'], date))
                             updates[i]['Date'] = core.dates.toString(updates[i]['Date'])
-                        for up in expectedUpdates:
-                            self.assertTrue(up in updates)
+                        expectedUpdates = testData['expectedUpdates']
+
+                        if sort:
+                            self.assertEqual(expectedUpdates, updates)
+                        else:
+                            self.assertEqual(len(expectedUpdates), len(updates))
+                            for up in expectedUpdates:
+                                self.assertTrue(up in updates)
                     except:
                         self.assertEqual(testData['expectedUpdates'], '{}'.format(sys.exc_info()[1]))
 
@@ -214,14 +233,21 @@ class TestSequenceFunctions(TestCase):
 
                     storage = MongoDB(self.mMongoHostAndPort, self.mMongoDataBase, self.mMongoTable)
                     getQuery = testData['getQuery']
+                    limit = testData['limit']
+                    skip = testData['skip']
+                    sort = testData['sort']
                     try:
-                        updates = storage.get(getQuery)
-                        expectedUpdates = testData['expectedUpdates']
-                        self.assertEqual(len(expectedUpdates), len(updates))
+                        updates = storage.get(getQuery, limit, skip, sort)
                         for i in range(0, len(updates)):
+                            self.assertTrue(isinstance(updates[i]['Date'], datetime))
                             updates[i]['Date'] = core.dates.toString(updates[i]['Date'])
-                        for up in expectedUpdates:
-                            self.assertTrue(up in updates)
+                        expectedUpdates = testData['expectedUpdates']
+                        if sort:
+                            self.assertEqual(expectedUpdates, updates)
+                        else:
+                            self.assertEqual(len(expectedUpdates), len(updates))
+                            for up in expectedUpdates:
+                                self.assertTrue(up in updates)
                     except:
                         self.assertEqual(testData['expectedUpdates'], '{}'.format(sys.exc_info()[1]))
 
