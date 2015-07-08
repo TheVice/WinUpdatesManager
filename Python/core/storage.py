@@ -256,6 +256,8 @@ class SQLite(Storage):
                     statement = '{} ORDER BY {} {}'.format(statement, key, value)
                     break
 
+        statement = '{} LIMIT {} OFFSET {}'.format(statement, aLimit, aSkip)
+
         readResult = db.sqliteDB.readAsync(self.mInit, statement, lambda l: l.fetchall())
 
         if not readResult:
