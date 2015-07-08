@@ -52,7 +52,8 @@ class TestSequenceFunctions(TestCase):
             self.mMongoDB.dropCollectionsInDB(self.mMongoDataBase, self.mMongoTable)
 
     def tearDown(self):
-        db.sqliteDB.disconnect(self.mSqliteDB)
+        if 'SQLite' in TestSequenceFunctions.storages:
+            db.sqliteDB.disconnect(self.mSqliteDB)
 
     def test_getAvalibleVersions(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
@@ -237,6 +238,9 @@ class TestSequenceFunctions(TestCase):
                     skip = testData['skip']
                     sort = testData['sort']
                     try:
+                        if sort:
+                            key = list(sort.keys())[0]
+                            sort = [(key, sort[key])]
                         updates = storage.get(getQuery, limit, skip, sort)
                         for i in range(0, len(updates)):
                             self.assertTrue(isinstance(updates[i]['Date'], datetime))
@@ -308,6 +312,8 @@ class TestSequenceFunctions(TestCase):
                     storage.getCount({})
 
     def test_uif2SQLiteDB(self):
+        if 'SQLite' not in TestSequenceFunctions.storages:
+            return
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
             SQLite.uif2SQLiteDB(self.mSqliteDB.cursor(), testData['updates'])
@@ -320,6 +326,8 @@ class TestSequenceFunctions(TestCase):
             self.assertEqual(testData['updates'], updates)
 
     def test_uif2MongoDB(self):
+        if 'MongoDB' not in TestSequenceFunctions.storages:
+            return
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
             MongoDB.uif2MongoDB(testData['updates'], self.mMongoDataBase,

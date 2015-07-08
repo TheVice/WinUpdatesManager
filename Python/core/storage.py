@@ -64,31 +64,71 @@ class Uif(Storage):
 
     def get(self, aQuery, aLimit=-1, aSkip=0, aSort=None):
 
+        if aLimit == 0:
+            return []
+
         updates = []
 
-        if not aQuery:
-            return self.mUpdates
+        if aQuery:
+            for update in self.mUpdates:
+                match = True
 
-        for update in self.mUpdates:
-            match = True
+                for key in Updates.validKeys:
+                    if key in aQuery.keys():
+                        if 'Date' == key:
+                            aQuery[key] = core.dates.toDate(aQuery[key])
 
-            for key in Updates.validKeys:
-                if key in aQuery.keys():
-                    if 'Date' == key:
-                        aQuery[key] = core.dates.toDate(aQuery[key])
+                        value = aQuery[key]
 
-                    value = aQuery[key]
-
-                    if isinstance(value, list):
-                        if update[key] not in value:
+                        if isinstance(value, list):
+                            if update[key] not in value:
+                                match = False
+                                break
+                        elif not update[key] == value:
                             match = False
                             break
-                    elif not update[key] == value:
-                        match = False
-                        break
 
-            if match:
-                updates.append(update)
+                if match:
+                    updates.append(update)
+        else:
+            updates.extend(self.mUpdates)
+
+        if aSort:
+            updates = Updates.separateToKnownAndUnknown(updates)
+
+            for key in Updates.validKeys:
+                if key in aSort.keys():
+                    value = aSort[key]
+                    if (isinstance(value, int) and value < 0):
+                        updates['known'].sort(key=lambda up: up[key], reverse=True)
+                    else:
+                        updates['known'].sort(key=lambda up: up[key])
+                    break
+
+            updates['known'].extend(updates['unKnown'])
+            updates = updates['known']
+
+        count = len(updates)
+
+        if aSkip > 0:
+            if aSkip < count:
+                if aLimit > 0:
+                    ups = []
+                    for i in range(aSkip, min(aSkip + aLimit, count)):
+                        ups.append(updates[i])
+                    updates = ups
+                else:
+                    ups = []
+                    for i in range(aSkip, count):
+                        ups.append(updates[i])
+                    updates = ups
+            else:
+                return []
+        elif aLimit > 0:
+            ups = []
+            for i in range(0, min(aLimit, count)):
+                ups.append(updates[i])
+            updates = ups
 
         return updates
 
@@ -167,7 +207,7 @@ class SQLite(Storage):
 
     def get(self, aQuery, aLimit=-1, aSkip=0, aSort=None):
 
-        statement = ('SELECT * FROM Updates'
+        statement = ('SELECT kb_id, Date, Path, Version, Type, Language FROM Updates'
                      ' INNER JOIN KBs ON kb_id LIKE KBs.id'
                      ' INNER JOIN Dates ON date_id LIKE Dates.id'
                      ' INNER JOIN Paths ON path_id LIKE Paths.id'
@@ -202,17 +242,31 @@ class SQLite(Storage):
                     statement = '{} AND {}'.format(statement, subStatement[i])
 
         statement = statement.replace('\\\\', '\\')
+
+        if aSort:
+            for key in Updates.validKeys:
+                if key in aSort.keys():
+                    value = aSort[key]
+                    if 'KB' == key:
+                        key = 'KBs.id'
+                    if (isinstance(value, int) and value < 0):
+                        value = 'DESC'
+                    else:
+                        value = 'ASC'
+                    statement = '{} ORDER BY {} {}'.format(statement, key, value)
+                    break
+
         readResult = db.sqliteDB.readAsync(self.mInit, statement, lambda l: l.fetchall())
 
         if not readResult:
             return []
 
-        kb_num = 7
-        date_num = 9
-        path_num = 11
-        version_num = 13
-        type_num = 15
-        language_num = 17
+        kb_num = 0
+        date_num = 1
+        path_num = 2
+        version_num = 3
+        type_num = 4
+        language_num = 5
 
         updates = []
         for r in readResult:
@@ -245,6 +299,10 @@ class SQLite(Storage):
                                                               update['Path'])
 
             updates.append(update)
+
+        updates = Updates.separateToKnownAndUnknown(updates)
+        updates['known'].extend(updates['unKnown'])
+        updates = updates['known']
 
         return updates
 
@@ -445,7 +503,14 @@ class MongoDB(Storage):
             aLimit = None
 
         projection = {'_id': 0}
-        return self.mDbClient.getItemsFromDB(self.mDataBase, self.mTable, query, projection, aSkip, aLimit, aSort)
+
+        updates = self.mDbClient.getItemsFromDB(self.mDataBase, self.mTable, query, projection, aSkip, aLimit, aSort)
+
+        updates = Updates.separateToKnownAndUnknown(updates)
+        updates['known'].extend(updates['unKnown'])
+        updates = updates['known']
+
+        return updates
 
     def getCount(self, aQuery):
 
