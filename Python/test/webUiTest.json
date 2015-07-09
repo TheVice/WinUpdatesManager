@@ -1,0 +1,33 @@
+{
+  "TargetTestFile": "webUiTest",
+  "test_decodeQuery": [
+    {"": {}},
+    {"Version,Windows%20XP,Date,2015%2007%2009": {"Version": "Windows XP", "Date": "2015, 07, 09"}},
+    {"Date,2015%2007%2009,Version,Windows%20XP": {"Version": "Windows XP", "Date": "2015, 07, 09"}},
+    {"KB,1": {"KB": 1}},
+    {"KB,1a": {}},
+    {"KB,1,Path,a/b/c,Version,Windows%20XP,Type,x86,Language,ENU,Date,2015%2007%2009":
+      {"KB": 1, "Path": "a/b/c", "Version": "Windows XP", "Type": "x86", "Language": "ENU", "Date": "2015, 07, 09"}},
+    {"Date,2007 1 9": {"Date": "2007, 1, 9"}}
+  ],
+  "test_encodeQuery": [
+    {"": {}},
+    {"Version,Windows%20XP,Date,2015%2007%2009": {"Version": "Windows XP", "Date": "2015, 07, 09"}},
+    {"KB,1": {"KB": 1}},
+    {"KB,1,Path,a/b/c,Version,Windows%20XP,Type,x86,Language,ENU,Date,2015%2007%2009":
+      {"KB": 1, "Path": "a/b/c", "Version": "Windows XP", "Type": "x86", "Language": "ENU", "Date": "2015, 07, 09"}}
+  ],
+  "test_decodeSort": [
+    {"": {}},
+    {"Date,1": {"Date": 1}},
+    {"Date,-1": {"Date": -1}},
+    {"Date,-1a": {"Date": 1}},
+    {"Date,a": {"Date": 1}},
+    {"Date,1a": {"Date": 1}}
+  ],
+  "test_encodeSort": [
+    {"": {}},
+    {"Date,1": {"Date": 1}},
+    {"Date,-1": {"Date": -1}}
+  ]
+}

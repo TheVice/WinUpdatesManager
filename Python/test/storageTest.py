@@ -238,9 +238,6 @@ class TestSequenceFunctions(TestCase):
                     skip = testData['skip']
                     sort = testData['sort']
                     try:
-                        if sort:
-                            key = list(sort.keys())[0]
-                            sort = [(key, sort[key])]
                         updates = storage.get(getQuery, limit, skip, sort)
                         for i in range(0, len(updates)):
                             self.assertTrue(isinstance(updates[i]['Date'], datetime))

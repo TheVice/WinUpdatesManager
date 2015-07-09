@@ -52,31 +52,109 @@ class Main(Page):
         return template.format(self.header(), self.footer())
 
     @cherrypy.expose
-    def view_updates(self, aQuery={}, aLimit=-1, aSkip=0, aSort=None):
+    def view_updates(self, aQuery='', aLimit=15, aSkip=0, aSort=''):
 
-        updates = self.mStorage.get(aQuery, aLimit=15)
+        if (not self.mVersions or
+            None == self.mVersions[0] or
+            not self.mTypes or
+            None == self.mTypes[0] or
+            not self.mLanguages or
+            None == self.mLanguages[0]):
 
-        str_list = []
+            template = (
+                '{}'
+                'There are no valid data in the storage.'
+                '{}'
+            )
+        else:
+            aQuery = Main.decodeQuery(aQuery)
+            aSort = Main.decodeSort(aSort)
 
-        str_list.append('<table border="1"><tr>')
-        for head in Updates.validKeys:
-            str_list.append('<th>{}</th>'.format(head))
-        str_list.append('</tr>')
+            try:
+                aLimit = int(aLimit)
+            except:
+                aLimit = 15
 
-        for up in updates:
-            str_list.append('<tr>')
-            up['Date'] = core.dates.toDate(up['Date'])
-            for t in Updates.validKeys:
-                str_list.append('<td>{}</td>'.format(up[t]))
+            try:
+                aSkip = int(aSkip)
+            except:
+                aSkip = 0
 
+            count = self.mStorage.getCount(aQuery)
+            updates = self.mStorage.get(aQuery, aLimit, aSkip, aSort)
+
+            if 'Date' in aQuery.keys():
+                aQuery['Date'] = core.dates.toString(aQuery['Date'])
+
+            aQuery = Main.encodeQuery(aQuery)
+
+            template = (
+                '<a href=\'/view_updates?'
+                'aQuery=\'{}\'&amp;'
+                'aSkip={}&amp;'
+                'aLimit={}'
+                '&amp;aSort=\'{}\''
+                '\'>{}</a>'
+                '<br>'
+            )
+
+            str_list = []
+
+            str_list.append('<table border="1"><tr>')
+            for head in Updates.validKeys:
+                subTemplate = Main.normalizeQuery(template, aQuery)
+                if head in aSort.keys():
+                    sort = {head: -1 * aSort[head]}
+                else:
+                    sort = {head: -1}
+                sort = Main.encodeSort(sort)
+                subTemplate = Main.normalizeSort(subTemplate, sort)
+                subTemplate = subTemplate.format(0, aLimit, head)
+
+                str_list.append('<th>{}</th>'.format(subTemplate))
             str_list.append('</tr>')
-        str_list.append('</table>')
 
-        template = (
-            '{}'
-            '{}'
-            '{}'
-        )
+            aSort = Main.encodeSort(aSort)
+
+            for up in updates:
+                str_list.append('<tr>')
+                up['Date'] = core.dates.toDate(up['Date'])
+                for key in Updates.validKeys:
+                    if isinstance(up[key], dict):
+                        str_list.append('<td>{}</td>'.format(up[key]))
+                        continue
+
+                    if key == 'Date':
+                        query = {key: core.dates.toString(up[key])}
+                    else:
+                        query = {key: up[key]}
+
+                    query = Main.encodeQuery(query)
+                    subTemplate = Main.normalizeQuery(template, query)
+                    subTemplate = Main.normalizeSort(subTemplate, aSort)
+                    subTemplate = subTemplate.format(0, aLimit, up[key])
+
+                    str_list.append('<td>{}</td>'.format(subTemplate))
+                str_list.append('</tr>')
+            str_list.append('</table>')
+
+            if 0 < aSkip:
+                subTemplate = Main.normalizeQuery(template, aQuery)
+                subTemplate = Main.normalizeSort(subTemplate, aSort)
+                subTemplate = subTemplate.format(aSkip - aLimit, aLimit, 'Back')
+                str_list.append(subTemplate)
+
+            if aSkip + aLimit < count:
+                subTemplate = Main.normalizeQuery(template, aQuery)
+                subTemplate = Main.normalizeSort(subTemplate, aSort)
+                subTemplate = subTemplate.format(aSkip + aLimit, aLimit, 'Forward')
+                str_list.append(subTemplate)
+
+            template = (
+                '{}'
+                '{}'
+                '{}'
+            )
 
         return template.format(self.header(), ''.join(str_list), self.footer())
 
@@ -250,16 +328,115 @@ class Main(Page):
 
         return template.format(self.header(), batchList, self.footer())
 
+    @staticmethod
+    def decodeQuery(aQuery):
 
-conf = {'/global': {'server.socket_host': '127.0.0.1',
-                    'server.socket_port': 8080,
-                    'server.thread_pool': 10}}
+        query = {}
+
+        for key in Updates.validKeys:
+            if key in aQuery:
+                startValue = 1 + aQuery.find(key) + len(key)
+                value = aQuery[startValue:]
+
+                if ',' in value:
+                    value = value[:value.find(',')]
+
+                if 'Date' == key:
+                    if '%20' in value:
+                        value = value.replace('%20', ', ')
+                    elif ' ' in value:
+                        value = value.replace(' ', ', ')
+                else:
+                    value = value.replace('%20', ' ')
+                if 'KB' == key:
+                    try:
+                        value = int(value)
+                    except:
+                        continue
+
+                query[key] = value
+
+        return query
+
+    @staticmethod
+    def encodeQuery(aQuery):
+
+        str_list = []
+        for key in Updates.validKeys:
+            if key in aQuery.keys():
+                value = '{}'.format(aQuery[key])
+                if 'Date' == key:
+                    value = core.dates.toString(value)
+                    value = value.replace(', ', '%20')
+                else:
+                    value = value.replace(' ', '%20')
+                str_list.append('{},{}'.format(key, value))
+                str_list.append(',')
+
+        if str_list:
+            del str_list[len(str_list)-1]
+            return ''.join(str_list)
+        else:
+            return ''
+
+    @staticmethod
+    def decodeSort(aSort):
+
+        sort = {}
+        for key in Updates.validKeys:
+            if key in aSort:
+                startValue = 1 + aSort.find(key) + len(key)
+                value = aSort[startValue:]
+
+                try:
+                    value = int(value)
+                except:
+                    value = 1
+
+                sort[key] = value
+                break
+
+        return sort
+
+    @staticmethod
+    def encodeSort(aSort):
+
+        str_list = []
+        for key in Updates.validKeys:
+            if key in aSort.keys():
+                value = '{}'.format(aSort[key])
+                str_list.append('{},{}'.format(key, value))
+                break
+
+        if str_list:
+            return ''.join(str_list)
+        else:
+            return ''
+
+    @staticmethod
+    def normalizeQuery(aTemplate, aQuery):
+
+        if aQuery == '':
+            return aTemplate.replace('aQuery=\'{}\'&amp;', '')
+        else:
+            return aTemplate.replace('aQuery=\'{}\'&amp;', 'aQuery={}&amp;'.format(aQuery))
+
+    @staticmethod
+    def normalizeSort(aTemplate, aSort):
+
+        if aSort == '':
+            return aTemplate.replace('&amp;aSort=\'{}\'', '')
+        else:
+            return aTemplate.replace('&amp;aSort=\'{}\'', '&amp;aSort={}'.format(aSort))
 
 
 if __name__ == '__main__':
 
     argc = len(sys.argv)
     if argc == 2:
+        conf = {'/global': {'server.socket_host': '127.0.0.1',
+                    'server.socket_port': 8080,
+                    'server.thread_pool': 10}}
         cherrypy.quickstart(Main(core.storage.getStorage(sys.argv[1])),
                                                        config=conf)
     elif argc == 3:

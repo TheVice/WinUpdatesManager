@@ -504,9 +504,21 @@ class MongoDB(Storage):
         if aLimit < 0:
             aLimit = None
 
+        sort = None
+        if aSort:
+            for key in Updates.validKeys:
+                if key in aSort.keys():
+                    value = aSort[key]
+                    if (isinstance(value, int) and value < 0):
+                        value = -1
+                    else:
+                        value = 1
+                    sort = [(key, value)]
+                    break
+
         projection = {'_id': 0}
 
-        updates = self.mDbClient.getItemsFromDB(self.mDataBase, self.mTable, query, projection, aSkip, aLimit, aSort)
+        updates = self.mDbClient.getItemsFromDB(self.mDataBase, self.mTable, query, projection, aSkip, aLimit, sort)
 
         updates = Updates.separateToKnownAndUnknown(updates)
         updates['known'].extend(updates['unKnown'])
