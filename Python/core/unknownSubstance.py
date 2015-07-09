@@ -29,4 +29,4 @@ class UnknownSubstance:
             if value == aValue:
                 return key
 
-        return os.sep + str(aValue) + os.sep
+        return '{0}{1}{0}'.format(os.sep, aValue)

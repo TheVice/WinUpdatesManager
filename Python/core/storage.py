@@ -37,7 +37,7 @@ class Storage:
 
     def __str__(self):
 
-        return str(self.mType)
+        return '{}'.format(self.mType)
 
 
 class Uif(Storage):
@@ -565,7 +565,7 @@ def getStorage(aInit):
                 return Uif(aInit)
             else:
                 extension = os.path.splitext(aInit)[1]
-                if '.uif' == str.lower(extension):
+                if '.uif' == os.path.normcase(extension):
                     return Uif(aInit)
                 else:
                     return SQLite(aInit)

@@ -26,7 +26,7 @@ class TestSequenceFunctions(TestCase):
             try:
                 self.assertEqual(testData[1], core.dates.getDate(testData[0]).day)
             except Exception:
-                self.assertEqual(testData[1], str(sys.exc_info()[1]))
+                self.assertEqual(testData[1], '{}'.format(sys.exc_info()[1]))
 
     def test_toDate(self):
         testsData = self.mJsonHelper.GetTestInputOutputData(sys._getframe().f_code.co_name)
