@@ -1,11 +1,9 @@
 import sys
 import core.kb
 if 2 == sys.version_info[0]:
-    import __builtin__ as builtins
-    from mock import MagicMock
+    from mock import patch
 else:
-    import builtins
-    from unittest.mock import MagicMock
+    from unittest.mock import patch
 from unittest import main, TestCase
 from test.jsonHelper import JsonHelper
 
@@ -45,21 +43,27 @@ class TestSequenceFunctions(TestCase):
     def test_getKBsFromReport(self):
         testsData = self.mJsonHelper.GetTestInputOutputData(sys._getframe().f_code.co_name)
         for testData in testsData:
-            self.assertEqual(testData[1], core.kb.getKBsFromReport(testData[0]))
+            kbs = core.kb.getKBsFromReport(testData[0])
+            expectedKbs = testData[1]
+            self.assertEqual(len(expectedKbs), len(kbs))
+            for kb in kbs:
+                self.assertTrue(kb in expectedKbs)
 
     def test_getKBsFromReportFile(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
-            builtinsOpen = builtins.open
-            builtins.open = MagicMock(return_value=MockReport(testData['mockData']))
-
-            try:
-                self.assertEqual(testData['expectedUpdates'], core.kb.getKBsFromReportFile('reportFile'))
-            except Exception:
-                self.assertEqual('Unexpected error while work with file \'reportFile\' Report is empty',
-                                 '{}'.format(sys.exc_info()[1]))
-
-            builtins.open = builtinsOpen
+            patchName = '__builtin__.open' if 2 == sys.version_info[0] else 'builtins.open'
+            with patch(patchName) as mock_open:
+                mock_open.return_value = MockReport(testData['mockData'])
+                try:
+                    updates = core.kb.getKBsFromReportFile('reportFile')
+                    expectedUpdates = testData['expectedUpdates']
+                    self.assertEqual(len(expectedUpdates), len(updates))
+                    for up in updates:
+                        self.assertTrue(up in expectedUpdates)
+                except Exception:
+                    self.assertEqual('Unexpected error while work with file \'reportFile\' Report is empty',
+                                     '{}'.format(sys.exc_info()[1]))
 
 
 if __name__ == '__main__':

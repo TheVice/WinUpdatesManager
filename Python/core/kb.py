@@ -7,9 +7,6 @@ def getKB(aPath):
     length = len(aPath)
     startKB = aPath.find('KB')
 
-    if startKB == -1:
-        startKB = aPath.find('kb')
-
     if startKB != -1 and startKB + 2 < length:
         startKB += 2
         endKB = startKB
@@ -25,26 +22,27 @@ def getKB(aPath):
 
 def getKBsFromReport(aReport):
 
-    KBs = []
     i = 0
+    KBs = set()
+    length = len(aReport)
 
-    while i < len(aReport):
+    while i < length:
 
         KB = getKB(aReport[i:])
-        if not isinstance(KB, dict) and 0 == KBs.count(KB):
-            KBs.append(KB)
+        if not isinstance(KB, dict):
+            KBs.add(KB)
 
         strKB = 'KB'
         if not isinstance(KB, dict):
-            strKB += str(KB)
+            strKB = '{}{}'.format(strKB, KB)
 
         pos = aReport[i:].find(strKB)
-        if pos < 1:
-            i = len(aReport)
+        if pos < 0:
+            i = length
         else:
             i += pos + len(strKB)
 
-    return KBs
+    return list(KBs)
 
 
 def getKBsFromReportFile(aFileName):

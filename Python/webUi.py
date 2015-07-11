@@ -189,12 +189,9 @@ class Main(Page):
     @cherrypy.expose
     def report_submit(self):
 
-        if (not self.mVersions or
-            None == self.mVersions[0] or
-            not self.mTypes or
-            None == self.mTypes[0] or
-            not self.mLanguages or
-            None == self.mLanguages[0]):
+        if (not len(self.mVersions) or
+            not len(self.mTypes) or
+            not len(self.mLanguages)):
 
             template = (
                 '{}'
@@ -237,7 +234,7 @@ class Main(Page):
                 '</form>'
             )
             template = template.format(''.join(versions), ''.join(types), ''.join(languages))
-            template = template.format('{0}{1}{0}'.format('{}', template))
+            template = '{0}{1}{0}'.format('{}', template)
 
         return template.format(self.header(), self.footer())
 
@@ -291,7 +288,6 @@ class Main(Page):
                     kbs = []
                     for kb in notFoundedKBs:
                         kbs.append(kbTemplate.format(kb))
-                        kbs.append(os.linesep)
 
                     subTemplate = (
                         '<p><ul>'
