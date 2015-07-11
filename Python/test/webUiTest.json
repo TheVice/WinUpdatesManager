@@ -29,5 +29,55 @@
     {"": {}},
     {"Date,1": {"Date": 1}},
     {"Date,-1": {"Date": -1}}
+  ],
+  "test_normalize": [
+    {
+      "template": ["<a href='/view_updates?", "aQuery={}", "&amp;", "aSkip={}", "&amp;", "aLimit={}", "&amp;", "aSort={}", "'>{}</a>", "<br>"],
+      "parameterName": "a={}",
+      "parameter": "",
+      "expectedTemplate": ["<a href='/view_updates?", "aQuery={}", "&amp;", "aSkip={}", "&amp;", "aLimit={}", "&amp;", "aSort={}", "'>{}</a>", "<br>"]
+    },
+    {
+      "template": ["<a href='/view_updates?", "aQuery={}", "&amp;", "aSkip={}", "&amp;", "aLimit={}", "&amp;", "aSort={}", "'>{}</a>", "<br>"],
+      "parameterName": "aQuery={}",
+      "parameter": "",
+      "expectedTemplate": ["<a href='/view_updates?", "aSkip={}", "&amp;", "aLimit={}", "&amp;", "aSort={}", "'>{}</a>", "<br>"]
+    },
+    {
+      "template": ["<a href='/view_updates?", "aQuery={}", "aSkip={}", "&amp;", "aLimit={}", "&amp;", "aSort={}", "'>{}</a>", "<br>"],
+      "parameterName": "aQuery={}",
+      "parameter": "",
+      "expectedTemplate": ["<a href='/view_updates?", "aSkip={}", "&amp;", "aLimit={}", "&amp;", "aSort={}", "'>{}</a>", "<br>"]
+    },
+    {
+      "template": ["<a href='/view_updates?", "aQuery={}"],
+      "parameterName": "aQuery={}",
+      "parameter": "",
+      "expectedTemplate": ["<a href='/view_updates?"]
+    },
+    {
+      "template": ["<a href='/view_updates?", "aQuery={}", "&amp;", "aSkip={}", "&amp;", "aLimit={}", "&amp;", "aSort={}", "'>{}</a>", "<br>"],
+      "parameterName": "a={}",
+      "parameter": "aDate,1",
+      "expectedTemplate": ["<a href='/view_updates?", "aQuery={}", "&amp;", "aSkip={}", "&amp;", "aLimit={}", "&amp;", "aSort={}", "'>{}</a>", "<br>"]
+    },
+    {
+      "template": ["<a href='/view_updates?", "aQuery={}", "&amp;", "aSkip={}", "&amp;", "aLimit={}", "&amp;", "aSort={}", "'>{}</a>", "<br>"],
+      "parameterName": "aQuery={}",
+      "parameter": "aDate,1",
+      "expectedTemplate": ["<a href='/view_updates?", "aQuery=aDate,1", "&amp;", "aSkip={}", "&amp;", "aLimit={}", "&amp;", "aSort={}", "'>{}</a>", "<br>"]
+    },
+    {
+      "template": ["<a href='/view_updates?", "aQuery={}", "aSkip={}", "&amp;", "aLimit={}", "&amp;", "aSort={}", "'>{}</a>", "<br>"],
+      "parameterName": "aQuery={}",
+      "parameter": "aDate,1",
+      "expectedTemplate": ["<a href='/view_updates?", "aQuery=aDate,1", "aSkip={}", "&amp;", "aLimit={}", "&amp;", "aSort={}", "'>{}</a>", "<br>"]
+    },
+    {
+      "template": ["<a href='/view_updates?", "aQuery={}"],
+      "parameterName": "aQuery={}",
+      "parameter": "aDate,1",
+      "expectedTemplate": ["<a href='/view_updates?", "aQuery=aDate,1"]
+    }
   ]
 }

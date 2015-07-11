@@ -88,28 +88,38 @@ class Main(Page):
 
             aQuery = Main.encodeQuery(aQuery)
 
-            template = (
-                '<a href=\'/view_updates?'
-                'aQuery=\'{}\'&amp;'
-                'aSkip={}&amp;'
-                'aLimit={}'
-                '&amp;aSort=\'{}\''
-                '\'>{}</a>'
+            template_list = [
+                '<a href=\'/view_updates?',
+                'aQuery={}',
+                '&amp;',
+                'aSkip={}',
+                '&amp;',
+                'aLimit={}',
+                '&amp;',
+                'aSort={}',
+                '\'>{}</a>',
                 '<br>'
-            )
+            ]
 
             str_list = []
 
             str_list.append('<table border="1"><tr>')
             for head in Updates.validKeys:
-                subTemplate = Main.normalizeQuery(template, aQuery)
                 if head in aSort.keys():
                     sort = {head: -1 * aSort[head]}
                 else:
                     sort = {head: -1}
                 sort = Main.encodeSort(sort)
-                subTemplate = Main.normalizeSort(subTemplate, sort)
-                subTemplate = subTemplate.format(0, aLimit, head)
+
+                subTemplate = []
+                subTemplate.extend(template_list)
+
+                subTemplate = Main.normalize(subTemplate, 'aQuery={}', aQuery)
+                subTemplate = Main.normalize(subTemplate, 'aSkip={}', 0)
+                subTemplate = Main.normalize(subTemplate, 'aLimit={}', aLimit)
+                subTemplate = Main.normalize(subTemplate, 'aSort={}', sort)
+                subTemplate = Main.normalize(subTemplate, '\'>{}</a>', head)
+                subTemplate = ''.join(subTemplate)
 
                 str_list.append('<th>{}</th>'.format(subTemplate))
             str_list.append('</tr>')
@@ -121,42 +131,60 @@ class Main(Page):
                 up['Date'] = core.dates.toDate(up['Date'])
                 for key in Updates.validKeys:
                     if isinstance(up[key], dict):
-                        str_list.append('<td>{}</td>'.format(up[key]))
+                        keys = list(up[key].keys())
+                        if keys:
+                            str_list.append('<td>{}</td>'.format(keys[0]))
                         continue
 
                     if key == 'Date':
                         query = {key: core.dates.toString(up[key])}
                     else:
                         query = {key: up[key]}
-
                     query = Main.encodeQuery(query)
-                    subTemplate = Main.normalizeQuery(template, query)
-                    subTemplate = Main.normalizeSort(subTemplate, aSort)
-                    subTemplate = subTemplate.format(0, aLimit, up[key])
+
+                    subTemplate = []
+                    subTemplate.extend(template_list)
+
+                    subTemplate = Main.normalize(subTemplate, 'aQuery={}', query)
+                    subTemplate = Main.normalize(subTemplate, 'aSkip={}', 0)
+                    subTemplate = Main.normalize(subTemplate, 'aLimit={}', aLimit)
+                    subTemplate = Main.normalize(subTemplate, 'aSort={}', aSort)
+                    subTemplate = Main.normalize(subTemplate, '\'>{}</a>', up[key])
+                    subTemplate = ''.join(subTemplate)
 
                     str_list.append('<td>{}</td>'.format(subTemplate))
                 str_list.append('</tr>')
             str_list.append('</table>')
 
             if 0 < aSkip:
-                subTemplate = Main.normalizeQuery(template, aQuery)
-                subTemplate = Main.normalizeSort(subTemplate, aSort)
-                subTemplate = subTemplate.format(aSkip - aLimit, aLimit, 'Back')
+                subTemplate = []
+                subTemplate.extend(template_list)
+
+                subTemplate = Main.normalize(subTemplate, 'aQuery={}', aQuery)
+                subTemplate = Main.normalize(subTemplate, 'aSkip={}', aSkip - aLimit)
+                subTemplate = Main.normalize(subTemplate, 'aLimit={}', aLimit)
+                subTemplate = Main.normalize(subTemplate, 'aSort={}', aSort)
+                subTemplate = Main.normalize(subTemplate, '\'>{}</a>', 'Back')
+                subTemplate = ''.join(subTemplate)
+
                 str_list.append(subTemplate)
 
             if aSkip + aLimit < count:
-                subTemplate = Main.normalizeQuery(template, aQuery)
-                subTemplate = Main.normalizeSort(subTemplate, aSort)
-                subTemplate = subTemplate.format(aSkip + aLimit, aLimit, 'Forward')
+                subTemplate = []
+                subTemplate.extend(template_list)
+
+                subTemplate = Main.normalize(subTemplate, 'aQuery={}', aQuery)
+                subTemplate = Main.normalize(subTemplate, 'aSkip={}', aSkip + aLimit)
+                subTemplate = Main.normalize(subTemplate, 'aLimit={}', aLimit)
+                subTemplate = Main.normalize(subTemplate, 'aSort={}', aSort)
+                subTemplate = Main.normalize(subTemplate, '\'>{}</a>', 'Forward')
+                subTemplate = ''.join(subTemplate)
+
                 str_list.append(subTemplate)
 
-            template = (
-                '{}'
-                '{}'
-                '{}'
-            )
+            template = '{0}{1}{0}'.format('{}', ''.join(str_list))
 
-        return template.format(self.header(), ''.join(str_list), self.footer())
+        return template.format(self.header(), self.footer())
 
     @cherrypy.expose
     def report_submit(self):
@@ -414,20 +442,20 @@ class Main(Page):
             return ''
 
     @staticmethod
-    def normalizeQuery(aTemplate, aQuery):
+    def normalize(aTemplate, aParameterName, aParameter):
 
-        if aQuery == '':
-            return aTemplate.replace('aQuery=\'{}\'&amp;', '')
-        else:
-            return aTemplate.replace('aQuery=\'{}\'&amp;', 'aQuery={}&amp;'.format(aQuery))
+        if aParameterName in aTemplate:
 
-    @staticmethod
-    def normalizeSort(aTemplate, aSort):
+            i = aTemplate.index(aParameterName)
+            if aParameter == '':
+                if i + 1 < len(aTemplate):
+                    if '&amp;' == aTemplate[i + 1]:
+                        del aTemplate[i + 1]
+                del aTemplate[i]
+            else:
+                aTemplate[i] = aParameterName.format(aParameter)
 
-        if aSort == '':
-            return aTemplate.replace('&amp;aSort=\'{}\'', '')
-        else:
-            return aTemplate.replace('&amp;aSort=\'{}\'', '&amp;aSort={}'.format(aSort))
+        return aTemplate
 
 
 if __name__ == '__main__':

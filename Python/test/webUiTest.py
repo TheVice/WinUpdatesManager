@@ -29,6 +29,16 @@ class TestSequenceFunctions(TestCase):
         for testData in testsData:
             self.assertEqual(testData[0], webUi.Main.encodeSort(testData[1]))
 
+    def test_normalize(self):
+        testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
+        for testData in testsData:
+            template = testData['template']
+            parameterName = testData['parameterName']
+            parameter = testData['parameter']
+            expectedTemplate = testData['expectedTemplate']
+
+            self.assertEqual(expectedTemplate, webUi.Main.normalize(template, parameterName, parameter))
+
 
 if __name__ == '__main__':
 
