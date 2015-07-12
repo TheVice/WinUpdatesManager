@@ -54,12 +54,9 @@ class Main(Page):
     @cherrypy.expose
     def view_updates(self, aQuery='', aLimit=15, aSkip=0, aSort=''):
 
-        if (not self.mVersions or
-            None == self.mVersions[0] or
-            not self.mTypes or
-            None == self.mTypes[0] or
-            not self.mLanguages or
-            None == self.mLanguages[0]):
+        if (not len(self.mVersions) or
+            not len(self.mTypes) or
+            not len(self.mLanguages)):
 
             template = (
                 '{}'
@@ -134,6 +131,8 @@ class Main(Page):
                         keys = list(up[key].keys())
                         if keys:
                             str_list.append('<td>{}</td>'.format(keys[0]))
+                        else:
+                            str_list.append('<td></td>')
                         continue
 
                     if key == 'Date':
@@ -233,7 +232,9 @@ class Main(Page):
                 '<p><input type=submit value=\'Make request\'></p>'
                 '</form>'
             )
-            template = template.format(''.join(versions), ''.join(types), ''.join(languages))
+            template = template.format(
+                ''.join(versions), ''.join(types), ''.join(languages)
+            )
             template = '{0}{1}{0}'.format('{}', template)
 
         return template.format(self.header(), self.footer())
@@ -263,13 +264,17 @@ class Main(Page):
             template = template.format(''.join(kbsText), len(kbs))
 
             updates = []
-            query = {'KB': kbs, 'Version': aVersion, 'Type': aPlatform, 'Language': aLanguage}
+            query = {'KB': kbs, 'Version': aVersion,
+                     'Type': aPlatform, 'Language': aLanguage}
             updates.extend(self.mStorage.get(query))
 
             str_list = []
 
             if updates:
-                str_list.append('<br>Count of updates queried from db - {}'.format(len(updates)))
+                str_list.append(
+                    '<br>Count of updates queried from db - {}'.format(
+                        len(updates))
+                )
 
                 foundedKBs = []
                 for up in updates:
@@ -281,9 +286,14 @@ class Main(Page):
                     str_list.append('<br>Not founded by strict query')
 
                     kbTemplate = (
-                        '<li>{0} - <a href=\'http://support.microsoft.com/KB/{0}\'>support</a>,'
+                        '<li>{0} - '
+                        '<a href=\'http://support.microsoft.com/KB/{0}\'>'
+                        'support'
+                        '</a>,'
                         ' '
-                        '<a href=\'http://www.microsoft.com/en-us/Search/result.aspx?q=KB{0}\'>search</a></li>'
+                        '<a href=\'http://www.microsoft.com/en-us/Search/result.aspx?q=KB{0}\'>'
+                        'search'
+                        '</a></li>'
                     )
                     kbs = []
                     for kb in notFoundedKBs:
@@ -324,7 +334,8 @@ class Main(Page):
             '</datalist>'
             '</p>'
             '<p>'
-            '<input type="checkbox" name="aCopyRequired">Copy updates into %TEMP% before installing<br>'
+            '<input type="checkbox" name="aCopyRequired">'
+            'Copy updates into %TEMP% before installing<br>'
             '</p>'
             '<p><label><u>List of paths</u><br><br>'
             '<textarea name=aReport cols=100 rows=25 required></textarea>'
@@ -338,7 +349,8 @@ class Main(Page):
     @cherrypy.expose
     def process_generation(self, aReport, aRoot, aSwitch, aCopyRequired=False):
 
-        batchList = batchGenerator.generate(aReport.split('\n'), aRoot, aSwitch, aCopyRequired)
+        batchList = batchGenerator.generate(aReport.split('\n'), aRoot,
+                                            aSwitch, aCopyRequired)
 
         template = (
             '{}'
@@ -398,7 +410,7 @@ class Main(Page):
                 str_list.append(',')
 
         if str_list:
-            del str_list[len(str_list)-1]
+            del str_list[len(str_list) - 1]
             return ''.join(str_list)
         else:
             return ''

@@ -30,6 +30,28 @@ class TestSequenceFunctions(TestCase):
         )
         self.assertEqual(referenceTemplate, template)
 
+    def test_view_updates(self):
+        testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
+        for testData in testsData:
+            query = testData['query']
+            limit = testData['limit']
+            skip = testData['skip']
+            sort = testData['sort']
+            referenceTemplate = testData['referenceTemplate']
+
+            with patch('core.storage.os.path.isfile'):
+                with patch('core.storage.os.path.exists'):
+                    patchName = '__builtin__.open' if 2 == sys.version_info[0] else 'builtins.open'
+                    with patch(patchName) as mock_open:
+                        mock_open.return_value = MockFile(testData['updates'])
+
+                        storage = getStorage('file.uif')
+
+                        mainPage = webUi.Main(storage)
+                        template = mainPage.view_updates(query, limit, skip, sort)
+
+                        self.assertEqual(referenceTemplate, template)
+
     def test_report_submit(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
         for testData in testsData:
