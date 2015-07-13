@@ -350,8 +350,8 @@ class TestSequenceFunctions(TestCase):
                     with patch('core.storage.os.path.exists'):
                         patchName = '__builtin__.open' if 2 == sys.version_info[0] else 'builtins.open'
                         with patch(patchName):
-                            storageType = type(getStorage(testData[0]))
-                            self.assertEqual(eval(testData[1]), storageType)
+                            storage = getStorage(testData[0])
+                            self.assertTrue(isinstance(storage, eval(testData[1])))
                             self.assertEqual(testData[1], '{}'.format(getStorage(testData[0])))
                             if 2 != sys.version_info[0]:
                                 with patch('core.storage.sys.version_info') as mock_pyVer:
@@ -361,8 +361,8 @@ class TestSequenceFunctions(TestCase):
             elif testData[0] == 'UIFs':
                 with patch('core.storage.os.path.isdir'):
                     with patch('core.storage.os.path.exists'):
-                        storageType = type(getStorage(testData[0]))
-                        self.assertEqual(eval(testData[1]), storageType)
+                        storage = getStorage(testData[0])
+                        self.assertTrue(isinstance(storage, eval(testData[1])))
                         self.assertEqual(testData[1], '{}'.format(getStorage(testData[0])))
                         if 2 != sys.version_info[0]:
                             with patch('core.storage.sys.version_info') as mock_pyVer:
@@ -372,8 +372,8 @@ class TestSequenceFunctions(TestCase):
             elif testData[0] == 'base.sqlite':
                 with patch('core.storage.os.path.isfile'):
                     with patch('core.storage.os.path.exists'):
-                        storageType = type(getStorage(testData[0]))
-                        self.assertEqual(eval(testData[1]), storageType)
+                        storage = getStorage(testData[0])
+                        self.assertTrue(isinstance(storage, eval(testData[1])))
                         self.assertEqual(testData[1], '{}'.format(getStorage(testData[0])))
                         if 2 != sys.version_info[0]:
                             with patch('core.storage.sys.version_info') as mock_pyVer:
@@ -389,8 +389,8 @@ class TestSequenceFunctions(TestCase):
                     with self.assertRaises(OSError):
                         getStorage(testData[0])
             else:
-                storageType = type(getStorage(testData[0]))
-                self.assertEqual(eval(testData[1]), storageType)
+                storage = getStorage(testData[0])
+                self.assertTrue(isinstance(storage, eval(testData[1])))
                 self.assertEqual(testData[1], '{}'.format(getStorage(testData[0])))
                 if 2 != sys.version_info[0]:
                     with patch('core.storage.sys.version_info') as mock_pyVer:

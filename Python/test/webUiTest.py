@@ -131,7 +131,7 @@ class TestSequenceFunctions(TestCase):
             switch = testData['switch']
             copyRequired = testData['copyRequired']
             referenceGenerate = testData['referenceGenerate']
-            referenceGenerate = referenceGenerate.replace('os.linesep', os.linesep)
+
             getStorage = MagicMock()
             mainPage = webUi.Main(getStorage())
             generate = mainPage.process_generation(lines, root, switch, copyRequired)

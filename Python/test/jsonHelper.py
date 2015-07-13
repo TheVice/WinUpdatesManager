@@ -10,13 +10,11 @@ class JsonHelper:
         pathAndExtention = os.path.splitext(aFileName)
         if '.json' != pathAndExtention[1]:
             aFileName = '{}.json'.format(pathAndExtention[0])
-
         inputFile = open(aFileName, 'r')
         fileContent = inputFile.read()
-        if os.name != 'nt':
-            fileContent = fileContent.replace('\\r', '')
         self.mData = json.loads(fileContent)
         inputFile.close()
+        self.mData = JsonHelper.MakeDataPlatformIndependence(self.mData)
 
     def __str__(self):
 
@@ -50,8 +48,6 @@ class JsonHelper:
     def GetSting(self, aTestName, aVariableName):
 
         data = self.GetTestVariable(aTestName, aVariableName)
-        if 2 == sys.version_info[0]:
-            data = data.encode('utf-8')
         if not isinstance(data, str):
             raise TypeError('\'{}\' at \'{}\' is not a String'.format(aVariableName, aTestName))
         return data
@@ -62,3 +58,20 @@ class JsonHelper:
         if not isinstance(data, int):
             raise TypeError('\'{}\' at \'{}\' is not an Integer'.format(aVariableName, aTestName))
         return data
+
+    @staticmethod
+    def MakeDataPlatformIndependence(aData):
+
+        if isinstance(aData, dict):
+            for key in aData.keys():
+                aData[key] = JsonHelper.MakeDataPlatformIndependence(aData[key])
+        elif isinstance(aData, list):
+            for i in range(0, len(aData)):
+                aData[i] = JsonHelper.MakeDataPlatformIndependence(aData[i])
+        elif isinstance(aData, str):
+            aData = aData.replace('os.linesep', os.linesep)
+        elif 2 == sys.version_info[0] and isinstance(aData, unicode):
+            aData = aData.encode('utf-8')
+            aData = JsonHelper.MakeDataPlatformIndependence(aData)
+
+        return aData

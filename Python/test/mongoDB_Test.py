@@ -261,7 +261,7 @@ class TestSequenceFunctions(TestCase):
                     self.assertTrue(table in tables)
 
             except:
-                self.assertEqual(testData['expectedTables'], '{}'.format(sys.exc_info()[1]))
+                self.assertTrue('{}'.format(sys.exc_info()[1]) in testData['expectedTables'])
 
     def test_aggregate(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)

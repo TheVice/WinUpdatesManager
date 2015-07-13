@@ -812,7 +812,7 @@
       "dataBase": null,
       "tablesToCreate": null,
       "tablesToDrop": null,
-      "expectedTables": "name must be an instance of str"
+      "expectedTables": ["name must be an instance of str", "name must be an instance of basestring"]
     }
   ],
   "test_aggregate": [

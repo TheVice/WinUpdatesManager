@@ -1,3 +1,4 @@
+import sys
 from datetime import datetime, date
 
 
@@ -38,6 +39,8 @@ def toDate(aDate):
             aDate[i] = toDate(aDate[i])
     elif isinstance(aDate, str):
         return datetime.strptime(aDate, '%Y, %m, %d').date()
+    elif 2 == sys.version_info[0] and isinstance(aDate, unicode):
+        aDate = toDate(aDate.encode('utf-8'))
     elif isinstance(aDate, datetime):
         return aDate.date()
     return aDate
@@ -50,6 +53,8 @@ def toString(aDate):
             aDate[i] = toString(aDate[i])
     elif isinstance(aDate, date) or isinstance(aDate, datetime):
         return '{}, {}, {}'.format(aDate.year, aDate.month, aDate.day)
+    elif 2 == sys.version_info[0] and isinstance(aDate, unicode):
+        aDate = toString(aDate.encode('utf-8'))
     return aDate
 
 
@@ -60,6 +65,8 @@ def toDateTime(aDate):
             aDate[i] = toDateTime(aDate[i])
     elif isinstance(aDate, str):
         return datetime.strptime(aDate, '%Y, %m, %d')
+    elif 2 == sys.version_info[0] and isinstance(aDate, unicode):
+        aDate = toDateTime(aDate.encode('utf-8'))
     elif isinstance(aDate, date):
         return datetime(aDate.year, aDate.month, aDate.day)
     return aDate
