@@ -65,11 +65,21 @@ class JsonHelper:
         if isinstance(aData, dict):
             for key in aData.keys():
                 aData[key] = JsonHelper.MakeDataPlatformIndependence(aData[key])
+            newDict = {}
+            for key in aData.keys():
+                newKey = JsonHelper.MakeDataPlatformIndependence(key)
+                newDict[newKey] = aData[key]
+            aData = newDict
         elif isinstance(aData, list):
             for i in range(0, len(aData)):
                 aData[i] = JsonHelper.MakeDataPlatformIndependence(aData[i])
         elif isinstance(aData, str):
             aData = aData.replace('os.linesep', os.linesep)
+            if os.name != 'nt':
+                from string import ascii_letters
+                for i in list(ascii_letters):
+                    aData = aData.replace('{}:\\'.format(i), '{0}media_{1}{0}'.format(os.sep, i))
+                aData = aData.replace('\\', os.sep)
         elif 2 == sys.version_info[0] and isinstance(aData, unicode):
             aData = aData.encode('utf-8')
             aData = JsonHelper.MakeDataPlatformIndependence(aData)

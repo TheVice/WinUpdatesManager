@@ -66,7 +66,8 @@ class TestSequenceFunctions(TestCase):
                 with patch('updates2Package.os.path.isfile') as mock_isfile:
                     mock_isfile.return_value=True
 
-                    self.assertEqual([testData[1]], updates2Package.getFullPath2UnknownUpdatesAtFolder('A:\\'))
+                    rootPath = self.mJsonHelper.GetTestRoot('rootPath')
+                    self.assertEqual([testData[1]], updates2Package.getFullPath2UnknownUpdatesAtFolder(rootPath))
 
     def test_relPaths2Full(self):
 

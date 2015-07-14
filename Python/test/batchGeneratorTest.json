@@ -6,14 +6,14 @@
       "strNumber": 2,
       "switch": "/quiet",
       "copyRequired": true,
-      "referenceTemplate": "\r\n:UP2\r\nIF NOT EXIST \"1.txt\" GOTO N2\r\necho Installing 1.txt UP2\r\ncopy \"1.txt\" \"%TEMP%\\1.txt\" /Y\r\n\"%TEMP%\\1.txt\" /quiet\r\nGOTO Y2\r\n\r\n:N2\r\necho File 1.txt not present.\r\necho Please change media and press any key...\r\nPAUSE > nul:\r\nGOTO UP2\r\n:Y2\r\n\r\n"
+      "referenceTemplate": "os.linesep:UP2os.linesepIF NOT EXIST \"1.txt\" GOTO N2os.linesepecho Installing 1.txt UP2os.linesepcopy \"1.txt\" \"%TEMP%\\1.txt\" /Yos.linesep\"%TEMP%\\1.txt\" /quietos.linesepGOTO Y2os.linesepos.linesep:N2os.linesepecho File 1.txt not present.os.linesepecho Please change media and press any key...os.linesepPAUSE > nul:os.linesepGOTO UP2os.linesep:Y2os.linesepos.linesep"
     },
     {
       "path": "1.txt",
       "strNumber": 2,
       "switch": "/quiet",
       "copyRequired": false,
-      "referenceTemplate": "\r\n:UP2\r\nIF NOT EXIST \"1.txt\" GOTO N2\r\necho Installing 1.txt UP2\r\n\"1.txt\" /quiet\r\nGOTO Y2\r\n\r\n:N2\r\necho File 1.txt not present.\r\necho Please change media and press any key...\r\nPAUSE > nul:\r\nGOTO UP2\r\n:Y2\r\n\r\n"
+      "referenceTemplate": "os.linesep:UP2os.linesepIF NOT EXIST \"1.txt\" GOTO N2os.linesepecho Installing 1.txt UP2os.linesep\"1.txt\" /quietos.linesepGOTO Y2os.linesepos.linesep:N2os.linesepecho File 1.txt not present.os.linesepecho Please change media and press any key...os.linesepPAUSE > nul:os.linesepGOTO UP2os.linesep:Y2os.linesepos.linesep"
     }
   ],
   "test_generate": [
@@ -22,28 +22,28 @@
       "root": null,
       "switch": "/quiet /nobackup",
       "copyRequired": true,
-      "referenceGenerate": "@echo off\r\nif [%1] == [] GOTO UP1\r\nGOTO %1\r\n\r\n:UP1\r\nIF NOT EXIST \"update.exe\" GOTO N1\r\necho Installing update.exe UP1\r\ncopy \"update.exe\" \"%TEMP%\\update.exe\" /Y\r\n\"%TEMP%\\update.exe\" /quiet /nobackup\r\nGOTO Y1\r\n\r\n:N1\r\necho File update.exe not present.\r\necho Please change media and press any key...\r\nPAUSE > nul:\r\nGOTO UP1\r\n:Y1\r\n\r\n"
+      "referenceGenerate": "@echo offos.linesepif [%1] == [] GOTO UP1os.linesepGOTO %1os.linesepos.linesep:UP1os.linesepIF NOT EXIST \"update.exe\" GOTO N1os.linesepecho Installing update.exe UP1os.linesepcopy \"update.exe\" \"%TEMP%\\update.exe\" /Yos.linesep\"%TEMP%\\update.exe\" /quiet /nobackupos.linesepGOTO Y1os.linesepos.linesep:N1os.linesepecho File update.exe not present.os.linesepecho Please change media and press any key...os.linesepPAUSE > nul:os.linesepGOTO UP1os.linesep:Y1os.linesepos.linesep"
     },
     {
       "lines": ["update.exe"],
       "root": "Z:\\",
       "switch": "/quiet /nobackup",
       "copyRequired": true,
-      "referenceGenerate": "@echo off\r\nif [%1] == [] GOTO UP1\r\nGOTO %1\r\n\r\n:UP1\r\nIF NOT EXIST \"Z:\\update.exe\" GOTO N1\r\necho Installing Z:\\update.exe UP1\r\ncopy \"Z:\\update.exe\" \"%TEMP%\\update.exe\" /Y\r\n\"%TEMP%\\update.exe\" /quiet /nobackup\r\nGOTO Y1\r\n\r\n:N1\r\necho File Z:\\update.exe not present.\r\necho Please change media and press any key...\r\nPAUSE > nul:\r\nGOTO UP1\r\n:Y1\r\n\r\n"
+      "referenceGenerate": "@echo offos.linesepif [%1] == [] GOTO UP1os.linesepGOTO %1os.linesepos.linesep:UP1os.linesepIF NOT EXIST \"Z:\\update.exe\" GOTO N1os.linesepecho Installing Z:\\update.exe UP1os.linesepcopy \"Z:\\update.exe\" \"%TEMP%\\update.exe\" /Yos.linesep\"%TEMP%\\update.exe\" /quiet /nobackupos.linesepGOTO Y1os.linesepos.linesep:N1os.linesepecho File Z:\\update.exe not present.os.linesepecho Please change media and press any key...os.linesepPAUSE > nul:os.linesepGOTO UP1os.linesep:Y1os.linesepos.linesep"
     },
         {
       "lines": ["update.exe"],
       "root": null,
       "switch": "/quiet /nobackup",
       "copyRequired": false,
-      "referenceGenerate": "@echo off\r\nif [%1] == [] GOTO UP1\r\nGOTO %1\r\n\r\n:UP1\r\nIF NOT EXIST \"update.exe\" GOTO N1\r\necho Installing update.exe UP1\r\n\"update.exe\" /quiet /nobackup\r\nGOTO Y1\r\n\r\n:N1\r\necho File update.exe not present.\r\necho Please change media and press any key...\r\nPAUSE > nul:\r\nGOTO UP1\r\n:Y1\r\n\r\n"
+      "referenceGenerate": "@echo offos.linesepif [%1] == [] GOTO UP1os.linesepGOTO %1os.linesepos.linesep:UP1os.linesepIF NOT EXIST \"update.exe\" GOTO N1os.linesepecho Installing update.exe UP1os.linesep\"update.exe\" /quiet /nobackupos.linesepGOTO Y1os.linesepos.linesep:N1os.linesepecho File update.exe not present.os.linesepecho Please change media and press any key...os.linesepPAUSE > nul:os.linesepGOTO UP1os.linesep:Y1os.linesepos.linesep"
     },
     {
       "lines": ["update.exe"],
       "root": "Z:\\",
       "switch": "/quiet /nobackup",
       "copyRequired": false,
-      "referenceGenerate": "@echo off\r\nif [%1] == [] GOTO UP1\r\nGOTO %1\r\n\r\n:UP1\r\nIF NOT EXIST \"Z:\\update.exe\" GOTO N1\r\necho Installing Z:\\update.exe UP1\r\n\"Z:\\update.exe\" /quiet /nobackup\r\nGOTO Y1\r\n\r\n:N1\r\necho File Z:\\update.exe not present.\r\necho Please change media and press any key...\r\nPAUSE > nul:\r\nGOTO UP1\r\n:Y1\r\n\r\n"
+      "referenceGenerate": "@echo offos.linesepif [%1] == [] GOTO UP1os.linesepGOTO %1os.linesepos.linesep:UP1os.linesepIF NOT EXIST \"Z:\\update.exe\" GOTO N1os.linesepecho Installing Z:\\update.exe UP1os.linesep\"Z:\\update.exe\" /quiet /nobackupos.linesepGOTO Y1os.linesepos.linesep:N1os.linesepecho File Z:\\update.exe not present.os.linesepecho Please change media and press any key...os.linesepPAUSE > nul:os.linesepGOTO UP1os.linesep:Y1os.linesepos.linesep"
     }
   ]
 }

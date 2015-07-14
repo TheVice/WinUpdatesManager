@@ -30,8 +30,8 @@ templateWithOutCopy = (
 
 templateWithCopy = templateWithOutCopy.replace(
     '\"{1}\" {2}{3}',
-    'copy \"{1}\" "%TEMP%\{4}" /Y{3}'
-    '\"%TEMP%\{4}\" {2}{3}'
+    'copy \"{1}\" "%TEMP%{5}{4}" /Y{3}'
+    '\"%TEMP%{5}{4}\" {2}{3}'
 )
 
 
@@ -47,6 +47,7 @@ def batchTemplate(aPath, aStrNumber, aSwitch, aCopyRequired):
     strList = strList.replace('{3}', os.linesep)
     if aCopyRequired:
         strList = strList.replace('{4}', os.path.split(aPath)[1])
+        strList = strList.replace('{5}', os.sep)
     return strList
 
 

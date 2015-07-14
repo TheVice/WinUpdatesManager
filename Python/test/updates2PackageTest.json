@@ -92,6 +92,7 @@
     {"WindowsXP-Silverlight-x86.exe": ["Unable to detect language: WindowsXP-Silverlight-x86.exe", "\n"]},
     {"WindowsXP-Silverlight-x86-ENU.exe": []}
   ],
+  "rootPath": "A:\\",
   "test_getFullPath2UnknownUpdatesAtFolder": [
     {"Windows8.1-KB2904266-x64.msu": "A:\\Windows8.1-KB2904266-x64.msu"},
     {"Windows8.1-KB2904266-x86.msu": "A:\\Windows8.1-KB2904266-x86.msu"},
