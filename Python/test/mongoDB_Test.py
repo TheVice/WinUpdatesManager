@@ -18,8 +18,10 @@ class TestSequenceFunctions(TestCase):
         self.mServerSelectionTimeoutMS = self.mJsonHelper.GetInteger('MongoClient', 'ServerSelectionTimeoutMS')
         self.mDataBase = self.mJsonHelper.GetSting('MongoClient', 'dataBase')
         self.mTable = self.mJsonHelper.GetSting('MongoClient', 'table')
-        self.mItemsForTest = self.mJsonHelper.GetArray('MongoClient', 'itemsForTest')
-        self.mItemsForTest = MongoDBClient.addObjectIdFieldAtCollection(self.mItemsForTest)
+        itemsForTest = self.mJsonHelper.GetArray('MongoClient', 'itemsForTest')
+        for i in itemsForTest:
+            i['_id'] = ObjectId(i['_id'])
+        self.mItemsForTest = itemsForTest
 
         self.mDbClient = MongoDBClient(self.mHostAndPort)
         self.mDbClient.dropDB(self.mDataBase)
@@ -51,7 +53,7 @@ class TestSequenceFunctions(TestCase):
                                                       testData['limit'], sort)
                 expectedItems = testData['expectedItems']
                 for i in range(0, len(expectedItems)):
-                    if expectedItems[i].get('_id'):
+                    if '_id' in expectedItems[i].keys():
                         expectedItems[i]['_id'] = ObjectId(expectedItems[i]['_id'])
 
                 self.assertEqual(expectedItems, items)
@@ -75,7 +77,7 @@ class TestSequenceFunctions(TestCase):
         for testData in testsData:
             self.mDbClient.dropCollectionsInDB(self.mDataBase, self.mTable)
             items = self.mDbClient.getItemsFromDB(self.mDataBase, self.mTable)
-            if [] != testData[1]:
+            if testData[1]:
                 self.assertNotEqual(testData[1], items)
 
             try:
@@ -118,7 +120,7 @@ class TestSequenceFunctions(TestCase):
                 else:
                     query[key] = query[key][0]
 
-            if len(query.keys()) > 1:
+            if len(list(query.keys())) > 1:
                 newQuery = {}
                 newQuery['$or'] = []
                 for key in query.keys():
@@ -308,7 +310,7 @@ class TestSequenceFunctions(TestCase):
         for testData in testsData:
             items = testData['items']
             for i in items:
-                if i.get('Date'):
+                if 'Date' in i.keys():
                     i['Date'] = core.dates.toDate(i['Date'])
             items = MongoDBClient.addObjectIdFieldAtCollection(items)
             expectedHashes = testData['hashes']
