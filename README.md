@@ -17,10 +17,6 @@ Series of scripts to manage MS DLC from KB913086 and others
    * direct installing by installator or
    * ```pip install cherrypy``` or
    * ```easy_install cherrypy```
-* For coverage view install [coverage](https://pypi.python.org/pypi/coverage/)
-   * direct installing by installator or
-   * ```pip install coverage``` or
-   * ```easy_install coverage```
 
 ###Setup file storage using Ubuntu
 * Install [FuseIso](https://help.ubuntu.com/community/FuseIso)
@@ -152,14 +148,6 @@ Series of scripts to manage MS DLC from KB913086 and others
 * Open cmd.exe, move to Python folder.
 * Type and execute ```python batchGenerator.py <Path to file with path list from updates4Target>```
 * For running ```webUi.py``` you pass only source data(```<Path to uif file>```, ```<Path to MongoDB server>``` or ```<Path to SQLite file>```) and than open in web browser link [http://127.0.0.1:8080](http://127.0.0.1:8080) (by default configuration) where you can generate your batch file by put required file list from queried section.
-
-##Running tests with coverage
-* Open cmd.exe, move to Python folder.
-* Adding <Python Path\Scripts> into the path, for example ```set PATH=%PATH%;C:\Python34\Scripts```
-* Type and execute ```coverage_run.cmd```
-* At Linux (in terminal(console) not at cmd.exe of course) you can set what version (depend of Python version) of coverage do you what to execute, for example:
-   * ```bash coverage_run.sh coverage2```
-   * ```bash coverage_run.sh coverage3```
 
 ##WinUpdatesManager and Windows 10
 * Because in EULA Microsoft say very clear: ```For consumers and small business, Windows 10 delivers automatic updates, with no option to selectively delay or reject individual updates``` that’s why is very small reason for using this project on/with that version of Windows.

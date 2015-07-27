@@ -1,9 +1,0 @@
-{
-  "TargetTestFile": "typesTest",
-  "test_getType": [{"\\middle\\of\\nowhere\\": {"UNKNOWN TYPE": "\\middle\\of\\nowhere\\"}},
-                       {"\\x86\\": "x86"}
-                      ],
-  "test_getPathKey": [{"": "\\\\"},
-                      {"x86": "\\x86\\"}
-                     ]
-}
