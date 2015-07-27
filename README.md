@@ -4,8 +4,58 @@ WinUpdatesManager
 Series of scripts to manage MS DLC from KB913086 and others
 * Support to process data through uif(JSON list) files, [MongoDB](https://www.mongodb.org/) or [SQLite](https://sqlite.org/).
 * Collect data provided to *uif* (Updates Information) files that can be converted to MongoDB or SQLite through accompaniment tools *uif2MongoDB* and *uif2SQLite*.
-* To work through MongoDB installing of [pymongo](https://pypi.python.org/pypi/pymongo/) required.
-* For web UI installing of [cherrypy](https://pypi.python.org/pypi/CherryPy) required.
+
+##Deploying
+
+###Basic
+* Install [Python](https://www.python.org/).
+* To work through MongoDB install [pymongo](https://pypi.python.org/pypi/pymongo/):
+   * direct installing by installator or
+   * ```pip install pymongo``` or
+   * ```easy_install pymongo```
+* For web UI install [cherrypy](https://pypi.python.org/pypi/CherryPy):
+   * direct installing by installator or
+   * ```pip install cherrypy``` or
+   * ```easy_install cherrypy```
+* For coverage view install [coverage](https://pypi.python.org/pypi/coverage/)
+   * direct installing by installator or
+   * ```pip install coverage``` or
+   * ```easy_install coverage```
+
+###Setup file storage using Ubuntu
+* Install [FuseIso](https://help.ubuntu.com/community/FuseIso)
+* Install [mhddfs](https://romanrm.net/mhddfs)
+* Configure [Samba Server](https://help.ubuntu.com/community/Samba/SambaServerGuide) to use ```/srv/samba/share/```
+* At terminal(console) go to folder where iso and updates file present in structure like this:
+```
+├───2013
+├───2014
+├───Addons
+│   └───1213
+│       ├───2877213
+│       │   └───Windows8
+│       │       ├───x64
+│       │       │   └───NEU
+│       │       └───x86
+│       │           └───NEU
+│       ├───2891804
+│       │   ├───Windows7
+│       │   │   ├───x64
+│       │   │   │   └───NEU
+│       │   │   └───x86
+│       │   │       └───NEU
+│       │   ├───Windows8
+│       │   │   ├───x64
+│       │   │   │   └───NEU
+│       │   │   └───x86
+│       │   │       └───NEU
+│       │   └───WindowsVista
+│       │       ├───x64
+│       │       │   └───NEU
+│       │       └───x86
+│       │           └───NEU
+```
+* Type and execute ```sudo bash <path to scripts/manageStorage.sh>```
 
 ##Sample using
 
@@ -45,6 +95,7 @@ Series of scripts to manage MS DLC from KB913086 and others
    * WindowsServer2003-KBXXXXXXX-x86-ENU.exe
    * WindowsServer2003-KBXXXXXXX-x86-RUS.exe
 * After executing updates2Package you got next file system tree:
+```
 ├───Windows7
 │   ├───x64
 │   │   └───NEU
@@ -95,19 +146,23 @@ Series of scripts to manage MS DLC from KB913086 and others
     └───x86
         └───NEU
                 Windows6.0-KBXXXXXXX-x86.msu
+```
 
 ###Using batchGenerator(command line UI) or webUi to generate batch that installing updates
 * Open cmd.exe, move to Python folder.
 * Type and execute ```python batchGenerator.py <Path to file with path list from updates4Target>```
 * For running ```webUi.py``` you pass only source data(```<Path to uif file>```, ```<Path to MongoDB server>``` or ```<Path to SQLite file>```) and than open in web browser link [http://127.0.0.1:8080](http://127.0.0.1:8080) (by default configuration) where you can generate your batch file by put required file list from queried section.
 
-##Running tests with [coverage](https://pypi.python.org/pypi/coverage/)
+##Running tests with coverage
 * Open cmd.exe, move to Python folder.
 * Adding <Python Path\Scripts> into the path, for example ```set PATH=%PATH%;C:\Python34\Scripts```
 * Type and execute ```coverage_run.cmd```
 * At Linux (in terminal(console) not at cmd.exe of course) you can set what version (depend of Python version) of coverage do you what to execute, for example:
    * ```bash coverage_run.sh coverage2```
    * ```bash coverage_run.sh coverage3```
+
+##WinUpdatesManager and Windows 10
+* Because in EULA Microsoft say very clear: ```For consumers and small business, Windows 10 delivers automatic updates, with no option to selectively delay or reject individual updates``` that’s why is very small reason for using this project on/with that version of Windows.
 
 =============
 
