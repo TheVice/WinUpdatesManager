@@ -37,6 +37,12 @@ class TestSequenceFunctions(TestCase):
             self.assertEqual(expectedDate, correctedDate)
             correctedDate = core.dates.toDate([inputDate])
             self.assertEqual([expectedDate], correctedDate)
+            if 2 == sys.version_info[0] and isinstance(inputDate, str):
+                inputDate = unicode(inputDate)
+                correctedDate = core.dates.toDate(inputDate)
+                self.assertEqual(expectedDate, correctedDate)
+                correctedDate = core.dates.toDate([inputDate])
+                self.assertEqual([expectedDate], correctedDate)
 
     def test_toString(self):
         testsData = self.mJsonHelper.GetTestInputOutputData(sys._getframe().f_code.co_name)
@@ -47,6 +53,12 @@ class TestSequenceFunctions(TestCase):
             self.assertEqual(expectedDate, correctedDate)
             correctedDate = core.dates.toString([inputDate])
             self.assertEqual([expectedDate], correctedDate)
+            if 2 == sys.version_info[0] and isinstance(inputDate, str):
+                inputDate = unicode(inputDate)
+                correctedDate = core.dates.toString(inputDate)
+                self.assertEqual(expectedDate, correctedDate)
+                correctedDate = core.dates.toString([inputDate])
+                self.assertEqual([expectedDate], correctedDate)
 
     def test_toDateTime(self):
         testsData = self.mJsonHelper.GetTestInputOutputData(sys._getframe().f_code.co_name)
@@ -57,6 +69,12 @@ class TestSequenceFunctions(TestCase):
             self.assertEqual(expectedDate, correctedDate)
             correctedDate = core.dates.toDateTime([inputDate])
             self.assertEqual([expectedDate], correctedDate)
+            if 2 == sys.version_info[0] and isinstance(inputDate, str):
+                inputDate = unicode(inputDate)
+                correctedDate = core.dates.toDateTime(inputDate)
+                self.assertEqual(expectedDate, correctedDate)
+                correctedDate = core.dates.toDateTime([inputDate])
+                self.assertEqual([expectedDate], correctedDate)
 
 
 if __name__ == '__main__':

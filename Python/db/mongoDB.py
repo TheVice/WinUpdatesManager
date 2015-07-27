@@ -1,7 +1,7 @@
 from hashlib import new
 from sys import exc_info
 from bson import ObjectId
-from pymongo import MongoClient, version_tuple
+from pymongo import MongoClient
 from pymongo.errors import ServerSelectionTimeoutError, DuplicateKeyError
 
 
@@ -69,13 +69,10 @@ class MongoDBClient:
             db = self.mClient[aDB]
             table = db[aTable]
 
-            if version_tuple >= (3, ):
-                if isinstance(aItems, list):
-                    table.insert_many(aItems)
-                else:
-                    table.insert_one(aItems)
+            if isinstance(aItems, list):
+                table.insert_many(aItems)
             else:
-                table.insert(aItems)
+                table.insert_one(aItems)
 
         except:
             raise Exception(exc_info()[1])
@@ -86,24 +83,17 @@ class MongoDBClient:
             db = self.mClient[aDB]
             table = db[aTable]
 
-            if version_tuple >= (3, ):
-                if isinstance(aItems, list):
-                    for item in aItems:
-                        try:
-                            table.insert_one(item)
-                        except DuplicateKeyError:
-                            table.replace_one({'_id': item['_id']}, item)
-                else:
+            if isinstance(aItems, list):
+                for item in aItems:
                     try:
-                        table.insert_one(aItems)
+                        table.insert_one(item)
                     except DuplicateKeyError:
-                        table.replace_one({'_id': aItems['_id']}, aItems)
+                        table.replace_one({'_id': item['_id']}, item)
             else:
-                if isinstance(aItems, list):
-                    for item in aItems:
-                        table.save(item)
-                else:
-                    table.save(aItems)
+                try:
+                    table.insert_one(aItems)
+                except DuplicateKeyError:
+                    table.replace_one({'_id': aItems['_id']}, aItems)
 
         except:
             raise Exception(exc_info()[1])
@@ -114,18 +104,11 @@ class MongoDBClient:
             db = self.mClient[aDB]
             table = db[aTable]
 
-            if version_tuple >= (3, ):
-                if isinstance(aItems, list):
-                    for item in aItems:
-                        table.delete_one(item)
-                else:
-                    table.delete_one(aItems)
+            if isinstance(aItems, list):
+                for item in aItems:
+                    table.delete_one(item)
             else:
-                if isinstance(aItems, list):
-                    for item in aItems:
-                        table.remove(item)
-                else:
-                    table.remove(aItems)
+                table.delete_one(aItems)
 
         except:
             raise Exception(exc_info()[1])

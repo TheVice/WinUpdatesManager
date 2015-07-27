@@ -73,7 +73,6 @@ class TestSequenceFunctions(TestCase):
 
     def test_insertToDB(self):
         testsData = self.mJsonHelper.GetTestInputOutputData(sys._getframe().f_code.co_name)
-        usePymongo3rdVersion = True
         for testData in testsData:
             self.mDbClient.dropCollectionsInDB(self.mDataBase, self.mTable)
             items = self.mDbClient.getItemsFromDB(self.mDataBase, self.mTable)
@@ -81,12 +80,7 @@ class TestSequenceFunctions(TestCase):
                 self.assertNotEqual(testData[1], items)
 
             try:
-                if usePymongo3rdVersion:
-                    self.mDbClient.insertToDB(self.mDataBase, self.mTable, testData[1])
-                else:
-                    with patch('db.mongoDB.version_tuple') as mock_obj:
-                        mock_obj.__ge__ = MagicMock(return_value=False)
-                        self.mDbClient.insertToDB(self.mDataBase, self.mTable, testData[1])
+                self.mDbClient.insertToDB(self.mDataBase, self.mTable, testData[1])
             except:
                 self.assertEqual(testData[0], '{}'.format(sys.exc_info()[1]))
 
@@ -97,11 +91,8 @@ class TestSequenceFunctions(TestCase):
             else:
                 self.assertEqual(testData[1], items)
 
-            usePymongo3rdVersion = not usePymongo3rdVersion
-
     def test_updateInDB(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
-        usePymongo3rdVersion = True
         for testData in testsData:
             self.mDbClient.dropCollectionsInDB(self.mDataBase, self.mTable)
             self.mDbClient.insertToDB(self.mDataBase, self.mTable, testData['itemsToInsert'])
@@ -148,23 +139,15 @@ class TestSequenceFunctions(TestCase):
             expectedItems = testData['expectedItems']
 
             try:
-                if usePymongo3rdVersion:
-                    self.mDbClient.updateInDB(self.mDataBase, self.mTable, existItems)
-                else:
-                    with patch('db.mongoDB.version_tuple') as mock_obj:
-                        mock_obj.__ge__ = MagicMock(return_value=False)
-                        self.mDbClient.updateInDB(self.mDataBase, self.mTable, existItems)
+                self.mDbClient.updateInDB(self.mDataBase, self.mTable, existItems)
 
                 items = self.mDbClient.getItemsFromDB(self.mDataBase, self.mTable, aProjection={'_id': 0})
                 self.assertEqual(expectedItems, items)
             except Exception:
                 self.assertEqual(expectedItems, '{}'.format(sys.exc_info()[1]))
 
-            usePymongo3rdVersion = not usePymongo3rdVersion
-
     def test_deleteFromDB(self):
         testsData = self.mJsonHelper.GetTestRoot(sys._getframe().f_code.co_name)
-        usePymongo3rdVersion = True
         for testData in testsData:
             self.mDbClient.dropCollectionsInDB(self.mDataBase, self.mTable)
             self.mDbClient.insertToDB(self.mDataBase, self.mTable, self.mItemsForTest)
@@ -172,19 +155,12 @@ class TestSequenceFunctions(TestCase):
 
             expectedItems = testData['expectedItems']
             try:
-                if usePymongo3rdVersion:
-                    self.mDbClient.deleteFromDB(self.mDataBase, self.mTable, itemsToDelete)
-                else:
-                    with patch('db.mongoDB.version_tuple') as mock_obj:
-                        mock_obj.__ge__ = MagicMock(return_value=False)
-                        self.mDbClient.deleteFromDB(self.mDataBase, self.mTable, itemsToDelete)
+                self.mDbClient.deleteFromDB(self.mDataBase, self.mTable, itemsToDelete)
 
                 items = self.mDbClient.getItemsFromDB(self.mDataBase, self.mTable, aProjection={'_id': 0})
                 self.assertEqual(expectedItems, items)
             except:
                 self.assertEqual(expectedItems, '{}'.format(sys.exc_info()[1]))
-
-            usePymongo3rdVersion = not usePymongo3rdVersion
 
     def test_dropDB(self):
         dbs = self.mDbClient.getDBs()
