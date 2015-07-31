@@ -61,6 +61,7 @@ def generate(aLines,
 
     for line, i in zip(aLines, range(1, len(aLines) + 1)):
 
+        line = line.replace('\r', '')
         if aRoot:
             line = os.path.join(aRoot, line)
 
