@@ -1,9 +1,11 @@
 from hashlib import new
 from sys import exc_info
-from bson import ObjectId
-from pymongo import MongoClient
-from pymongo.errors import ServerSelectionTimeoutError, DuplicateKeyError
-
+try:
+    from bson import ObjectId
+    from pymongo import MongoClient
+    from pymongo.errors import ServerSelectionTimeoutError, DuplicateKeyError
+except:
+    pass
 
 class MongoDBClient:
 

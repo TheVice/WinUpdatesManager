@@ -40,8 +40,6 @@ if __name__ == '__main__':
         itemsCount = len(storage.get({}))
 
         if 0 < itemsCount:
-            print('At \'{}\' found {} update objects'.format(storagePath, itemsCount))
-
             version = sys.argv[2]
             platform = sys.argv[3]
             language = sys.argv[4]
@@ -59,7 +57,6 @@ if __name__ == '__main__':
                       'Language - {3}{0}'
                       'Path to report - {4}{0}'
                       'KBs - {5}'.format(os.linesep, version, platform, language, pathToReport, KBs))
-
         else:
             print('Not found update objects at {}'.format(storagePath))
 
