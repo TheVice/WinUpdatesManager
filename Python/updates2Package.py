@@ -17,6 +17,7 @@ versions.mVersions['Windows6.0'] = versions.Vista
 versions.mVersions['Windows6.1'] = versions.Seven
 versions.mVersions['Windows8-RT'] = versions.Eight
 versions.mVersions['Windows8.1'] = versions.EightDotOne
+versions.mVersions['Windows10.0'] = versions.Ten
 
 types.mTypes['x86'] = types.x86
 types.mTypes['x64'] = types.x64

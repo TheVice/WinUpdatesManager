@@ -19,6 +19,7 @@ class Versions(UnknownSubstance):
         self.Win2k12 = 'Windows Server 2012'
         self.EightDotOne = 'Windows 8.1'
         self.Win2k12R2 = 'Windows Server 2012 R2'
+        self.Ten = 'Windows 10'
 
         self.WinRT = 'Windows RT'
 
@@ -37,6 +38,7 @@ class Versions(UnknownSubstance):
         versions[os.sep + 'WindowsServer2012' + os.sep] = self.Win2k12
         versions[os.sep + 'Windows8.1' + os.sep] = self.EightDotOne
         versions[os.sep + 'WindowsServer2012R2' + os.sep] = self.Win2k12R2
+        versions[os.sep + 'Windows10' + os.sep] = self.Ten
 
         versions[os.sep + 'WindowsRT' + os.sep] = self.WinRT
 
@@ -55,6 +57,7 @@ class Versions(UnknownSubstance):
         versions[os.sep + 'windowsserver2012' + os.sep] = self.Win2k12
         versions[os.sep + 'windows8.1' + os.sep] = self.EightDotOne
         versions[os.sep + 'windowswerver2012r2' + os.sep] = self.Win2k12R2
+        versions[os.sep + 'windows10' + os.sep] = self.Ten
 
         versions[os.sep + 'windowsrt' + os.sep] = self.WinRT
 
@@ -71,6 +74,7 @@ class Versions(UnknownSubstance):
         versions[os.sep + 'WINDOWSSERVER2012' + os.sep] = self.Win2k12
         versions[os.sep + 'WINDOWS8.1' + os.sep] = self.EightDotOne
         versions[os.sep + 'WINDOWSSERVER2012R2' + os.sep] = self.Win2k12R2
+        versions[os.sep + 'WINDOWS10' + os.sep] = self.Ten
 
         versions[os.sep + 'WINDOWSRT' + os.sep] = self.WinRT
 
