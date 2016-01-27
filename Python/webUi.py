@@ -314,6 +314,44 @@ class Main(Page):
         return template.format(self.header(), self.footer())
 
     @cherrypy.expose
+    def dates_view(self):
+
+        template = (
+            '{}'
+            '<form action=\'process_dates_view\' method=\'post\'>'
+            '<p><label><u>List of paths</u><br><br>'
+            '<textarea name=aPaths cols=100 rows=25 required></textarea>'
+            '</label></p>'
+            '<p><input type=submit value=\'Generate\'></p>'
+            '</form>'
+            '{}')
+
+        return template.format(self.header(), self.footer())
+    
+    @cherrypy.expose
+    def process_dates_view(self, aPaths):
+
+        template = ('{}{}{}')
+        updates = []
+        aPaths = aPaths.split('\r\n')
+        query = {'Path': aPaths}
+        updates.extend(self.mStorage.get(query))
+
+        dates = set()
+        for up in updates:
+            dates.add(up['Date'])
+
+        dates = sorted(dates)
+        str_list = []
+        for d in dates:
+            if d.month < 10:
+                str_list.append('<br><I>{}.0{}</I>'.format(d.year, d.month))
+            else:
+                str_list.append('<br><I>{}.{}</I>'.format(d.year, d.month))
+
+        return template.format(self.header(), ''.join(str_list), self.footer())
+
+    @cherrypy.expose
     def batch_generator(self):
 
         template = (
