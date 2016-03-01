@@ -1,5 +1,5 @@
-#Get-ExecutionPolicy -list
-#Set-ExecutionPolicy RemoteSigned -scope CurrentUser
+# Get-ExecutionPolicy -Scope CurrentUser
+# Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
 Function Generate-MonthYearNames()
 {
@@ -22,12 +22,14 @@ Function Generate-MonthYearNames()
 		{
 			if ($month -lt 10)
 			{
-                $monthYear += ("DLC_0{0}{1}" -f $month, $year)
+				$monthYear += ("DLC_0{0}{1}" -f $month, $year)
+				$monthYear += ("DLC_0{0}_20{1}" -f $month, $year)
 				$monthYear += ("0{0}{1}" -f $month, $year)
 			}
 			else
 			{
-                $monthYear += ("DLC_{0}{1}" -f $month, $year)
+				$monthYear += ("DLC_{0}{1}" -f $month, $year)
+				$monthYear += ("DLC_{0}_20{1}" -f $month, $year)
 				$monthYear += ("{0}{1}" -f $month, $year)
 			}
 		}
@@ -38,41 +40,41 @@ Function Generate-MonthYearNames()
 
 Function Get-PathsToPatches()
 {
-    param($aSrcPath, $aMonthAndYear)
+	param($aSrcPath, $aMonthAndYear)
 
-    [string[]]$fileList = @()
-    [string[]]$folderList = @()
-    $folderList = Get-ChildItem -Path $aSrcPath -Directory -Name
-    ForEach ($my in $aMonthAndYear)
-    {
-    	ForEach ($folder in $folderList)
-    	{
-    		If ($my -eq $folder)
-    		{
-                $pathToFolder = Join-Path -Path $aSrcPath -ChildPath $folder
-                [string[]]$subFileList = @()
-                $subFileList = Get-ChildItem -Path $pathToFolder -Recurse -Name -File
-                
-                For ($j = 0; $j -lt $subFileList.Count; $j++)
-                {
-                    $subFileList[$j] = ".\{0}\{1}" -f $folder, $subFileList[$j]
-                }
+	[string[]]$fileList = @()
+	[string[]]$folderList = @()
+	$folderList = Get-ChildItem -Path $aSrcPath -Directory -Name
+	ForEach ($my in $aMonthAndYear)
+	{
+		ForEach ($folder in $folderList)
+		{
+			If ($my -eq $folder)
+			{
+				$pathToFolder = Join-Path -Path $aSrcPath -ChildPath $folder
+				[string[]]$subFileList = @()
+				$subFileList = Get-ChildItem -Path $pathToFolder -Recurse -Name -File
+				
+				For ($j = 0; $j -lt $subFileList.Count; $j++)
+				{
+					$subFileList[$j] = ".\{0}\{1}" -f $folder, $subFileList[$j]
+				}
 
-                $fileList += $subFileList
-                $fileList += ""
-    		}
-    	}
-    }
+				$fileList += $subFileList
+				$fileList += ""
+			}
+		}
+	}
 
-    $fileList
+	$fileList
 }
 
 
 If($Args.Count -lt 1)
 {
-    Write-Output("Bad Using")
-    Write-Output("Use next (for example):`n ?: <Path where folders with patches located>")
-    Exit
+	Write-Output("Bad Using")
+	Write-Output("Use next (for example): <Path where folders with patches located>")
+	Exit
 }
 
 $sourcePath = $Args[0]
@@ -82,5 +84,5 @@ $sourcePath = $Args[0]
 
 ForEach ($path in $paths)
 {
-    Write-Host $path
+	Write-Host $path
 }
