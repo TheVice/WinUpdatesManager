@@ -6,20 +6,39 @@
   </head>
   <body>
     <div>
-      <p>Updating Windows Vista</p>
+      <hr/>
+      <p style="text-align:center">BSOD in RDR_FILE_SYSTEM at Windows Build 14393</p>
+      <p style="text-align:right">November 14, 2016</p>
+      <p>As written in blog by <b>Rend</b> user: there is a issue in RDR_FILE_SYSTEM in Windows 10 and Windows Server 2016 with build number 14393. Error generated on call <i>NtClose</i> that do not handle proper in rdbss.sys</p>
+      <p>Practice demonstation:</p>
+      <video controls="controls" poster="./2016.11.14/BSOD in RDR_FILE_SYSTEM Windows 10_Poster.png" width="720" height="576">
+        <source src="./2016.11.14/BSOD in RDR_FILE_SYSTEM(576p_x264).mp4" type="video/mp4" />
+        <source src="./2016.11.14/BSOD in RDR_FILE_SYSTEM(576p_VP8).webm" type="video/webm" />
+        <source src="./2016.11.14/BSOD in RDR_FILE_SYSTEM(576p_Theora).ogv" type="video/ogg" />
+        <!-- source src="*.3gp" type="video/3gp" /-->
+      Your browser does not support the video tag.
+      </video>
+      <p>Previous version of Windows 10 - 1511 and Windows Server 2016 - TP5 do not fail in this scenario.</p>
+      <p>Reference: <a href="https://habrahabr.ru/post/314882/">Синий экран смерти при копировании через Remote Desktop теперь доступен и на серверной платформе</a></p>
+      <hr/>
+    </div>
+    <div>
+      <p style="text-align:center">Updating Windows Vista</p>
       <video controls="controls" poster="./WebUI-Updating_Vista_Poster.png" width="640" height="480">
         <source src="./WebUI-Updating_Vista(1080p_x264).mp4" type="video/mp4" />
         <!--source src="./.webm" type="video/webm" /-->
       Your browser does not support the video tag.
       </video>
+      <hr/>
     </div>
     <div>
-      <p>Updating Windows Server 2008 in Server Core mode</p>
-      <video controls="controls" poster="./ConsoleUI-Updating_W2k8_Server_Core_Poster.png" width="640" height="780">
+      <p style="text-align:center">Updating Windows Server 2008 in Server Core mode</p>
+      <video controls="controls" poster="./ConsoleUI-Updating_W2k8_Server_Core_Poster.png" width="640" height="480">
         <source src="./ConsoleUI-Updating_W2k8_Server_Core(720p_x264).mp4" type="video/mp4" />
         <source src="./ConsoleUI-Updating_W2k8_Server_Core(720p_VP8).webm" type="video/webm" />
       Your browser does not support the video tag.
       </video>
+      <hr/>
     </div>
   </body>
 </html>
